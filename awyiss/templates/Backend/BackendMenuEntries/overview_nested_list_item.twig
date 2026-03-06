@@ -47,10 +47,18 @@
 
 {% block nestedListItemAuditInfo %}
 	<div class="AuditInfo{% if key is not numeric %} Hidden{% endif %}" data-id="{{ key }}">
-		{% block nestedListItemAuditInfoList %}
-			<ul class="AuditInfoList">
-				<li><strong>ID:</strong> {{ settings.isFiltered ? entity.id : key }}</li>
-			</ul>
+		{{ block('nestedListItemAuditInfoList') }}
+
+		{% block nestedListItemAuditInfoHistoryLink %}
+			{{ HtmlHelper.link(__d('Audit', 'show_history'), {
+				controller: 'audit',
+				action: 'history',
+				scope: 'BackendMenuEntries',
+				id: entity.identifier
+			}, {
+				escape: false,
+				title: __d('Audit', 'show_history'),
+			}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

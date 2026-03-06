@@ -49,8 +49,8 @@ class AttributesConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
 			'identifier',
-			'input_type',
-			'default_value',
+			'inputType',
+			'defaultValue',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('attributes::identifier, attributes::input_type, attributes::default_value', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -61,19 +61,19 @@ class AttributesConfigOptionsTest extends TestCase {
 			'scope' => 'attributes::scope',
 			'identifier' => 'attributes::identifier',
 			'type' => 'attributes::type',
-			'has_index' => 'attributes::has_index',
+			'hasIndex' => 'attributes::has_index',
 			'fieldset' => 'attributes::fieldset',
-			'input_type' => 'attributes::input_type',
-			'default_value' => 'attributes::default_value',
+			'inputType' => 'attributes::input_type',
+			'defaultValue' => 'attributes::default_value',
 			'required' => 'attributes::required',
 			'translatable' => 'attributes::translatable',
-			'column_span' => 'attributes::column_span',
-			'system_order' => 'attributes::system_order',
+			'columnSpan' => 'attributes::column_span',
+			'systemOrder' => 'attributes::system_order',
 			'active' => 'attributes::active',
-			'created_by' => 'attributes::created_by',
-			'created_on' => 'attributes::created_on',
-			'changed_by' => 'attributes::changed_by',
-			'changed_on' => 'attributes::changed_on',
+			'createdBy' => 'attributes::created_by',
+			'createdOn' => 'attributes::created_on',
+			'changedBy' => 'attributes::changed_by',
+			'changedOn' => 'attributes::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

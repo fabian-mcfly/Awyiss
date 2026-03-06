@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -58,11 +59,11 @@ class FormElementsTable extends Table {
 		'checkbox',
 		'radio',
 		'select',
-		'select_multiple',
+		'selectMultiple',
 		'file',
 		'hidden',
 		'fieldset',
-		'free_text',
+		'freeText',
 		'submit',
 	];
 	/**
@@ -101,7 +102,7 @@ class FormElementsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['form_id'],
+		'blocklistedColumns' => ['formId'],
 	];
 	/**
 	 * @inheritDoc
@@ -140,7 +141,7 @@ class FormElementsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms', [
-			'foreignKey' => 'form_id',
+			'foreignKey' => 'formId',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -158,7 +159,7 @@ class FormElementsTable extends Table {
 		$types = [];
 
 		foreach ($this->availableTypes as $type) {
-			$types[ $type ] = __d('form_elements', 'type_' . $type);
+			$types[ $type ] = __d($this->getI18nDomain(), 'type_' . Inflector::underscore($type));
 		}
 
 		return $types;
@@ -221,13 +222,13 @@ class FormElementsTable extends Table {
 		$validator->requirePresence([
 			'title',
 		], function (array $context): bool {
-			return ($context['data']['type'] ?? '') !== 'free_text';
+			return ($context['data']['type'] ?? '') !== 'freeText';
 		});
 
 		$validator->requirePresence([
 			'identifier',
 		], function (array $context): bool {
-			return !in_array($context['data']['type'] ?? '', ['free_text', 'submit']);
+			return !in_array($context['data']['type'] ?? '', ['freeText', 'submit']);
 		});
 
 
@@ -260,7 +261,7 @@ class FormElementsTable extends Table {
 
 
 		$validator->notEmptyString('identifier', null, function (array $context): bool {
-			return !in_array($context['data']['type'] ?? '', ['free_text', 'submit']);
+			return !in_array($context['data']['type'] ?? '', ['freeText', 'submit']);
 		});
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -271,7 +272,7 @@ class FormElementsTable extends Table {
 
 
 		$validator->notEmptyString('title', null, function (array $context): bool {
-			return ($context['data']['type'] ?? '') !== 'free_text';
+			return ($context['data']['type'] ?? '') !== 'freeText';
 		});
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -281,7 +282,7 @@ class FormElementsTable extends Table {
 		]);
 
 
-		$validator->add('title_email', [
+		$validator->add('titleEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
@@ -383,9 +384,9 @@ class FormElementsTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$rules->add($rules->isUnique(['identifier', 'form_id']), 'identifierUnique', [
+		$rules->add($rules->isUnique(['identifier', 'formId']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 		]);
 
 		$rules->add(function (FormElement $entity/*, array $options*/): bool {
@@ -394,7 +395,7 @@ class FormElementsTable extends Table {
 			return in_array($entity->type, $availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'type',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_input_type'),
 		]);
 
 		$rules->add(function (FormElement $entity): bool {
@@ -412,7 +413,7 @@ class FormElementsTable extends Table {
 			return true;
 		}, 'validWidthIndentCombination', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_width_indent_combination'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_width_indent_combination'),
 		]);
 
 		return $rules;

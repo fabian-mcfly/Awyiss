@@ -13,13 +13,13 @@ enum CustomerGroupAccessType: string {
 	/**
 	 * Entity is available to all customer groups
 	 */
-	case AllGroups = 'all_groups';
+	case AllGroups = 'allGroups';
 	/**
 	 * Entity is only visible to non-logged-in users
 	 */
-	case HideOnLogin = 'hide_on_login';
+	case HideOnLogin = 'hideOnLogin';
 	/**
 	 * Entity is only visible to assigned customer groups
 	 */
-	case SpecificGroups = 'specific_groups';
+	case SpecificGroups = 'specificGroups';
 }

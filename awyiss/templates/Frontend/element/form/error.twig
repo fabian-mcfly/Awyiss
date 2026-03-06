@@ -16,13 +16,13 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-<div class="Form-ErrorMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+<div class="Form-ErrorMessage" id="Form-{{ form.identifier|camelize }}">
 	{% if form.errors['_general'] %}
 		{% for message in form.errors['_general'] %}
 			{{ message|raw }}<br>
 		{% endfor %}
 	{% else %}
-		<p>{{ __d('validation', 'form_has_errors')|raw }}</p>
+		<p>{{ __d('Validation', 'form_has_errors')|raw }}</p>
 
 		{% if form.summarizeErrors and form.errors %}
 			<ul>

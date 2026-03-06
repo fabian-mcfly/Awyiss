@@ -40,7 +40,7 @@ class ContactFormTemplateTest extends TestCase {
 		]);
 
 		$this->assertCount(8, $elements);
-		$this->assertSame(['title', 'firstname', 'lastname', 'phone', 'email', 'message', 'privacy_accepted', null], array_column($elements, 'identifier'));
+		$this->assertSame(['title', 'firstname', 'lastname', 'phone', 'email', 'message', 'privacyAccepted', null], array_column($elements, 'identifier'));
 		$this->assertSame(['Titel', 'Vorname', 'Nachname', 'Telefon', 'E-Mail', 'Nachricht', 'Datenschutz akzeptiert', 'Absenden'], array_column($elements, 'title'));
 	}
 
@@ -61,7 +61,7 @@ class ContactFormTemplateTest extends TestCase {
 			['de' => ['title' => 'Titel'], 'en' => ['title' => 'Title']],
 			['de' => ['title' => 'Vorname'], 'en' => ['title' => 'Firstname']],
 			['de' => ['title' => 'Nachname'], 'en' => ['title' => 'Lastname']],
-			['de' => ['title' => 'Telefon', 'optional_placeholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optional_placeholder' => '(optional)']],
+			['de' => ['title' => 'Telefon', 'optionalPlaceholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optionalPlaceholder' => '(optional)']],
 			['de' => ['title' => 'E-Mail'], 'en' => ['title' => 'Email']],
 			['de' => ['title' => 'Nachricht'], 'en' => ['title' => 'Message']],
 			['de' => ['title' => 'Datenschutz akzeptiert'], 'en' => ['title' => 'Privacy accepted']],

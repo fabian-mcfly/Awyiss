@@ -35,7 +35,7 @@
 		<div class="ButtonArea">
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 				{% endblock %}
 
 				{% block overviewButtonAdd %}
@@ -45,7 +45,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'backend_menu_entries'}) }}
+					{{ element('search/filter_button', {scope: 'BackendMenuEntries'}) }}
 				{% endblock %}
 			{% endblock %}
 		</div>
@@ -54,7 +54,7 @@
 	{% block listOverview %}
 		<div class="Overview-List">
 			{% from '@Backend/macro/nested_list.twig' import nestedList %}
-			{% set isFiltered = _filter['backend_menu_entries']['active'] == true %}
+			{% set isFiltered = _filter['backendMenuEntries']['active'] == true %}
 			{{ nestedList(isFiltered ? menuEntries : menu.getDynamicMenu().getItems(), _context|merge({
 				data: {
 					sortable: isFiltered == false,
@@ -74,6 +74,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'backend_menu_entries'}) }}
+		{{ element('search/filter', {scope: 'BackendMenuEntries'}) }}
 	{% endblock %}
 </div>

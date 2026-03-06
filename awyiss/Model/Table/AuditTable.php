@@ -39,7 +39,7 @@ class AuditTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Users', [
-			'foreignKey' => 'created_by',
+			'foreignKey' => 'createdBy',
 		]);
 	}
 
@@ -128,14 +128,14 @@ class AuditTable extends Table {
 		]);
 
 
-		$validator->add('data_old', [
+		$validator->add('dataOld', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
-		$validator->add('data_new', [
+		$validator->add('dataNew', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],

@@ -97,7 +97,7 @@ class SurveyEntriesTableTest extends TestCase {
 		$result = $this->surveyEntriesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('survey_entries', $result->getI18nDomain());
+		$this->assertSame('SurveyEntries', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('surveyId'));
@@ -131,7 +131,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'data' => 'Test survey entry data',
 			'ipHash' => 'abc123hash',
 			'postHash' => 'def456hash',
-			'identifier' => 'test_entry_identifier',
+			'identifier' => 'testEntryIdentifier',
 			'deleted' => false,
 		];
 
@@ -244,7 +244,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'data' => null, // Null should be allowed
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -268,7 +268,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'data' => null, // Should be allowed
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -290,7 +290,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'surveyId' => 1, // Existing survey
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -310,7 +310,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'surveyId' => 99999, // Non-existing survey
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -337,7 +337,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'pageId' => 1, // Existing page
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -358,7 +358,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'pageId' => null, // Null should be allowed
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -379,7 +379,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'pageId' => 99999, // Non-existing page
 			'ipHash' => 'test_ip_hash',
 			'postHash' => 'test_post_hash',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->surveyEntriesTable->newDefaultEntity();
@@ -429,7 +429,7 @@ class SurveyEntriesTableTest extends TestCase {
 			'data' => 'Custom survey entry data',
 			'ipHash' => 'custom_ip_hash',
 			'postHash' => 'custom_post_hash',
-			'identifier' => 'custom_identifier',
+			'identifier' => 'customIdentifier',
 			'deleted' => true,
 		];
 
@@ -443,7 +443,7 @@ class SurveyEntriesTableTest extends TestCase {
 		$this->assertSame('Custom survey entry data', $entity->data);
 		$this->assertSame('custom_ip_hash', $entity->ipHash);
 		$this->assertSame('custom_post_hash', $entity->postHash);
-		$this->assertSame('custom_identifier', $entity->identifier);
+		$this->assertSame('customIdentifier', $entity->identifier);
 		$this->assertTrue($entity->deleted);
 	}
 
@@ -475,6 +475,6 @@ class SurveyEntriesTableTest extends TestCase {
 		$config = $this->surveyEntriesTable->getBehavior('Search')->getConfig();
 
 		$this->assertArrayHasKey('blocklistedColumns', $config);
-		$this->assertEquals(['survey_id', 'page_id'], $config['blocklistedColumns']);
+		$this->assertEquals(['surveyId', 'pageId'], $config['blocklistedColumns']);
 	}
 }

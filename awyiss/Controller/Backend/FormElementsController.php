@@ -29,8 +29,8 @@ class FormElementsController extends Controller {
 	];
 	protected array $blocklistedElements = [
 		'text' => ['options', 'text'],
-		'free_text' => ['identifier', 'options', 'placeholder', 'required', 'title', 'title_email'],
-		'fieldset' => ['column_width', 'column_indent', 'column_last', 'column_rtl', 'options', 'placeholder', 'required', 'text'],
+		'freeText' => ['identifier', 'options', 'placeholder', 'required', 'title', 'titleEmail'],
+		'fieldset' => ['columnWidth', 'columnIndent', 'columnLast', 'columnRtl', 'options', 'placeholder', 'required', 'text'],
 		'email' => ['options', 'text'],
 		'number' => ['options', 'text'],
 		'range' => ['options', 'placeholder', 'text'],
@@ -43,14 +43,14 @@ class FormElementsController extends Controller {
 		'checkbox' => ['placeholder', 'text'],
 		'radio' => ['placeholder', 'text'],
 		'select' => ['placeholder', 'text'],
-		'select_multiple' => ['placeholder', 'text'],
+		'selectMultiple' => ['placeholder', 'text'],
 		'file' => ['options', 'placeholder', 'text'],
-		'hidden' => ['column_width', 'column_indent', 'column_last', 'column_rtl', 'options', 'placeholder', 'required', 'text'],
-		'submit' => ['identifier', 'options', 'placeholder', 'required', 'text', 'title_email'],
+		'hidden' => ['columnWidth', 'columnIndent', 'columnLast', 'columnRtl', 'options', 'placeholder', 'required', 'text'],
+		'submit' => ['identifier', 'options', 'placeholder', 'required', 'text', 'titleEmail'],
 	];
 
 	/**
-	 * @var string|null Session identifier for the selected parent_id
+	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
 	/**
@@ -67,7 +67,7 @@ class FormElementsController extends Controller {
 
 		$this->Authorization->setScope('forms');
 
-		$this->selectedParentIdSessionIdentifier = 'form_elements.parent_id';
+		$this->selectedParentIdSessionIdentifier = 'formElements.parentId';
 	}
 
 
@@ -310,7 +310,7 @@ class FormElementsController extends Controller {
 	protected function getPossibleParentFormElements(FormElement $formElement): CollectionInterface {
 		if (!isset($this->threadedFormElements)) {
 			$query = $this->FormElements->find('mediaAssignments')->where([
-				'form_id' => $formElement->formId,
+				'formId' => $formElement->formId,
 			]);
 
 			$this->threadedFormElements = $this->FormElements->listNested($query);
@@ -338,11 +338,11 @@ class FormElementsController extends Controller {
 
 		$this->FormElements->patchEntity($formElement, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->FormElements->save($formElement, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -353,7 +353,7 @@ class FormElementsController extends Controller {
 				$session = $this->request->getSession();
 				$session->write($this->selectedParentIdSessionIdentifier, $formElement->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'formId' => $formElement->formId,

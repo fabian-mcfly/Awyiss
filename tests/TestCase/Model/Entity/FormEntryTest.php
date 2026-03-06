@@ -67,19 +67,19 @@ class FormEntryTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'form_id' => 123,
-			'page_id' => 456,
-			'language_shortcode' => 'de',
+			'formId' => 123,
+			'pageId' => 456,
+			'languageShortcode' => 'de',
 			'subject' => 'Contact Form Submission',
-			'subject_confirmation' => 'Thank you for your message',
+			'subjectConfirmation' => 'Thank you for your message',
 			'body' => 'This is the form submission content',
-			'body_confirmation' => 'Your message has been received',
+			'bodyConfirmation' => 'Your message has been received',
 			'data' => '{"name":"John Doe","email":"john@example.com"}',
-			'ip_hash' => 'a1b2c3d4e5f6',
-			'post_hash' => 'f6e5d4c3b2a1',
+			'ipHash' => 'a1b2c3d4e5f6',
+			'postHash' => 'f6e5d4c3b2a1',
 			'identifier' => 'form-entry-12345',
 			'deleted' => false,
-			'created_on' => '2025-01-06 12:00:00',
+			'createdOn' => '2025-01-06 12:00:00',
 		];
 
 		$entity = new FormEntry($properties);
@@ -98,29 +98,5 @@ class FormEntryTest extends TestCase {
 		$this->assertEquals('form-entry-12345', $entity->identifier);
 		$this->assertFalse($entity->deleted);
 		$this->assertNotNull($entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\FormEntry::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'form_id' => 789,
-			'page_id' => 101,
-			'language_shortcode' => 'en',
-			'subject_confirmation' => 'Confirmation subject',
-			'body_confirmation' => 'Confirmation body',
-			'ip_hash' => '123abc',
-			'post_hash' => 'abc123',
-		];
-
-		$entity = new FormEntry($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

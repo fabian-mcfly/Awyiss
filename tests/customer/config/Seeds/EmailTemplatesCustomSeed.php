@@ -16,25 +16,25 @@ class EmailTemplatesCustomSeed extends AbstractSeed {
 			[
 				'id' => 1,
 				'title' => 'Default',
-				'text_html' => '<p>Folgende Daten wurden gesendet:</p><p>{{$data}}</p>',
-				'text_plain' => 'Folgende Daten wurden gesendet:
+				'textHtml' => '<p>Folgende Daten wurden gesendet:</p><p>{{$data}}</p>',
+				'textPlain' => 'Folgende Daten wurden gesendet:
 
 {{$data}}',
-				'file_name' => 'dummy',
+				'fileName' => 'dummy',
 				'layout' => 'default.twig',
 				'active' => 1,
 				'deleted' => 0,
-				'created_by' => 1,
-				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
-				'changed_by' => null,
-				'changed_on' => null,
-				'deleted_by' => null,
-				'deleted_on' => null,
+				'createdBy' => 1,
+				'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changedBy' => null,
+				'changedOn' => null,
+				'deletedBy' => null,
+				'deletedOn' => null,
 			],
 			[
 				'id' => 3,
 				'title' => 'Confirmation',
-				'text_html' => '<p><strong>{{$salutation|Hallo}},</strong></p>
+				'textHtml' => '<p><strong>{{$salutation|Hallo}},</strong></p>
 <p><strong>vielen Dank f&uuml;r Ihre Anfrage.</strong> Folgende Daten wurden an uns &uuml;bermittelt:</p>
 <p>{{$data}}</p>
 <p>Mit freundlichen Gr&uuml;&szlig;en</p>
@@ -42,7 +42,7 @@ class EmailTemplatesCustomSeed extends AbstractSeed {
 <p>Telefon: <a href="tel:+491234567890"><strong>0123-456789-0</strong></a><br>E-Mail: <a href="mailto:max@mustermann.de">max@mustermann.de</a></p>
 <p>&nbsp;</p>
 <p><a href="de/impressum">Impressum</a> | <a href="de/datenschutz">Datenschutz</a></p>',
-				'text_plain' => '{{$salutation|Hallo}},
+				'textPlain' => '{{$salutation|Hallo}},
 
 vielen Dank für Ihre Anfrage. Folgende Daten wurden an uns übermittelt:
 
@@ -63,16 +63,16 @@ E-Mail: max@mustermann.de
 
 Impressum: {{$baseUrl}}de/impressum
 Datenschutz: {{$baseUrl}}de/datenschutz',
-				'file_name' => 'dummy',
+				'fileName' => 'dummy',
 				'layout' => 'default.twig',
 				'active' => 1,
 				'deleted' => 0,
-				'created_by' => 1,
-				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
-				'changed_by' => null,
-				'changed_on' => null,
-				'deleted_by' => null,
-				'deleted_on' => null,
+				'createdBy' => 1,
+				'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changedBy' => null,
+				'changedOn' => null,
+				'deletedBy' => null,
+				'deletedOn' => null,
 			],
 		];
 

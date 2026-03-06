@@ -20,32 +20,32 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
-{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('urlHistory', [], 'create') %}
+{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('UrlHistory', [], 'create') %}
 
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDefaultFields %}
 	<th class="TableHeader-Url{% if PaginatorHelper.isCurrentSortKey('url') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('url', i18nDomain ? __df(i18nDomain, 'system', 'url') : __('url')) }}
+		{{ PaginatorHelper.sort('url', i18nDomain ? __df(i18nDomain, 'System', 'url') : __('url')) }}
 	</th>
 	{% if grouped == false %}
 		<th class="TableHeader-Referrer{% if PaginatorHelper.isCurrentSortKey('referrer') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('referrer', i18nDomain ? __df(i18nDomain, 'system', 'referrer') : __('referrer')) }}
+			{{ PaginatorHelper.sort('referrer', i18nDomain ? __df(i18nDomain, 'System', 'referrer') : __('referrer')) }}
 		</th>
 		<th class="TableHeader-IsRobot{% if PaginatorHelper.isCurrentSortKey('isRobot') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('isRobot', i18nDomain ? __df(i18nDomain, 'system', 'is_robot') : __('is_robot')) }}
+			{{ PaginatorHelper.sort('isRobot', i18nDomain ? __df(i18nDomain, 'System', 'is_robot') : __('is_robot')) }}
 		</th>
 		<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
+			{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'System', 'created_on') : __('created_on')) }}
 		</th>
 	{% else %}
 		<th class="TableHeader-Occurrences{% if PaginatorHelper.isCurrentSortKey('occurrences') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('occurrences', i18nDomain ? __df(i18nDomain, 'system', 'is_robot') : __('occurrences')) }}
+			{{ PaginatorHelper.sort('occurrences', i18nDomain ? __df(i18nDomain, 'System', 'is_robot') : __('occurrences')) }}
 		</th>
 		<th class="TableHeader-FirstOccurrence{% if PaginatorHelper.isCurrentSortKey('firstOccurrence') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('firstOccurrence', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('first_occurrence')) }}
+			{{ PaginatorHelper.sort('firstOccurrence', i18nDomain ? __df(i18nDomain, 'System', 'created_on') : __('first_occurrence')) }}
 		</th>
 		<th class="TableHeader-LastOccurrence{% if PaginatorHelper.isCurrentSortKey('lastOccurrence') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('lastOccurrence', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('last_occurrence')) }}
+			{{ PaginatorHelper.sort('lastOccurrence', i18nDomain ? __df(i18nDomain, 'System', 'created_on') : __('last_occurrence')) }}
 		</th>
 	{% endif %}
 {% endblock %}
@@ -91,8 +91,8 @@
 			<div class="Actions">
 				{% if canCreateUrlHistory %}
 					<form method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
-						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit_type', value: 'submit'}) }}
-						{{ FormHelper.hidden('reload_form', {val: 1}) }}
+						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submitType', value: 'submit'}) }}
+						{{ FormHelper.hidden('reloadForm', {val: 1}) }}
 						{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
 					</form>
 				{% endif %}

@@ -71,7 +71,7 @@ class LanguagesTableTest extends TestCase {
 		$this->assertTrue($configurationAssociation->getCascadeCallbacks());
 		$this->assertTrue($configurationAssociation->getDependent());
 		$this->assertSame(['realm', 'shortcode'], $configurationAssociation->getBindingKey());
-		$this->assertSame(['realm', 'language_shortcode'], $configurationAssociation->getForeignKey());
+		$this->assertSame(['realm', 'languageShortcode'], $configurationAssociation->getForeignKey());
 
 		// Test FormEntries association (HasMany)
 		$this->assertTrue($this->languagesTable->hasAssociation('FormEntries'));
@@ -80,7 +80,7 @@ class LanguagesTableTest extends TestCase {
 		$this->assertTrue($formEntriesAssociation->getCascadeCallbacks());
 		$this->assertFalse($formEntriesAssociation->getDependent());
 		$this->assertSame('shortcode', $formEntriesAssociation->getBindingKey());
-		$this->assertSame('language_shortcode', $formEntriesAssociation->getForeignKey());
+		$this->assertSame('languageShortcode', $formEntriesAssociation->getForeignKey());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->languagesTable->hasAssociation('MediaAssignments'));
@@ -96,7 +96,7 @@ class LanguagesTableTest extends TestCase {
 		$this->assertTrue($menuEntriesAssociation->getCascadeCallbacks());
 		$this->assertFalse($menuEntriesAssociation->getDependent());
 		$this->assertSame('shortcode', $menuEntriesAssociation->getBindingKey());
-		$this->assertSame('language_shortcode', $menuEntriesAssociation->getForeignKey());
+		$this->assertSame('languageShortcode', $menuEntriesAssociation->getForeignKey());
 
 		// Test Pages association (HasMany)
 		$this->assertTrue($this->languagesTable->hasAssociation('Pages'));
@@ -105,7 +105,7 @@ class LanguagesTableTest extends TestCase {
 		$this->assertTrue($pagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($pagesAssociation->getDependent());
 		$this->assertSame('shortcode', $pagesAssociation->getBindingKey());
-		$this->assertSame('language_shortcode', $pagesAssociation->getForeignKey());
+		$this->assertSame('languageShortcode', $pagesAssociation->getForeignKey());
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
 		// Test user tracking associations
@@ -138,7 +138,7 @@ class LanguagesTableTest extends TestCase {
 		$result = $this->languagesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('languages', $result->getI18nDomain());
+		$this->assertSame('Languages', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('shortcode'));

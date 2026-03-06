@@ -133,7 +133,7 @@ class SurveyRenderer {
 			$query = $query->where(['Surveys.id' => $identifier]);
 		}
 		else {
-			$query = $query->where(['Surveys.identifier' => $identifier]);
+			$query = $query->where(['Surveys.identifier' => Inflector::variable($identifier)]);
 		}
 
 		$query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
@@ -185,8 +185,8 @@ class SurveyRenderer {
 		$this->currentAction = $this->survey->getCurrentAction();
 
 		if (
-			($this->requestData['_survey_identifier'] ?? null) === $this->survey->identifier &&
-			!isset($this->requestData['_form_identifier']) &&
+			($this->requestData['_surveyIdentifier'] ?? null) === $this->survey->identifier &&
+			!isset($this->requestData['_formIdentifier']) &&
 			in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
@@ -316,7 +316,7 @@ class SurveyRenderer {
 		/** @var \Awyiss\Model\Entity\SurveyEntry|null $entry */
 		$entry = $surveyEntriesTable->find('all')->where([
 			'identifier' => $surveyEntryHash,
-			'survey_id' => $surveyId,
+			'surveyId' => $surveyId,
 		])->first();
 
 		return $entry;
@@ -372,7 +372,7 @@ class SurveyRenderer {
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
-			$this->survey->setError('_general', __d('surveys', 'save_entry_failed'));
+			$this->survey->setError('_general', __d('Surveys', 'save_entry_failed'));
 		}
 
 		if ($this->processedForm) {
@@ -574,11 +574,11 @@ class SurveyRenderer {
 		$surveyEntry = $this->surveyEntriesTable->newDefaultEntity();
 
 		$data = [
-			'survey_id' => $this->survey->id,
-			'page_id' => $this->page?->id ?? null,
+			'surveyId' => $this->survey->id,
+			'pageId' => $this->page?->id ?? null,
 			'data' => base64_encode(gzcompress(json_encode($surveyData))),
-			'ip_hash' => $ipHash,
-			'post_hash' => $postHash,
+			'ipHash' => $ipHash,
+			'postHash' => $postHash,
 			'identifier' => md5($ipHash . '|' . $postHash),
 		];
 
@@ -646,8 +646,8 @@ class SurveyRenderer {
 			}
 
 			$userData['readable'][] = [
-				'question_id' => $question->id,
-				'answer_id' => $answerIds,
+				'questionId' => $question->id,
+				'answerId' => $answerIds,
 				'question' => $question->surveyQuestion->label,
 				'answer' => $readableAnswers ?: $readableAnswer ?: null,
 			];
@@ -776,7 +776,7 @@ class SurveyRenderer {
 			$fileName . '.twig',
 		]);
 
-		$element = $this->currentAction->surveyQuestion->type->value;
+		$element = Inflector::underscore($this->currentAction->surveyQuestion->type->value);
 		if (file_exists($filePath)) {
 			$element = $fileName;
 		}

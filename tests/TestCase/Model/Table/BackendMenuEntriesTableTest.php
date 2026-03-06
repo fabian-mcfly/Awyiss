@@ -153,7 +153,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$result = $this->backendMenuEntriesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('backend_menu_entries', $result->getI18nDomain());
+		$this->assertSame('BackendMenuEntries', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -180,7 +180,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 			'title' => 'Test Backend Menu Entry',
 			'link' => 'TestController::overview',
 			'access' => [
-				'scope' => 'test',
+				'scope' => 'Test',
 				'identifier' => 'read',
 			],
 			'external' => false,
@@ -466,7 +466,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$this->assertEquals(2, $children[1]->systemOrder);
 
 		$this->assertEquals('generic_datatables::menu_configure', $children[2]->title);
-		$this->assertEquals('Configuration::overview::scope:test_scope', $children[2]->link);
+		$this->assertEquals('Configuration::overview::scope:TestScope', $children[2]->link);
 		$this->assertEquals(3, $children[2]->systemOrder);
 	}
 
@@ -505,7 +505,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 			'link' => 'CustomController::overview',
 			'parentId' => 'media',
 			'access' => [
-				'scope' => 'custom',
+				'scope' => 'Custom',
 				'identifier' => 'read',
 			],
 			'external' => true,
@@ -523,7 +523,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$this->assertSame('Custom Menu Entry', $entity->title);
 		$this->assertSame('CustomController::overview', $entity->link);
 		$this->assertSame('media', $entity->parentId);
-		$this->assertSame(['scope' => 'custom', 'identifier' => 'read'], $entity->access);
+		$this->assertSame(['scope' => 'Custom', 'identifier' => 'read'], $entity->access);
 		$this->assertTrue($entity->external);
 		$this->assertSame(5, $entity->systemOrder);
 		$this->assertFalse($entity->active);

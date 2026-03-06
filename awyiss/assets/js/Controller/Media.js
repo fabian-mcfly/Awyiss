@@ -90,7 +90,7 @@ export default class MediaController {
 				dropZone: document.querySelector('#UploadQueue-DropZone'),
 				maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
 				uploadData: {
-					media_folder_id: mediaList.dataset.mediaFolderId,
+					mediaFolderId: mediaList.dataset.mediaFolderId,
 				},
 				uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:false/`
 			});
@@ -115,7 +115,7 @@ export default class MediaController {
 			maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
 			queueElement: uploadQueue.querySelector('tbody'),
 			uploadData: {
-				media_folder_id: overviewTable.dataset.mediaFolderId,
+				mediaFolderId: overviewTable.dataset.mediaFolderId,
 			},
 			uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:true/`
 		});
@@ -169,7 +169,7 @@ export default class MediaController {
 	 * @return {void}
 	 */
 	bindAutoOverwriteChangeLabel() {
-		const autoOverwrite = document.querySelector('input[name="upload_auto_overwrite"]');
+		const autoOverwrite = document.querySelector('input[name="uploadAutoOverwrite"]');
 		const labels = document.querySelectorAll('label[for="UploadAutoOverwrite"]');
 
 		if (!autoOverwrite || !labels.length) {

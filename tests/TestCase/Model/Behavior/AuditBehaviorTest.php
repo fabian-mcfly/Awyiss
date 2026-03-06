@@ -170,23 +170,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
-	 */
-	public function testInitializeAddsFieldMapping(): void {
-		/** @var \Awyiss\Model\Entity\Page $entityClass */
-		$entityClass = $this->table->getEntityClass();
-
-		$this->assertSame('createdOn', $entityClass::mapField('created_on'));
-		$this->assertSame('createdBy', $entityClass::mapField('created_by'));
-		$this->assertSame('changedOn', $entityClass::mapField('changed_on'));
-		$this->assertSame('changedBy', $entityClass::mapField('changed_by'));
-		$this->assertSame('deletedOn', $entityClass::mapField('deleted_on'));
-		$this->assertSame('deletedBy', $entityClass::mapField('deleted_by'));
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::addAssociation()
 	 */
 	public function testInitializeAddsUserAssociations(): void {
@@ -1020,7 +1003,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->assertSame('test-transaction-id', $audit->transactionId);
 		$this->assertSame('u', $audit->type);
 		$this->assertSame(123, $audit->foreignKey);
-		$this->assertSame('pages', $audit->scope);
+		$this->assertSame('Pages', $audit->scope);
 		$this->assertTrue($audit->createdOn->wasWithinLast('5 seconds'));
 		$this->assertSame(3, $audit->createdBy);
 
@@ -1144,14 +1127,14 @@ class AuditBehaviorTest extends TestCase {
 		$entity->unset('attributes');
 
 		$newStartData = $publicationDataTable->newDefaultEntity([
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'type' => 'start',
 			'dateTime' => new DateTime('2023-01-01 10:00:00'),
 		]);
 
 		$newEndData = $publicationDataTable->newDefaultEntity([
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'type' => 'end',
 			'dateTime' => new DateTime('2023-12-31 23:59:59'),
@@ -1218,14 +1201,14 @@ class AuditBehaviorTest extends TestCase {
 		$entity->unset('attributes');
 
 		$newStartData = $publicationDataTable->newDefaultEntity([
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'type' => 'start',
 			'dateTime' => new DateTime('2023-02-01 09:00:00'),
 		]);
 
 		$newEndData = $publicationDataTable->newDefaultEntity([
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'type' => 'end',
 			'dateTime' => new DateTime('2023-11-30 22:00:00'),
@@ -1778,10 +1761,10 @@ class AuditBehaviorTest extends TestCase {
 			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => 2,
+						'mediaId' => 2,
 					],
-					'lightbox_media' => [
-						'media_id' => 4,
+					'lightboxMedia' => [
+						'mediaId' => 4,
 					],
 				],
 			],
@@ -1812,10 +1795,10 @@ class AuditBehaviorTest extends TestCase {
 					'standard' => [
 						'lightboxMedia' => [
 							'mediaElementId' => 2,
-							'mediaElementSelectorIdentifier' => 'lightbox_media',
+							'mediaElementSelectorIdentifier' => 'lightboxMedia',
 							'mediaFolderId' => null,
 							'mediaId' => 4,
-							'scope' => 'pages',
+							'scope' => 'Pages',
 							'systemOrder' => 1,
 						],
 						'media' => [
@@ -1823,7 +1806,7 @@ class AuditBehaviorTest extends TestCase {
 							'mediaElementSelectorIdentifier' => 'media',
 							'mediaFolderId' => null,
 							'mediaId' => 2,
-							'scope' => 'pages',
+							'scope' => 'Pages',
 							'systemOrder' => 1,
 						],
 					],
@@ -1864,7 +1847,7 @@ class AuditBehaviorTest extends TestCase {
 			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => 4,
+						'mediaId' => 4,
 					],
 				],
 			],
@@ -1895,7 +1878,7 @@ class AuditBehaviorTest extends TestCase {
 							'mediaElementSelectorIdentifier' => 'media',
 							'mediaFolderId' => null,
 							'mediaId' => 2,
-							'scope' => 'pages',
+							'scope' => 'Pages',
 							'systemOrder' => 1,
 						],
 					],
@@ -1909,7 +1892,7 @@ class AuditBehaviorTest extends TestCase {
 							'mediaElementSelectorIdentifier' => 'media',
 							'mediaFolderId' => null,
 							'mediaId' => 4,
-							'scope' => 'pages',
+							'scope' => 'Pages',
 							'systemOrder' => 1,
 						],
 					],
@@ -1966,7 +1949,7 @@ class AuditBehaviorTest extends TestCase {
 			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => 4,
+						'mediaId' => 4,
 						'id' => 234,
 					],
 				],
@@ -2087,7 +2070,7 @@ class AuditBehaviorTest extends TestCase {
 							'mediaElementSelectorIdentifier' => 'media',
 							'mediaFolderId' => null,
 							'mediaId' => 2,
-							'scope' => 'pages',
+							'scope' => 'Pages',
 							'systemOrder' => 1,
 						],
 					],
@@ -2131,7 +2114,7 @@ class AuditBehaviorTest extends TestCase {
 			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => 2,
+						'mediaId' => 2,
 					],
 				],
 			],
@@ -2635,7 +2618,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 102,
-						'identifier' => 'form_id',
+						'identifier' => 'formId',
 						'title' => null,
 						'fieldset' => 'content',
 						'columnSpan' => '12/12',
@@ -2644,7 +2627,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 20,
-						'identifier' => 'content_template_id',
+						'identifier' => 'contentTemplateId',
 						'title' => null,
 						'fieldset' => 'presentation',
 						'columnSpan' => '12/12',
@@ -2653,7 +2636,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 101,
-						'identifier' => 'attributes.background_color',
+						'identifier' => 'attributes.backgroundColor',
 						'title' => null,
 						'fieldset' => 'presentation',
 						'columnSpan' => '12/12',
@@ -2662,7 +2645,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 103,
-						'identifier' => 'survey_id',
+						'identifier' => 'surveyId',
 						'title' => null,
 						'fieldset' => 'content',
 						'columnSpan' => '12/12',
@@ -2671,7 +2654,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 21,
-						'identifier' => 'language_shortcode',
+						'identifier' => 'languageShortcode',
 						'title' => null,
 						'fieldset' => 'conditions',
 						'columnSpan' => '12/12',
@@ -2680,7 +2663,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 22,
-						'identifier' => 'page_id',
+						'identifier' => 'pageId',
 						'title' => null,
 						'fieldset' => 'conditions',
 						'columnSpan' => '12/12',
@@ -2689,7 +2672,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 23,
-						'identifier' => 'content_area_id',
+						'identifier' => 'contentAreaId',
 						'title' => null,
 						'fieldset' => 'conditions',
 						'columnSpan' => '12/12',
@@ -2698,7 +2681,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 24,
-						'identifier' => 'system_order',
+						'identifier' => 'systemOrder',
 						'title' => null,
 						'fieldset' => 'conditions',
 						'columnSpan' => '12/12',
@@ -2707,7 +2690,7 @@ class AuditBehaviorTest extends TestCase {
 					],
 					[
 						'id' => 25,
-						'identifier' => 'css_class',
+						'identifier' => 'cssClass',
 						'title' => null,
 						'fieldset' => 'presentation',
 						'columnSpan' => '12/12',
@@ -2969,9 +2952,9 @@ class AuditBehaviorTest extends TestCase {
 		$this->assertNotFalse($this->table->save($entity));
 
 		$result = $this->auditTable->find()->where([
-			'scope' => 'usergroups_users',
-			'subject_left_table' => 'users',
-			'subject_left_foreign_key' => $entity->id,
+			'scope' => 'UsergroupsUsers',
+			'subjectLeftTable' => 'Users',
+			'subjectLeftForeignKey' => $entity->id,
 		])->all();
 
 		$this->assertCount(2, $result);
@@ -3001,9 +2984,9 @@ class AuditBehaviorTest extends TestCase {
 		$this->assertNotFalse($this->table->save($entity));
 
 		$result = $this->auditTable->find()->where([
-			'scope' => 'usergroups_users',
-			'subject_left_table' => 'users',
-			'subject_left_foreign_key' => $entity->id,
+			'scope' => 'UsergroupsUsers',
+			'subjectLeftTable' => 'Users',
+			'subjectLeftForeignKey' => $entity->id,
 		])->all();
 
 		$this->assertCount(4, $result);
@@ -3033,9 +3016,9 @@ class AuditBehaviorTest extends TestCase {
 		$this->assertNotFalse($this->table->save($entity));
 
 		$result = $this->auditTable->find()->where([
-			'scope' => 'usergroups_users',
-			'subject_left_table' => 'users',
-			'subject_left_foreign_key' => $entity->id,
+			'scope' => 'UsergroupsUsers',
+			'subjectLeftTable' => 'Users',
+			'subjectLeftForeignKey' => $entity->id,
 		])->all();
 
 		$this->assertCount(2, $result);
@@ -3062,9 +3045,9 @@ class AuditBehaviorTest extends TestCase {
 		$this->assertNotFalse($this->table->save($entity));
 
 		$result = $this->auditTable->find()->where([
-			'scope' => 'usergroups_users',
-			'subject_left_table' => 'users',
-			'subject_left_foreign_key' => $entity->id,
+			'scope' => 'UsergroupsUsers',
+			'subjectLeftTable' => 'Users',
+			'subjectLeftForeignKey' => $entity->id,
 		])->all();
 
 		$this->assertCount(4, $result);

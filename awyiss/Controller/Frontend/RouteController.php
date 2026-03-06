@@ -71,7 +71,7 @@ class RouteController extends AppController {
 		if ($addresses === false) {
 			$this->set([
 				'status' => 'error',
-				'message' => __d('route', 'geocode_error_address'),
+				'message' => __d('Route', 'geocode_error_address'),
 				'title' => null,
 				'addresses' => null,
 			]);
@@ -84,8 +84,8 @@ class RouteController extends AppController {
 		if (count($addresses) > 1) {
 			$this->set([
 				'status' => 'notice',
-				'message' => __d('route', 'geocode_multiple_results_found'),
-				'title' => __d('route', 'geocode_multiple_results_found_title'),
+				'message' => __d('Route', 'geocode_multiple_results_found'),
+				'title' => __d('Route', 'geocode_multiple_results_found_title'),
 				'addresses' => $addresses->toArray(),
 			]);
 
@@ -96,7 +96,7 @@ class RouteController extends AppController {
 
 		$this->set([
 			'status' => 'success',
-			'message' => __d('route', 'geocode_address_found'),
+			'message' => __d('Route', 'geocode_address_found'),
 			'title' => null,
 			'addresses' => $addresses->toArray(),
 		]);
@@ -130,7 +130,7 @@ class RouteController extends AppController {
 		) {
 			$this->set([
 				'status' => 'error',
-				'message' => __d('route', 'route_planner_error_end_coordinates'),
+				'message' => __d('Route', 'route_planner_error_end_coordinates'),
 				'addresses' => null,
 				'route' => null,
 			]);
@@ -158,7 +158,7 @@ class RouteController extends AppController {
 			if ($addresses === false) {
 				$this->set([
 					'status' => 'error',
-					'message' => __d('route', 'route_planner_error_start_coordinates'),
+					'message' => __d('Route', 'route_planner_error_start_coordinates'),
 					'addresses' => null,
 					'route' => null,
 				]);
@@ -171,7 +171,7 @@ class RouteController extends AppController {
 			if (count($addresses) > 1) {
 				$this->set([
 					'status' => 'notice',
-					'message' => __d('route', 'route_planner_multiple_results_found'),
+					'message' => __d('Route', 'route_planner_multiple_results_found'),
 					'addresses' => $addresses->toArray(),
 					'route' => null,
 				]);
@@ -206,7 +206,7 @@ class RouteController extends AppController {
 		];
 
 		$route = $this->routingService->getRoute($startAddress, $endAddress, $transportationMode, $this->request->getParam('lang'), $params);
-		$message = __d('route', $route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
+		$message = __d('Route', $route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([
 			'status' => $route !== false ? 'success' : 'error',
@@ -226,7 +226,7 @@ class RouteController extends AppController {
 		$referer = $this->request->getHeaderLine('Referer');
 		if (!str_starts_with($referer, Router::fullBaseUrl())) {
 			throw new ForbiddenException(
-				__d('route', 'route_planner_error_access')
+				__d('Route', 'route_planner_error_access')
 			);
 		}
 
@@ -235,7 +235,7 @@ class RouteController extends AppController {
 
 		if ($crawlerDetect->isCrawler($userAgent)) {
 			throw new ForbiddenException(
-				__d('route', 'route_planner_error_access')
+				__d('Route', 'route_planner_error_access')
 			);
 		}
 	}

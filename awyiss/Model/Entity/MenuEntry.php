@@ -40,16 +40,6 @@ use Cake\Datasource\FactoryLocator;
 class MenuEntry extends Entity {
 	use CustomerGroupAccessTrait;
 
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'menu_id' => 'menuId',
-		'language_shortcode' => 'languageShortcode',
-		'parent_id' => 'parentId',
-		'system_order' => 'systemOrder',
-	];
-
 
 	/**
 	 * @inheritDoc

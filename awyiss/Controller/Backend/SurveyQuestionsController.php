@@ -173,23 +173,23 @@ class SurveyQuestionsController extends Controller {
 		) {
 			$associated[] = 'SurveyAnswers';
 			$surveyQuestion->setAccess('surveyAnswers', true);
-			$requestData['survey_answers'] = $this->buildAnswersData($requestData['answers']);
+			$requestData['surveyAnswers'] = $this->buildAnswersData($requestData['answers']);
 		}
 
 		$this->SurveyQuestions->patchEntity($surveyQuestion, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->SurveyQuestions->save($surveyQuestion, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($surveyQuestion),
@@ -230,7 +230,7 @@ class SurveyQuestionsController extends Controller {
 		array_walk($answers, function (&$value, int $key) use ($languages, $currentLanguage) {
 			$value = [
 				'title' => $value,
-				'system_order' => $key + 1,
+				'systemOrder' => $key + 1,
 			];
 
 			if (count($languages) > 1) {

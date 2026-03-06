@@ -20,15 +20,15 @@
 		<div class="Widget-SocialMediaEmbed SocialMediaEmbed SocialMediaService-{{ settings.service|ucparts(false) }}" data-social-media-embed-service="{{ settings.service }}" data-social-media-embed-embed-id="{{ embedId }}">
 			{% block socialMediaEmbedConsentInfo %}
 				<div class="ConsentInfo">
-					<p>{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'content_from_external_provider') }}</p>
+					<p>{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'content_from_external_provider') }}</p>
 					<p>
 						<button class="Button ConsentButton" type="button">
-							{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'load_content') }}
+							{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'load_content') }}
 						</button>
 					</p>
 					<label>
 						<input type="checkbox" class="RememberConsent" />
-						{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'remember_consent') }}
+						{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'remember_consent') }}
 					</label>
 				</div>
 			{% endblock %}
@@ -36,16 +36,16 @@
 			{% block socialMediaEmbedNoScript %}
 				<noscript>
 					{% block socialMediaEmbedNoScriptText %}
-						<p>{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'javascript_is_required_to_display_this_content') }}</p>
+						<p>{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'javascript_is_required_to_display_this_content') }}</p>
 					{% endblock %}
 
 					{% block socialMediaEmbedNoScriptLink %}
 						{% if settings.service == 'youtube' %}
-							<p><a href="https://www.youtube.com/watch?v={{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'view_on_youtube') }}</a></p>
+							<p><a href="https://www.youtube.com/watch?v={{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'view_on_youtube') }}</a></p>
 						{% elseif settings.service == 'vimeo' %}
-							<p><a href="https://vimeo.com/{{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'view_on_vimeo') }}</a></p>
+							<p><a href="https://vimeo.com/{{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'view_on_vimeo') }}</a></p>
 						{% elseif settings.service == 'instagram' %}
-							<p><a href="https://instagram.com/p/{{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/social_media_embed', 'Frontend/widgets', 'view_on_instagram') }}</a></p>
+							<p><a href="https://instagram.com/p/{{ embedId }}" rel="noopener noreferrer">{{ __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'view_on_instagram') }}</a></p>
 						{% endif %}
 					{% endblock %}
 				</noscript>

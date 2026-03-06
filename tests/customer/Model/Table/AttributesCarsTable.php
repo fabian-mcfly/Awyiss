@@ -84,7 +84,7 @@ class AttributesCarsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('input_list', 'json');
-		$schema->setColumnType('input_key_value_list', 'json');
+		$schema->setColumnType('inputList', 'json');
+		$schema->setColumnType('inputKeyValueList', 'json');
 	}
 }

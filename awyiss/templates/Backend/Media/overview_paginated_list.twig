@@ -70,7 +70,7 @@
 		{{ HtmlHelper.link(entity.path, entity.path, {
 			target: '_blank',
 		}) }}
-	{% elseif field == 'usage_count' %}
+	{% elseif field == 'usageCount' %}
 		{% set value = entity.has(field) ? entity.get(field) : 0 %}
 		{% if value > 0 %}
 			{{ HtmlHelper.link(value, {action: 'usages', id: entity.id}, {title: __('show_usages')}) }}
@@ -92,7 +92,7 @@
 
 {% block tableOverviewCellActionsUpdate %}
 	{% if AuthorizationHelper.isAccessible('create') %}
-		{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+		{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 	{% endif %}
 {% endblock %}
 

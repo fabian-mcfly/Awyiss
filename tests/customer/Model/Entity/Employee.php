@@ -39,14 +39,4 @@ class Employee extends Entity {
 	 * Entity to be passed to the validation of attributes
 	 */
 	protected ?Entity $entity = null;
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'language_shortcode' => 'languageShortcode',
-		'system_order' => 'systemOrder',
-	];
 }

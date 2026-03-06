@@ -43,7 +43,7 @@ class MediaController extends Controller {
 	protected array $categories = [
 		'queryConditions' => [
 			'active' => true,
-			'parents_active' => true,
+			'parentsActive' => true,
 			'hidden' => false,
 		],
 		'startupMethods' => ['overview', 'batchEdit'],
@@ -53,7 +53,7 @@ class MediaController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $paginate = [
-		'defaultSortableFields' => ['usage_count'],
+		'defaultSortableFields' => ['usageCount'],
 		'enabled' => false,
 		'order' => [
 			'name' => 'asc',
@@ -71,7 +71,7 @@ class MediaController extends Controller {
 			$this->Categories->setConfig('verifySelection', false);
 		}
 
-		$mediaFolderId = $this->request->getParam('mediaFolderId') ?? $this->request->getData('media_folder_id');
+		$mediaFolderId = $this->request->getData('mediaFolderId');
 		if ($mediaFolderId) {
 			/** @var \Awyiss\Model\Entity\MediaFolder $mediaFolder */
 			$mediaFolder = $this->Media->MediaFolders->findById($mediaFolderId)->first();
@@ -131,7 +131,7 @@ class MediaController extends Controller {
 		}
 
 		$query->enableAutoFields()->select([
-			'usage_count' => $query->func()->count('MediaAssignments.id'),
+			'usageCount' => $query->func()->count('MediaAssignments.id'),
 		])->leftJoinWith('MediaAssignments')->groupBy('Media.id');
 
 		if ($paginated) {
@@ -229,7 +229,7 @@ class MediaController extends Controller {
 			 * If the request is an AJAX request, the type is a form submit (not a reload)
 			 * set the view class to JSON, disable the auto layout and render the response
 			 */
-			if ($this->request->is('ajax') && !$this->request->getData('reload_form')) {
+			if ($this->request->is('ajax') && !$this->request->getData('reloadForm')) {
 				$errorMessage = $this->getErrorMessage($media);
 
 				// Consume the flash messages to prevent them from being displayed the next time the page is loaded
@@ -298,7 +298,7 @@ class MediaController extends Controller {
 				return $this->redirect(['action' => 'overview']);
 			}
 
-			$media->usageCount = $this->Media->MediaAssignments->find()->where(['media_id' => $media->id, 'deleted' => 0])->count();
+			$media->usageCount = $this->Media->MediaAssignments->find()->where(['mediaId' => $media->id, 'deleted' => 0])->count();
 
 			if ($this->request->is(['patch', 'post', 'put'])) {
 				$this->save($media, 'edit', $this->request->is('ajax'));
@@ -317,7 +317,7 @@ class MediaController extends Controller {
 		if (
 			$this->request->is(['patch', 'post', 'put']) &&
 			$this->request->is('ajax') &&
-			!$this->request->getData('reload_form') &&
+			!$this->request->getData('reloadForm') &&
 			!$this->request->getParam('ajaxForm')
 		) {
 			$errorMessage = $this->getErrorMessage($media);
@@ -637,7 +637,7 @@ class MediaController extends Controller {
 		$this->set([
 			'groupedMediaFolders' => $mediaFolders,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'mediaFolderId' => $this->request->getData('media_folder_id'),
+			'mediaFolderId' => $this->request->getData('mediaFolderId'),
 		]);
 
 		$this->viewBuilder()->setLayout('overlay_configuration');
@@ -660,7 +660,7 @@ class MediaController extends Controller {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 				$this->set('success', false);
-				$this->set('message', __d('media_folders', 'record_not_found'));
+				$this->set('message', __d('MediaFolders', 'record_not_found'));
 
 				// Set the view class to JSON
 				$this->viewBuilder()->setClassName('Json');
@@ -669,20 +669,20 @@ class MediaController extends Controller {
 				$this->response = $this->response->withStatus(400, 'Bad Request');
 			}
 			else {
-				$this->Flash->error(__d('media_folders', 'record_not_found'));
+				$this->Flash->error(__d('MediaFolders', 'record_not_found'));
 				$this->redirect(['action' => 'overview']);
 			}
 		}
 
 		$affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-			'media_folder_id' => (int)$folderid,
+			'mediaFolderId' => (int)$folderid,
 		]);
 
 		if ($this->request->is('ajax')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 			$this->set('success', $affectedRows !== false);
-			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('message', $affectedRows > 0 ? __d('System', 'system_order_saved') : __d('System', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
@@ -816,7 +816,7 @@ class MediaController extends Controller {
 
 		$this->ensureValidFile($method, $media, $uploadedFile);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 			$options = [];
 
 			if ($isAjax) {
@@ -828,7 +828,7 @@ class MediaController extends Controller {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'mediaFolderId' => $media->mediaFolderId,
@@ -886,7 +886,7 @@ class MediaController extends Controller {
 	 * @inheritDoc
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
-		$mediaFolderId = $this->request->getData('media_folder_id');
+		$mediaFolderId = $this->request->getData('mediaFolderId');
 
 		$orderData = [];
 		foreach ($requestData as $index => $mediaId) {
@@ -908,8 +908,8 @@ class MediaController extends Controller {
 			}
 
 			return [
-				'media_folder_id' => $folderCase,
-				'system_order' => $systemOrderCase,
+				'mediaFolderId' => $folderCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),
@@ -926,7 +926,7 @@ class MediaController extends Controller {
 	 */
 	protected function _deleteMultiple(): Response {
 		$ids = $this->request->getData('ids');
-		$mediaFolderId = $this->request->getData('media_folder_id');
+		$mediaFolderId = $this->request->getData('mediaFolderId');
 
 		$error = null;
 		if (!$ids) {
@@ -935,7 +935,7 @@ class MediaController extends Controller {
 		else {
 			$query = $this->Media->find()->where([
 				'id IN' => $ids,
-				'media_folder_id' => (int)$mediaFolderId,
+				'mediaFolderId' => (int)$mediaFolderId,
 			]);
 			$media = $query->all();
 
@@ -951,7 +951,7 @@ class MediaController extends Controller {
 			elseif ($media->count() > 1) {
 				// Rebuild the system order if multiple records were deleted
 				$this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-					'media_folder_id' => (int)$mediaFolderId,
+					'mediaFolderId' => (int)$mediaFolderId,
 				]);
 			}
 		}
@@ -1052,17 +1052,17 @@ class MediaController extends Controller {
 			$requestData['name'] .= '.' . $extension;
 		}
 
-		$requestData['crop'] = array_filter($requestData['crop'] ?? [], 'is_numeric');
-		if (count($requestData['crop']) !== 6 || $this->request->getData('reload_form')) {
+		$requestData['crop'] = array_filter($requestData['crop'] ?? [], is_numeric(...));
+		if (count($requestData['crop']) !== 6 || $this->request->getData('reloadForm')) {
 			$requestData['crop'] = null;
 		}
 		else {
 			// If crop values and resize values are the same as the original values, set crop to null
 			if (
 				$media->width === (float)$requestData['crop']['width'] &&
-				$media->width === (float)$requestData['crop']['resize_width'] &&
+				$media->width === (float)$requestData['crop']['resizeWidth'] &&
 				$media->height === (float)$requestData['crop']['height'] &&
-				$media->height === (float)$requestData['crop']['resize_height']
+				$media->height === (float)$requestData['crop']['resizeHeight']
 			) {
 				$requestData['crop'] = null;
 			}
@@ -1070,7 +1070,7 @@ class MediaController extends Controller {
 
 		$this->Media->patchEntity($media, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 	}
 
@@ -1106,7 +1106,7 @@ class MediaController extends Controller {
 	 */
 	protected function groupAssignmentsByPageRole(array &$mediaAssignments, array &$usedScopes, array &$inaccessibleAssignments, array $pageRoles): void {
 		// Contents need to be grouped by their page's role
-		$contentIds = array_column($mediaAssignments['contents'], 'foreign_key');
+		$contentIds = array_column($mediaAssignments['contents'], 'foreignKey');
 
 		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
 		$contentsTable = $this->fetchTable('Contents');
@@ -1220,7 +1220,7 @@ class MediaController extends Controller {
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 
 		foreach ($usedScopes as $scope => $label) {
-			if ($scope === 'contents') {
+			if ($scope === 'Contents') {
 				continue;
 			}
 
@@ -1245,7 +1245,7 @@ class MediaController extends Controller {
 			$tableName = Inflector::camelize($scope);
 
 			$mediaAssignmentsTable->belongsTo($tableName, [
-				'foreignKey' => 'foreign_key',
+				'foreignKey' => 'foreignKey',
 				'conditions' => [
 					'MediaAssignments.scope' => $scope,
 				],

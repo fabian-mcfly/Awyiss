@@ -29,7 +29,7 @@
 	{% block headlinesOverview %}
 		<div class="Headlines">
 			{% block headlineOverview %}
-				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_overview', pageRole.title) }}</h1>
+				<h1>{{ __df(pageRoleName, 'GenericPages', 'headline_overview', pageRole.title) }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -42,7 +42,7 @@
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
 				{% set identifier = localConfig('categories.identifier', 'category') %}
-				{% set label = __(identifier ~ '_filter_label') %}
+				{% set label = __(identifier|underscore ~ '_filter_label') %}
 				{% if '::' in label and attributes[ identifier ] is not empty %}
 					{% set label = attributes[ identifier ].title %}
 				{% endif %}
@@ -54,13 +54,13 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if sortable and paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
 				{% block overviewButtonAdd %}
 					{% if AuthorizationHelper.isAccessible('create') %}
-						{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'create', pageRole.title), {action: 'add'}, {class: 'Button Button-Add' }) }}
+						{{ HtmlHelper.link(__df(pageRoleName, 'GenericPages', 'create', pageRole.title), {action: 'add'}, {class: 'Button Button-Add' }) }}
 					{% endif %}
 				{% endblock %}
 
@@ -88,7 +88,7 @@
 	{% if paginated %}
 		{% block paginatedOverview %}
 			{% include '@Backend/GenericPages/overview_paginated_list.twig' with _context|merge({
-				i18nDomain: 'generic_pages',
+				i18nDomain: 'GenericPages',
 				records: pages.items().toArray(),
 				displayedFields: localConfig.overview.displayedFields,
 			}) %}
@@ -104,7 +104,7 @@
 						'movable-between-groups': false,
 					},
 					displayedFields: localConfig.overview.displayedFields,
-					i18nDomain: 'generic_pages',
+					i18nDomain: 'GenericPages',
 					identifier: 'Pages',
 					template: '@Backend/GenericPages/overview_nested_list_item.twig',
 				})) }}
@@ -123,7 +123,7 @@
 	{% block listFilter %}
 		{{ element('search/filter', {
 			scope: pageRole.identifier|pluralize,
-			i18nDomain: 'generic_pages',
+			i18nDomain: 'GenericPages',
 		}) }}
 	{% endblock %}
 </div>

@@ -32,13 +32,13 @@
 
 							{% block tableOverviewHeaderId %}
 								<th class="TableHeader-Id">
-									{{ __df('customers', 'system', 'id') }}
+									{{ __df('Customers', 'System', 'id') }}
 								</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderDefaultFields %}
 								<th class="TableHeader-Email">
-									{{ __df('customers', 'system', 'email') }}
+									{{ __df('Customers', 'System', 'email') }}
 								</th>
 							{% endblock %}
 
@@ -46,21 +46,19 @@
 								{% for field in displayedFields %}
 									{% block tableOverviewHeaderDisplayedField %}
 										{% if field starts with 'attributes.' %}
-											{% set field = field|slice(11)|underscore %}
+											{% set field = field|slice(11) %}
 											<th class="TableHeader-{{ field|camelize }}">
 												{{ attributes[field].label }}
 											</th>
 										{% else %}
-											{% set field = field|underscore %}
-
-											{% if field ends with '_id' and field != 'parent_id' %}
+											{% if field ends with 'Id' and field != 'parentId' %}
 												{% set associationName = field|slice(0, -3) %}
 												<th class="TableHeader-{{ field|camelize }}">
-													{{ __df('customers', 'system', field) }}
+													{{ __df('Customers', 'System', field|underscore) }}
 												</th>
 											{% else %}
 												<th class="TableHeader-{{ field|camelize }}">
-													{{ __df('customers', 'system', field) }}
+													{{ __df('Customers', 'System', field|underscore) }}
 												</th>
 											{% endif %}
 										{% endif %}
@@ -108,37 +106,13 @@
 										{% block tableOverviewCellDisplayedField %}
 											<td class="TableCell-{{ field|camelize }}">
 												{% if field starts with 'attributes.' %}
-													{% set field = field|slice(11)|underscore %}
+													{% set field = field|slice(11) %}
 													{% block tableOverviewCellDisplayedFieldAttributeValue %}
-														{% if attributes[field].inputType in ['date', 'datetime', 'time'] and customer.has('attributes') and customer.attributes.has(field) %}
-															{% if attributes[field].inputType == 'datetime' %}
-																{{ TimeHelper.nice(customer.attributes.get(field)) }}
-															{% else %}
-																{{ TimeHelper.i18nFormat(customer.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
-															{% endif %}
-														{% else %}
-															{{ customer.attributes.get(field) ?: '-' }}
-														{% endif %}
+														{% include '@Backend/element/overview/list_item_attribute_value.twig' %}
 													{% endblock %}
 												{% else %}
-													{% set field = field|underscore %}
 													{% block tableOverviewCellDisplayedFieldDefaultValue %}
-														{% if field == 'language_shortcode' %}
-															{{ customer.get(field) ? languages.Frontend[ customer.get(field) ].title : '-' }}
-														{% elseif field in ['created_on', 'changed_on'] %}
-															{{ customer.has(field) ? TimeHelper.nice(customer.get(field)) ?: '-' }}
-														{% elseif categories.config.field and field == categories.config.field|underscore %}
-															{{ customer.has(field) ? (categories.simple[ customer.get(field) ] ?? '-') : '-' }}
-														{% else %}
-															{% set value = customer.has(field) ? customer.get(field) : '-' %}
-															{% if value is same as true or value is same as 'true' %}
-																<i class="las la-check">{{ __('true') }}</i>
-															{% elseif value is same as false or value is same as 'false' %}
-																<i class="las la-times">{{ __('false') }}</i>
-															{% else %}
-																{{ value }}
-															{% endif %}
-														{% endif %}
+														{% include '@Backend/element/overview/list_item_value.twig' %}
 													{% endblock %}
 												{% endif %}
 											</td>

@@ -42,24 +42,24 @@ export default class FormsController {
 	 * @returns {void}
 	 */
 	handleConditionalRecipientTypeChange(form, event) {
-		if (!event.target.matches('select[name^="form_conditional_recipients"][name$="[type]"]')) {
+		if (!event.target.matches('select[name^="conditionalRecipients"][name$="[type]"]')) {
 			return;
 		}
 
 		const row = event.target.closest('.FormInputType-ListItem');
-		const fieldSelect = row.querySelector('select[name^="form_conditional_recipients"][name$="[field]"]');
+		const fieldSelect = row.querySelector('select[name^="conditionalRecipients"][name$="[field]"]');
 
 		// Remove all options
 		fieldSelect.innerHTML = '';
 
-		if (event.target.value === 'element_identifier') {
+		if (event.target.value === 'elementIdentifier') {
 			const template = form.querySelector('#FormElementOptions');
 			const options = template.content.querySelectorAll('select > *');
 			options.forEach(option => {
 				fieldSelect.appendChild(option.cloneNode(true));
 			});
 		}
-		else if (event.target.value === 'current_page') {
+		else if (event.target.value === 'currentPage') {
 			const template = form.querySelector('#CurrentPageOptions');
 			const options = template.content.querySelectorAll('select > *');
 			options.forEach(option => {

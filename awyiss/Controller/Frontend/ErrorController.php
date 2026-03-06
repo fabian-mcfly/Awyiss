@@ -231,7 +231,7 @@ class ErrorController extends AppController {
 				],
 			],
 			'PageTemplates' => [
-				'fields' => ['id', 'file_name'],
+				'fields' => ['id', 'fileName'],
 				'finder' => [
 					$languageShortcode ? 'withDeleted' : 'all' => [
 						'translate' => ['skip' => true],
@@ -241,20 +241,20 @@ class ErrorController extends AppController {
 		]);
 
 		$query->orderBy([
-			'Pages.parents_active' => 'DESC',
+			'Pages.parentsActive' => 'DESC',
 			'Pages.active' => 'DESC',
 			'PageRoles.active' => 'DESC',
-			'PageRoles.system_order' => 'ASC',
+			'PageRoles.systemOrder' => 'ASC',
 		]);
 
 		$query->where(['slug' => $slug]);
 
 		if ($languageShortcode) {
-			$query->andWhere(['language_shortcode' => $languageShortcode]);
+			$query->andWhere(['languageShortcode' => $languageShortcode]);
 		}
 		else {
 			$query->orderBy([
-				'Languages.system_order' => 'ASC',
+				'Languages.systemOrder' => 'ASC',
 				'Languages.deleted' => 'ASC',
 				'Languages.active' => 'DESC',
 			]);
@@ -273,7 +273,7 @@ class ErrorController extends AppController {
 		if ($page->duplicateOf) {
 			$pagesTable->loadInto($page, [
 				'DuplicateOfPage' => [
-					'fields' => ['id', 'language_shortcode', 'slug'],
+					'fields' => ['id', 'languageShortcode', 'slug'],
 					'finder' => [
 						$languageShortcode ? 'withDeleted' : 'all' => [
 							'translate' => ['skip' => true],
@@ -404,7 +404,7 @@ class ErrorController extends AppController {
 		 * @var \Awyiss\Model\Table\UrlsNotFoundTable $urlsNotFoundTable
 		 */
 		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
-		if ($urlsNotFoundTable->exists(['url' => $slug, 'created_on >' => new DateTime('-5 minutes')])) {
+		if ($urlsNotFoundTable->exists(['url' => $slug, 'createdOn >' => new DateTime('-5 minutes')])) {
 			DebugTimer::stop('ErrorController::track404');
 			return;
 		}

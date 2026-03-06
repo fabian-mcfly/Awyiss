@@ -64,7 +64,7 @@ export default class Selectors {
 				element.mediaIdInput = element.querySelector(element.dataset.mediaIdInputSelector);
 			}
 			else {
-				element.mediaIdInput = element.querySelector('input[name^="media_assignments"][name$="[media_id]"]');
+				element.mediaIdInput = element.querySelector('input[name^="mediaAssignments"][name$="[mediaId]"]');
 			}
 
 			if (!element.mediaIdInput) {
@@ -154,7 +154,7 @@ export default class Selectors {
 		});
 
 		const id = parseInt(media.getAttribute('id').replace(/\D/g, ''));
-		const mediaIdInput = mediaListItem.querySelector('input[name^="media_assignments"][name$="[]"]');
+		const mediaIdInput = mediaListItem.querySelector('input[name^="mediaAssignments"][name$="[]"]');
 		mediaIdInput.value = id;
 
 		// Add the media item into the preview area but before the add button
@@ -367,7 +367,7 @@ export class MediaFolderSelect {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
 			body: JSON.stringify({
-				media_folder_id: this.activeInput.value,
+				mediaFolderId: this.activeInput.value,
 			}),
 		});
 
@@ -441,7 +441,7 @@ export class MediaFolderSelect {
 		}
 
 		// If the click event was on an input, uncheck all other checkboxes
-		if (event.target.matches('input[name="media_folder_id"]')) {
+		if (event.target.matches('input[name="mediaFolderId"]')) {
 			const checkbox = event.target;
 			const checked = this.dialog.querySelectorAll('input[type="checkbox"]:checked');
 

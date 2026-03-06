@@ -34,20 +34,6 @@ class PageTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'page_role_id' => 'pageRoleId',
-		'file_name' => 'fileName',
-		'system_order' => 'systemOrder',
-		'page_role' => 'pageRole',
-		'content_areas' => 'contentAreas',
-		'content_template_content_areas' => 'contentTemplateContentAreas',
-		'used_for_pages' => 'usedForPages',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'pageRoleId' => true,
 		'title' => true,

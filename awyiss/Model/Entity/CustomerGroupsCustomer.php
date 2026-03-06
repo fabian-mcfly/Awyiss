@@ -18,16 +18,6 @@ class CustomerGroupsCustomer extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'customer_group_id' => 'customerGroupId',
-		'customer_id' => 'customerId',
-		'customer_group' => 'customerGroup',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'customerGroupId' => true,
 		'customerId' => true,

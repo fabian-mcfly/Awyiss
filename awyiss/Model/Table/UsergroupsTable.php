@@ -56,12 +56,16 @@ class UsergroupsTable extends Table {
 		$this->hasMany('UsergroupPermissions', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'usergroupId',
+			'propertyName' => 'usergroupPermissions',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsToMany('Users', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'usergroupId',
+			'targetForeignKey' => 'userId',
 		]);
 	}
 
@@ -120,7 +124,7 @@ class UsergroupsTable extends Table {
 			'titleUnique',
 			[
 				'errorField' => 'title',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_title_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_title_unique'),
 			]
 		);
 
@@ -143,7 +147,7 @@ class UsergroupsTable extends Table {
 		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
 		$authorizationService = Router::getRequest()->getAttribute('authorization');
 		static::$authorizationPolicies = $authorizationService->getPolicies();
-		unset(static::$authorizationPolicies['user_configuration']);
+		unset(static::$authorizationPolicies['UserConfiguration']);
 
 		ksort(static::$authorizationPolicies);
 

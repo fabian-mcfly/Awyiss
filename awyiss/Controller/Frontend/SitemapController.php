@@ -32,7 +32,7 @@ class SitemapController extends AppController {
 		 */
 		$query = $pagesTable->find('threaded', skipPageRoleCheck: true)->find('published')->where([
 			'active' => true,
-			'parents_active' => true,
+			'parentsActive' => true,
 		])->contain([
 			'Contents' => function (SelectQuery $query) {
 				/**

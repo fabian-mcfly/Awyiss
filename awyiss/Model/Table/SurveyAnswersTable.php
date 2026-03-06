@@ -42,7 +42,7 @@ class SurveyAnswersTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['survey_question_id'],
+		'blocklistedColumns' => ['surveyQuestionId'],
 	];
 	/**
 	 * @inheritDoc
@@ -68,20 +68,23 @@ class SurveyAnswersTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('SurveyQuestions', [
-			'foreignKey' => 'survey_question_id',
+			'foreignKey' => 'surveyQuestionId',
 			'joinType' => 'INNER',
+			'propertyName' => 'surveyQuestion',
 		]);
 
 		$this->hasMany('SurveySurveyAnswers', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_answer_id',
+			'foreignKey' => 'surveyAnswerId',
+			'propertyName' => 'surveySurveyAnswers',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsTo('SurveySurveyQuestions', [
-			'foreignKey' => 'survey_survey_question_id',
+			'foreignKey' => 'surveySurveyQuestionId',
 			'joinType' => 'INNER',
+			'propertyName' => 'surveySurveyQuestion',
 		]);
 	}
 
@@ -168,7 +171,7 @@ class SurveyAnswersTable extends Table {
 			'noLinkedSurveys',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_surveys'),
 			]
 		);
 

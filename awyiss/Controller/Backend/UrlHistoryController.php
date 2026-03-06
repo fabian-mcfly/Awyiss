@@ -29,7 +29,7 @@ class UrlHistoryController extends Controller {
 	protected array $paginate = [
 		'enabled' => true,
 		'order' => [
-			'created_on' => 'desc',
+			'createdOn' => 'desc',
 			'id' => 'desc',
 		],
 	];
@@ -196,18 +196,18 @@ class UrlHistoryController extends Controller {
 
 		$this->UrlHistory->patchEntity($urlHistory, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->UrlHistory->save($urlHistory, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($urlHistory),
@@ -256,7 +256,7 @@ class UrlHistoryController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getDeletedPages(): CollectionInterface {
-		$historyPageIdQuery = $this->UrlHistory->find()->select('foreign_key')->where(['scope' => 'pages']);
+		$historyPageIdQuery = $this->UrlHistory->find()->select('foreignKey')->where(['scope' => 'Pages']);
 		$pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
 
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
@@ -268,7 +268,7 @@ class UrlHistoryController extends Controller {
 		$pages = $query->where(function (QueryExpression $exp) use ($historyPageIdQuery, $pagesSlugQuery, $query) {
 			return $exp->notIn('id', $historyPageIdQuery)
 			->notIn(
-				$query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier']),
+				$query->func()->concat(['languageShortcode' => 'identifier', '/', 'slug' => 'identifier']),
 				$pagesSlugQuery,
 				'string'
 			);
@@ -294,7 +294,7 @@ class UrlHistoryController extends Controller {
 			$scopes[ $scope ] = __('scope_' . $scope);
 		}
 
-		if ($urlHistory->scope === 'media' && !$this->request->getData('foreign_key')) {
+		if ($urlHistory->scope === 'Media' && !$this->request->getData('foreignKey')) {
 			$this->UrlHistory->loadInto($urlHistory, ['Media']);
 		}
 

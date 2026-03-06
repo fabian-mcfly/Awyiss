@@ -301,13 +301,13 @@ class BackendMenuEntryTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'parent_id' => 'media',
-			'insert_after_id' => 'some_entry',
+			'parentId' => 'media',
+			'insertAfterId' => 'some_entry',
 			'title' => 'dashboard::meta_title_overview',
 			'link' => 'https://example.com/test',
 			'access' => '["admin", "moderator"]',
 			'external' => true,
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -324,25 +324,5 @@ class BackendMenuEntryTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\BackendMenuEntry::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'parent_id' => 'test_parent',
-			'insert_after_id' => 'test_after',
-			'system_order' => 5,
-		];
-
-		$entity = new BackendMenuEntry($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

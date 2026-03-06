@@ -46,7 +46,7 @@ trait AdminTrait {
 		$associated = ['UsergroupPermissions'];
 		$usergroup->setAccess('usergroupPermissions', true);
 		$data = [
-			'usergroup_permissions' => $this->getPermissions(),
+			'usergroupPermissions' => $this->getPermissions(),
 		];
 
 		$usergroupsTable->patchEntity($usergroup, $data, ['associated' => $associated]);
@@ -138,7 +138,7 @@ trait AdminTrait {
 		// Get all available policies from the AuthorizationService
 		$authorizationService = new AuthorizationService(Awyiss::REALM_BACKEND);
 		$policies = $authorizationService->getPolicies();
-		unset($policies['user_configuration']);
+		unset($policies['UserConfiguration']);
 
 		ksort($policies);
 
@@ -149,7 +149,7 @@ trait AdminTrait {
 			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
 			foreach ($policyClass::getPermissionOptions() as $permission) {
 				$identifier = $permission->getConfig('identifier');
-				$identifier = Inflector::underscore($identifier);
+				$identifier = Inflector::variable($identifier);
 
 				$permissions[] = [
 					'scope' => $policyScope,

@@ -18,7 +18,7 @@ use RuntimeException;
  * Controller:
  * - `EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_BACKEND);`
  * CLI:
- * - `EventListenersProvider::loadListener('general_events', 'Bake');`
+ * - `EventListenersProvider::loadListener('generalEvents', 'Bake');`
  */
 class EventListenersProvider {
 	/**

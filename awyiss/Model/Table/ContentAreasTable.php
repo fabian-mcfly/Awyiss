@@ -42,12 +42,18 @@ class ContentAreasTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsToMany('ContentTemplates', [
-			'through' => 'ContentTemplateContentAreas',
+			'foreignKey' => 'contentAreaId',
+			'propertyName' => 'contentTemplates',
 			'saveStrategy' => 'replace',
+			'targetForeignKey' => 'contentTemplateId',
+			'through' => 'ContentTemplateContentAreas',
 		]);
 
 		$this->belongsToMany('PageTemplates', [
-			'sort' => ['system_order' => 'ASC'],
+			'foreignKey' => 'contentAreaId',
+			'propertyName' => 'pageTemplates',
+			'sort' => ['systemOrder' => 'ASC'],
+			'targetForeignKey' => 'pageTemplateId',
 			'through' => 'PageTemplateContentAreas',
 		]);
 	}
@@ -106,7 +112,7 @@ class ContentAreasTable extends Table {
 			'identifierUnique',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 			]
 		);
 

@@ -30,7 +30,7 @@
 
 			{% block formControlUrl %}
 				{% set deletedPages %}
-					{{ FormHelper.select('url_options', hashPrinter(deletedPages, 'title', 'link'), {
+					{{ FormHelper.select('urlOptions', hashPrinter(deletedPages, 'title', 'link'), {
 						'data-options-for': 'UrlHistory-Url',
 					}) }}
 				{% endset %}
@@ -52,7 +52,7 @@
 
 			{% block formControlForeignKey %}
 				{% if urlHistory.scope == 'pages' %}
-					{{ FormHelper.control('foreign_key', {
+					{{ FormHelper.control('foreignKey', {
 						columnSpan: 4,
 						options: hashPrinter(threadedPages, 'label', 'id', '- '),
 						label: __('target'),
@@ -62,7 +62,7 @@
 						<label class="Label">{{ __('target') }}</label>
 
 						<div class="MediaSelector-Preview">
-							<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
+							<span class="MediaSelector-MediaSelect">{{ __d('Media', 'select_file') }}</span>
 
 							{% set mediaItem = urlHistory.media ?? null %}
 							{% if mediaItem %}
@@ -85,16 +85,16 @@
 							{% endif %}
 						</div>
 
-						<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
+						<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('Media', 'remove_file') }}</button>
 
-						{{ FormHelper.input('foreign_key', {
+						{{ FormHelper.input('foreignKey', {
 							class: 'MediaSelector-MediaId',
 							type: 'text',
 							value: urlHistory.foreignKey,
 							'data-form-updater': true,
 						}) }}
 
-						{{ FormHelper.error('foreign_key') }}
+						{{ FormHelper.error('foreignKey') }}
 					</div>
 				{% else %}
 					{{ FormHelper.control('target', {
@@ -242,7 +242,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

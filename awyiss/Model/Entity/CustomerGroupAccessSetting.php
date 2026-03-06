@@ -26,15 +26,6 @@ class CustomerGroupAccessSetting extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'foreign_key' => 'foreignKey',
-		'access_type' => 'accessType',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'foreignKey' => true,

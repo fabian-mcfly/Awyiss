@@ -80,7 +80,7 @@ class ConfigurationListenerTest extends TestCase {
 	public function testBeforeSaveTypecastsValue(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity();
 		$entity->patch([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => '85',
@@ -95,10 +95,10 @@ class ConfigurationListenerTest extends TestCase {
 		$this->assertSame(85, $entity->value);
 
 		$entity->patch([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'overview.displayed_fields',
-			'value' => ['id', 'title', 'created_on'],
+			'identifier' => 'overview.displayedFields',
+			'value' => ['id', 'title', 'createdOn'],
 			'languageShortcode' => 'en',
 		]);
 
@@ -109,9 +109,9 @@ class ConfigurationListenerTest extends TestCase {
 		$this->assertIsArray($decodedValue);
 
 		$entity->patch([
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 			'value' => (object)['key1' => 'value1', 'key2' => 'value2'],
 			'languageShortcode' => 'en',
 		]);
@@ -157,9 +157,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.class_name',
+			'identifier' => 'columnSystem.className',
 			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
 		]);
 
@@ -207,9 +207,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.max_columns',
+			'identifier' => 'columnSystem.maxColumns',
 			'value' => 10,
 		]);
 
@@ -242,9 +242,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.max_columns',
+			'identifier' => 'columnSystem.maxColumns',
 			'value' => 10,
 		]);
 
@@ -269,7 +269,7 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'nest.enabled',
 			'value' => false,
@@ -336,7 +336,7 @@ class ConfigurationListenerTest extends TestCase {
 		Configure::write('Awyiss.Employees.Backend.systemOrder.direction', SORT_DESC);
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'nest.enabled',
 			'value' => false,
@@ -400,7 +400,7 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'nest.enabled',
 			'value' => true,
@@ -486,15 +486,15 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
+			'identifier' => 'systemOrder.field',
 			'value' => 'title',
 		]);
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -556,9 +556,9 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
+			'identifier' => 'systemOrder.field',
 			'value' => 'languageShortcode',
 		]);
 		$entity->clean();
@@ -567,8 +567,8 @@ class ConfigurationListenerTest extends TestCase {
 		$entity->value = 'title';
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -632,9 +632,9 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
+			'identifier' => 'systemOrder.field',
 			'value' => 'title',
 		]);
 		$entity->clean();
@@ -645,8 +645,8 @@ class ConfigurationListenerTest extends TestCase {
 		$entity->value = 'title';
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -710,15 +710,15 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
+			'identifier' => 'systemOrder.field',
 			'value' => 4,
 		]);
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -782,9 +782,9 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.direction',
+			'identifier' => 'systemOrder.direction',
 			'value' => 4,
 		]);
 		$entity->clean();
@@ -793,8 +793,8 @@ class ConfigurationListenerTest extends TestCase {
 		$entity->value = 3;
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -856,9 +856,9 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.direction',
+			'identifier' => 'systemOrder.direction',
 			'value' => 3,
 		]);
 		$entity->clean();
@@ -869,8 +869,8 @@ class ConfigurationListenerTest extends TestCase {
 		$entity->value = 3;
 
 		$employeesTable->updateAll([
-			'parent_id' => null,
-			'system_order' => 999,
+			'parentId' => null,
+			'systemOrder' => 999,
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -927,7 +927,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitCreatesCustomConfiguration(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 20,
@@ -963,9 +963,9 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingFileType(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'resizing.file_type',
+			'identifier' => 'resizing.fileType',
 			'value' => 'webp',
 		]);
 
@@ -980,7 +980,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1002,7 +1002,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingQuality(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 20,
@@ -1019,7 +1019,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1041,9 +1041,9 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheForOtherConfig(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'other_identifier',
+			'identifier' => 'otherIdentifier',
 			'value' => 'test_value',
 		]);
 
@@ -1070,7 +1070,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheWhenNotNewAndValueNotChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 50,
@@ -1101,7 +1101,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 50,
@@ -1122,7 +1122,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1172,9 +1172,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.class_name',
+			'identifier' => 'columnSystem.className',
 			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
 		]);
 
@@ -1222,9 +1222,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.max_columns',
+			'identifier' => 'columnSystem.maxColumns',
 			'value' => 10,
 		]);
 
@@ -1257,9 +1257,9 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.max_columns',
+			'identifier' => 'columnSystem.maxColumns',
 			'value' => 10,
 		]);
 
@@ -1284,7 +1284,7 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'nest.enabled',
 			'value' => false,
@@ -1352,7 +1352,7 @@ class ConfigurationListenerTest extends TestCase {
 		$employeesTable = $this->fetchTable('Employees');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'employees',
+			'scope' => 'Employees',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'nest.enabled',
 			'value' => false,
@@ -1434,7 +1434,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitCreatesCustomConfiguration(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 20,
@@ -1470,9 +1470,9 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingFileType(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'resizing.file_type',
+			'identifier' => 'resizing.fileType',
 			'value' => 'webp',
 		]);
 
@@ -1487,7 +1487,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1509,7 +1509,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingQuality(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 20,
@@ -1526,7 +1526,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1548,9 +1548,9 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitNotClearsMediaCacheForOtherConfig(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'other_identifier',
+			'identifier' => 'otherIdentifier',
 			'value' => 'test_value',
 		]);
 
@@ -1577,7 +1577,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueUnchanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 50,
@@ -1596,7 +1596,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1618,7 +1618,7 @@ class ConfigurationListenerTest extends TestCase {
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'realm' => Awyiss::REALM_FRONTEND,
 			'identifier' => 'resizing.quality',
 			'value' => 50,
@@ -1639,7 +1639,7 @@ class ConfigurationListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'media::clear_cache',
+				'reference' => 'Media::clearCache',
 			]
 		);
 
@@ -1693,97 +1693,97 @@ class ConfigurationListenerTest extends TestCase {
 		$insertQuery->insert([
 			'id',
 			'title',
-			'language_shortcode',
-			'parent_id',
-			'system_order',
+			'languageShortcode',
+			'parentId',
+			'systemOrder',
 		]);
 
 		$insertQuery->values([
 			'id' => 1,
 			'title' => 'Employee 1',
-			'language_shortcode' => 'en',
-			'parent_id' => null,
-			'system_order' => 1,
+			'languageShortcode' => 'en',
+			'parentId' => null,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 2,
 			'title' => 'Employee 1.1',
-			'language_shortcode' => 'en',
-			'parent_id' => 1,
-			'system_order' => 1,
+			'languageShortcode' => 'en',
+			'parentId' => 1,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 3,
 			'title' => 'Employee 1.2',
-			'language_shortcode' => 'en',
-			'parent_id' => 1,
-			'system_order' => 2,
+			'languageShortcode' => 'en',
+			'parentId' => 1,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 4,
 			'title' => 'Employee 2',
-			'language_shortcode' => 'en',
-			'parent_id' => null,
-			'system_order' => 2,
+			'languageShortcode' => 'en',
+			'parentId' => null,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 5,
 			'title' => 'Employee 2.1',
-			'language_shortcode' => 'en',
-			'parent_id' => 4,
-			'system_order' => 1,
+			'languageShortcode' => 'en',
+			'parentId' => 4,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 6,
 			'title' => 'Employee 2.2',
-			'language_shortcode' => 'en',
-			'parent_id' => 4,
-			'system_order' => 2,
+			'languageShortcode' => 'en',
+			'parentId' => 4,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 7,
 			'title' => 'Employee 2.2.1',
-			'language_shortcode' => 'en',
-			'parent_id' => 6,
-			'system_order' => 1,
+			'languageShortcode' => 'en',
+			'parentId' => 6,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 8,
 			'title' => 'Employee 2.2.2',
-			'language_shortcode' => 'en',
-			'parent_id' => 6,
-			'system_order' => 2,
+			'languageShortcode' => 'en',
+			'parentId' => 6,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 9,
 			'title' => 'Employee 3',
-			'language_shortcode' => 'en',
-			'parent_id' => null,
-			'system_order' => 3,
+			'languageShortcode' => 'en',
+			'parentId' => null,
+			'systemOrder' => 3,
 		]);
 
 		$insertQuery->values([
 			'id' => 10,
 			'title' => 'Employee 3.1',
-			'language_shortcode' => 'en',
-			'parent_id' => 9,
-			'system_order' => 1,
+			'languageShortcode' => 'en',
+			'parentId' => 9,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 11,
 			'title' => 'Employee 3.2',
-			'language_shortcode' => 'en',
-			'parent_id' => 9,
-			'system_order' => 2,
+			'languageShortcode' => 'en',
+			'parentId' => 9,
+			'systemOrder' => 2,
 		]);
 
 		$this->assertNotFalse($insertQuery->execute());

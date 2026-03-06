@@ -15,7 +15,7 @@ class AttributesPagesCustomSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'page_id' => 2,
+				'pageId' => 2,
 				'date' => '2020-02-02',
 			],
 		];

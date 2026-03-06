@@ -102,14 +102,14 @@ class BackendMenuProviderTest extends TestCase {
 			'system',
 		], array_keys($menu->getItems()));
 
-		// There should also be a dummy_entry1 entry under 'media'
+		// There should also be a dummyEntry1 entry under 'media'
 		$mediaItem = $menu->getItem('media');
 		$this->assertInstanceOf(BackendMenuItem::class, $mediaItem);
 		$this->assertSame([
-			'media_folders',
-			'media_batch_edit',
-			'media_elements',
-			'media_configure',
+			'mediaFolders',
+			'mediaBatchEdit',
+			'mediaElements',
+			'mediaConfigure',
 		], array_keys($mediaItem->getChildren()->getItems()));
 	}
 
@@ -132,25 +132,25 @@ class BackendMenuProviderTest extends TestCase {
 			'dashboard',
 			'pages',
 			'media',
-			'dummy_entry2',
+			'dummyEntry2',
 			'components',
 			'system',
 		], array_keys($customMenu->getItems()));
 
-		// There should also be a dummy_entry1 entry under 'media'
+		// There should also be a dummyEntry1 entry under 'media'
 		$mediaItem = $customMenu->getItem('media');
 		$this->assertInstanceOf(BackendMenuItem::class, $mediaItem);
-		$this->assertTrue($mediaItem->getChildren()->hasItem('dummy_entry1'));
+		$this->assertTrue($mediaItem->getChildren()->hasItem('dummyEntry1'));
 
-		// Media should also still have `media_folders`
-		$this->assertTrue($mediaItem->getChildren()->hasItem('media_folders'));
+		// Media should also still have `mediaFolders`
+		$this->assertTrue($mediaItem->getChildren()->hasItem('mediaFolders'));
 
 		$this->assertSame([
-			'dummy_entry1',
-			'media_folders',
-			'media_batch_edit',
-			'media_elements',
-			'media_configure',
+			'dummyEntry1',
+			'mediaFolders',
+			'mediaBatchEdit',
+			'mediaElements',
+			'mediaConfigure',
 		], array_keys($mediaItem->getChildren()->getItems()));
 	}
 
@@ -173,7 +173,7 @@ class BackendMenuProviderTest extends TestCase {
 			'dashboard',
 			'pages',
 			'media',
-			'dummy_entry2',
+			'dummyEntry2',
 			3, // Backend menu entries from the db have their id as identifier
 			4, // Backend menu entries from the db have their id as identifier
 			5, // Backend menu entries from the db have their id as identifier
@@ -181,22 +181,22 @@ class BackendMenuProviderTest extends TestCase {
 			'system',
 		], array_keys($dynamicMenu->getItems()));
 
-		// Menu should have a `dummy_entry1` and `1` entries under 'media'
+		// Menu should have a `dummyEntry1` and `1` entries under 'media'
 		$mediaItem = $dynamicMenu->getItem('media');
 		$this->assertInstanceOf(BackendMenuItem::class, $mediaItem);
-		$this->assertTrue($mediaItem->getChildren()->hasItem('dummy_entry1'));
+		$this->assertTrue($mediaItem->getChildren()->hasItem('dummyEntry1'));
 		$this->assertTrue($mediaItem->getChildren()->hasItem(1));
 
-		// Media should also still have `media_folders`
-		$this->assertTrue($mediaItem->getChildren()->hasItem('media_folders'));
+		// Media should also still have `mediaFolders`
+		$this->assertTrue($mediaItem->getChildren()->hasItem('mediaFolders'));
 
 		$this->assertSame([
 			1,
-			'dummy_entry1',
-			'media_folders',
-			'media_batch_edit',
-			'media_elements',
-			'media_configure',
+			'dummyEntry1',
+			'mediaFolders',
+			'mediaBatchEdit',
+			'mediaElements',
+			'mediaConfigure',
 		], array_keys($mediaItem->getChildren()->getItems()));
 
 		// Entry `1` should have a child `2`

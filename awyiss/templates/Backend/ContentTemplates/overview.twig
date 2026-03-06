@@ -35,7 +35,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -46,7 +46,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'content_templates'}) }}
+					{{ element('search/filter_button', {scope: 'ContentTemplates'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
@@ -83,7 +83,7 @@
 							{{ nestedList(contentTemplates, _context|merge({
 								data: {
 									nestable: false,
-									sortable: _filter['content_templates']['active'] == false,
+									sortable: _filter['contentTemplates']['active'] == false,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'ContentTemplates',
@@ -103,6 +103,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'content_templates'}) }}
+		{{ element('search/filter', {scope: 'ContentTemplates'}) }}
 	{% endblock %}
 </div>

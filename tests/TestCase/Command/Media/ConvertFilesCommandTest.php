@@ -1024,8 +1024,8 @@ class ConvertFilesCommandTest extends TestCase {
 				$file->crop = [
 					'width' => 800,
 					'height' => 600,
-					'resize_width' => 800,
-					'resize_height' => 600,
+					'resizeWidth' => 800,
+					'resizeHeight' => 600,
 					'x' => 100,
 					'y' => 50,
 				];
@@ -1034,8 +1034,8 @@ class ConvertFilesCommandTest extends TestCase {
 				$file->crop = [
 					'width' => 1000,
 					'height' => 1000,
-					'resize_width' => 500,
-					'resize_height' => 500,
+					'resizeWidth' => 500,
+					'resizeHeight' => 500,
 					'x' => 80,
 					'y' => 60,
 				];

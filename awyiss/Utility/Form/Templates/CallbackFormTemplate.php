@@ -20,32 +20,32 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 		'es' => [
 			'name' => 'Nombre',
 			'phone' => 'Teléfono',
-			'privacy_accepted' => 'Acepto la política de privacidad',
-			'privacy_accepted_yes' => 'Sí',
-			'privacy_accepted_text' => 'He leído y acepto la política de privacidad.',
+			'privacyAccepted' => 'Acepto la política de privacidad',
+			'privacyAcceptedYes' => 'Sí',
+			'privacyAcceptedText' => 'He leído y acepto la política de privacidad.',
 			'submit' => 'Enviar',
 		],
 		'fr' => [
 			'name' => 'Nom',
 			'phone' => 'Téléphone',
-			'privacy_accepted' => 'J\'accepte la politique de confidentialité',
-			'privacy_accepted_yes' => 'Oui',
-			'privacy_accepted_text' => 'J\'ai lu et j\'accepte la politique de confidentialité.',
+			'privacyAccepted' => 'J\'accepte la politique de confidentialité',
+			'privacyAcceptedYes' => 'Oui',
+			'privacyAcceptedText' => 'J\'ai lu et j\'accepte la politique de confidentialité.',
 			'submit' => 'Soumettre',
 		],
 		'it' => [
 			'name' => 'Nome',
 			'phone' => 'Telefono',
-			'privacy_accepted' => 'Accetto la politica sulla privacy',
-			'privacy_accepted_yes' => 'Sì',
-			'privacy_accepted_text' => 'Ho letto e accetto la politica sulla privacy.',
+			'privacyAccepted' => 'Accetto la politica sulla privacy',
+			'privacyAcceptedYes' => 'Sì',
+			'privacyAcceptedText' => 'Ho letto e accetto la politica sulla privacy.',
 			'submit' => 'Invia',
 		],
 	];
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $strings = ['name', 'phone', 'privacy_accepted', 'privacy_accepted_yes', 'privacy_accepted_text', 'submit'];
+	protected static array $strings = ['name', 'phone', 'privacyAccepted', 'privacyAcceptedYes', 'privacyAcceptedText', 'submit'];
 	/**
 	 * @inheritDoc
 	 */
@@ -56,7 +56,7 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {
-		return __d('forms', 'form_template_callback_form');
+		return __d('Forms', 'form_template_callback_form');
 	}
 
 
@@ -64,7 +64,7 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getElements(array $languages): array {
-		$fields = ['name', 'phone', 'privacy_accepted', 'submit'];
+		$fields = ['name', 'phone', 'privacyAccepted', 'submit'];
 
 		return static::buildElements($fields, $languages);
 	}

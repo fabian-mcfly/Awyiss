@@ -83,15 +83,15 @@ class ContentTemplatesListenerTest extends TestCase {
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		$this->assertArrayNotHasKey('content_template_elements', $data);
+		$this->assertArrayNotHasKey('contentTemplateElements', $data);
 
-		$data = new ArrayObject(['content_template_elements' => null]);
+		$data = new ArrayObject(['contentTemplateElements' => null]);
 		$options = new ArrayObject();
 		$event = new Event('Model.ContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		$this->assertNull($data['content_template_elements']);
+		$this->assertNull($data['contentTemplateElements']);
 	}
 
 
@@ -103,25 +103,25 @@ class ContentTemplatesListenerTest extends TestCase {
 		$elements = [
 			['identifier' => 'title'],
 			['identifier' => 'subtitle'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['content_template_elements' => $elements]);
+		$data = new ArrayObject(['contentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.ContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
 		// All elements should remain since title and subtitle are present
-		$this->assertCount(5, $data['content_template_elements']);
-		$identifiers = array_column($data['content_template_elements'], 'identifier');
+		$this->assertCount(5, $data['contentTemplateElements']);
+		$identifiers = array_column($data['contentTemplateElements'], 'identifier');
 		$this->assertContains('title', $identifiers);
 		$this->assertContains('subtitle', $identifiers);
-		$this->assertContains('title_tag', $identifiers);
-		$this->assertContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('titleTag', $identifiers);
+		$this->assertContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -132,24 +132,24 @@ class ContentTemplatesListenerTest extends TestCase {
 	public function testBeforeMarshalWithTitleButNoSubtitle(): void {
 		$elements = [
 			['identifier' => 'title'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['content_template_elements' => $elements]);
+		$data = new ArrayObject(['contentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.ContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
 		// subtitle_tag should be filtered out since subtitle is not present
-		$this->assertCount(3, $data['content_template_elements']);
-		$identifiers = array_column($data['content_template_elements'], 'identifier');
+		$this->assertCount(3, $data['contentTemplateElements']);
+		$identifiers = array_column($data['contentTemplateElements'], 'identifier');
 		$this->assertContains('title', $identifiers);
-		$this->assertContains('title_tag', $identifiers);
-		$this->assertNotContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('titleTag', $identifiers);
+		$this->assertNotContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -160,24 +160,24 @@ class ContentTemplatesListenerTest extends TestCase {
 	public function testBeforeMarshalWithSubtitleButNoTitle(): void {
 		$elements = [
 			['identifier' => 'subtitle'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['content_template_elements' => $elements]);
+		$data = new ArrayObject(['contentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.ContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
 		// title_tag should be filtered out since title is not present
-		$this->assertCount(3, $data['content_template_elements']);
-		$identifiers = array_column($data['content_template_elements'], 'identifier');
+		$this->assertCount(3, $data['contentTemplateElements']);
+		$identifiers = array_column($data['contentTemplateElements'], 'identifier');
 		$this->assertContains('subtitle', $identifiers);
-		$this->assertContains('subtitle_tag', $identifiers);
-		$this->assertNotContains('title_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('subtitleTag', $identifiers);
+		$this->assertNotContains('titleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -187,23 +187,23 @@ class ContentTemplatesListenerTest extends TestCase {
 	 */
 	public function testBeforeMarshalWithNeitherTitleNorSubtitle(): void {
 		$elements = [
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['content_template_elements' => $elements]);
+		$data = new ArrayObject(['contentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.ContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
 		// Both title_tag and subtitle_tag should be filtered out
-		$this->assertCount(1, $data['content_template_elements']);
-		$identifiers = array_column($data['content_template_elements'], 'identifier');
-		$this->assertNotContains('title_tag', $identifiers);
-		$this->assertNotContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertCount(1, $data['contentTemplateElements']);
+		$identifiers = array_column($data['contentTemplateElements'], 'identifier');
+		$this->assertNotContains('titleTag', $identifiers);
+		$this->assertNotContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -268,7 +268,7 @@ class ContentTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('content_templates::file_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('ContentTemplates::fileChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -300,7 +300,7 @@ class ContentTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('content_templates::file_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('ContentTemplates::fileChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -349,7 +349,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -437,7 +437,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -531,7 +531,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -584,7 +584,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -640,7 +640,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -699,7 +699,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -743,7 +743,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 
@@ -831,7 +831,7 @@ class ContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]
 		);
 

@@ -77,7 +77,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					$timezones = DateTimeZone::listIdentifiers();
 					$timezones = array_combine($timezones, $timezones);
 
-					return ['auto' => __d('system', 'timezone_automatic')] + $timezones;
+					return ['auto' => __d('System', 'timezone_automatic')] + $timezones;
 				},
 			),
 		]);
@@ -121,8 +121,8 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::ListKey,
 					values: function () {
 						return [
-							'disabled' => __d('system', 'auto_translate_disabled'),
-							'auto' => __d('system', 'auto_translate_automatic'),
+							'disabled' => __d('System', 'auto_translate_disabled'),
+							'auto' => __d('System', 'auto_translate_automatic'),
 						];
 					},
 				),
@@ -142,9 +142,9 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				personalizable: false,
 				type: ConfigOptionType::ListKey,
 				values: [
-					'none' => __d('system', 'html_cleaning_none'),
-					'moderate' => __d('system', 'html_cleaning_moderate'),
-					'strict' => __d('system', 'html_cleaning_strict'),
+					'none' => __d('System', 'html_cleaning_none'),
+					'moderate' => __d('System', 'html_cleaning_moderate'),
+					'strict' => __d('System', 'html_cleaning_strict'),
 				],
 			),
 			'interface' => [
@@ -172,9 +172,9 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ListKey,
 					values: [
-						'plain' => __d('system', 'interface_editor_plain'),
-						'jodit' => __d('system', 'interface_editor_jodit'),
-						'tinymce' => __d('system', 'interface_editor_tinymce'),
+						'plain' => __d('System', 'interface_editor_plain'),
+						'jodit' => __d('System', 'interface_editor_jodit'),
+						'tinymce' => __d('System', 'interface_editor_tinymce'),
 					],
 				),
 				new ConfigOption(
@@ -193,9 +193,9 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ListKey,
 					values: [
-						'small' => __d('system', 'interface_scale_small'),
-						'medium' => __d('system', 'interface_scale_medium'),
-						'regular' => __d('system', 'interface_scale_regular'),
+						'small' => __d('System', 'interface_scale_small'),
+						'medium' => __d('System', 'interface_scale_medium'),
+						'regular' => __d('System', 'interface_scale_regular'),
 					],
 				),
 				new ConfigOption(
@@ -251,7 +251,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					$timezones = DateTimeZone::listIdentifiers();
 					$timezones = array_combine($timezones, $timezones);
 
-					return ['auto' => __d('system', 'timezone_automatic')] + $timezones;
+					return ['auto' => __d('System', 'timezone_automatic')] + $timezones;
 				},
 			),
 		]);

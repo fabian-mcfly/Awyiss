@@ -164,8 +164,8 @@ class GlobalContentTemplatesTableTest extends TestCase {
 
 		// Test that the query includes the expected fields
 		$select = $query->clause('select');
-		$this->assertContains('used_for_global_contents', array_keys($select));
-		$this->assertInstanceOf(AggregateExpression::class, $select['used_for_global_contents']);
+		$this->assertContains('usedForGlobalContents', array_keys($select));
+		$this->assertInstanceOf(AggregateExpression::class, $select['usedForGlobalContents']);
 
 		// Test that the query includes group by
 		$this->assertTrue($query->isAutoFieldsEnabled());
@@ -193,10 +193,10 @@ class GlobalContentTemplatesTableTest extends TestCase {
 			'fileName' => 'test_template',
 			'globalContentTemplateElements' => [
 				[
-					'identifier' => 'attributes.free_text',
+					'identifier' => 'attributes.freeText',
 				],
 				[
-					'identifier' => 'attributes.free_text_inactive',
+					'identifier' => 'attributes.freeText_inactive',
 				],
 				[
 					'identifier' => 'title',
@@ -206,7 +206,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 
 		$assignedAttributes = $this->globalContentTemplatesTable->getAssignedGlobalContentAttributes($globalContentTemplate);
 
-		$this->assertSame(['free_text'], $assignedAttributes);
+		$this->assertSame(['freeText'], $assignedAttributes);
 	}
 
 
@@ -223,7 +223,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$assignedAttributes = $this->globalContentTemplatesTable->getAssignedGlobalContentAttributes($globalContentTemplate);
 
 		$this->assertNotEmpty($globalContentTemplate->globalContentTemplateElements);
-		$this->assertSame(['free_text'], $assignedAttributes);
+		$this->assertSame(['freeText'], $assignedAttributes);
 	}
 
 
@@ -313,7 +313,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$result = $this->globalContentTemplatesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('global_content_templates', $result->getI18nDomain());
+		$this->assertSame('GlobalContentTemplates', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));

@@ -144,11 +144,11 @@ export default class MenuEntriesController {
 							element.id = `Pages-ListItemNew${newId}`;
 
 							newEntries['New' + newId] = {
-								menu_id: parseInt(rootList.dataset.menuId),
+								menuId: parseInt(rootList.dataset.menuId),
 								title: element.dataset.title,
 								link: element.dataset.link,
 								active: element.classList.contains('Inactive') ? 0 : 1,
-								language_shortcode: languageShortcode,
+								languageShortcode: languageShortcode,
 							};
 
 							return 'New' + newId;

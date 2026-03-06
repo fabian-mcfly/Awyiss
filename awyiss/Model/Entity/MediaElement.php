@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
 
@@ -36,16 +37,6 @@ class MediaElement extends Entity {
 	 * @var array The column spans
 	 */
 	protected static array $columnSpans;
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'identifier' => 'identifier',
-		'column_span' => 'columnSpan',
-		'system_order' => 'systemOrder',
-		'media_element_assignments' => 'mediaElementAssignments',
-		'media_element_selectors' => 'mediaElementSelectors',
-	];
 
 
 	/**
@@ -82,7 +73,7 @@ class MediaElement extends Entity {
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 
 

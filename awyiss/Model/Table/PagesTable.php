@@ -55,7 +55,7 @@ class PagesTable extends Table {
 	protected array $categories = [
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		'finder' => 'forCurrentLanguage',
-		'foreignKey' => 'parent_id',
+		'foreignKey' => 'parentId',
 	];
 	/**
 	 * @inheritDoc
@@ -75,7 +75,7 @@ class PagesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['language_shortcode', 'page_role_id'],
+		'blocklistedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
 	/**
 	 * @inheritDoc
@@ -113,39 +113,48 @@ class PagesTable extends Table {
 			'cascadeCallbacks' => true,
 			'className' => 'Contents',
 			'dependent' => true,
-			'foreignKey' => 'page_id',
+			'foreignKey' => 'pageId',
 		]);
 
-		$this->belongsTo('Forms');
+		$this->belongsTo('Forms', [
+			'foreignKey' => 'formId',
+		]);
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
 		]);
 
-		$this->belongsTo('PageRoles');
+		$this->belongsTo('PageRoles', [
+			'foreignKey' => 'pageRoleId',
+			'propertyName' => 'pageRole',
+		]);
 
 		$this->belongsTo('PageTemplates', [
 			'bindingKey' => [
 				'id',
-				'page_role_id',
+				'pageRoleId',
 			],
 			'foreignKey' => [
-				'page_template_id',
-				'page_role_id',
+				'pageTemplateId',
+				'pageRoleId',
 			],
+			'propertyName' => 'pageTemplate',
 		]);
 
-		$this->belongsTo('Surveys');
+		$this->belongsTo('Surveys', [
+			'foreignKey' => 'surveyId',
+		]);
 
 		$this->hasMany('UrlHistory', [
 			'cascadeCallbacks' => true,
 			'conditions' => [
-				'scope' => 'pages',
+				'scope' => 'Pages',
 			],
 			'dependent' => true,
-			'foreignKey' => 'foreign_key',
+			'foreignKey' => 'foreignKey',
+			'propertyName' => 'urlHistory',
 		]);
 	}
 
@@ -157,7 +166,7 @@ class PagesTable extends Table {
 	public function findActive(SelectQuery $query): SelectQuery {
 		$query->where([
 			'active' => true,
-			'parents_active' => true,
+			'parentsActive' => true,
 		]);
 
 
@@ -208,7 +217,7 @@ class PagesTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 2),
 				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
@@ -343,7 +352,7 @@ class PagesTable extends Table {
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_language_exists'),
 			]
 		);
 
@@ -362,17 +371,17 @@ class PagesTable extends Table {
 			'validPageRoleId',
 			[
 				'errorField' => 'pageRoleId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_role_id'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_page_role_id'),
 			]
 		);
 
 
 		$rules->add(
-			$rules->existsIn(['pageTemplateId', 'page_role_id'], 'PageTemplates'),
+			$rules->existsIn(['pageTemplateId', 'pageRoleId'], 'PageTemplates'),
 			'validPageTemplate',
 			[
 				'errorField' => 'pageTemplateId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_template'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_page_template'),
 			]
 		);
 
@@ -389,30 +398,30 @@ class PagesTable extends Table {
 			}
 
 			if (!$entity->isNew() && $entity->id === $entity->duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_self_duplicating');
 			}
 
 			// Prevent a page (current) from duplicating another one (target),
 			// if the (current) page is already duplicated by a page (third).
-			if ($entity->id && $this->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
+			if ($entity->id && $this->exists(['duplicateOf' => $entity->id], ['skipPageRoleCheck' => true])) {
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_duplicating_duplicated');
 			}
 
 			/** @var \Awyiss\Model\Entity\Page $duplicateOf */
 			$duplicateOf = $this->find('all', skipPageRoleCheck: true)->where([
 				'id' => $entity->duplicateOf,
-				'page_role_id' => $entity->pageRoleId,
+				'pageRoleId' => $entity->pageRoleId,
 			])->first();
 
 			// Disallow duplicating pages that do not exist
 			if (!$duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
+				return __df($this->getI18nDomain(), 'Validation', 'error_valid_duplicate_of');
 			}
 
 			// Prevents a page (current) from duplicating another page (target),
 			// if the (target) page is already duplicating another page (third).
 			if ($duplicateOf->duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_duplicating_duplicating');
 			}
 
 			return true;
@@ -427,7 +436,7 @@ class PagesTable extends Table {
 				/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 				$pagesTable = FactoryLocator::get('Table')->get('Pages');
 
-				if ($pagesTable->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
+				if ($pagesTable->exists(['duplicateOf' => $entity->id], ['skipPageRoleCheck' => true])) {
 					// If the page is duplicated by another page, we cannot delete it.
 					return false;
 				}
@@ -443,14 +452,14 @@ class PagesTable extends Table {
 
 				// If any of the nested pages is duplicated by another page, we cannot delete it.
 				return !$pagesTable->find('all', skipPageRoleCheck: true)->where([
-					'duplicate_of IN' => $nestedChildrenIds,
+					'duplicateOf IN' => $nestedChildrenIds,
 					'id NOT IN' => $nestedChildrenIds,
 				])->count();
 			},
 			'noDuplicating' . $pageRole,
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_duplicating_pages'),
 			]
 		);
 
@@ -460,11 +469,11 @@ class PagesTable extends Table {
 			$contentsTable = FactoryLocator::get('Table')->get('Contents');
 
 			// Get all contents of the current page
-			$contents = $contentsTable->find()->where(['page_id' => $entity->id])->all()->indexBy('id')->toArray();
+			$contents = $contentsTable->find()->where(['pageId' => $entity->id])->all()->indexBy('id')->toArray();
 
 			if ($contents) {
 				// Find contents that duplicate the current page's contents
-				if ($contentsTable->find()->where(['duplicate_of IN' => array_keys($contents)])->count()) {
+				if ($contentsTable->find()->where(['duplicateOf IN' => array_keys($contents)])->count()) {
 					return false;
 				}
 			}
@@ -478,7 +487,7 @@ class PagesTable extends Table {
 			$nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $nestedChildren));
 
 			// Get all contents of all nested children
-			$contents = $contentsTable->find()->where(['page_id IN' => $nestedChildrenIds])->all()->indexBy('id')->toArray();
+			$contents = $contentsTable->find()->where(['pageId IN' => $nestedChildrenIds])->all()->indexBy('id')->toArray();
 			if (!$contents) {
 				return true;
 			}
@@ -487,12 +496,12 @@ class PagesTable extends Table {
 			// we cannot delete the current page. Except if the duplicating contents
 			// are also contents of the nested pages.
 			return !$contentsTable->find()->where([
-				'duplicate_of IN' => array_keys($contents),
-				'page_id NOT IN' => $nestedChildrenIds,
+				'duplicateOf IN' => array_keys($contents),
+				'pageId NOT IN' => $nestedChildrenIds,
 			])->count();
 		}, 'noDuplicatedContents', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_contents'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_duplicated_contents'),
 		]);
 
 
@@ -500,7 +509,7 @@ class PagesTable extends Table {
 			return !$this->hasDescendantsWithDifferentPageRole($entity);
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_nested_children_with_different_page_role'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_nested_children_with_different_page_role'),
 		]);
 
 
@@ -515,17 +524,17 @@ class PagesTable extends Table {
 		$pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
 		$this->hasMany('Duplicating' . $pageRole, [
-			'bindingKey' => 'duplicate_of',
+			'bindingKey' => 'duplicateOf',
 			'className' => $pageRole,
 			'foreignKey' => 'id',
-			'propertyName' => 'duplicated_by',
+			'propertyName' => 'duplicatedBy',
 		]);
 
 		// Singular DuplicateOf<Page/News/Product>
 		$this->belongsTo('DuplicateOf' . Inflector::camelize($this->pageRole->name), [
 			'bindingKey' => 'id',
 			'className' => $pageRole,
-			'foreignKey' => 'duplicate_of',
+			'foreignKey' => 'duplicateOf',
 			'propertyName' => 'duplicate',
 		]);
 	}
@@ -540,7 +549,7 @@ class PagesTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\PageRole> $pageRoleEnum */
 		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$schema->setColumnType('page_role_id', EnumType::from($pageRoleEnum));
+		$schema->setColumnType('pageRoleId', EnumType::from($pageRoleEnum));
 	}
 
 
@@ -597,11 +606,11 @@ class PagesTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
-		if ($column === 'form_id') {
+		if ($column === 'formId') {
 			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'duplicate_of') {
+		if ($column === 'duplicateOf') {
 			/**
 			 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -609,13 +618,13 @@ class PagesTable extends Table {
 			return $this->find('forCurrentLanguage')->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 
-		if ($column === 'page_template_id') {
+		if ($column === 'pageTemplateId') {
 			return $this->getAssociation('PageTemplates')->find('list', valueField: 'label')->where([
-				'page_role_id' => $this->getPageRole()->value,
+				'pageRoleId' => $this->getPageRole()->value,
 			])->toArray();
 		}
 
-		if ($column === 'survey_id') {
+		if ($column === 'surveyId') {
 			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
 		}
 

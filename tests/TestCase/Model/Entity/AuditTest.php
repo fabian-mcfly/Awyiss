@@ -69,21 +69,21 @@ class AuditTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'scope' => 'users',
-			'foreign_key' => 123,
-			'transaction_id' => 'abc-123-def',
+			'scope' => 'Users',
+			'foreignKey' => 123,
+			'transactionId' => 'abc-123-def',
 			'type' => 'update',
-			'data_old' => '{"name":"John","email":"john@example.com"}',
-			'data_new' => '{"name":"John Smith","email":"john.smith@example.com"}',
+			'dataOld' => '{"name":"John","email":"john@example.com"}',
+			'dataNew' => '{"name":"John Smith","email":"john.smith@example.com"}',
 			'diff' => ['name' => ['old' => 'John', 'new' => 'John Smith'], 'email' => ['old' => 'john@example.com', 'new' => 'john.smith@example.com']],
-			'created_by' => 456,
-			'created_on' => '2023-01-01 12:00:00',
+			'createdBy' => 456,
+			'createdOn' => '2023-01-01 12:00:00',
 		];
 
 		$entity = new Audit($properties);
 
 		$this->assertEquals(1, $entity->id);
-		$this->assertEquals('users', $entity->scope);
+		$this->assertEquals('Users', $entity->scope);
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals('abc-123-def', $entity->transactionId);
 		$this->assertEquals('update', $entity->type);
@@ -92,28 +92,5 @@ class AuditTest extends TestCase {
 		$this->assertEquals(['name' => ['old' => 'John', 'new' => 'John Smith'], 'email' => ['old' => 'john@example.com', 'new' => 'john.smith@example.com']], $entity->diff);
 		$this->assertEquals(456, $entity->createdBy);
 		$this->assertEquals('2023-01-01 12:00:00', $entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Audit::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'transaction_id' => 'test-transaction',
-			'foreign_key' => 789,
-			'data_old' => '{"old":"data"}',
-			'data_new' => '{"new":"data"}',
-			'created_by' => 123,
-			'created_on' => '2023-01-01 12:00:00',
-		];
-
-		$entity = new Audit($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

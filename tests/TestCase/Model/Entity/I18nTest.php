@@ -63,7 +63,7 @@ class I18nTest extends TestCase {
 			'id' => 1,
 			'locale' => 'de_DE',
 			'model' => 'Contents',
-			'foreign_key' => 123,
+			'foreignKey' => 123,
 			'field' => 'title',
 			'content' => 'Deutscher Titel',
 		];
@@ -76,23 +76,5 @@ class I18nTest extends TestCase {
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals('title', $entity->field);
 		$this->assertEquals('Deutscher Titel', $entity->content);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\I18n::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'foreign_key' => 456,
-		];
-
-		$entity = new I18n($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

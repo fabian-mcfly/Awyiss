@@ -76,16 +76,16 @@ class UsergroupPermissionTest extends TestCase {
 		$entity = new UsergroupPermission();
 
 		$entity->scope = 'testScope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'TestScope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'testHTMLScope';
-		$this->assertEquals('test_h_t_m_l_scope', $entity->scope);
+		$this->assertEquals('TestHTMLScope', $entity->scope);
 
-		$entity->scope = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->scope);
+		$entity->scope = 'is_underscored';
+		$this->assertEquals('IsUnderscored', $entity->scope);
 
 		$entity->scope = null;
 		$this->assertNull($entity->scope);
@@ -100,16 +100,16 @@ class UsergroupPermissionTest extends TestCase {
 		$entity = new UsergroupPermission();
 
 		$entity->set('scope', 'testScope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'TestScope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'testHTMLScope');
-		$this->assertEquals('test_h_t_m_l_scope', $entity->scope);
+		$this->assertEquals('TestHTMLScope', $entity->scope);
 
-		$entity->set('scope', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->scope);
+		$entity->set('scope', 'is_underscored');
+		$this->assertEquals('IsUnderscored', $entity->scope);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('scope', null);
@@ -126,16 +126,16 @@ class UsergroupPermissionTest extends TestCase {
 		$entity = new UsergroupPermission();
 
 		$entity->identifier = 'testIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -150,16 +150,16 @@ class UsergroupPermissionTest extends TestCase {
 		$entity = new UsergroupPermission();
 
 		$entity->set('identifier', 'testIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -174,7 +174,7 @@ class UsergroupPermissionTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'usergroup_id' => 123,
+			'usergroupId' => 123,
 			'scope' => 'TestScope',
 			'identifier' => 'TestIdentifier',
 			'access' => PermissionAccess::Granted,
@@ -185,27 +185,9 @@ class UsergroupPermissionTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(123, $entity->usergroupId);
-		$this->assertEquals('test_scope', $entity->scope);
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('TestScope', $entity->scope);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 		$this->assertEquals(PermissionAccess::Granted, $entity->access);
 		$this->assertEquals(['key' => 'value'], $entity->settings);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\UsergroupPermission::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'usergroup_id' => 456,
-		];
-
-		$entity = new UsergroupPermission($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

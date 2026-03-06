@@ -105,6 +105,7 @@ class CategoriesBehavior extends Behavior {
 					'bindingKey' => $this->getConfig('bindingKey', 'id'),
 					'joinType' => 'INNER',
 					'foreignKey' => $this->getConfig('foreignKey'),
+					'propertyName' => Inflector::variable($associationName),
 				]);
 			}
 
@@ -115,10 +116,7 @@ class CategoriesBehavior extends Behavior {
 			}
 
 			if (!$this->getConfig('field')) {
-				/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-				$entityClass = $table->getEntityClass();
-
-				$this->setConfig('field', $entityClass::mapField($association->getForeignKey()));
+				$this->setConfig('field', $association->getForeignKey());
 			}
 		}
 
@@ -127,7 +125,7 @@ class CategoriesBehavior extends Behavior {
 		}
 
 		if (!$this->getConfig('field')) {
-			$this->setConfig('field', Inflector::underscore($this->getConfig('identifier')));
+			$this->setConfig('field', Inflector::variable($this->getConfig('identifier')));
 		}
 	}
 
@@ -325,15 +323,7 @@ class CategoriesBehavior extends Behavior {
 		$table = $this->table();
 		$isAttribute = $this->fieldIsAttribute();
 		if ($isAttribute) {
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $table->getAttributesTable()->getEntityClass();
-			$column = $entityClass::unmapField($column);
 			$column = $table->getAttributesTableName(true) . '.' . $column;
-		}
-		else {
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $table->getEntityClass();
-			$column = $entityClass::unmapField($column);
 		}
 
 		if ($selectedCategory == $this->getConfig('unassignedKey')) {
@@ -392,19 +382,12 @@ class CategoriesBehavior extends Behavior {
 					$realColumn = reset($realColumn);
 				}
 			}
-
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $query->getRepository()->getEntityClass();
 		}
 		else {
 			if (empty($realColumn)) {
 				$realColumn = $this->getConfig('identifier');
 			}
-
-			$entityClass = $this->table()->getEntityClass();
 		}
-
-		$realColumn = $entityClass::mapField($realColumn);
 
 		if ($sortByAssociation) {
 			$this->sortQuery($query, $column, $associationName);
@@ -489,21 +472,14 @@ class CategoriesBehavior extends Behavior {
 					$column = reset($column);
 				}
 			}
-
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $association->getSource()->getEntityClass();
 		}
 		else {
-			$entityClass = $this->table()->getEntityClass();
-
 			if (empty($column)) {
 				$column = $this->getConfig('identifier');
 			}
 		}
 
 		$categoryIdentifiers = array_keys($categories);
-
-		$column = $entityClass::unmapField($column);
 
 		//Remember existing orders
 		$order = $query->clause('order');
@@ -548,7 +524,7 @@ class CategoriesBehavior extends Behavior {
 
 		/*
 		 * Set the order by-clause but reset existing order-clauses, so records will be sorted
-		 * by the system_order of category first and then in the desired order.
+		 * by the systemOrder of category first and then in the desired order.
 		 */
 		if (!empty($order)) {
 			dd($order, __FILE__, __LINE__);
@@ -591,14 +567,22 @@ class CategoriesBehavior extends Behavior {
 	public function verifySelection(mixed $categoryId = null, ?array $validSelectionValues = null): mixed {
 		$categoryId = $categoryId ?: $this->getConfig('selectedCategory');
 		if (is_string($categoryId)) {
-			$categoryId = Inflector::underscore($categoryId);
+			$categoryId = Inflector::variable($categoryId);
 		}
 
 		$validSelectionValues ??= $this->getValidSelectionValues();
-		$validSelectionValues = array_map(fn ($value) => is_string($value) ? Inflector::underscore($value) : $value, $validSelectionValues);
 
-		if (in_array($categoryId, $validSelectionValues)) {
-			return $categoryId;
+		foreach ($validSelectionValues as $validSelectionValue) {
+			if (
+				$categoryId == $validSelectionValue ||
+				(
+					is_string($categoryId) &&
+					is_string($validSelectionValue) &&
+					Inflector::variable($categoryId) === Inflector::variable($validSelectionValue)
+				)
+			) {
+				return $validSelectionValue;
+			}
 		}
 
 		return false;
@@ -819,10 +803,10 @@ class CategoriesBehavior extends Behavior {
 
 			return array_key_exists($value, $categories);
 		}, $ruleName, [
-			'errorField' => Inflector::underscore($fieldName),
+			'errorField' => Inflector::variable($fieldName),
 			'message' => __df(
 				$table->getI18nDomain(),
-				'validation',
+				'Validation',
 				'error_valid_' . Inflector::underscore($fieldName)
 			),
 		]);
@@ -831,7 +815,7 @@ class CategoriesBehavior extends Behavior {
 
 	/**
 	 * Sorts the query by the field used for the system order.
-	 * This method is used to sort the query by the system order field, in case the system_order field itself
+	 * This method is used to sort the query by the system order field, in case the systemOrder field itself
 	 * is ambiguous
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
@@ -843,7 +827,7 @@ class CategoriesBehavior extends Behavior {
 		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $systemOrderBehavior */
 		$systemOrderBehavior = $table->getBehavior('SystemOrder');
 		$field = $systemOrderBehavior->getConfig('field');
-		if (in_array($field, ['system_order', 'systemOrder'])) {
+		if (in_array($field, ['systemOrder', 'systemOrder'])) {
 			return;
 		}
 

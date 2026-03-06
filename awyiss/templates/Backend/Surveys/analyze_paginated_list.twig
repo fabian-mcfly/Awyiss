@@ -22,7 +22,7 @@
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDisplayedFields %}
 	<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
+		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'System', 'created_on') : __('created_on')) }}
 	</th>
 {% endblock %}
 {% block tableOverviewHeaderAuditInfo %}{% endblock %}
@@ -41,7 +41,7 @@
 	<td class="TableCell-Actions">
 		<div class="Actions">
 			{% block tableAnalyzeCellActionsDiagram %}
-				{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'show_diagram') : __('show_diagram'), {
+				{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'show_diagram') : __('show_diagram'), {
 					action: 'diagram',
 					id: entity.surveyId,
 					entryId: entity.id,

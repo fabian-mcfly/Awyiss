@@ -32,7 +32,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 
 	/**
 	 * If the filename of an email templates has changed,
-	 * check the QueuedJobs table for jobs with the identifier 'email_templates::file_changes'.
+	 * check the QueuedJobs table for jobs with the identifier 'EmailTemplates::fileChanges'.
 	 * If such an active job exists, stop the save event and return an error.
 	 * This is necessary since a second file rename job could interfere with the first one.
 	 *
@@ -45,9 +45,9 @@ class EmailTemplatesListener implements EventListenerInterface {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-			if ($queuedJobsTable->isQueued('email_templates::file_changes')) {
+			if ($queuedJobsTable->isQueued('EmailTemplates::fileChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('email_templates', 'file_changes_in_progress'));
+				$entity->setError('_general', __d('EmailTemplates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -110,7 +110,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]);
 		}
 	}
@@ -150,7 +150,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]);
 		}
 	}

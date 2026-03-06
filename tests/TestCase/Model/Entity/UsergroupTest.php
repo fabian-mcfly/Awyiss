@@ -72,22 +72,4 @@ class UsergroupTest extends TestCase {
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
 	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Usergroup::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'usergroup_permissions' => [],
-		];
-
-		$entity = new Usergroup($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
-	}
 }

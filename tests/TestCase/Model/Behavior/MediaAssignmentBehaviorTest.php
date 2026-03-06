@@ -76,7 +76,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'rebuildMediaAssignments' => 'rebuildMediaAssignments',
 		], $config['implementedMethods']);
 
-		$this->assertSame('global_contents', $config['referenceName']);
+		$this->assertSame('GlobalContents', $config['referenceName']);
 		$this->assertSame('select', $config['strategy']);
 
 		$this->assertTrue($this->table->hasAssociation('MediaAssignments'));
@@ -92,7 +92,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $association);
 
 		$this->assertSame('MediaAssignments', $association->getName());
-		$this->assertSame('foreign_key', $association->getForeignKey());
+		$this->assertSame('foreignKey', $association->getForeignKey());
 		$this->assertSame('mediaAssignments', $association->getProperty());
 		$this->assertTrue($association->getCascadeCallbacks());
 		$this->assertTrue($association->getDependent());
@@ -105,7 +105,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 	 */
 	public function testFindMediaAssignments(): void {
-		$query = $this->table->find('mediaAssignments')->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments')->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -135,7 +135,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	public function testFindMediaAssignmentsWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
 
-		$query = $this->table->find('mediaAssignments')->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments')->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -150,7 +150,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 	 */
 	public function testFindMediaAssignmentsWithIncludeElementSelector(): void {
-		$query = $this->table->find('mediaAssignments', includeElementSelector: true)->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments', includeElementSelector: true)->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -178,7 +178,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 	 */
 	public function testFindMediaAssignmentsWithUseMediaEntity(): void {
-		$query = $this->table->find('mediaAssignments', useMediaEntity: true)->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments', useMediaEntity: true)->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -241,7 +241,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 	 */
 	public function testFindMediaAssignmentsWithoutFormatResult(): void {
-		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -264,7 +264,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
 	 */
 	public function testRebuildMediaAssignments(): void {
-		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -295,7 +295,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
 	 */
 	public function testRebuildMediaAssignmentsWithUseMediaEntity(): void {
-		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
+		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummyNested']);
 		$result = $query->all()->toArray();
 
 		$this->assertNotEmpty($result);
@@ -356,13 +356,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => '10',
+						'mediaId' => '10',
 					],
-					'lightbox_media' => [
-						'media_id' => 10,
+					'lightboxMedia' => [
+						'mediaId' => 10,
 					],
 				],
 			],
@@ -380,15 +380,15 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaElementId);
 		$this->assertSame('media', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 
 		$this->assertInstanceOf(MediaAssignment::class, $entity->mediaAssignments[1]);
 		$this->assertSame(2, $entity->mediaAssignments[1]->mediaElementId);
 		$this->assertSame(10, $entity->mediaAssignments[1]->mediaId);
-		$this->assertSame('lightbox_media', $entity->mediaAssignments[1]->mediaElementSelectorIdentifier);
+		$this->assertSame('lightboxMedia', $entity->mediaAssignments[1]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[1]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[1]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[1]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 	}
 
@@ -406,10 +406,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				4 => [
 					'media' => [
-						'media_id' => [2, 4, 0, 10],
+						'mediaId' => [2, 4, 0, 10],
 					],
 				],
 			],
@@ -426,7 +426,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 
 		$this->assertArrayHasKey(1, $entity->mediaAssignments);
@@ -435,9 +435,9 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(4, $entity->mediaAssignments[1]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[1]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[1]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[1]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[1]->scope);
 		$this->assertSame(2, $entity->mediaAssignments[1]->systemOrder);
-		$this->assertArrayNotHasKey('lightbox_media', $entity->mediaAssignments[1]);
+		$this->assertArrayNotHasKey('lightboxMedia', $entity->mediaAssignments[1]);
 
 		$this->assertArrayHasKey(2, $entity->mediaAssignments);
 		$this->assertInstanceOf(MediaAssignment::class, $entity->mediaAssignments[2]);
@@ -445,7 +445,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(10, $entity->mediaAssignments[2]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[2]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[2]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[2]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[2]->scope);
 		$this->assertSame(3, $entity->mediaAssignments[2]->systemOrder);
 	}
 
@@ -463,10 +463,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				1 => [
-					'hidden_folder' => [
-						'media_folder_id' => 2,
+					'hiddenFolder' => [
+						'mediaFolderId' => 2,
 					],
 				],
 			],
@@ -481,9 +481,9 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertInstanceOf(MediaAssignment::class, $entity->mediaAssignments[0]);
 		$this->assertSame(1, $entity->mediaAssignments[0]->mediaElementId);
 		$this->assertNull($entity->mediaAssignments[0]->mediaId);
-		$this->assertSame('hidden_folder', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
+		$this->assertSame('hiddenFolder', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('GlobalContents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 	}
 
@@ -498,13 +498,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => '10',
+						'mediaId' => '10',
 					],
-					'lightbox_media' => [
-						'media_id' => 10,
+					'lightboxMedia' => [
+						'mediaId' => 10,
 					],
 				],
 			],
@@ -520,8 +520,8 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertArrayHasKey('media', $entity->mediaAssignments[2]);
 		$this->assertIsArray($entity->mediaAssignments[2]['media']);
 
-		$this->assertArrayHasKey('lightbox_media', $entity->mediaAssignments[2]);
-		$this->assertIsArray($entity->mediaAssignments[2]['lightbox_media']);
+		$this->assertArrayHasKey('lightboxMedia', $entity->mediaAssignments[2]);
+		$this->assertIsArray($entity->mediaAssignments[2]['lightboxMedia']);
 	}
 
 
@@ -540,13 +540,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => '10',
+						'mediaId' => '10',
 					],
-					'lightbox_media' => [
-						'media_id' => 10,
+					'lightboxMedia' => [
+						'mediaId' => 10,
 					],
 				],
 			],
@@ -562,8 +562,8 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertArrayHasKey('media', $entity->mediaAssignments[2]);
 		$this->assertIsArray($entity->mediaAssignments[2]['media']);
 
-		$this->assertArrayHasKey('lightbox_media', $entity->mediaAssignments[2]);
-		$this->assertIsArray($entity->mediaAssignments[2]['lightbox_media']);
+		$this->assertArrayHasKey('lightboxMedia', $entity->mediaAssignments[2]);
+		$this->assertIsArray($entity->mediaAssignments[2]['lightboxMedia']);
 	}
 
 
@@ -580,13 +580,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => '10',
+						'mediaId' => '10',
 					],
-					'lightbox_media' => [
-						'media_id' => 10,
+					'lightboxMedia' => [
+						'mediaId' => 10,
 					],
 				],
 			],
@@ -602,8 +602,8 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertArrayHasKey('media', $entity->mediaAssignments[2]);
 		$this->assertIsArray($entity->mediaAssignments[2]['media']);
 
-		$this->assertArrayHasKey('lightbox_media', $entity->mediaAssignments[2]);
-		$this->assertIsArray($entity->mediaAssignments[2]['lightbox_media']);
+		$this->assertArrayHasKey('lightboxMedia', $entity->mediaAssignments[2]);
+		$this->assertIsArray($entity->mediaAssignments[2]['lightboxMedia']);
 	}
 
 
@@ -620,13 +620,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => null,
+						'mediaId' => null,
 					],
-					'lightbox_media' => [
-						'media_id' => 0,
+					'lightboxMedia' => [
+						'mediaId' => 0,
 					],
 				],
 			],
@@ -649,13 +649,13 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$entity = $this->table->newEmptyEntity();
 		$data = [
 			'title' => 'Test Template',
-			'media_assignments' => [
+			'mediaAssignments' => [
 				2 => [
 					'media' => [
-						'media_id' => 'invalid',
+						'mediaId' => 'invalid',
 					],
-					'lightbox_media' => [
-						'media_id' => 10,
+					'lightboxMedia' => [
+						'mediaId' => 10,
 					],
 				],
 			],
@@ -730,7 +730,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$validAssignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 		]);
 
 		$entity = $this->table->newDefaultEntity([
@@ -760,7 +760,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$validAssignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 		]);
 
 		$entity = $this->table->newDefaultEntity([
@@ -769,8 +769,8 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$entity->set('mediaAssignments', [
 			$validAssignment,
-			'invalid_key' => 'invalid_value',
-			'not_an_assignment',
+			'invalidKey' => 'invalidValue',
+			'notAnAssignment',
 		]);
 
 		$event = new Event('Model.beforeSave');
@@ -795,7 +795,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 		]);
 		$assignment->set('id', 123);
 		$assignment->setNew(false);
@@ -838,10 +838,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->behavior->afterSave($event, $entity, $options);
 
 		$existingAssignments = $this->mediaAssignmentsTable->find()->where([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		])->count();
 
 		$this->assertSame(0, $existingAssignments);
@@ -866,10 +866,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->behavior->afterSave($event, $entity, $options);
 
 		$existingAssignments = $this->mediaAssignmentsTable->find()->where([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		]);
 
 		$this->assertCount(1, $existingAssignments);
@@ -896,17 +896,17 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$entity->title = 'Testfolder1';
 
 		$this->mediaAssignmentsTable->deleteAll([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		]);
 
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
 			'foreignKey' => 23,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'mediaFolderId' => 2,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);
@@ -922,10 +922,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->behavior->afterSave($event, $entity, $options);
 
 		$existingAssignments = $this->mediaAssignmentsTable->find()->where([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		]);
 		$this->assertCount(1, $existingAssignments);
 
@@ -947,10 +947,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$entity->title = 'Testfolder1';
 
 		$this->mediaAssignmentsTable->deleteAll([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		]);
 
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -965,9 +965,9 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
 			'foreignKey' => 23,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'mediaFolderId' => $mediaFolderId,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);
@@ -998,10 +998,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$entity->title = 'Testfolder1';
 
 		$this->mediaAssignmentsTable->deleteAll([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => 23,
-			'scope' => 'global_contents',
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
+			'foreignKey' => 23,
+			'scope' => 'GlobalContents',
 		]);
 
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1016,9 +1016,9 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'mediaElementSelectorIdentifier' => 'hiddenFolder',
 			'foreignKey' => 23,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'mediaFolderId' => $mediaFolderId,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);

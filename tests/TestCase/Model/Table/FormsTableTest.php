@@ -76,7 +76,7 @@ class FormsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $emailTemplatesAssociation);
 		$this->assertFalse($emailTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($emailTemplatesAssociation->getDependent());
-		$this->assertSame('email_template_id', $emailTemplatesAssociation->getForeignKey());
+		$this->assertSame('emailTemplateId', $emailTemplatesAssociation->getForeignKey());
 
 		// Test ConfirmationEmailTemplates association (BelongsTo)
 		$this->assertTrue($this->formsTable->hasAssociation('ConfirmationEmailTemplates'));
@@ -84,16 +84,16 @@ class FormsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $confirmationEmailTemplatesAssociation);
 		$this->assertFalse($confirmationEmailTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($confirmationEmailTemplatesAssociation->getDependent());
-		$this->assertSame('confirmation_email_template_id', $confirmationEmailTemplatesAssociation->getForeignKey());
+		$this->assertSame('confirmationEmailTemplateId', $confirmationEmailTemplatesAssociation->getForeignKey());
 
 		// Test FormConditionalRecipients association (HasMany)
 		$this->assertTrue($this->formsTable->hasAssociation('FormConditionalRecipients'));
-		$formConditionalRecipientsAssociation = $this->formsTable->getAssociation('FormConditionalRecipients');
-		$this->assertInstanceOf(HasMany::class, $formConditionalRecipientsAssociation);
-		$this->assertTrue($formConditionalRecipientsAssociation->getCascadeCallbacks());
-		$this->assertTrue($formConditionalRecipientsAssociation->getDependent());
-		$this->assertSame('form_id', $formConditionalRecipientsAssociation->getForeignKey());
-		$this->assertSame('replace', $formConditionalRecipientsAssociation->getSaveStrategy());
+		$conditionalRecipientsAssociation = $this->formsTable->getAssociation('FormConditionalRecipients');
+		$this->assertInstanceOf(HasMany::class, $conditionalRecipientsAssociation);
+		$this->assertTrue($conditionalRecipientsAssociation->getCascadeCallbacks());
+		$this->assertTrue($conditionalRecipientsAssociation->getDependent());
+		$this->assertSame('formId', $conditionalRecipientsAssociation->getForeignKey());
+		$this->assertSame('replace', $conditionalRecipientsAssociation->getSaveStrategy());
 
 		// Test FormElements association (HasMany)
 		$this->assertTrue($this->formsTable->hasAssociation('FormElements'));
@@ -101,7 +101,7 @@ class FormsTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $formElementsAssociation);
 		$this->assertTrue($formElementsAssociation->getCascadeCallbacks());
 		$this->assertTrue($formElementsAssociation->getDependent());
-		$this->assertSame('form_id', $formElementsAssociation->getForeignKey());
+		$this->assertSame('formId', $formElementsAssociation->getForeignKey());
 
 		// Test FormEntries association (HasMany)
 		$this->assertTrue($this->formsTable->hasAssociation('FormEntries'));
@@ -109,7 +109,7 @@ class FormsTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $formEntriesAssociation);
 		$this->assertTrue($formEntriesAssociation->getCascadeCallbacks());
 		$this->assertTrue($formEntriesAssociation->getDependent());
-		$this->assertSame('form_id', $formEntriesAssociation->getForeignKey());
+		$this->assertSame('formId', $formEntriesAssociation->getForeignKey());
 
 		// Test Pages association (HasMany)
 		$this->assertTrue($this->formsTable->hasAssociation('Pages'));
@@ -206,7 +206,7 @@ class FormsTableTest extends TestCase {
 		$result = $this->formsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('forms', $result->getI18nDomain());
+		$this->assertSame('Forms', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -247,7 +247,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'sendEmail' => false,
 			'sendConfirmationEmail' => false,
 			'summarizeErrors' => true,
@@ -413,7 +413,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationEmailFields(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'ownerEmail' => 'invalid-email',
 			'userEmail' => 'invalid-email',
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
@@ -434,7 +434,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationValidEmailPlaceholders(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'userEmail' => '$email_field',
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -467,7 +467,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationInvalidEmailPlaceholders(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'userEmail' => '{{$email_field|invalid-fallback}}',
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -486,7 +486,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationCcBccArraysValid(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'cc' => [
 				['email' => 'cc1@example.com'],
 				['email' => 'cc2@example.com'],
@@ -514,7 +514,7 @@ class FormsTableTest extends TestCase {
 		// Test invalid CC/BCC
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'cc' => [
 				['email' => 'invalid-email'],
 			],
@@ -540,7 +540,7 @@ class FormsTableTest extends TestCase {
 		// Test that email template is required when send_email is true
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'sendEmail' => true,
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -556,7 +556,7 @@ class FormsTableTest extends TestCase {
 		// Test that confirmation email fields are required when send_confirmation_email is true
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'sendConfirmationEmail' => true,
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -578,7 +578,7 @@ class FormsTableTest extends TestCase {
 	public function testEntityValidationConditionalRecipientsStrategy(): void {
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form',
+			'identifier' => 'testForm',
 			'conditionalRecipientsStrategy' => 'invalid_strategy',
 		];
 
@@ -613,7 +613,7 @@ class FormsTableTest extends TestCase {
 		// Test with existing email template
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form_unique_1',
+			'identifier' => 'testFormUnique1',
 			'emailTemplateId' => 1,
 			'transportProfile' => 'default',
 		];
@@ -633,7 +633,7 @@ class FormsTableTest extends TestCase {
 		// Test with non-existing email template
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form_unique_2',
+			'identifier' => 'testFormUnique2',
 			'emailTemplateId' => 99999,
 		];
 
@@ -656,7 +656,7 @@ class FormsTableTest extends TestCase {
 		// Test with existing confirmation email template
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form_unique_3',
+			'identifier' => 'testFormUnique3',
 			'confirmationEmailTemplateId' => 1,
 			'transportProfile' => 'default',
 		];
@@ -676,7 +676,7 @@ class FormsTableTest extends TestCase {
 		// Test with non-existing confirmation email template
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form_unique_4',
+			'identifier' => 'testFormUnique4',
 			'confirmationEmailTemplateId' => 99999,
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -727,7 +727,7 @@ class FormsTableTest extends TestCase {
 		if ($validProfile) {
 			$data = [
 				'title' => 'Test Form',
-				'identifier' => 'test_form_unique_5',
+				'identifier' => 'testFormUnique5',
 				'transportProfile' => $validProfile,
 				'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 			];
@@ -751,7 +751,7 @@ class FormsTableTest extends TestCase {
 		// Test with non-existing transport profile
 		$data = [
 			'title' => 'Test Form',
-			'identifier' => 'test_form_unique_6',
+			'identifier' => 'testFormUnique6',
 			'transportProfile' => 'non_existing_profile',
 			'conditionalRecipientsStrategy' => FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 		];
@@ -917,7 +917,7 @@ class FormsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Form',
-			'identifier' => 'custom_form',
+			'identifier' => 'customForm',
 			'sendEmail' => true,
 			'emailTemplateId' => 1,
 			'ownerEmail' => 'owner@example.com',
@@ -933,7 +933,7 @@ class FormsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Form', $entity->title);
-		$this->assertSame('custom_form', $entity->identifier);
+		$this->assertSame('customForm', $entity->identifier);
 		$this->assertTrue($entity->sendEmail);
 		$this->assertSame(1, $entity->emailTemplateId);
 		$this->assertSame('owner@example.com', $entity->ownerEmail);

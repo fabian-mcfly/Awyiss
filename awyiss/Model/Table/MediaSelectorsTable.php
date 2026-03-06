@@ -44,6 +44,8 @@ class MediaSelectorsTable extends Table {
 		$this->hasMany('MediaElementSelectors', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaSelectorId',
+			'propertyName' => 'mediaElementSelectors',
 			'saveStrategy' => 'replace',
 		]);
 	}
@@ -113,7 +115,7 @@ class MediaSelectorsTable extends Table {
 			'identifierUnique',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 			]
 		);
 
@@ -123,7 +125,7 @@ class MediaSelectorsTable extends Table {
 			'noLinkedMediaElementSelectors',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_element_selectors'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_media_element_selectors'),
 			]
 		);
 
@@ -135,7 +137,7 @@ class MediaSelectorsTable extends Table {
 			'notDefaultSelectorDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_default_selector_deletion'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_default_selector_deletion'),
 			]
 		);
 

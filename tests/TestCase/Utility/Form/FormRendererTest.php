@@ -258,7 +258,7 @@ class FormRendererTest extends TestCase {
 		$renderer = new FormRenderer($this->view);
 
 		$requestData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'example@domain.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -280,7 +280,7 @@ class FormRendererTest extends TestCase {
 		$renderer = new FormRenderer($this->view);
 
 		$requestData = [
-			'_form_identifier' => 'contact2',
+			'_formIdentifier' => 'contact2',
 			'email' => 'example@domain.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -308,7 +308,7 @@ class FormRendererTest extends TestCase {
 		$renderer->initForm(4, []);
 		$form = $renderer->getForm();
 
-		$this->assertSame('new_contact4', $form->identifier);
+		$this->assertSame('newContact4', $form->identifier);
 	}
 
 
@@ -322,7 +322,7 @@ class FormRendererTest extends TestCase {
 
 		// Simulate a form submission with data that matches the conditional recipient
 		$requestData = [
-			'_form_identifier' => 'contact4',
+			'_formIdentifier' => 'contact4',
 			'email' => 'importantclient@example.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -339,7 +339,7 @@ class FormRendererTest extends TestCase {
 
 		// Simulate a form submission with data that matches the conditional recipient
 		$requestData = [
-			'_form_identifier' => 'contact3',
+			'_formIdentifier' => 'contact3',
 			'email' => 'importantclient@example.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -362,7 +362,7 @@ class FormRendererTest extends TestCase {
 
 		// Simulate a form submission with data that matches the conditional recipient
 		$requestData = [
-			'_form_identifier' => 'contact4',
+			'_formIdentifier' => 'contact4',
 			'email' => 'domain@example.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -411,12 +411,12 @@ class FormRendererTest extends TestCase {
 		$renderer->expects($this->never())->method('sendAndRedirect');
 
 		$renderer->initForm(1, [
-			'_form_identifier' => 'contact2', // Other Form's identifier to simulate not submitted
+			'_formIdentifier' => 'contact2', // Other Form's identifier to simulate not submitted
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		]);
 
 		$renderer->process();
@@ -438,12 +438,12 @@ class FormRendererTest extends TestCase {
 		$renderer->expects($this->never())->method('sendAndRedirect');
 
 		$renderer->initForm(1, [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'no-email',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		]);
 
 		$renderer->process();
@@ -467,12 +467,12 @@ class FormRendererTest extends TestCase {
 		$renderer->expects($this->once())->method('sendAndRedirect');
 
 		$renderer->initForm(1, [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		]);
 
 		$renderer->process();
@@ -490,7 +490,7 @@ class FormRendererTest extends TestCase {
 	public function testGetFormBodyIsEmptyForEmptyElements(): void {
 		$renderer = new FormRenderer($this->view);
 		$renderer->initForm(5, [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 		]);
 
 		$renderer->process();
@@ -533,7 +533,7 @@ class FormRendererTest extends TestCase {
 		$renderer = new FormRenderer($this->view);
 
 		$renderer->initForm(1, [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'dummy@example.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -559,7 +559,7 @@ class FormRendererTest extends TestCase {
 		$renderer = new FormRenderer($this->view);
 
 		$renderer->initForm(1, [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'dummy@example.com',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
@@ -859,12 +859,12 @@ class FormRendererTest extends TestCase {
 	 */
 	public function testSendForm(): void {
 		$formData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$renderer = new FormRenderer($this->view);
@@ -887,7 +887,7 @@ class FormRendererTest extends TestCase {
 		$data = json_decode(gzuncompress(base64_decode($entry->data)), true);
 		$this->assertIsArray($data);
 
-		unset($formData['_form_identifier']);
+		unset($formData['_formIdentifier']);
 		$this->assertSame($formData, $data);
 	}
 
@@ -928,12 +928,12 @@ class FormRendererTest extends TestCase {
 	 */
 	public function testSendAndRedirect(): void {
 		$formData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$renderer = new FormRenderer($this->view);
@@ -972,12 +972,12 @@ class FormRendererTest extends TestCase {
 		Router::setRequest($request);
 
 		$formData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$renderer = new FormRenderer($this->view);
@@ -1016,12 +1016,12 @@ class FormRendererTest extends TestCase {
 		Router::setRequest($request);
 
 		$formData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$renderer = new FormRenderer($this->view);
@@ -1060,12 +1060,12 @@ class FormRendererTest extends TestCase {
 		Router::setRequest($request);
 
 		$formData = [
-			'_form_identifier' => 'contact',
+			'_formIdentifier' => 'contact',
 			'email' => 'awyiss@cms.de',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$renderer = new FormRenderer($this->view);

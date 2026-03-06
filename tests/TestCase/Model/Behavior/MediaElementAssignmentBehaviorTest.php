@@ -61,7 +61,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 		$this->assertSame([
 			'mediaElementAssignments' => 'findMediaElementAssignments',
 		], $config['implementedFinders']);
-		$this->assertSame('content_templates', $config['referenceName']);
+		$this->assertSame('ContentTemplates', $config['referenceName']);
 		$this->assertSame('subquery', $config['strategy']);
 
 		$this->assertTrue($this->table->hasAssociation('MediaElementAssignments'));
@@ -78,6 +78,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	public function testInitializationForModelLevel(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Cars');
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->behavior = $this->table->getBehavior('MediaElementAssignment');
 
 		$config = $this->behavior->getConfig();
@@ -86,7 +87,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 		$this->assertSame([
 			'mediaElementAssignments' => 'findMediaElementAssignments',
 		], $config['implementedFinders']);
-		$this->assertSame('cars', $config['referenceName']);
+		$this->assertSame('Cars', $config['referenceName']);
 		$this->assertSame('subquery', $config['strategy']);
 
 		$this->assertTrue($this->table->hasAssociation('MediaElementAssignments'));
@@ -164,7 +165,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$this->assertSame('MediaElementAssignments', $association->getName());
 		$this->assertSame('id', $association->getBindingKey());
-		$this->assertSame('foreign_key', $association->getForeignKey());
+		$this->assertSame('foreignKey', $association->getForeignKey());
 		$this->assertTrue($association->getCascadeCallbacks());
 		$this->assertTrue($association->getDependent());
 		$this->assertSame('replace', $association->getSaveStrategy());
@@ -188,7 +189,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 			foreach ($entity->mediaElementAssignments as $assignment) {
 				$this->assertInstanceOf(MediaElementAssignment::class, $assignment);
-				$this->assertSame('content_templates', $assignment->scope);
+				$this->assertSame('ContentTemplates', $assignment->scope);
 			}
 		}
 	}
@@ -238,7 +239,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	 */
 	public function testGetScope(): void {
 		$scope = $this->behavior->getConfig('referenceName');
-		$this->assertSame('content_templates', $scope);
+		$this->assertSame('ContentTemplates', $scope);
 	}
 
 
@@ -252,12 +253,12 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 4,
+					'mediaElementId' => 4,
 				],
 				[
-					'media_element_id' => 2,
+					'mediaElementId' => 2,
 					'id' => 4,
 				],
 			],
@@ -270,13 +271,13 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$this->assertInstanceOf(MediaElementAssignment::class, $entity->mediaElementAssignments[0]);
 		$this->assertSame(4, $entity->mediaElementAssignments[0]->mediaElementId);
-		$this->assertSame('content_templates', $entity->mediaElementAssignments[0]->scope);
+		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[0]->scope);
 		$this->assertTrue($entity->mediaElementAssignments[0]->isNew());
 		$this->assertNull($entity->mediaElementAssignments[0]->id);
 
 		$this->assertInstanceOf(MediaElementAssignment::class, $entity->mediaElementAssignments[1]);
 		$this->assertSame(2, $entity->mediaElementAssignments[1]->mediaElementId);
-		$this->assertSame('content_templates', $entity->mediaElementAssignments[1]->scope);
+		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[1]->scope);
 		$this->assertTrue($entity->mediaElementAssignments[1]->isNew());
 		$this->assertNull($entity->mediaElementAssignments[1]->id);
 	}
@@ -292,12 +293,12 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 4,
+					'mediaElementId' => 4,
 				],
 				[
-					'media_element_id' => 2,
+					'mediaElementId' => 2,
 					'id' => 4,
 				],
 			],
@@ -310,13 +311,13 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$this->assertInstanceOf(MediaElementAssignment::class, $entity->mediaElementAssignments[0]);
 		$this->assertSame(4, $entity->mediaElementAssignments[0]->mediaElementId);
-		$this->assertSame('content_templates', $entity->mediaElementAssignments[0]->scope);
+		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[0]->scope);
 		$this->assertTrue($entity->mediaElementAssignments[0]->isNew());
 		$this->assertNull($entity->mediaElementAssignments[0]->id);
 
 		$this->assertInstanceOf(MediaElementAssignment::class, $entity->mediaElementAssignments[1]);
 		$this->assertSame(2, $entity->mediaElementAssignments[1]->mediaElementId);
-		$this->assertSame('content_templates', $entity->mediaElementAssignments[1]->scope);
+		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[1]->scope);
 		$this->assertFalse($entity->mediaElementAssignments[1]->isNew());
 		$this->assertSame(4, $entity->mediaElementAssignments[1]->id);
 	}
@@ -334,12 +335,12 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 4,
+					'mediaElementId' => 4,
 				],
 				[
-					'media_element_id' => 2,
+					'mediaElementId' => 2,
 					'id' => 4,
 				],
 			],
@@ -364,12 +365,12 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 4,
+					'mediaElementId' => 4,
 				],
 				[
-					'media_element_id' => 2,
+					'mediaElementId' => 2,
 					'id' => 4,
 				],
 			],
@@ -396,12 +397,12 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 0,
+					'mediaElementId' => 0,
 				],
 				[
-					'media_element_id' => 2,
+					'mediaElementId' => 2,
 				],
 			],
 		];
@@ -413,7 +414,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$this->assertInstanceOf(MediaElementAssignment::class, $entity->mediaElementAssignments[0]);
 		$this->assertSame(2, $entity->mediaElementAssignments[0]->mediaElementId);
-		$this->assertSame('content_templates', $entity->mediaElementAssignments[0]->scope);
+		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[0]->scope);
 		$this->assertTrue($entity->mediaElementAssignments[0]->isNew());
 		$this->assertNull($entity->mediaElementAssignments[0]->id);
 	}
@@ -428,9 +429,9 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Template',
-			'media_element_assignments' => [
+			'mediaElementAssignments' => [
 				[
-					'media_element_id' => 'foobar',
+					'mediaElementId' => 'foobar',
 				],
 			],
 		];

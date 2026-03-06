@@ -55,36 +55,10 @@ use Cake\View\View;
  * @property \Awyiss\Model\Entity\EmailTemplate $confirmationEmailTemplate
  * @property \Awyiss\Model\Entity\FormElement[]|\Cake\Collection\CollectionInterface $formElements
  * @property \Awyiss\Model\Entity\FormEntry[]|\Cake\Collection\CollectionInterface $formEntries
- * @property \Awyiss\Model\Entity\FormConditionalRecipient[]|\Cake\Collection\CollectionInterface $formConditionalRecipients
+ * @property \Awyiss\Model\Entity\FormConditionalRecipient[]|\Cake\Collection\CollectionInterface $conditionalRecipients
  */
 class Form extends Entity {
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'send_email' => 'sendEmail',
-		'email_template_id' => 'emailTemplateId',
-		'send_confirmation_email' => 'sendConfirmationEmail',
-		'confirmation_email_template_id' => 'confirmationEmailTemplateId',
-		'owner_email' => 'ownerEmail',
-		'owner_name' => 'ownerName',
-		'user_email' => 'userEmail',
-		'user_name' => 'userName',
-		'subject_confirmation' => 'subjectConfirmation',
-		'salutation_confirmation' => 'salutationConfirmation',
-		'summarize_errors' => 'summarizeErrors',
-		'success_message' => 'successMessage',
-		'conditional_recipients_strategy' => 'conditionalRecipientsStrategy',
-		'transport_profile' => 'transportProfile',
-		'email_template' => 'emailTemplate',
-		'confirmation_email_template' => 'confirmationEmailTemplate',
-		'form_elements' => 'formElements',
-		'form_entries' => 'formEntries',
-		'form_conditional_recipients' => 'formConditionalRecipients',
-	];
 
 
 	/**
@@ -113,7 +87,7 @@ class Form extends Entity {
 		'conditionalRecipientsStrategy' => true,
 		'transportProfile' => true,
 		'active' => true,
-		'formConditionalRecipients' => true,
+		'conditionalRecipients' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -235,7 +209,7 @@ class Form extends Entity {
 		}
 
 		$formElements = $query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->where([
-			'form_id' => $this->id,
+			'formId' => $this->id,
 		])->all()->filter(function (FormElement $content) {
 			return $content->parentId === null;
 		})->compile();
@@ -247,7 +221,7 @@ class Form extends Entity {
 		/** @var array<\Awyiss\Model\Entity\FormElement> $listedFormElements */
 		$listedFormElements = $formElements->listNested()->toList();
 		foreach ($listedFormElements as $formElement) {
-			if (in_array($formElement->type, ['checkbox', 'radio', 'select', 'select_multiple'])) {
+			if (in_array($formElement->type, ['checkbox', 'radio', 'select', 'selectMultiple'])) {
 				$formElement->options = $formElement->parseOptions(
 					$formElement->options,
 					$formElement->type,
@@ -299,7 +273,7 @@ class Form extends Entity {
 	 */
 	public function loadFormOptions(): static {
 		if (!isset($this->formOptions)) {
-			$className = App::className(Inflector::ucparts($this->identifier, false) . 'FormOptions', 'Form');
+			$className = App::className(Inflector::camelize($this->identifier), 'Form', 'FormOptions');
 
 			if (!$className) {
 				$className = App::className('FormOptions', 'Form');
@@ -471,6 +445,6 @@ class Form extends Entity {
 
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 }

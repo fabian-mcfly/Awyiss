@@ -145,7 +145,7 @@ class DashboardElementsTableTest extends TestCase {
 		$result = $this->dashboardElementsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('dashboard_elements', $result->getI18nDomain());
+		$this->assertSame('DashboardElements', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('scope'));
@@ -168,7 +168,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard Element',
 			'access' => ['admin'],
 			'settings' => ['limit' => 10],
@@ -270,7 +270,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListFieldsSuccess(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'fields' => ['id', 'username', 'email'],
@@ -290,7 +290,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListFieldsEmptySettings(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [],
 		];
@@ -308,7 +308,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListFieldsNoFields(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'other' => 'value',
@@ -328,7 +328,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListFieldsNotArray(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'fields' => 'not_an_array',
@@ -349,7 +349,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListFieldsInvalidField(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'fields' => ['id', 'nonexistent_field', 'username'],
@@ -370,7 +370,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidFilterSettingsSuccess(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'filter' => [
@@ -395,7 +395,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidFilterSettingsEmptyFilter(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'other' => 'value',
@@ -415,7 +415,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidFilterSettingsNotArray(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'filter' => 'not_an_array',
@@ -436,11 +436,11 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidFilterSettingsInvalidColumn(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'filter' => [
-					'nonexistent_column' => [
+					'nonexistentColumn' => [
 						'operator' => '=',
 						'value' => 'test',
 					],
@@ -462,7 +462,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidFilterSettingsBooleanWithoutOperator(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'filter' => [
@@ -486,7 +486,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortSuccess(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [
@@ -511,7 +511,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortEmptySort(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'other' => 'value',
@@ -531,7 +531,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortNotArray(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => 'not_an_array',
@@ -552,7 +552,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortInvalidField(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [
@@ -578,7 +578,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortMissingField(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [
@@ -603,7 +603,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortInvalidDirection(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [
@@ -629,7 +629,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortDescDirection(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [
@@ -654,7 +654,7 @@ class DashboardElementsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidListSortMissingDirection(): void {
 		$data = [
-			'scope' => 'users',
+			'scope' => 'Users',
 			'title' => 'Test Dashboard',
 			'settings' => [
 				'sort' => [

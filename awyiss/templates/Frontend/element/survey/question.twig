@@ -22,7 +22,7 @@
 #}
 
 {% block question %}
-	<div class="SurveyQuestion SurveyQuestionType-{{ question.surveyQuestion.type.value|ucparts(false) }}" id="SurveyQuestion-{{ question.identifier|ucparts(false) }}">
+	<div class="SurveyQuestion SurveyQuestionType-{{ question.surveyQuestion.type.value|camelize }}" id="SurveyQuestion-{{ question.identifier|camelize }}">
 		{% block questionTitle %}
 			{% if question.surveyQuestion.title %}
 				<p class="Title SurveyQuestion-Title">
@@ -89,12 +89,12 @@
 
 				{% block customAnswer %}
 					{% if question.allowCustomAnswer %}
-						<li class="SurveyAnswer SurveyAnswer-Custom" id="SurveyAnswer-Custom{{ question.identifier|ucparts(false) }}">
+						<li class="SurveyAnswer SurveyAnswer-Custom" id="SurveyAnswer-Custom{{ question.identifier|camelize }}">
 							{% block customAnswerInput %}
 								<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="custom" id="SurveyAnswer-InputCustom">
 							{% endblock %}
 							{% block customAnswerLabel %}
-								<label for="SurveyAnswer-InputCustom">{{ __d('surveys', 'custom_answer_label') }}</label>
+								<label for="SurveyAnswer-InputCustom">{{ __d('Surveys', 'custom_answer_label') }}</label>
 							{% endblock %}
 							{% block customAnswerInputField %}
 								<input type="text" name="survey[{{ survey.identifier }}][custom][{{ question.identifier }}]" class="SurveyAnswer-CustomInput">

@@ -15,14 +15,14 @@ class CreateAttributesContents extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_contents')->addColumn('content_id', 'integer', [
+		$this->table('attributes_contents')->addColumn('contentId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => false,
 		])->addColumn('teaser', 'text', [
 			'default' => null,
 			'null' => true,
-		])->addColumn('free_text', 'text', [
+		])->addColumn('freeText', 'text', [
 			'default' => null,
 			'null' => true,
 		])->create();

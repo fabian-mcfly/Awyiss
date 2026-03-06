@@ -4,9 +4,9 @@
 namespace Awyiss\Test\TestCase\Configuration;
 
 
+use Awyiss\config\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptions\FormsConfigOptions;
 use Awyiss\Configuration\ConfigOptions\GenericDatatablesConfigOptions;
-use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Test\TestSuite\TestCase;
 use Customer\Configuration\ConfigOptions\DummyConfigOptions;

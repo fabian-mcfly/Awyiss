@@ -206,7 +206,7 @@ class LinkSelectWidget extends BasicWidget {
 			$groupLabel = $data['groupLabels'][ $optionAttributes['title'] ?: 'general' ];
 		}
 		else {
-			$groupLabel = __($data['identifier'] . '_grouplabel_' . ($optionAttributes['title'] ?: 'general'));
+			$groupLabel = __(Inflector::underscore($data['identifier']) . '_grouplabel_' . ($optionAttributes['title'] ?: 'general'));
 		}
 
 		$optionAttributes['title'] = $groupLabel;

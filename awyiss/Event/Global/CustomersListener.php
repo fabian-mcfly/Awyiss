@@ -51,7 +51,7 @@ class CustomersListener implements EventListenerInterface {
 		$unverifiedCustomers = $customersTable->find()
 			->where([
 				'verified' => false,
-				'created_on <' => $cutoffTime,
+				'createdOn <' => $cutoffTime,
 			])
 			->all();
 

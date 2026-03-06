@@ -92,7 +92,7 @@ class UserConfigurationListenerTest extends TestCase {
 	public function testBeforeSaveTypecastsValue(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity();
 		$entity->patch([
-			'scope' => 'newscategories',
+			'scope' => 'Newscategories',
 			'identifier' => 'paginate.limit',
 			'value' => '10',
 		]);
@@ -104,7 +104,7 @@ class UserConfigurationListenerTest extends TestCase {
 		$this->assertEquals(10, $entity->value);
 
 		$entity->patch([
-			'scope' => 'newscategories',
+			'scope' => 'Newscategories',
 			'identifier' => 'paginate.enabled',
 			'value' => 'true',
 		]);
@@ -114,7 +114,7 @@ class UserConfigurationListenerTest extends TestCase {
 		$this->assertSame(true, $entity->value);
 
 		$entity->patch([
-			'scope' => 'newscategories',
+			'scope' => 'Newscategories',
 			'identifier' => 'paginate.enabled',
 			'value' => 'false',
 		]);
@@ -124,17 +124,17 @@ class UserConfigurationListenerTest extends TestCase {
 		$this->assertSame(0, $entity->value);
 
 		$entity->patch([
-			'scope' => 'media',
-			'identifier' => 'overview.displayed_fields',
-			'value' => ['id', 'name', 'created_by', 'unknown_column'],
+			'scope' => 'Media',
+			'identifier' => 'overview.displayedFields',
+			'value' => ['id', 'name', 'createdBy', 'unknown_column'],
 		]);
 
 		$this->listener->beforeSave($event, $entity);
 
-		$this->assertSame('{"1":"name","2":"created_by"}', $entity->value);
+		$this->assertSame('{"1":"name","2":"createdBy"}', $entity->value);
 
 		$entity->patch([
-			'scope' => 'media',
+			'scope' => 'Media',
 			'identifier' => 'overview.displayed_fields',
 			'value' => null,
 		]);
@@ -151,8 +151,8 @@ class UserConfigurationListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveSetsCurrentUserId(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity([
-			'scope' => 'test_scope',
-			'identifier' => 'test_identifier',
+			'scope' => 'TestScope',
+			'identifier' => 'testIdentifier',
 			'value' => 'test_value',
 		]);
 

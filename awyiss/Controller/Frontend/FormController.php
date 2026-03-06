@@ -61,7 +61,7 @@ class FormController extends AppController {
 		$this->viewBuilder()->setClassName('Frontend');
 
 		if ($this->request->is('post')) {
-			$identifier = $this->request->getData('_form_identifier');
+			$identifier = $this->request->getData('_formIdentifier');
 
 			if (!$identifier) {
 				throw new InvalidArgumentException('No form identifier provided.');
@@ -111,8 +111,8 @@ class FormController extends AppController {
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
 			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
-				'parent_id IS' => null,
-				'language_shortcode' => $languageShortcode,
+				'parentId IS' => null,
+				'languageShortcode' => $languageShortcode,
 			])->first();
 		}
 
@@ -150,7 +150,7 @@ class FormController extends AppController {
 	protected function handleFormSubmission(string $identifier): void {
 		$options = $this->getOptions();
 
-		$pageId = $this->request->getData('_page_id');
+		$pageId = $this->request->getData('_pageId');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $pageId])->first();
 
@@ -162,8 +162,8 @@ class FormController extends AppController {
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
 			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
-				'parent_id IS' => null,
-				'language_shortcode' => $languageShortcode,
+				'parentId IS' => null,
+				'languageShortcode' => $languageShortcode,
 			])->first();
 		}
 
@@ -274,7 +274,7 @@ class FormController extends AppController {
 		}
 
 		if ($input !== $words[ $word ]) {
-			return __d('form', 'error_valid_captcha');
+			return __d('Form', 'error_valid_captcha');
 		}
 
 		return true;

@@ -15,35 +15,35 @@ class DashboardElementsSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'scope' => 'form_entries',
+				'scope' => 'FormEntries',
 				'title' => 'Neue Formulareinträge',
 				'access' => '{"scope":"FormEntries","identifier":"read"}',
-				'settings' => '{"fields":["form_id","language_shortcode","subject","created_on"],"filter":{"created_on":{"active":"1","operator":"since_last_login"}},"sort":[{"field":"created_on","direction":"desc"}]}',
-				'system_order' => 1,
+				'settings' => '{"fields":["formId","languageShortcode","subject","createdOn"],"filter":{"createdOn":{"active":"1","operator":"sinceLastLogin"}},"sort":[{"field":"createdOn","direction":"desc"}]}',
+				'systemOrder' => 1,
 				'active' => 1,
 				'deleted' => 0,
-				'created_by' => 1,
-				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
-				'changed_by' => null,
-				'changed_on' => null,
-				'deleted_by' => null,
-				'deleted_on' => null
+				'createdBy' => 1,
+				'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changedBy' => null,
+				'changedOn' => null,
+				'deletedBy' => null,
+				'deletedOn' => null
 			],
 			[
 				'id' => 2,
-				'scope' => 'urls_not_found',
+				'scope' => 'UrlsNotFound',
 				'title' => 'Neue 404 Fehler',
 				'access' => '{"scope":"UrlsNotFound","identifier":"read"}',
-				'settings' => '{"fields":["url","is_robot","created_on"],"filter":{"created_on":{"active":"1","operator":"since_last_login"}},"sort":[{"field":"created_on","direction":"desc"}]}',
-				'system_order' => 2,
+				'settings' => '{"fields":["url","isRobot","createdOn"],"filter":{"createdOn":{"active":"1","operator":"sinceLastLogin"}},"sort":[{"field":"createdOn","direction":"desc"}]}',
+				'systemOrder' => 2,
 				'active' => 1,
 				'deleted' => 0,
-				'created_by' => 1,
-				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
-				'changed_by' => null,
-				'changed_on' => null,
-				'deleted_by' => null,
-				'deleted_on' => null
+				'createdBy' => 1,
+				'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changedBy' => null,
+				'changedOn' => null,
+				'deletedBy' => null,
+				'deletedOn' => null
 			]
 		];
 

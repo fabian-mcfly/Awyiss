@@ -58,13 +58,15 @@ class SurveySurveyAnswersTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('SurveyAnswers', [
-			'foreignKey' => 'survey_answer_id',
+			'foreignKey' => 'surveyAnswerId',
 			'joinType' => 'INNER',
+			'propertyName' => 'surveyAnswer',
 		]);
 
 		$this->belongsTo('SurveySurveyQuestions', [
-			'foreignKey' => 'survey_survey_question_id',
+			'foreignKey' => 'surveySurveyQuestionId',
 			'joinType' => 'INNER',
+			'propertyName' => 'surveySurveyQuestion',
 		]);
 	}
 
@@ -186,7 +188,7 @@ class SurveySurveyAnswersTable extends Table {
 			'validSurveyAnswerId',
 			[
 				'errorField' => 'surveyAnswerId',
-				'message' => __df('surveys', 'validation', 'error_valid_survey_answer_id'),
+				'message' => __df('Surveys', 'Validation', 'error_valid_survey_answer_id'),
 			]
 		);
 
@@ -195,7 +197,7 @@ class SurveySurveyAnswersTable extends Table {
 			'validSurveySurveyQuestionId',
 			[
 				'errorField' => 'surveySurveyQuestionId',
-				'message' => __df('surveys', 'validation', 'error_valid_survey_survey_question_id'),
+				'message' => __df('Surveys', 'Validation', 'error_valid_survey_survey_question_id'),
 			]
 		);
 
@@ -214,7 +216,7 @@ class SurveySurveyAnswersTable extends Table {
 			'validNextAction',
 			[
 				'errorField' => 'nextAction',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_next_action'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_next_action'),
 			]
 		);
 
@@ -231,6 +233,6 @@ class SurveySurveyAnswersTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
 		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('next_action', EnumType::from($surveyNextActionEnum));
+		$schema->setColumnType('nextAction', EnumType::from($surveyNextActionEnum));
 	}
 }

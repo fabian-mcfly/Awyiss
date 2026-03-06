@@ -19,12 +19,12 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% set assignedElements = assignedElements ? combine(assignedElements|column('media_element_id'), assignedElements) : [] %}
+{% set assignedElements = assignedElements ? combine(assignedElements|column('mediaElementId'), assignedElements) : [] %}
 
 {% if availableElements %}
 	<fieldset class="Fieldset-MediaElementAssignments AssignmentLists">
 		{% block formControlMediaElements %}
-			{% set assignedElementIds = assignedElements|column('media_element_id') %}
+			{% set assignedElementIds = assignedElements|column('mediaElementId') %}
 			{% set elementCounter = 0 %}
 			{% set fieldsetElements = {} %}
 
@@ -35,7 +35,7 @@
 						{% if availableElement.id not in assignedElementIds %}
 							<li class="Item MediaElement">
 								<span class="Title">
-									{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
+									{{ FormHelper.checkbox('mediaElementAssignments[' ~ loop.index0 ~ '][mediaElementId]', {
 										checked: false,
 										hiddenField: false,
 										id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
@@ -59,13 +59,13 @@
 							{% set assignedElement = assignedElements[ availableElement.id ] %}
 							<li class="Item MediaElement">
 								<span class="Title">
-									{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
+									{{ FormHelper.checkbox('mediaElementAssignments[' ~ loop.index0 ~ '][mediaElementId]', {
 										checked: true,
 										id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
 										value: availableElement.id,
 									}) }}
 
-									{{ FormHelper.hidden('media_element_assignments[' ~ loop.index0 ~ '][id]', {
+									{{ FormHelper.hidden('mediaElementAssignments[' ~ loop.index0 ~ '][id]', {
 										value: assignedElement.id,
 									}) }}
 

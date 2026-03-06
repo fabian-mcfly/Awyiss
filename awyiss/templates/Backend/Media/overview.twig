@@ -46,14 +46,14 @@
 			{% endblock %}
 
 			{% block overviewButtonAutoOverwritePreferenceInput %}
-				<input id="UploadAutoOverwrite" type="checkbox" name="upload_auto_overwrite" value="1" {% if localConfig.upload.autoOverwrite %}checked{% endif %}>
+				<input id="UploadAutoOverwrite" type="checkbox" name="uploadAutoOverwrite" value="1" {% if localConfig.upload.autoOverwrite %}checked{% endif %}>
 			{% endblock %}
 
 			{% block overviewButtons %}
 				{% if isAjax == false %}
 					{% if paginated == false %}
 						{% block overviewButtonSaveSystemOrder %}
-							<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+							<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 						{% endblock %}
 
 						{% block overviewButtonDelete %}
@@ -74,10 +74,10 @@
 					{% block overviewButtonAdd %}
 						{% set autoOverwritePreferenceLabel %}
 							<label for="UploadAutoOverwrite"
-								data-title-active="{{ __d('media', 'upload_overwrite_existing_files_active') }}"
-								data-title-inactive="{{ __d('media', 'upload_overwrite_existing_files_inactive') }}"
-								title="{{ __d('media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
-								{{ __d('media', 'upload_overwrite_existing_files') }}
+								data-title-active="{{ __d('Media', 'upload_overwrite_existing_files_active') }}"
+								data-title-inactive="{{ __d('Media', 'upload_overwrite_existing_files_inactive') }}"
+								title="{{ __d('Media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
+								{{ __d('Media', 'upload_overwrite_existing_files') }}
 							</label>
 						{% endset %}
 
@@ -152,7 +152,7 @@
 				<div class="ButtonArea">
 					{{ block('overviewButtonAutoOverwritePreferenceInput') }}
 
-					<button class="Button Button-Success Button-UseFiles" disabled>{{ __d('media', 'use_files') }}</button>
+					<button class="Button Button-Success Button-UseFiles" disabled>{{ __d('Media', 'use_files') }}</button>
 
 					{{ block('overviewButtonSaveSystemOrder') }}
 
@@ -165,10 +165,10 @@
 							</form>
 
 							<label for="UploadAutoOverwrite" tabindex="0"
-								data-title-active="{{ __d('media', 'upload_overwrite_existing_files_active') }}"
-								data-title-inactive="{{ __d('media', 'upload_overwrite_existing_files_inactive') }}"
-								title="{{ __d('media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
-								{{ __d('media', 'upload_overwrite_existing_files') }}
+								data-title-active="{{ __d('Media', 'upload_overwrite_existing_files_active') }}"
+								data-title-inactive="{{ __d('Media', 'upload_overwrite_existing_files_inactive') }}"
+								title="{{ __d('Media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
+								{{ __d('Media', 'upload_overwrite_existing_files') }}
 							</label>
 						</div>
 					{% endif %}
@@ -254,7 +254,7 @@
 
 				{% if AuthorizationHelper.isAccessible('create') %}
 					<div id="MediaFolders-AddButton">
-						{{ HtmlHelper.link(__d('media_folders', 'create'), {controller: 'MediaFolders', action: 'add'}, {class: 'Button Button-Add OverlayForm'}) }}
+						{{ HtmlHelper.link(__d('MediaFolders', 'create'), {controller: 'MediaFolders', action: 'add'}, {class: 'Button Button-Add OverlayForm'}) }}
 					</div>
 				{% endif %}
 

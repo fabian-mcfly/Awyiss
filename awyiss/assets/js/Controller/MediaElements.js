@@ -33,7 +33,7 @@ export default class MediaElementsController {
 			}
 
 			const scope = event.target.value;
-			const entitySelect = event.target.closest('.FormInputType-ListItem').querySelector('[name$="[foreign_key]"]');
+			const entitySelect = event.target.closest('.FormInputType-ListItem').querySelector('[name$="[foreignKey]"]');
 
 			if (!entitySelect) {
 				return;

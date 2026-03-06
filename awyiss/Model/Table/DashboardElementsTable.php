@@ -137,12 +137,12 @@ class DashboardElementsTable extends Table {
 			}
 
 			$tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
-			unset($tableFields['page_role_id']);
+			unset($tableFields['pageRoleId']);
 
 			return array_all($entity->settings['fields'], fn ($field) => array_key_exists($field, $tableFields));
 		}, 'validListFields', [
 			'errorField' => 'listFields',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_list_fields'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_list_fields'),
 		]);
 
 		$rules->add(function (DashboardElement $entity): bool {
@@ -205,7 +205,7 @@ class DashboardElementsTable extends Table {
 			return true;
 		}, 'validFilterSettings', [
 			'errorField' => 'filterSettings',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_filter_settings'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_filter_settings'),
 		]);
 
 		$rules->add(function (DashboardElement $entity): bool {
@@ -242,7 +242,7 @@ class DashboardElementsTable extends Table {
 			return true;
 		}, 'validListSort', [
 			'errorField' => 'listSort',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_list_sort'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_list_sort'),
 		]);
 
 		return $rules;
@@ -279,52 +279,55 @@ class DashboardElementsTable extends Table {
 			if (
 				str_starts_with($tableName, 'attributes_') ||
 				in_array($tableName, [
-					'audit',
-					'content_template_content_areas',
-					'content_template_elements',
-					'customer_groups_customers',
-					'dashboard_elements',
-					'form_conditional_recipients',
+					AuditTable::TABLE,
+					ContentTemplateContentAreasTable::TABLE,
+					ContentTemplateElementsTable::TABLE,
+					CustomerGroupsCustomersTable::TABLE,
+					DashboardElementsTable::TABLE,
+					FormConditionalRecipientsTable::TABLE,
 					'generic_datatables',
-					'i18n',
-					'locks',
-					'page_template_content_areas',
-					'publication_data',
-					'survey_survey_answers',
-					'survey_survey_questions',
-					'user_configuration',
-					'usergroup_permissions',
-					'usergroups_users',
-					'global_content_template_elements',
+					GlobalContentTemplateElementsTable::TABLE,
+					I18nTable::TABLE,
+					LocksTable::TABLE,
+					PageTemplateContentAreasTable::TABLE,
+					PublicationDataTable::TABLE,
+					SurveySurveyAnswersTable::TABLE,
+					SurveySurveyQuestionsTable::TABLE,
+					UserConfigurationTable::TABLE,
+					UsergroupPermissionsTable::TABLE,
+					UsergroupsUsersTable::TABLE,
 				])
 			) {
 				continue;
 			}
 
-			static::$scopes[ $tableName ] = __d($tableName, 'headline_overview');
+			static::$scopes[ Inflector::camelize($tableName) ] = __d($tableName, 'headline_overview');
 		}
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		$pageRolesTable->findAllAndCache()->each(function (PageRole $pageRole): void {
 			$pageRoleName = Inflector::pluralize($pageRole->identifier);
+			$scopeName = Inflector::camelize($pageRoleName);
 
-			if (isset(static::$scopes[ $pageRoleName ]) && !str_contains(static::$scopes[ $pageRoleName ], '::')) {
+			if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
 				return;
 			}
 
-			static::$scopes[ $pageRoleName ] = $pageRole->label;
+			static::$scopes[ $scopeName ] = $pageRole->label;
 		});
 
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $table */
 		$table = FactoryLocator::get('Table')->get('Datatables');
 		$table->findAllAndCache()->each(function (Datatable $datatable): void {
-			if (isset(static::$scopes[ $datatable->identifier ]) && !str_contains(static::$scopes[ $datatable->identifier ], '::')) {
+			$scopeName = $datatable->identifier;
+
+			if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
 				return;
 			}
 
-			static::$scopes[ $datatable->identifier ] = $datatable->label;
+			static::$scopes[ $scopeName ] = $datatable->label;
 		});
 
 		Arrays::naturalSort(static::$scopes);

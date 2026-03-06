@@ -20,14 +20,6 @@ class AttributesPage extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'page_id' => 'pageId',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'pageId' => true,
 		'date' => true,

@@ -227,8 +227,8 @@ class MenuCell extends Cell {
 		}
 
 		$menuEntries = $query->find('threaded')->where([
-			'menu_id' => $menu->id,
-			'language_shortcode' => $languageShortcode,
+			'menuId' => $menu->id,
+			'languageShortcode' => $languageShortcode,
 		])->all();
 
 		$menuEntries = $menuEntries->filter(function (MenuEntry $menuEntry) {

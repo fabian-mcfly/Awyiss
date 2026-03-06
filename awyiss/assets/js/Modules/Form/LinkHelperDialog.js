@@ -57,8 +57,8 @@ export default class LinkHelperDialog {
 		this.eventHandler.add('click', event => {
 			event.preventDefault();
 
-			const controller = this.dialog.querySelector('select[name="link_helper[controller]"]').value;
-			const method = this.dialog.querySelector('select[name="link_helper[method]"]').value;
+			const controller = this.dialog.querySelector('select[name="linkHelper[controller]"]').value;
+			const method = this.dialog.querySelector('select[name="linkHelper[method]"]').value;
 
 			// Set the value of the link input
 			this.element.value = `${controller}::${method}`;
@@ -127,8 +127,8 @@ export default class LinkHelperDialog {
 	handleButtonClick(event) {
 		event.preventDefault();
 
-		const controllerSelect = this.dialog.querySelector('select[name="link_helper[controller]"]');
-		const methodSelect = this.dialog.querySelector('select[name="link_helper[method]"]');
+		const controllerSelect = this.dialog.querySelector('select[name="linkHelper[controller]"]');
+		const methodSelect = this.dialog.querySelector('select[name="linkHelper[method]"]');
 
 		// Get all optgroups and put their titles as options
 		const optgroups = this.helperSelect.querySelectorAll('optgroup');
@@ -175,7 +175,7 @@ export default class LinkHelperDialog {
 	 * @param {Event} event
 	 */
 	handleControllerSelectChange(event) {
-		const methodSelect = this.dialog.querySelector('select[name="link_helper[method]"]');
+		const methodSelect = this.dialog.querySelector('select[name="linkHelper[method]"]');
 
 		// Get the selected controller
 		const selectedController = event.target.value;

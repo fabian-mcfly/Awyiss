@@ -61,7 +61,7 @@ trait ForcedTitleTrait {
 
 		$inactive = '';
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$inactive = __d($this->_registryAlias !== 'GlobalContents' ? 'contents' : 'global_contents', 'inactive') . ' ';
+			$inactive = __d($this->getSource() !== 'GlobalContents' ? 'contents' : 'global_contents', 'inactive') . ' ';
 		}
 
 		return $inactive . ($title ?: $defaultTitle);
@@ -111,7 +111,7 @@ trait ForcedTitleTrait {
 	protected function processFormId(bool $includeHtml): ?string {
 		$form = $this->form ?? $this->getForm();
 
-		return $form ? __d('contents', 'form_id') . ': ' . ($includeHtml ? '<em>' . $form->label . '</em>' : $form->label) : null;
+		return $form ? __d('Contents', 'form_id') . ': ' . ($includeHtml ? '<em>' . $form->label . '</em>' : $form->label) : null;
 	}
 
 
@@ -122,7 +122,7 @@ trait ForcedTitleTrait {
 	protected function processSurveyId(bool $includeHtml): ?string {
 		$survey = $this->survey ?? $this->getSurvey();
 
-		return $survey ? __d('contents', 'survey_id') . ': ' . ($includeHtml ? '<em>' . $survey->label . '</em>' : $survey->label) : null;
+		return $survey ? __d('Contents', 'survey_id') . ': ' . ($includeHtml ? '<em>' . $survey->label . '</em>' : $survey->label) : null;
 	}
 
 
@@ -140,7 +140,7 @@ trait ForcedTitleTrait {
 	protected function processDuplicateOf(): ?string {
 		$content = $this->loadDuplicatedContent();
 
-		return $content ? __d('contents', 'duplicate_of') . ': ' . $content->label . ' (ID: ' . $content->id . ')' : null;
+		return $content ? __d('Contents', 'duplicate_of') . ': ' . $content->label . ' (ID: ' . $content->id . ')' : null;
 	}
 
 

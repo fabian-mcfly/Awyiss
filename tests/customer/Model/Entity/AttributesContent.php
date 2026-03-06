@@ -20,16 +20,6 @@ class AttributesContent extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'content_id' => 'contentId',
-		'free_text' => 'freeText',
-		'background_color' => 'backgroundColor',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [
 		'contentId' => true,
 		'teaser' => true,

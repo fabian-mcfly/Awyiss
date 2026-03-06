@@ -98,11 +98,11 @@ class IpCheckFormProtection implements FormProtectionInterface {
 
 		if (
 			$formEntriesTable->exists([
-				'ip_hash' => $ipHash,
-				'created_on >=' => $timeoutDate->subSeconds($timeout),
+				'ipHash' => $ipHash,
+				'createdOn >=' => $timeoutDate->subSeconds($timeout),
 			])
 		) {
-			return __d('form', 'protection_method_ip_check_error_duplicate_found');
+			return __d('Form', 'protection_method_ip_check_error_duplicate_found');
 		}
 
 		return true;

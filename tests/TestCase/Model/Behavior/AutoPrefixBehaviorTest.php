@@ -111,13 +111,13 @@ class AutoPrefixBehaviorTest extends TestCase {
 		$query = $this->table->find()->where([
 			'title' => 'Test',
 			'active' => true,
-			'system_order IN' => [1, 2, 3],
+			'systemOrder IN' => [1, 2, 3],
 		]);
 		$sql = $query->sql();
 
 		$this->assertStringContainsString('Contents.title =', $sql);
 		$this->assertStringContainsString('Contents.active =', $sql);
-		$this->assertStringContainsString('Contents.system_order IN', $sql);
+		$this->assertStringContainsString('Contents.systemOrder IN', $sql);
 	}
 
 
@@ -227,14 +227,14 @@ class AutoPrefixBehaviorTest extends TestCase {
 	 */
 	public function testBeforeFindWithComparisonOperators(): void {
 		$query = $this->table->find()->where([
-			'system_order >' => 5,
-			'system_order <=' => 10,
-			'system_order !=' => 7,
+			'systemOrder >' => 5,
+			'systemOrder <=' => 10,
+			'systemOrder !=' => 7,
 		]);
 		$sql = $query->sql();
 
-		$this->assertStringContainsString('Contents.system_order > ', $sql);
-		$this->assertStringContainsString('Contents.system_order <= ', $sql);
-		$this->assertStringContainsString('Contents.system_order != ', $sql);
+		$this->assertStringContainsString('Contents.systemOrder > ', $sql);
+		$this->assertStringContainsString('Contents.systemOrder <= ', $sql);
+		$this->assertStringContainsString('Contents.systemOrder != ', $sql);
 	}
 }

@@ -12,5 +12,5 @@ enum PermissionOptionType: string {
 	case Checkbox = 'checkbox';
 	case Radio = 'radio';
 	case Select = 'select';
-	case Multiselect = 'select_multi';
+	case Multiselect = 'selectMulti';
 }

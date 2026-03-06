@@ -74,7 +74,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 			'getCustomerGroupAccessSettings' => 'getCustomerGroupAccessSettings',
 		], $config['implementedMethods']);
 
-		$this->assertSame('pages', $config['referenceName']);
+		$this->assertSame('Pages', $config['referenceName']);
 		$this->assertSame('select', $config['strategy']);
 	}
 
@@ -88,7 +88,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 		$accessSettingsAssociation = $this->table->getAssociation('CustomerGroupAccessSettings');
 		$this->assertInstanceOf(HasOne::class, $accessSettingsAssociation);
 		$this->assertSame('CustomerGroupAccessSettings', $accessSettingsAssociation->getName());
-		$this->assertSame('foreign_key', $accessSettingsAssociation->getForeignKey());
+		$this->assertSame('foreignKey', $accessSettingsAssociation->getForeignKey());
 		$this->assertSame('customerGroupAccessSettings', $accessSettingsAssociation->getProperty());
 		$this->assertTrue($accessSettingsAssociation->getCascadeCallbacks());
 		$this->assertTrue($accessSettingsAssociation->getDependent());
@@ -97,7 +97,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 		$assignmentsAssociation = $this->table->getAssociation('CustomerGroupAssignments');
 		$this->assertInstanceOf(HasMany::class, $assignmentsAssociation);
 		$this->assertSame('CustomerGroupAssignments', $assignmentsAssociation->getName());
-		$this->assertSame('foreign_key', $assignmentsAssociation->getForeignKey());
+		$this->assertSame('foreignKey', $assignmentsAssociation->getForeignKey());
 		$this->assertSame('customerGroupAssignments', $assignmentsAssociation->getProperty());
 		$this->assertTrue($assignmentsAssociation->getCascadeCallbacks());
 		$this->assertTrue($assignmentsAssociation->getDependent());
@@ -113,7 +113,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 		$accessSetting = $this->behavior->getCustomerGroupAccessSettings(1);
 
 		$this->assertInstanceOf(CustomerGroupAccessSetting::class, $accessSetting);
-		$this->assertSame('pages', $accessSetting->scope);
+		$this->assertSame('Pages', $accessSetting->scope);
 	}
 
 
@@ -203,8 +203,8 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Updated Title',
-			'customer_group_access_settings' => [
-				'access_type' => 'specific_groups',
+			'customerGroupAccessSettings' => [
+				'accessType' => 'specificGroups',
 			],
 		];
 
@@ -213,7 +213,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 		$this->assertNotEmpty($entity->customerGroupAccessSettings);
 		$this->assertInstanceOf(CustomerGroupAccessSetting::class, $entity->customerGroupAccessSettings);
 		$this->assertSame(CustomerGroupAccessType::SpecificGroups, $entity->customerGroupAccessSettings->accessType);
-		$this->assertSame('pages', $entity->customerGroupAccessSettings->scope);
+		$this->assertSame('Pages', $entity->customerGroupAccessSettings->scope);
 	}
 
 
@@ -227,7 +227,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Updated Title',
-			'customer_group_assignments' => [
+			'customerGroupAssignments' => [
 				1,
 				2,
 			],
@@ -240,7 +240,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		foreach ($entity->customerGroupAssignments as $assignment) {
 			$this->assertInstanceOf(CustomerGroupAssignment::class, $assignment);
-			$this->assertSame('pages', $assignment->scope);
+			$this->assertSame('Pages', $assignment->scope);
 		}
 	}
 
@@ -255,9 +255,9 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		$data = [
 			'title' => 'Updated Title',
-			'customer_group_assignments' => [
-				['customer_group_id' => 1, 'id' => 1],
-				['customer_group_id' => 2],
+			'customerGroupAssignments' => [
+				['customerGroupId' => 1, 'id' => 1],
+				['customerGroupId' => 2],
 			],
 		];
 
@@ -267,7 +267,7 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		foreach ($entity->customerGroupAssignments as $assignment) {
 			$this->assertInstanceOf(CustomerGroupAssignment::class, $assignment);
-			$this->assertSame('pages', $assignment->scope);
+			$this->assertSame('Pages', $assignment->scope);
 		}
 	}
 }

@@ -104,7 +104,7 @@ class PagesTableTest extends TestCase {
 		$schema = $this->pagesTable->getSchema();
 
 		// Test that page_role_id column is configured as an enum type
-		$this->assertSame('enum-customer-model-enum-pagerole', $schema->getColumnType('page_role_id'));
+		$this->assertSame('enum-customer-model-enum-pagerole', $schema->getColumnType('pageRoleId'));
 	}
 
 
@@ -163,7 +163,7 @@ class PagesTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertEquals('shortcode', $languagesAssociation->getBindingKey());
-		$this->assertEquals('language_shortcode', $languagesAssociation->getForeignKey());
+		$this->assertEquals('languageShortcode', $languagesAssociation->getForeignKey());
 
 		// Test PageRoles association (BelongsTo)
 		$this->assertTrue($this->pagesTable->hasAssociation('PageRoles'));
@@ -178,8 +178,8 @@ class PagesTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $pageTemplatesAssociation);
 		$this->assertFalse($pageTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($pageTemplatesAssociation->getDependent());
-		$this->assertEquals(['id', 'page_role_id'], $pageTemplatesAssociation->getBindingKey());
-		$this->assertEquals(['page_template_id', 'page_role_id'], $pageTemplatesAssociation->getForeignKey());
+		$this->assertEquals(['id', 'pageRoleId'], $pageTemplatesAssociation->getBindingKey());
+		$this->assertEquals(['pageTemplateId', 'pageRoleId'], $pageTemplatesAssociation->getForeignKey());
 
 		// Test Surveys association (BelongsTo)
 		$this->assertTrue($this->pagesTable->hasAssociation('Surveys'));
@@ -208,7 +208,7 @@ class PagesTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $urlHistoryAssociation);
 		$this->assertTrue($urlHistoryAssociation->getCascadeCallbacks());
 		$this->assertTrue($urlHistoryAssociation->getDependent());
-		$this->assertEquals('foreign_key', $urlHistoryAssociation->getForeignKey());
+		$this->assertEquals('foreignKey', $urlHistoryAssociation->getForeignKey());
 
 		$this->assertTrue($this->pagesTable->hasAssociation('DuplicatingPages'));
 		$duplicatingPagesAssociation = $this->pagesTable->getAssociation('DuplicatingPages');
@@ -280,15 +280,15 @@ class PagesTableTest extends TestCase {
 
 		// Verify the specific conditions are applied
 		$sql = $query->sql();
-		$this->assertStringContainsString('active = :c5', $sql);
-		$this->assertStringContainsString('parents_active = :c6', $sql);
+		$this->assertStringContainsString('active = :c2', $sql);
+		$this->assertStringContainsString('parentsActive = :c3', $sql);
 
 		// Verify the bound values
 		$valueBinder = $query->getValueBinder();
 		$bindings = $valueBinder->bindings();
 
-		$this->assertTrue($bindings[':c5']['value']);
-		$this->assertTrue($bindings[':c6']['value']);
+		$this->assertTrue($bindings[':c2']['value']);
+		$this->assertTrue($bindings[':c3']['value']);
 	}
 
 
@@ -301,7 +301,7 @@ class PagesTableTest extends TestCase {
 		$result = $this->pagesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('pages', $result->getI18nDomain());
+		$this->assertSame('Pages', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('languageShortcode'));
@@ -1145,7 +1145,7 @@ class PagesTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
-		$result = $this->pagesTable->getPossibleFieldValues('form_id');
+		$result = $this->pagesTable->getPossibleFieldValues('formId');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1164,7 +1164,7 @@ class PagesTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesDuplicateOf(): void {
-		$result = $this->pagesTable->getPossibleFieldValues('duplicate_of');
+		$result = $this->pagesTable->getPossibleFieldValues('duplicateOf');
 
 		$this->assertIsArray($result);
 
@@ -1211,7 +1211,7 @@ class PagesTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesPageTemplateId(): void {
-		$result = $this->pagesTable->getPossibleFieldValues('page_template_id');
+		$result = $this->pagesTable->getPossibleFieldValues('pageTemplateId');
 
 		$this->assertIsArray($result);
 
@@ -1231,7 +1231,7 @@ class PagesTableTest extends TestCase {
 	public function testGetPossibleFieldValuesPageTemplateIdForDifferentPageRole(): void {
 		/** @var \Customer\Model\Table\NewsTable $newsTable */
 		$newsTable = FactoryLocator::get('Table')->get('News');
-		$result = $newsTable->getPossibleFieldValues('page_template_id');
+		$result = $newsTable->getPossibleFieldValues('pageTemplateId');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1246,7 +1246,7 @@ class PagesTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
-		$result = $this->pagesTable->getPossibleFieldValues('survey_id');
+		$result = $this->pagesTable->getPossibleFieldValues('surveyId');
 
 		$this->assertIsArray($result);
 
@@ -1270,7 +1270,7 @@ class PagesTableTest extends TestCase {
 		$config = $behavior->getConfig();
 
 		$this->assertSame('forCurrentLanguage', $config['finder']);
-		$this->assertSame('parent_id', $config['foreignKey']);
+		$this->assertSame('parentId', $config['foreignKey']);
 	}
 
 
@@ -1299,7 +1299,7 @@ class PagesTableTest extends TestCase {
 		$behavior = $this->pagesTable->getBehavior('Search');
 		$config = $behavior->getConfig();
 
-		$this->assertSame(['language_shortcode', 'page_role_id'], $config['blocklistedColumns']);
+		$this->assertSame(['languageShortcode', 'pageRoleId'], $config['blocklistedColumns']);
 	}
 
 

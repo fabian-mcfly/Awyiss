@@ -144,7 +144,7 @@ class EmailTemplatesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('email_templates::file_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('EmailTemplates::fileChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -173,7 +173,7 @@ class EmailTemplatesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('email_templates::file_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('EmailTemplates::fileChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -220,7 +220,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -266,7 +266,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -345,7 +345,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -393,7 +393,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -438,7 +438,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -480,7 +480,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 
@@ -525,7 +525,7 @@ class EmailTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'email_templates::file_changes',
+				'reference' => 'EmailTemplates::fileChanges',
 			]
 		);
 

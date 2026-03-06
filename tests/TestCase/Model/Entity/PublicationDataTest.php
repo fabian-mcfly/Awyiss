@@ -64,9 +64,9 @@ class PublicationDataTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'scope' => 'Pages',
-			'foreign_key' => 123,
+			'foreignKey' => 123,
 			'type' => PublicationDataType::Start,
-			'date_time' => $dateTime,
+			'dateTime' => $dateTime,
 		];
 
 		$entity = new PublicationData($properties);
@@ -76,25 +76,6 @@ class PublicationDataTest extends TestCase {
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals(PublicationDataType::Start, $entity->type);
 		$this->assertEquals($dateTime, $entity->dateTime);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\PublicationData::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'foreign_key' => 456,
-			'date_time' => new DateTime('2023-01-01 00:00:00'),
-		];
-
-		$entity = new PublicationData($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 

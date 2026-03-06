@@ -155,8 +155,8 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 						return null;
 					},
 					values: [
-						SORT_ASC => __d(Inflector::underscore($this->getDynamicScope()), 'sort_asc'),
-						SORT_DESC => __d(Inflector::underscore($this->getDynamicScope()), 'sort_desc'),
+						SORT_ASC => __d(Inflector::camelize($this->getDynamicScope()), 'sort_asc'),
+						SORT_DESC => __d(Inflector::camelize($this->getDynamicScope()), 'sort_desc'),
 					],
 				),
 				new ConfigOption(
@@ -181,7 +181,7 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 			if ($value) {
 				$scope = $this->getDynamicScope();
 				if (Configure::read('Awyiss.' . $scope . '.Backend.translatable')) {
-					return __d('configuration', 'error_option_when_split_into_languages_when_translatable');
+					return __d('Configuration', 'error_option_when_split_into_languages_when_translatable');
 				}
 			}
 
@@ -201,7 +201,7 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 			if ($value) {
 				$scope = $this->getDynamicScope();
 				if (Configure::read('Awyiss.' . $scope . '.Backend.splitIntoLanguages')) {
-					return __d('configuration', 'error_option_not_translatable_when_split_into_languages');
+					return __d('Configuration', 'error_option_not_translatable_when_split_into_languages');
 				}
 			}
 

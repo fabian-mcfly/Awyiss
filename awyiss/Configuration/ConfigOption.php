@@ -399,12 +399,12 @@ class ConfigOption {
 	 */
 	public function validate(mixed $value, ?string $languageShortcode = null): bool|string {
 		if ($languageShortcode !== null && $languageShortcode !== '' && !$this->isLocalizable()) {
-			return __d('configuration', 'error_option_not_localizable');
+			return __d('Configuration', 'error_option_not_localizable');
 		}
 
 		if ($value === null) {
 			if (!$this->isNullable($languageShortcode !== null)) {
-				return __d('configuration', 'error_option_not_nullable');
+				return __d('Configuration', 'error_option_not_nullable');
 			}
 
 

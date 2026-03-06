@@ -10,6 +10,8 @@ use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table\MediaFoldersTable;
+use Awyiss\Model\Table\MediaResizedImagesTable;
+use Awyiss\Model\Table\MediaTable;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
@@ -169,7 +171,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		if ($pathChanged) {
 			$this->createHistoricalPaths($originalPath);
 
-			foreach ([$mediaFoldersTable->getTable(), 'media', 'media_resized_images'] as $table) {
+			foreach ([$mediaFoldersTable->getTable(), MediaTable::TABLE, MediaResizedImagesTable::TABLE] as $table) {
 				$this->rebuildDatabasePath($table, $entity, $originalPath);
 			}
 
@@ -280,7 +282,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		$userId = $this->getIdentity()?->id;
 		$now = new DateTime('now');
 
-		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreignKey', 'status', 'createdBy', 'createdOn']);
 
 		/**
 		 * For each media that has a path that starts with the original path of the provided folder,
@@ -291,11 +293,11 @@ class MediaFoldersListener implements EventListenerInterface {
 		foreach ($records as $media) {
 			$query->values([
 				'url' => $media->path,
-				'scope' => 'media',
-				'foreign_key' => $media->id,
+				'scope' => 'Media',
+				'foreignKey' => $media->id,
 				'status' => 308,
-				'created_by' => $userId,
-				'created_on' => $now,
+				'createdBy' => $userId,
+				'createdOn' => $now,
 			]);
 		}
 
@@ -349,7 +351,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		if ($parentsActive) {
 			/**
 			 * When updating all media folders with the same path (LIKE 'oldpath/%'),
-			 * do not set the parents_active to true for media folders that
+			 * do not set the parentsActive to true for media folders that
 			 * are descendants of inactive folders.
 			 */
 			$subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalPath) {
@@ -363,7 +365,7 @@ class MediaFoldersListener implements EventListenerInterface {
 			}
 		}
 
-		$query->set('parents_active', $parentsActive);
+		$query->set('parentsActive', $parentsActive);
 
 		/**
 		 * WHERE path LIKE 'oldpath/%'
@@ -426,7 +428,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	protected function copyMediaEntities(MediaFolder $entity, MediaFolder $originalEntity, MediaFoldersTable $table): void {
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
+		$files = $table->Media->find('translations')->where(['mediaFolderId' => $originalEntity->id])->all();
 		/** @var \Awyiss\Model\Entity\Media $file */
 		foreach ($files as $file) {
 			$file->setNew(true);
@@ -466,7 +468,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		 * ```
 		 * [
 		 *	"MediaFolders.path" => "new/path/of/the/current/mediafolder"
-		 * 	"language_shortcode" => "de"
+		 * 	"languageShortcode" => "de"
 		 * 	"NOT" => [
 		 * 		"MediaFolders.id" => 1234
 		 * 	]

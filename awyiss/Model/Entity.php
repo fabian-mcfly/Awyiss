@@ -5,7 +5,6 @@ namespace Awyiss\Model;
 
 
 use Awyiss\Model\Trait\EntityAttributesTrait;
-use Awyiss\Model\Trait\EntityFieldMapTrait;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
 use Cake\I18n\DateTime;
@@ -30,7 +29,6 @@ class Entity extends BaseEntity {
 		EntityAttributesTrait::set as setOrSetAttribute;
 		EntityAttributesTrait::patch as patchOrPatchAttribute;
 	}
-	use EntityFieldMapTrait;
 	use TranslateTrait;
 
 
@@ -53,8 +51,6 @@ class Entity extends BaseEntity {
 	 * @param array $options
 	 */
 	public function __construct(array $properties = [], array $options = []) {
-		$properties = $this->mapFields($properties, true);
-
 		//Remember the original field names here.
 		$this->setOriginalField(array_keys($properties));
 
@@ -90,8 +86,6 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function &get(string $field): mixed {
-		$field = static::mapField($field);
-
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$value = &$this->getOrGetFromAttribute($field);
 
@@ -104,8 +98,6 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed {
-		$field = static::mapField($field);
-
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$value = &$this->getOrGetFromAttributeRequiredOrFail($field, $requireFieldPresence);
 
@@ -129,7 +121,7 @@ class Entity extends BaseEntity {
 			return parent::set($field, $value, $options);
 		}
 
-		return $this->setOrSetAttribute(static ::mapField($field), $value, $options);
+		return $this->setOrSetAttribute($field, $value, $options);
 	}
 
 
@@ -137,10 +129,52 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function patch(array $values, array $options = []): EntityInterface {
-		$values = static::mapFields($values, true);
-
-
 		return $this->patchOrPatchAttribute($values, $options);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function extract(?array $fields = [], bool $onlyDirty = false): array {
+		$fields = $fields ?: array_keys($this->_fields);
+
+		return parent::extract($fields, $onlyDirty);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function extractOriginal(?array $fields = []): array {
+		$fields = $fields ?: array_keys($this->_fields);
+
+		return parent::extractOriginal($fields);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param array|null $fields
+	 * @param bool $includeUnknownFields If set, returns fields that weren't part of the original entity
+	 * @return array
+	 */
+	public function extractOriginalChanged(?array $fields = [], bool $includeUnknownFields = false): array {
+		$fields = $fields ?: array_keys($this->_fields);
+		$extracted = parent::extractOriginalChanged($fields);
+
+		//Include fields that aren't part of the entity but requested.
+		if ($includeUnknownFields) {
+			foreach ($fields as $field) {
+				if (
+					!array_key_exists($field, $extracted) && !in_array($field, $this->_originalFields)
+				) {
+					$extracted[ $field ] = null;
+				}
+			}
+		}
+
+		return $extracted;
 	}
 
 
@@ -231,7 +265,7 @@ class Entity extends BaseEntity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getLabel(): string {
-		$scope = Inflector::underscore($this->getSource()) ?: 'system';
+		$scope = Inflector::camelize($this->getSource()) ?: 'System';
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$title = $this->title ?? $this->name;

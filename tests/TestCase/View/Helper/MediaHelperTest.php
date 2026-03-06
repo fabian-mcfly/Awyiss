@@ -100,8 +100,8 @@ class MediaHelperTest extends TestCase {
 	public function testElement(): void {
 		$this->view->expects($this->once())->method('element')->with('media/test_element', $this->anything())->willReturn('<div>media</div>');
 
-		$result = $this->mediaHelper->element('test_element', ['test_element' => 'mediaData'], null, [
-			'test_option' => ['key' => 'value'],
+		$result = $this->mediaHelper->element('testElement', ['testElement' => 'mediaData'], null, [
+			'testOption' => ['key' => 'value'],
 		]);
 
 		$this->assertEquals('<div>media</div>', $result);
@@ -115,7 +115,7 @@ class MediaHelperTest extends TestCase {
 	public function testElementReturnsEmptyStringForUnknownMediaAssignment(): void {
 		$this->view->expects($this->never())->method('element');
 
-		$result = $this->mediaHelper->element('another_element', ['test_element' => 'mediaData']);
+		$result = $this->mediaHelper->element('another_element', ['testElement' => 'mediaData']);
 
 		$this->assertEquals('', $result);
 	}
@@ -130,8 +130,8 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
-			'average_color' => '#ffff00',
+			'mimeType' => 'image/jpeg',
+			'averageColor' => '#ffff00',
 		]);
 
 		$resizeStrategory = ResizeStrategy::Contain;
@@ -158,8 +158,8 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
-			'average_color' => null,
+			'mimeType' => 'image/jpeg',
+			'averageColor' => null,
 		]);
 
 		$resizeStrategory = ResizeStrategy::Contain;
@@ -277,7 +277,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'document.pdf',
 			'path' => '/path/to/document.pdf',
-			'mime_type' => 'application/pdf',
+			'mimeType' => 'application/pdf',
 			'preview' => ProcessStatus::Success,
 		]);
 
@@ -306,7 +306,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
+			'mimeType' => 'audio/mpeg',
 		]);
 
 		$resizeStrategory = ResizeStrategy::Contain;
@@ -331,8 +331,8 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
-			'average_color' => '#ffff00',
+			'mimeType' => 'audio/mpeg',
+			'averageColor' => '#ffff00',
 		]);
 
 		$resizeStrategory = ResizeStrategy::Contain;
@@ -474,7 +474,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'document.pdf',
 			'path' => '/path/to/document.pdf',
-			'mime_type' => 'application/pdf',
+			'mimeType' => 'application/pdf',
 			'preview' => ProcessStatus::Success,
 		]);
 
@@ -498,7 +498,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'document.pdf',
 			'path' => '/path/to/document.pdf',
-			'mime_type' => 'application/pdf',
+			'mimeType' => 'application/pdf',
 			'preview' => ProcessStatus::Success,
 		]);
 
@@ -556,7 +556,7 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
+			'mimeType' => 'audio/mpeg',
 		]);
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
@@ -588,7 +588,7 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
-			'mime_type' => 'video/mp4',
+			'mimeType' => 'video/mp4',
 		]);
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
@@ -699,8 +699,8 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
-			'preview_path' => '/path/to/poster.jpg',
-			'mime_type' => 'video/mp4',
+			'previewPath' => '/path/to/poster.jpg',
+			'mimeType' => 'video/mp4',
 		]);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
@@ -807,7 +807,7 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
+			'mimeType' => 'audio/mpeg',
 		]);
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
@@ -954,7 +954,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
+			'mimeType' => 'image/jpeg',
 		]);
 
 		$result = $this->mediaHelper->audioTag($media, $this->mediaHelper->getMediaRenderOptions());
@@ -971,7 +971,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
+			'mimeType' => 'image/jpeg',
 		]);
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
@@ -990,7 +990,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
+			'mimeType' => 'image/jpeg',
 			'alt' => 'Test alt',
 		]);
 
@@ -1010,7 +1010,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.svg',
 			'path' => '/path/to/image.svg',
-			'mime_type' => 'image/svg+xml',
+			'mimeType' => 'image/svg+xml',
 		]);
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
@@ -1029,7 +1029,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'document.pdf',
 			'path' => '/path/to/document.pdf',
-			'mime_type' => 'application/pdf',
+			'mimeType' => 'application/pdf',
 			'preview' => ProcessStatus::Success,
 		]);
 
@@ -1049,7 +1049,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
+			'mimeType' => 'audio/mpeg',
 		]);
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
@@ -1083,7 +1083,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.jpg',
 			'path' => '/path/to/image.jpg',
-			'mime_type' => 'image/jpeg',
+			'mimeType' => 'image/jpeg',
 		]);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
@@ -1117,7 +1117,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'image.svg',
 			'path' => '/path/to/image.svg',
-			'mime_type' => 'image/svg+xml',
+			'mimeType' => 'image/svg+xml',
 		]);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
@@ -1565,7 +1565,7 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
-			'mime_type' => 'video/mp4',
+			'mimeType' => 'video/mp4',
 		]);
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
@@ -1691,7 +1691,7 @@ class MediaHelperTest extends TestCase {
 		$media = new Media([
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
-			'mime_type' => 'audio/mpeg',
+			'mimeType' => 'audio/mpeg',
 		]);
 
 		$result = $this->mediaHelper->videoTag($media, $this->mediaHelper->getMediaRenderOptions());
@@ -1712,8 +1712,8 @@ class MediaHelperTest extends TestCase {
 			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
-			'preview_path' => '/path/to/poster.jpg',
-			'mime_type' => 'video/mp4',
+			'previewPath' => '/path/to/poster.jpg',
+			'mimeType' => 'video/mp4',
 		]);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
@@ -1943,7 +1943,7 @@ class MediaHelperTest extends TestCase {
 		$media->avif = ProcessStatus::Success;
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
-		$result = $this->mediaHelper->resize($media, format: 'match_source', width: 400, height: 300, strategy: ResizeStrategy::Contain);
+		$result = $this->mediaHelper->resize($media, format: 'matchSource', width: 400, height: 300, strategy: ResizeStrategy::Contain);
 
 		$this->assertInstanceOf(MediaResizedImage::class, $result);
 		$this->assertEquals('logo-awyiss-[w400h300].jpg', $result->name);

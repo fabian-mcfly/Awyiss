@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\Form\Protection;
 
 
 use Awyiss\Form\FormOptions;
+use Awyiss\Form\Protection\FormProtectionInterface;
 use Awyiss\Form\Protection\HiddenInputFormProtection;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
@@ -90,14 +91,14 @@ class HiddenInputFormProtectionTest extends TestCase {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
 
-		$result = $this->hiddenInputFormProtection->getHtml('before');
+		$result = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertStringContainsString('<style nonce="' . $nonce . '">', $result);
-		$this->assertStringContainsString('{ position:absolute; visibility:hidden; }</style><input type="email" name="email_confirmation" value=""', $result);
+		$this->assertStringContainsString('{ position:absolute; visibility:hidden; }</style><input type="email" name="emailConfirmation" value=""', $result);
 
-		$result = $this->hiddenInputFormProtection->getHtml('before_submit');
+		$result = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertNull($result);
 
-		$result = $this->hiddenInputFormProtection->getHtml('after');
+		$result = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_AFTER);
 		$this->assertNull($result);
 	}
 
@@ -108,9 +109,9 @@ class HiddenInputFormProtectionTest extends TestCase {
 	 */
 	public function testGetHtmlWithConflictingFormElements(): void {
 		$conflictingFormElements = [
-			'email_confirmation' => new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'email_confirmation']),
-			'mail_confirmation' => new FormElement(['id' => 2, 'type' => 'text', 'identifier' => 'mail_confirmation']),
-			'e_mail_confirmation' => new FormElement(['id' => 3, 'type' => 'text', 'identifier' => 'e_mail_confirmation']),
+			'emailConfirmation' => new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'emailConfirmation']),
+			'mailConfirmation' => new FormElement(['id' => 2, 'type' => 'text', 'identifier' => 'mailConfirmation']),
+			'eMailConfirmation' => new FormElement(['id' => 3, 'type' => 'text', 'identifier' => 'eMailConfirmation']),
 		];
 
 		$this->hiddenInputFormProtection->initialize(
@@ -120,7 +121,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$html = $this->hiddenInputFormProtection->getHtml('before');
+		$html = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertStringContainsString('name="mail"', $html);
 	}
 
@@ -131,11 +132,10 @@ class HiddenInputFormProtectionTest extends TestCase {
 	 */
 	public function testGetHtmlWithAllAlternativesConflicting(): void {
 		$conflictingFormElements = [
-			'email_confirmation' => new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'email_confirmation']),
-			'mail_confirmation' => new FormElement(['id' => 2, 'type' => 'text', 'identifier' => 'mail_confirmation']),
-			'e_mail_confirmation' => new FormElement(['id' => 3, 'type' => 'text', 'identifier' => 'e_mail_confirmation']),
+			'emailConfirmation' => new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'emailConfirmation']),
+			'mailConfirmation' => new FormElement(['id' => 2, 'type' => 'text', 'identifier' => 'mailConfirmation']),
+			'eMailConfirmation' => new FormElement(['id' => 3, 'type' => 'text', 'identifier' => 'eMailConfirmation']),
 			'mail' => new FormElement(['id' => 4, 'type' => 'text', 'identifier' => 'mail']),
-			'e_mail' => new FormElement(['id' => 5, 'type' => 'text', 'identifier' => 'e_mail']),
 		];
 
 		$this->hiddenInputFormProtection->initialize(
@@ -145,8 +145,26 @@ class HiddenInputFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$html = $this->hiddenInputFormProtection->getHtml('before');
-		$this->assertStringContainsString('name="emailConfirmation"', $html);
+		$html = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
+		$this->assertStringContainsString('name="eMail"', $html);
+
+		$conflictingFormElements = [
+			'emailConfirmation' => new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'emailConfirmation']),
+			'mailConfirmation' => new FormElement(['id' => 2, 'type' => 'text', 'identifier' => 'mailConfirmation']),
+			'eMailConfirmation' => new FormElement(['id' => 3, 'type' => 'text', 'identifier' => 'eMailConfirmation']),
+			'mail' => new FormElement(['id' => 4, 'type' => 'text', 'identifier' => 'mail']),
+			'eMail' => new FormElement(['id' => 5, 'type' => 'text', 'identifier' => 'eMail']),
+		];
+
+		$this->hiddenInputFormProtection->initialize(
+			$this->form,
+			$conflictingFormElements,
+			$this->formOptions,
+			$this->view
+		);
+
+		$html = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
+		$this->assertStringContainsString('name="_email"', $html);
 	}
 
 
@@ -165,8 +183,8 @@ class HiddenInputFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$html = $this->hiddenInputFormProtection->getHtml('before');
-		$this->assertStringContainsString('name="email_confirmation"', $html);
+		$html = $this->hiddenInputFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
+		$this->assertStringContainsString('name="emailConfirmation"', $html);
 	}
 
 
@@ -185,7 +203,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 		$data = [
 			'name' => 'Test User',
 			'email' => 'test@example.com',
-			'email_confirmation' => '',
+			'emailConfirmation' => '',
 		];
 
 		$result = $this->hiddenInputFormProtection->validateData($data);
@@ -230,12 +248,12 @@ class HiddenInputFormProtectionTest extends TestCase {
 		$data = [
 			'name' => 'Test User',
 			'email' => 'test@example.com',
-			'email_confirmation' => 'spam@bot.com',
+			'emailConfirmation' => 'spam@bot.com',
 		];
 
 		$result = $this->hiddenInputFormProtection->validateData($data);
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_hidden_input_error_field_empty'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_hidden_input_error_field_empty'), $result);
 	}
 
 
@@ -245,7 +263,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 	 */
 	public function testValidateDataWithCustomFieldName(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'custom_field']);
+		$mockFormOptions->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'customField']);
 
 		$this->hiddenInputFormProtection->initialize(
 			$this->form,
@@ -257,13 +275,13 @@ class HiddenInputFormProtectionTest extends TestCase {
 		$data = [
 			'name' => 'Test User',
 			'email' => 'test@example.com',
-			'custom_field' => 'filled',
+			'customField' => 'filled',
 		];
 
 		$result = $this->hiddenInputFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_hidden_input_error_field_empty'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_hidden_input_error_field_empty'), $result);
 	}
 
 
@@ -282,12 +300,12 @@ class HiddenInputFormProtectionTest extends TestCase {
 		$data = [
 			'name' => 'Test User',
 			'email' => 'test@example.com',
-			'email_confirmation' => '   ',
+			'emailConfirmation' => '   ',
 		];
 
 		$result = $this->hiddenInputFormProtection->validateData($data);
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_hidden_input_error_field_empty'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_hidden_input_error_field_empty'), $result);
 	}
 
 
@@ -323,7 +341,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 		);
 
 		$formEntry = new FormEntry([
-			'form_id' => $this->form->id,
+			'formId' => $this->form->id,
 			'data' => json_encode(['test' => 'data']),
 		]);
 

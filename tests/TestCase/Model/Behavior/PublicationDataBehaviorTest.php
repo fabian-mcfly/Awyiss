@@ -48,7 +48,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'start' => [
-							'date_time' => new DateTime('2023-01-01 00:00:00'),
+							'dateTime' => new DateTime('2023-01-01 00:00:00'),
 						],
 					],
 				]),
@@ -57,7 +57,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'end' => [
-							'date_time' => new DateTime('2024-12-31 23:59:59'),
+							'dateTime' => new DateTime('2024-12-31 23:59:59'),
 						],
 					],
 				]),
@@ -66,10 +66,10 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'start' => [
-							'date_time' => new DateTime()->subHours(1),
+							'dateTime' => new DateTime()->subHours(1),
 						],
 						'end' => [
-							'date_time' => new DateTime()->addHours(1),
+							'dateTime' => new DateTime()->addHours(1),
 						],
 					],
 				]),
@@ -78,7 +78,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'start' => [
-							'date_time' => new DateTime()->addHours(1),
+							'dateTime' => new DateTime()->addHours(1),
 						],
 					],
 				]),
@@ -87,7 +87,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'end' => [
-							'date_time' => new DateTime()->subHours(1),
+							'dateTime' => new DateTime()->subHours(1),
 						],
 					],
 				]),
@@ -157,7 +157,7 @@ class PublicationDataBehaviorTest extends TestCase {
 			'publishedEndingBefore' => 'findPublishedEndingBefore',
 			'publishedEndingAfter' => 'findPublishedEndingAfter',
 		], $config['implementedFinders']);
-		$this->assertSame('employers', $config['referenceName']);
+		$this->assertSame('Employers', $config['referenceName']);
 		$this->assertSame('subquery', $config['strategy']);
 		$this->assertNotNull($config['tableLocator']);
 

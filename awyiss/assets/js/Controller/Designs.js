@@ -56,14 +56,14 @@ export default class DesignsController {
 		formData.forEach((value, key) => {
 			if (
 				key.includes('[') ||
-				['save_as_copy', 'reload_form'].includes(key) ||
-				key.endsWith('_unit')
+				['saveAsCopy', 'reloadForm'].includes(key) ||
+				key.endsWith('Unit')
 			) {
 				return;
 			}
 
-			// If a key exists with the current name plus '_unit', add the unit to the value
-			const unitKey = key + '_unit';
+			// If a key exists with the current name plus 'Unit', add the unit to the value
+			const unitKey = key + 'Unit';
 			if (formData.has(unitKey)) {
 				const unit = formData.get(unitKey);
 				if (unit) {
@@ -74,7 +74,7 @@ export default class DesignsController {
 			// Transform the key to camelBack case
 			const property = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 
-			if (key.startsWith('font_name_')) {
+			if (key.startsWith('fontName')) {
 				if (!allowGoogleFonts) {
 					return;
 				}
@@ -97,14 +97,14 @@ export default class DesignsController {
 
 			previewDoc.documentElement.style.setProperty(`--${property}`, value);
 
-			if (key.startsWith('font_name_')) {
-				let fontCategory = key.replace('font_name_', '');
+			if (key.startsWith('fontName')) {
+				let fontCategory = key.replace('fontName', '');
 				fontCategory = fontCategory.charAt(0).toUpperCase() + fontCategory.slice(1);
 				fontCategory = fontCategory.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 
 				const property = `fontStack${fontCategory}`;
 
-				let fallbackKey = key.replace('font_name_', 'font_stack_fallback_');
+				let fallbackKey = key.replace('fontName', 'fontStackFallback');
 				if (formData.has(fallbackKey) && formData.get(fallbackKey)) {
 					value += `, ${formData.get(fallbackKey)}`;
 				}
@@ -159,7 +159,7 @@ export default class DesignsController {
 
 			const webfont = webfonts?.[optgroup?.label]?.[selectedOption?.value] || null;
 
-			const fontVariantInputs = fontInput.querySelectorAll(`input[name="font_variants[${name}][]"]`);
+			const fontVariantInputs = fontInput.querySelectorAll(`input[name="fontVariants[${name}][]"]`);
 			fontVariantInputs.forEach((fontVariantInput) => {
 				let value = fontVariantInput.value + '';
 
@@ -200,7 +200,7 @@ export default class DesignsController {
 			return;
 		}
 
-		const unitSelect = formInput.querySelector(`select[name="${name}_unit"]`);
+		const unitSelect = formInput.querySelector(`select[name="${name}Unit"]`);
 
 		this.eventHandler.add('input', () => {
 			input.value = rangeInput.value;

@@ -40,23 +40,23 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
-		if (empty($data['content_template_elements'])) {
+		if (empty($data['contentTemplateElements'])) {
 			return;
 		}
 
-		$elements = $data['content_template_elements'];
+		$elements = $data['contentTemplateElements'];
 		$hasTitle = Hash::check($elements, '{n}[identifier=title]');
 		$hasSubtitle = Hash::check($elements, '{n}[identifier=subtitle]');
 
 		/**
-		 * Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
+		 * Filter out the titleTag and subtitleTag elements when the title and subtitle are not present
 		 */
-		$data['content_template_elements'] = array_filter($elements, function ($element) use ($hasTitle, $hasSubtitle) {
-			if ($element['identifier'] == 'title_tag' && !$hasTitle) {
+		$data['contentTemplateElements'] = array_filter($elements, function ($element) use ($hasTitle, $hasSubtitle) {
+			if ($element['identifier'] == 'titleTag' && !$hasTitle) {
 				return false;
 			}
 
-			if ($element['identifier'] == 'subtitle_tag' && !$hasSubtitle) {
+			if ($element['identifier'] == 'subtitleTag' && !$hasSubtitle) {
 				return false;
 			}
 
@@ -67,7 +67,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 
 	/**
 	 * If the filename of a content templates has changed,
-	 * check the QueuedJobs table for jobs with the identifier 'content_templates::file_changes'.
+	 * check the QueuedJobs table for jobs with the identifier 'ContentTemplates::fileChanges'.
 	 *
 	 * If such an active job exists, stop the save event and return an error.
 	 *
@@ -82,9 +82,9 @@ class ContentTemplatesListener implements EventListenerInterface {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-			if ($queuedJobsTable->isQueued('content_templates::file_changes')) {
+			if ($queuedJobsTable->isQueued('ContentTemplates::fileChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('content_templates', 'file_changes_in_progress'));
+				$entity->setError('_general', __d('ContentTemplates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -147,7 +147,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]);
 		}
 	}
@@ -187,7 +187,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'content_templates::file_changes',
+				'reference' => 'ContentTemplates::fileChanges',
 			]);
 		}
 	}

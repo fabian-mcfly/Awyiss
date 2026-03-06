@@ -148,7 +148,7 @@ class SystemController extends Controller {
 		}
 
 		if (!$runningJob) {
-			$reference = 'system::clear_cache';
+			$reference = 'System::clearCache';
 
 			$runningJob = $queuedJobsTable->find()->where([
 				'reference' => $reference,

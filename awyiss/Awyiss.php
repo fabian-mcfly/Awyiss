@@ -53,7 +53,7 @@ class Awyiss extends BaseApplication {
 	/**
 	 * The version of Awyiss
 	 */
-	final public const string VERSION = '0.1.0';
+	final public const string VERSION = '0.2.0';
 	/**
 	 * The name of the version
 	 */
@@ -124,11 +124,11 @@ class Awyiss extends BaseApplication {
 		}
 
 
-		EventListenersProvider::loadListener('general_events', 'Global');
+		EventListenersProvider::loadListener('generalEvents', 'Global');
 
 
 		if (PHP_SAPI === 'cli') {
-			EventListenersProvider::loadListener('general_events', 'Bake');
+			EventListenersProvider::loadListener('generalEvents', 'Bake');
 
 			FactoryLocator::add('Table', new TableLocator()->allowFallbackClass(true)->setFallbackClassName(Table::class));
 		}
@@ -411,6 +411,29 @@ class Awyiss extends BaseApplication {
 		$config = Configure::read('Awyiss', []);
 		$config = Hash::merge($config, $userConfig);
 
+
+		// Make sure only unique values are written to the config
+		$uniqueConfig = function ($data) use (&$uniqueConfig) {
+			if (!is_array($data)) {
+				return $data;
+			}
+
+			// Check if array contains only scalar values
+			$hasOnlyScalars = array_all($data, function (mixed $value): bool {
+				return is_scalar($value);
+			});
+
+			// If array contains only scalars, apply array_unique
+			if ($hasOnlyScalars) {
+				return array_unique($data);
+			}
+
+			// Otherwise, recurse into nested arrays
+			return array_map($uniqueConfig, $data);
+		};
+
+		$config = $uniqueConfig($config);
+
 		Configure::write('Awyiss', $config);
 	}
 
@@ -427,9 +450,9 @@ class Awyiss extends BaseApplication {
 		$query = $configurationTable->find()->enableHydration(false);
 		$query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
 			return $exp->or([
-				['language_shortcode IS' => null],
-				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
-				$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $frontendLanguage]]),
+				['languageShortcode IS' => null],
+				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['languageShortcode' => $backendLanguage]]),
+				$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['languageShortcode' => $frontendLanguage]]),
 			]);
 		});
 
@@ -437,8 +460,8 @@ class Awyiss extends BaseApplication {
 			'scope' => 'ASC',
 			'realm' => 'ASC',
 			'identifier' => 'ASC',
-			'language_shortcode IS null' => 'ASC',
-			'language_shortcode' => 'ASC',
+			'languageShortcode IS null' => 'ASC',
+			'languageShortcode' => 'ASC',
 		]);
 
 		$config = [];
@@ -460,7 +483,7 @@ class Awyiss extends BaseApplication {
 				$item['realm'],
 				implode('.', $item['identifier']),
 				$item['value'],
-				$item['language_shortcode']
+				$item['languageShortcode']
 			);
 
 			if (!isset($config[ $path ])) {

@@ -31,18 +31,6 @@ class GlobalContentTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'file_name' => 'fileName',
-		'global_content_template_elements' => 'globalContentTemplateElements',
-		'in_content_row' => 'inContentRow',
-		'system_order' => 'systemOrder',
-		'used_for_global_contents' => 'usedForGlobalContents',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'fileName' => true,

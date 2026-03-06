@@ -178,9 +178,9 @@ class FormsController extends Controller {
 		$requestData = $this->formatCcBcc($requestData, 'bcc');
 		$requestData = $this->formatConditionalRecipients($requestData);
 
-		if (isset($requestData['form_template'])) {
+		if (isset($requestData['formTemplate'])) {
 			$form->setAccess('formElements', true);
-			$requestData = $this->buildElementsFromTemplate($requestData['form_template'], $requestData);
+			$requestData = $this->buildElementsFromTemplate($requestData['formTemplate'], $requestData);
 			$associated['FormElements'] = [
 				'accessibleFields' => ['childFormElements' => true],
 				'associated' => [
@@ -194,11 +194,11 @@ class FormsController extends Controller {
 
 		$this->Forms->patchEntity($form, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Forms->save($form, ['asCopy' => $saveAsCopy])) {
 				/** @noinspection DuplicatedCode */
@@ -206,7 +206,7 @@ class FormsController extends Controller {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($form),
@@ -267,24 +267,24 @@ class FormsController extends Controller {
 	 * @return array|null
 	 */
 	protected function formatConditionalRecipients(array $data): ?array {
-		if (!isset($data['form_conditional_recipients']) || !is_array($data['form_conditional_recipients'])) {
+		if (!isset($data['conditionalRecipients']) || !is_array($data['conditionalRecipients'])) {
 			return $data;
 		}
 
 		$systemOrder = 1;
-		foreach ($data['form_conditional_recipients'] as $key => &$conditionalRecipient) {
+		foreach ($data['conditionalRecipients'] as $key => &$conditionalRecipient) {
 			if (empty($conditionalRecipient['type'])) {
-				unset($data['form_conditional_recipients'][ $key ]);
+				unset($data['conditionalRecipients'][ $key ]);
 				continue;
 			}
 
-			$conditionalRecipient['system_order'] = $systemOrder;
+			$conditionalRecipient['systemOrder'] = $systemOrder;
 			$systemOrder++;
 		}
 		unset($conditionalRecipient);
 
 		// Update the request data
-		$request = $this->request->withData('form_conditional_recipients', $data['form_conditional_recipients']);
+		$request = $this->request->withData('conditionalRecipients', $data['conditionalRecipients']);
 		$this->setRequest($request);
 
 		return $data;
@@ -301,8 +301,8 @@ class FormsController extends Controller {
 		$emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
 
 		$formConditionalRecipientTypes = [
-			'element_identifier',
-			'current_page',
+			'elementIdentifier',
+			'currentPage',
 		];
 		$formConditionalRecipientOperators = ComparisonOperator::cases();
 
@@ -312,7 +312,7 @@ class FormsController extends Controller {
 			$form->formElements = [];
 
 			foreach ($formElements as $formElement) {
-				if (!in_array($formElement->type, ['fieldset', 'hidden', 'free_text', 'submit'])) {
+				if (!in_array($formElement->type, ['fieldset', 'hidden', 'freeText', 'submit'])) {
 					$form->formElements[] = $formElement;
 				}
 			}
@@ -320,14 +320,14 @@ class FormsController extends Controller {
 
 		$pageProperties = $this->fetchTable('Pages')->getSchema()->columns();
 		$pageProperties = array_combine($pageProperties, $pageProperties);
-		$pageProperties = array_diff($pageProperties, ['meta_title', 'meta_description', 'robots_follow', 'robots_index', 'deleted', 'created_by', 'created_on', 'changed_by', 'changed_on', 'deleted_by', 'deleted_on']);
+		$pageProperties = array_diff($pageProperties, ['metaTitle', 'metaDescription', 'robotsFollow', 'robotsIndex', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn']);
 		foreach ($pageProperties as $value) {
-			$pageProperties[ $value ] = __d('pages', $value) . ' (' . $value . ')';
+			$pageProperties[ $value ] = __d('Pages', $value) . ' (' . $value . ')';
 		}
 
 		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
 		$pageRoles = $this->fetchTable('PageRoles')->find()->all()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
+			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
 		})->toArray();
 
 		$attributes = $this->fetchTable('Attributes')->find()->where(['scope IN' => array_keys($pageRoles)])->toArray();
@@ -371,7 +371,7 @@ class FormsController extends Controller {
 		$formElements = $class::getElements(LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND));
 
 		return array_merge($data, [
-			'form_elements' => $formElements,
+			'formElements' => $formElements,
 		]);
 	}
 }

@@ -111,7 +111,7 @@ class FrontendController extends AppController {
 			}
 
 			$children = $query->find('mediaAssignments', useMediaEntity: true)
-				->where(['parent_id' => $page->id])
+				->where(['parentId' => $page->id])
 				->all()
 				->toArray();
 
@@ -175,10 +175,10 @@ class FrontendController extends AppController {
 		$newerNews = $newerNewsQuery
 			->find('mediaAssignments', useMediaEntity: true)
 			->where([
-				'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
-				'system_order <' => $page->systemOrder,
+				'parentId' . (!$page->parentId ? ' IS' : '') => $page->parentId,
+				'systemOrder <' => $page->systemOrder,
 			])
-			->orderBy(['system_order' => 'DESC'])
+			->orderBy(['systemOrder' => 'DESC'])
 			->limit(1)
 			->first();
 
@@ -204,10 +204,10 @@ class FrontendController extends AppController {
 		$olderNews = $olderNewsQuery
 			->find('mediaAssignments', useMediaEntity: true)
 			->where([
-				'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
-				'system_order >' => $page->systemOrder,
+				'parentId' . (!$page->parentId ? ' IS' : '') => $page->parentId,
+				'systemOrder >' => $page->systemOrder,
 			])
-			->orderBy(['system_order' => 'ASC'])
+			->orderBy(['systemOrder' => 'ASC'])
 			->limit(1)
 			->first();
 
@@ -312,7 +312,7 @@ class FrontendController extends AppController {
 				],
 			],
 			'PageTemplates' => [
-				'fields' => ['id', 'file_name'],
+				'fields' => ['id', 'fileName'],
 				'finder' => [
 					$languageShortcode ? 'withDeleted' : 'all' => [
 						'translate' => ['skip' => true],
@@ -322,7 +322,7 @@ class FrontendController extends AppController {
 		]);
 
 		if ($this->previewMode) {
-			// Order all by deleted, system_order
+			// Order all by deleted, systemOrder
 			$query->orderBy([
 				'Pages.deleted' => 'ASC',
 			]);
@@ -338,27 +338,27 @@ class FrontendController extends AppController {
 				]);
 			}
 
-			// Order all by `parents_active`, `active`
+			// Order all by `parentsActive`, `active`
 			$query->orderBy([
-				'Pages.parents_active' => 'DESC',
+				'Pages.parentsActive' => 'DESC',
 				'Pages.active' => 'DESC',
 			]);
 		}
 
 		$query->orderBy([
 			'PageRoles.active' => 'DESC',
-			'PageRoles.system_order' => 'ASC',
+			'PageRoles.systemOrder' => 'ASC',
 		]);
 
 		if ($slug) {
 			$query->where(['slug' => $slug]);
 
 			if ($languageShortcode) {
-				$query->andWhere(['language_shortcode' => $languageShortcode]);
+				$query->andWhere(['languageShortcode' => $languageShortcode]);
 			}
 			else {
 				$query->orderBy([
-					'Languages.system_order' => 'ASC',
+					'Languages.systemOrder' => 'ASC',
 					'Languages.deleted' => 'ASC',
 				]);
 
@@ -372,10 +372,10 @@ class FrontendController extends AppController {
 		else {
 			$languageShortcode ??= LocaleMiddleware::getLanguage()->shortcode;
 
-			$query->where(['language_shortcode' => $languageShortcode]);
+			$query->where(['languageShortcode' => $languageShortcode]);
 
-			// Order by parent_id first
-			$query->orderBy(['Pages.parent_id' => 'ASC']);
+			// Order by parentId first
+			$query->orderBy(['Pages.parentId' => 'ASC']);
 		}
 
 		$query->limit(1);
@@ -391,7 +391,7 @@ class FrontendController extends AppController {
 			// Load the duplicated Page into the entity
 			$pagesTable->loadInto($page, [
 				'DuplicateOfPage' => [
-					'fields' => ['id', 'language_shortcode', 'slug'],
+					'fields' => ['id', 'languageShortcode', 'slug'],
 					'finder' => [
 						$languageShortcode ? 'withDeleted' : 'all' => [
 							'translate' => ['skip' => true],
@@ -836,7 +836,7 @@ class FrontendController extends AppController {
 			});
 		}
 
-		$query->orderByDesc('UrlHistory.created_on');
+		$query->orderByDesc('UrlHistory.createdOn');
 
 		/** @var \Awyiss\Model\Entity\UrlHistory $record */
 		$record = $query->first();
@@ -918,7 +918,7 @@ class FrontendController extends AppController {
 		// Only contain the DuplicateOf relation when the page is a duplicate
 		if ($page->duplicateOf) {
 			$contain['DuplicateOf' . $page->pageRoleId->name ] = [
-				'fields' => ['id', 'language_shortcode', 'slug'],
+				'fields' => ['id', 'languageShortcode', 'slug'],
 				'finder' => [
 					'withDeleted' => [
 						'translate' => ['skip' => true],
@@ -957,7 +957,7 @@ class FrontendController extends AppController {
 			return [];
 		}
 
-		if ($this->getRequest()->getData('awyiss_design_preview') === 'cancel') {
+		if ($this->getRequest()->getData('awyissDesignPreview') === 'cancel') {
 			$this->getRequest()->getSession()->delete('designPreviewIdentifier');
 
 			throw new RedirectException(Router::url(['_name' => $this->getRequest()->getParam('_name')]));
@@ -966,7 +966,7 @@ class FrontendController extends AppController {
 		$designTable = $this->fetchTable('Designs');
 		$design = $designTable->find('all')->where([
 			'identifier' => $designPreviewIdentifier,
-			'in_use' => false,
+			'inUse' => false,
 		])->first();
 
 		if (!$design) {
@@ -1056,9 +1056,9 @@ class FrontendController extends AppController {
 			'frontendPreviewConfig' => [
 				'enabled' => $session->read('previewMode.enabled', false),
 				'i18n' => [
-					'disable' => __d('system', 'preview_mode_disable'),
-					'label' => __d('system', 'preview_mode_label'),
-					'markInactiveElements' => __d('system', 'preview_mode_mark_inactive_elements'),
+					'disable' => __d('System', 'preview_mode_disable'),
+					'label' => __d('System', 'preview_mode_label'),
+					'markInactiveElements' => __d('System', 'preview_mode_mark_inactive_elements'),
 				],
 				'markInactiveElements' => $session->read('previewMode.markInactiveElements', false),
 				'settingsUrl' => Router::url([
@@ -1117,7 +1117,7 @@ class FrontendController extends AppController {
 
 		$query->where([
 			'slug IN' => $slugs,
-			'language_shortcode' => $page->languageShortcode,
+			'languageShortcode' => $page->languageShortcode,
 		]);
 
 		$parents = $query->all();

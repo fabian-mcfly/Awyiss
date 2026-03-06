@@ -20,14 +20,6 @@ class AttributesNews extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'page_id' => 'pageId',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [
 		'pageId' => true,
 		'date' => true,

@@ -110,7 +110,7 @@ class AwyissTest extends TestCase {
 			'Awyiss.News.Backend.somethingTranslatable' => 'deutsch',
 			'Awyiss.News.Frontend.somethingTranslatableForFrontend' => 'english',
 			'Awyiss.Newscategories.Backend.categories.allowAggregation' => true,
-			'Awyiss.ContentTemplates.Backend.overview.displayedFields' => ['file_name', 'created_by', 'created_on'],
+			'Awyiss.ContentTemplates.Backend.overview.displayedFields' => ['fileName', 'createdBy', 'createdOn'],
 		];
 
 		$result = Awyiss::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
@@ -127,7 +127,7 @@ class AwyissTest extends TestCase {
 			'Awyiss.News.Backend.somethingTranslatable' => 'english',
 			'Awyiss.News.Frontend.somethingTranslatableForFrontend' => 'deutsch',
 			'Awyiss.Newscategories.Backend.categories.allowAggregation' => true,
-			'Awyiss.ContentTemplates.Backend.overview.displayedFields' => ['file_name', 'created_by', 'created_on'],
+			'Awyiss.ContentTemplates.Backend.overview.displayedFields' => ['fileName', 'createdBy', 'createdOn'],
 		];
 
 		$result = Awyiss::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
@@ -149,7 +149,7 @@ class AwyissTest extends TestCase {
 		$expectedConfig = [
 			'Awyiss.Pages.Backend.publicationData.enabled' => true,
 			'Awyiss.Pages.Backend.sampleEntry' => true,
-			'Awyiss.Attributes.Backend.overview.displayedFields' => ['identifier', 'input_type', 'default_value'],
+			'Awyiss.Attributes.Backend.overview.displayedFields' => ['identifier', 'inputType', 'defaultValue'],
 		];
 
 		foreach ($expectedConfig as $key => $value) {

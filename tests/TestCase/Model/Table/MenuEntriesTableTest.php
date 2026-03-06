@@ -78,7 +78,7 @@ class MenuEntriesTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertEquals('shortcode', $languagesAssociation->getBindingKey());
-		$this->assertEquals('language_shortcode', $languagesAssociation->getForeignKey());
+		$this->assertEquals('languageShortcode', $languagesAssociation->getForeignKey());
 
 		// Check the condition for Languages association
 		$conditions = $languagesAssociation->getConditions();
@@ -152,7 +152,7 @@ class MenuEntriesTableTest extends TestCase {
 		$result = $this->menuEntriesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('menu_entries', $result->getI18nDomain());
+		$this->assertSame('MenuEntries', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('menuId'));
@@ -519,7 +519,7 @@ class MenuEntriesTableTest extends TestCase {
 
 		$this->assertfalse($config['allowAggregation']);
 		$this->assertfalse($config['allowUnassigned']);
-		$this->assertSame('menu_id', $config['foreignKey']);
+		$this->assertSame('menuId', $config['foreignKey']);
 		$this->assertSame('menu', $config['identifier']);
 	}
 

@@ -52,7 +52,7 @@ class MediaFoldersController extends Controller {
 			LocaleMiddleware::getLanguage()->shortcode => LocaleMiddleware::getLanguage()->title,
 		];
 
-		$this->selectedLanguageSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.language';
+		$this->selectedLanguageSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::variable($this->getName()) . '.language';
 
 		if ($this->request->getParam('action') !== 'overview') {
 			return;
@@ -80,7 +80,7 @@ class MediaFoldersController extends Controller {
 			$this->redirect(['action' => 'overview']);
 		}
 
-		$this->setOverviewWhere('language_shortcode', $language);
+		$this->setOverviewWhere('languageShortcode', $language);
 	}
 
 
@@ -92,11 +92,11 @@ class MediaFoldersController extends Controller {
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$query = $this->MediaFolders->find('forCurrentLanguage')->where(['hidden' => false]);
 
-		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
+		if ($this->getOverviewWhere('languageShortcode') !== 'all') {
 			$overviewWhere = $this->getOverviewWhere();
-			if (($overviewWhere['language_shortcode'] ?? null) === 'global') {
-				$overviewWhere['language_shortcode IS'] = null;
-				unset($overviewWhere['language_shortcode']);
+			if (($overviewWhere['languageShortcode'] ?? null) === 'global') {
+				$overviewWhere['languageShortcode IS'] = null;
+				unset($overviewWhere['languageShortcode']);
 			}
 
 			$query->where($overviewWhere);
@@ -123,7 +123,7 @@ class MediaFoldersController extends Controller {
 			$mediaFolders = $this->paginate($query);
 		}
 		else {
-			$query->orderBy('language_shortcode');
+			$query->orderBy('languageShortcode');
 
 			$mediaFolders = $query->find('threaded')->all()->groupBy(function (MediaFolder $mediaFolder) {
 				return $mediaFolder->languageShortcode ?? '_global';
@@ -133,7 +133,7 @@ class MediaFoldersController extends Controller {
 		$this->set([
 			'mediaFolders' => $mediaFolders,
 			'languages' => $this->languages,
-			'selectedLanguage' => $this->getOverviewWhere('language_shortcode'),
+			'selectedLanguage' => $this->getOverviewWhere('languageShortcode'),
 			'paginated' => $paginated,
 			'attributes' => $this->MediaFolders->getAttributes(),
 		]);
@@ -270,11 +270,11 @@ class MediaFoldersController extends Controller {
 
 		$this->MediaFolders->patchEntity($mediaFolder, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->MediaFolders->save($mediaFolder, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -287,7 +287,7 @@ class MediaFoldersController extends Controller {
 					$session->write($this->selectedLanguageSessionIdentifier, $languageShortcode);
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'lang' => $mediaFolder->languageShortcode,
@@ -374,7 +374,7 @@ class MediaFoldersController extends Controller {
 		$mediaFolderIds = [$mediaFolder->id, ...array_column($children->toArray(), 'id')];
 
 		$mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
-			'media_folder_id IN' => $mediaFolderIds,
+			'mediaFolderId IN' => $mediaFolderIds,
 		])->count();
 
 		if ($mediaFolderAssignments) {
@@ -397,7 +397,7 @@ class MediaFoldersController extends Controller {
 
 		// Check if any of the files inside the media folders are used
 		$files = $this->MediaFolders->Media->find()->where([
-			'media_folder_id IN' => $mediaFolderIds,
+			'mediaFolderId IN' => $mediaFolderIds,
 		])->contain(['MediaAssignments'])->matching('MediaAssignments')->count();
 
 		if (!$this->request->is('ajax')) {
@@ -449,8 +449,8 @@ class MediaFoldersController extends Controller {
 			}
 
 			return [
-				'language_shortcode' => $languageShortcodeCase,
-				'system_order' => $systemOrderCase,
+				'languageShortcode' => $languageShortcodeCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),
@@ -507,8 +507,8 @@ class MediaFoldersController extends Controller {
 
 		$request = $this->getRequest();
 		//When the field is part of the request data, overwrite it since it might be outdated
-		if ($request->getData('parent_id') !== null) {
-			$request = $request->withData('parent_id', $mediaFolder->parentId);
+		if ($request->getData('parentId') !== null) {
+			$request = $request->withData('parentId', $mediaFolder->parentId);
 			$this->setRequest($request);
 		}
 	}

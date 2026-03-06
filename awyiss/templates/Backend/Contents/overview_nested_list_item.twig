@@ -25,11 +25,11 @@
 {% endblock %}
 
 {% block nestedListItemDataDisplayedFieldDefaultValue %}
-	{% if field == 'content_template_id' %}
+	{% if field == 'contentTemplateId' %}
 		{{ entity.contentTemplate.label }}
-	{% elseif field == 'column_width' %}
+	{% elseif field == 'columnWidth' %}
 		{{ entity.column.width.label }}
-	{% elseif field == 'column_indent' %}
+	{% elseif field == 'columnIndent' %}
 		{{ entity.column.indent.label }}
 	{% elseif field == 'data' %}
 		{%- for key, value in entity.get(field) %}
@@ -45,12 +45,12 @@
 	<li
 		{{ block('nestedListItemId') }}
 		{{ block('nestedListItemClass') }}
-		{%- if contentTemplate.contentTemplateElements.parent_id is not defined %}
+		{%- if contentTemplate.contentTemplateElements.parentId is not defined %}
 			data-nestable="false"
-		{%- elseif contentTemplate.contentTemplateElements.parent_id.required %}
+		{%- elseif contentTemplate.contentTemplateElements.parentId.required %}
 			data-disallow-top-level="true"
 		{%- endif %}
-		{%- if contentTemplate.contentTemplateElements.column_width is not defined %}
+		{%- if contentTemplate.contentTemplateElements.columnWidth is not defined %}
 			data-resizable="false"
 		{%- endif %}
 		data-content-area-ids="{{ contentTemplate.contentAreaIds|jsonEncode }}"

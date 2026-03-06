@@ -28,5 +28,15 @@
 {% elseif _categoriesIdentifier is defined and _categoriesIdentifier|underscore == field %}
 	{{ entity.attributes.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}
 {% else %}
-	{{ entity.attributes.get(field) ?: '-' }}
+	{% set value = entity.attributes.has(field) ? entity.attributes.get(field) : '-' %}
+
+	{% if if attributes[field].inputType == 'checkbox' and (value is same as true or value is same as 'true') %}
+		<i class="las la-check">{{ __('true') }}</i>
+	{% elseif if attributes[field].inputType == 'checkbox' and (value is same as false or value is same as 'false') %}
+		<i class="las la-times">{{ __('false') }}</i>
+	{% elseif (value is enum) %}
+		{{ value.name }}
+	{% else %}
+		{{ value }}
+	{% endif %}
 {% endif %}

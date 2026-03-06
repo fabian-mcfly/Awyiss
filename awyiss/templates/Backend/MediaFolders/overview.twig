@@ -42,7 +42,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -53,7 +53,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'media_folders'}) }}
+					{{ element('search/filter_button', {scope: 'MediaFolders'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
@@ -95,7 +95,7 @@
 								nestable: false,
 								'language-shortcode': languageShortcode,
 								'movable-between-groups': false,
-								sortable: _filter['media_folders']['active'] == false,
+								sortable: _filter['mediaFolders']['active'] == false,
 							},
 							displayedFields: localConfig.overview.displayedFields,
 							identifier: 'MediaFolders',
@@ -120,6 +120,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'media_folders'}) }}
+		{{ element('search/filter', {scope: 'MediaFolders'}) }}
 	{% endblock %}
 </div>

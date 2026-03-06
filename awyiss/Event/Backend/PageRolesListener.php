@@ -47,9 +47,9 @@ class PageRolesListener implements EventListenerInterface {
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			if ($queuedJobsTable->isQueued('attributes::table_changes')) {
+			if ($queuedJobsTable->isQueued('Attributes::tableChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+				$entity->setError('_general', __d('Attributes', 'table_changes_in_progress'));
 			}
 		}
 	}
@@ -101,23 +101,23 @@ class PageRolesListener implements EventListenerInterface {
 		$menuEntries->deleteAll([
 			'OR' => [
 				'link LIKE' => Inflector::camelize(Inflector::pluralize($entity->identifier)) . '::%',
-				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($entity->identifier),
+				'link' => 'Configuration::overview::scope:' . Inflector::camelize(Inflector::pluralize($entity->identifier)),
 			],
 		]);
 
 		$configuration = $tableLocator->get('Configuration');
 		$configuration->deleteAll([
-			'scope' => Inflector::pluralize($entity->identifier),
+			'scope' => Inflector::camelize(Inflector::pluralize($entity->identifier)),
 		]);
 
 		$i18n = $tableLocator->get('I18n');
 		$i18n->deleteAll([
-			'model' => Inflector::pluralize($entity->identifier),
+			'model' => Inflector::camelize(Inflector::pluralize($entity->identifier)),
 		]);
 
 		$usergroupPermissions = $tableLocator->get('UsergroupPermissions');
 		$usergroupPermissions->deleteAll([
-			'scope' => Inflector::pluralize($entity->identifier),
+			'scope' => Inflector::camelize(Inflector::pluralize($entity->identifier)),
 		]);
 	}
 
@@ -146,12 +146,12 @@ class PageRolesListener implements EventListenerInterface {
 			$identityId = $attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$queuedJobsTable->createJob('Attributes/Delete', [
-				'identifier' => Inflector::tableize($entity->identifier),
+				'identifier' => Inflector::camelize($entity->identifier),
 				'identityId' => $identityId,
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'attributes::table_changes',
+				'reference' => 'Attributes::tableChanges',
 			]);
 		}
 
@@ -177,7 +177,7 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'page_roles::bake_seed',
+			'reference' => 'PageRoles::bakeSeed',
 		]);
 	}
 
@@ -214,7 +214,7 @@ class PageRolesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_roles::create_enum',
+				'reference' => 'PageRoles::createEnum',
 			]);
 		}
 	}
@@ -232,7 +232,7 @@ class PageRolesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-		if ($queuedJobsTable->isQueued('system::create_page_role_model::' . $entity->identifier)) {
+		if ($queuedJobsTable->isQueued('System::createPageRoleModel::' . $entity->identifier)) {
 			return;
 		}
 
@@ -265,7 +265,7 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::create_page_role_model::' . $entity->identifier,
+			'reference' => 'System::createPageRoleModel::' . $entity->identifier,
 		]);
 	}
 

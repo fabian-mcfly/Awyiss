@@ -62,7 +62,7 @@ export default class GlobalContentsController {
 
 		const nestedList = document.querySelector('.NestedList');
 		if (typeof columnWidths !== 'undefined' && nestedList.classList.contains('NestedList-Compact')) {
-			this.resizeableContent = new ResizableContents('global_contents', columnWidths);
+			this.resizeableContent = new ResizableContents('global-contents', columnWidths);
 		}
 
 		this.eventHandler.add('click', event => {

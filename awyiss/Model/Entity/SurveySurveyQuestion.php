@@ -38,22 +38,6 @@ class SurveySurveyQuestion extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'survey_id' => 'surveyId',
-		'survey_question_id' => 'surveyQuestionId',
-		'next_action' => 'nextAction',
-		'next_action_target' => 'nextActionTarget',
-		'allow_custom_answer' => 'allowCustomAnswer',
-		'custom_answer_title' => 'customAnswerTitle',
-		'system_order' => 'systemOrder',
-		'survey_survey_answers' => 'surveySurveyAnswers',
-		'survey_question' => 'surveyQuestion',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'surveyId' => true,
 		'surveyQuestionId' => true,
@@ -82,7 +66,7 @@ class SurveySurveyQuestion extends Entity {
 			$title = $this->surveyQuestion->title;
 
 			if (!$this->surveyQuestion->active) {
-				$inactive = __d('survey_questions', 'inactive') . ' ';
+				$inactive = __d('SurveyQuestions', 'inactive') . ' ';
 			}
 		}
 

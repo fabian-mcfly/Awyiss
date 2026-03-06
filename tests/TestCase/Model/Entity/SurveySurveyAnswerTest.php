@@ -78,14 +78,14 @@ class SurveySurveyAnswerTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'survey_answer_id' => 123,
-			'survey_survey_question_id' => 456,
+			'surveyAnswerId' => 123,
+			'surveySurveyQuestionId' => 456,
 			'title' => 'Test Answer',
 			'subtitle' => 'Test Subtitle',
 			'text' => 'Answer text',
-			'next_action' => NextAction::NextQuestion,
-			'next_action_target' => 'next_question',
-			'system_order' => 1,
+			'nextAction' => NextAction::NextQuestion,
+			'nextActionTarget' => 'nextQuestion',
+			'systemOrder' => 1,
 			'active' => true,
 		];
 
@@ -98,30 +98,9 @@ class SurveySurveyAnswerTest extends TestCase {
 		$this->assertEquals('Test Subtitle', $entity->subtitle);
 		$this->assertEquals('Answer text', $entity->text);
 		$this->assertEquals(NextAction::NextQuestion, $entity->nextAction);
-		$this->assertEquals('next_question', $entity->nextActionTarget);
+		$this->assertEquals('nextQuestion', $entity->nextActionTarget);
 		$this->assertEquals(1, $entity->systemOrder);
 		$this->assertTrue($entity->active);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'survey_answer_id' => 789,
-			'survey_survey_question_id' => 101,
-			'next_action' => NextAction::SpecificQuestion,
-			'next_action_target' => 'target',
-			'system_order' => 2,
-		];
-		$entity = new SurveySurveyAnswer($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 

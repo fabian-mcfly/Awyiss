@@ -95,14 +95,14 @@ export default class DashboardElementsController {
 			const valueInput = target.closest('.Column').querySelector('input[name^="settings[filter]["][name$="[value]"]');
 
 			if (valueInput) {
-				const multipleValueOperators = ['in', 'not_in', 'between', 'not_between'];
+				const multipleValueOperators = ['in', 'notIn', 'between', 'notBetween'];
 				valueInput.setAttribute('data-allow-multiple-values', multipleValueOperators.includes(value) ? 'true' : 'false');
 
 				if (valueInput.closest('.InputType-Datetime')) {
 					const datePicker = valueInput.datepicker;
 					datePicker.update({
-						multipleDates: multipleValueOperators.includes(value) && (value === 'in' || value === 'not_in'),
-						range: multipleValueOperators.includes(value) && value !== 'in' && value !== 'not_in',
+						multipleDates: multipleValueOperators.includes(value) && (value === 'in' || value === 'notIn'),
+						range: multipleValueOperators.includes(value) && value !== 'in' && value !== 'notIn',
 					}, true);
 				}
 			}
@@ -189,7 +189,7 @@ export default class DashboardElementsController {
 				container: this.element,
 				keyboardNav: true,
 				locale: airDatepickerLocale,
-				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'not_in'),
+				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'notIn'),
 				multipleDatesSeparator: ', ',
 				onlyTimepicker: timePicker,
 				position: function ({$datepicker}) {
@@ -209,7 +209,7 @@ export default class DashboardElementsController {
 					this.datepicker._setPositionClasses('left bottom');
 					this.datepicker.setPosition('left bottom');
 				}.bind(valueInput),
-				range: valueInput.dataset.allowMultipleValues === 'true' && operator !== 'in' && operator !== 'not_in',
+				range: valueInput.dataset.allowMultipleValues === 'true' && operator !== 'in' && operator !== 'notIn',
 				timepicker: dateTimePicker || timePicker,
 				onSelect: function (data) {
 					const element = data.datepicker.$el;

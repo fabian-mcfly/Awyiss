@@ -450,7 +450,7 @@ class ScssCompiler {
 		$normalizedVariables = [];
 
 		foreach ($variables as $key => $value) {
-			if (str_ends_with($key, 'Unit') || str_ends_with($key, '_unit')) {
+			if (str_ends_with($key, 'Unit')) {
 				continue;
 			}
 
@@ -459,10 +459,6 @@ class ScssCompiler {
 
 				if (!empty($value) && isset($variables[ $key . 'Unit' ])) {
 					$normalizedVariables[ $key ] .= $variables[ $key . 'Unit' ];
-				}
-
-				if (!empty($value) && isset($variables[ $key . '_unit' ])) {
-					$normalizedVariables[ $key ] .= $variables[ $key . '_unit' ];
 				}
 
 				continue;

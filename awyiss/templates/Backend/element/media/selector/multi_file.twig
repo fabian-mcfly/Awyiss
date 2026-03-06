@@ -44,21 +44,21 @@
 				}) }}
 				<span class="Name">{{ mediaItem.name }}</span>
 
-				<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
+				<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('Media', 'remove_file') }}</button>
 
-				{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
+				{{ FormHelper.hidden('mediaAssignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
 					value: mediaAssignment.mediaId,
 				}) }}
 			</div>
 		{% endfor %}
 
-		<span class="MediaSelector-MediaSelect">{{ __d('media', 'add_files') }}</span>
+		<span class="MediaSelector-MediaSelect">{{ __d('Media', 'add_files') }}</span>
 	</div>
 
 	<template>
-		<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
+		<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('Media', 'remove_file') }}</button>
 
-		{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
+		{{ FormHelper.hidden('mediaAssignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
 			value: '',
 		}) }}
 	</template>

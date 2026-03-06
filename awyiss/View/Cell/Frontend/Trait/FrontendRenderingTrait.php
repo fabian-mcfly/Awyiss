@@ -78,8 +78,8 @@ trait FrontendRenderingTrait {
 		$query = $mediaTable->find()
 			->matching('MediaAssignments', function (SelectQuery $query) use ($entityIds, $scope) {
 				return $query->where([
-					'MediaAssignments.foreign_key IN' => $entityIds,
-					'MediaAssignments.scope' => $scope,
+					'MediaAssignments.foreignKey IN' => $entityIds,
+					'MediaAssignments.scope' => Inflector::camelize($scope),
 				]);
 			})
 			->contain(['MediaResizedImages'])

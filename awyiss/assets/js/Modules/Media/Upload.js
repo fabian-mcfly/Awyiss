@@ -211,7 +211,7 @@ export default class Upload {
 		const formData = new FormData();
 
 		// Append the file and its order to the FormData instance
-		formData.append('system_order', systemOrder.toString());
+		formData.append('systemOrder', systemOrder.toString());
 
 		// Add the additional data if it exists
 		for (const key in this.uploadData) {

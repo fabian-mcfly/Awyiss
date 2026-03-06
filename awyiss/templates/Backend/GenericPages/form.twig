@@ -41,13 +41,13 @@
 				{% block fieldsetGeneralInner %}
 					{% block formControlTitle %}
 						{{ FormHelper.control('title', {
-							label: __df(pageRoleName, 'generic_pages', 'title'),
+							label: __df(pageRoleName, 'GenericPages', 'title'),
 						}) }}
 					{% endblock %}
 
 					{% block formControlSlug %}
 						{{ FormHelper.control('slug', {
-							label: __df(pageRoleName, 'generic_pages', 'slug'),
+							label: __df(pageRoleName, 'GenericPages', 'slug'),
 							required: false,
 							templateVars: {
 								additionalContent: (config.Route.includeLanguageShortcode or parentRecord.slug)
@@ -61,25 +61,25 @@
 					{% endblock %}
 
 					{% block formControlDuplicateOf %}
-						{{ FormHelper.control('duplicate_of', {
+						{{ FormHelper.control('duplicateOf', {
 							columnSpan: 6,
 							disabled: isDuplicated ? true : [page.id],
-							label: __df(pageRoleName, 'generic_pages', 'duplicate_of'),
+							label: __df(pageRoleName, 'GenericPages', 'duplicate_of'),
 							options: threadedPages.printer('label', 'id', '- '),
 						}) }}
 					{% endblock %}
 
 					{% block formControlRedirectLink %}
-						{{ FormHelper.control('redirect_link', {
+						{{ FormHelper.control('redirectLink', {
 							columnSpan: 6,
-							label: __df(pageRoleName, 'generic_pages', 'redirect_link'),
+							label: __df(pageRoleName, 'GenericPages', 'redirect_link'),
 						}) }}
 					{% endblock %}
 
 					{% block formControlFormId %}
 						{% if localConfig('forms.enabled') %}
-							{{ FormHelper.control('form_id', {
-								label: __df(pageRoleName, 'generic_pages', 'form_id'),
+							{{ FormHelper.control('formId', {
+								label: __df(pageRoleName, 'GenericPages', 'form_id'),
 								options: hashPrinter(forms, 'label', 'id', '- '),
 							}) }}
 						{% endif %}
@@ -87,8 +87,8 @@
 
 					{% block formControlSurveyId %}
 						{% if localConfig('surveys.enabled') %}
-							{{ FormHelper.control('survey_id', {
-								label: __df(pageRoleName, 'generic_pages', 'survey_id'),
+							{{ FormHelper.control('surveyId', {
+								label: __df(pageRoleName, 'GenericPages', 'survey_id'),
 								options: hashPrinter(surveys, 'label', 'id', '- '),
 							}) }}
 						{% endif %}
@@ -141,7 +141,7 @@
 	{% set fieldsetSeo %}
 		{% block fieldsetSeo %}
 			<fieldset class="Fieldset-Seo">
-				<legend>{{ __d('seo', 'fieldset_seo') }}</legend>
+				<legend>{{ __d('Seo', 'fieldset_seo') }}</legend>
 
 				{% block fieldsetSeoInner %}
 					{{ element('Pages/seo_snippet') }}
@@ -165,9 +165,9 @@
 				{% endblock %}
 
 				{% block formControlPageTemplateId %}
-					{{ FormHelper.control('page_template_id', {
+					{{ FormHelper.control('pageTemplateId', {
 						empty: false,
-						label: __df(pageRoleName, 'generic_pages', 'page_template_id'),
+						label: __df(pageRoleName, 'GenericPages', 'page_template_id'),
 						options: pageTemplates.combine('id', 'label'),
 					}) }}
 				{% endblock %}
@@ -187,7 +187,7 @@
 
 				{% block fieldsetConditionsInner %}
 					{% block formControlLanguageShortcode %}
-						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+						{{ LocaleHelper.control('languageShortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
 					{% endblock %}
 
 					{% block formControlParentId %}
@@ -196,8 +196,8 @@
 						{% endif %}
 
 						{% if nestable and possibleParentPages is not null %}
-							{{ FormHelper.control('parent_id', {
-								label: __df(pageRoleName, 'generic_pages', 'parent_id'),
+							{{ FormHelper.control('parentId', {
+								label: __df(pageRoleName, 'GenericPages', 'parent_id'),
 								options: hashPrinter(possibleParentPages, 'label', 'id', '- '),
 								'data-form-updater': true
 							}) }}
@@ -206,7 +206,7 @@
 
 					{% block formControlSystemOrder %}
 						{% if sortable %}
-							{{ SystemOrderHelper.control('system_order') }}
+							{{ SystemOrderHelper.control('systemOrder') }}
 						{% endif %}
 					{% endblock %}
 
@@ -235,11 +235,11 @@
 	{% set fieldsetAddPageToMenus %}
 		{% block fieldsetAddPageToMenus %}
 			<fieldset class="Fieldset-AddPageToMenus">
-				<legend>{{ __df(pageRoleName, 'generic_pages', 'fieldset_menus') }}</legend>
+				<legend>{{ __df(pageRoleName, 'GenericPages', 'fieldset_menus') }}</legend>
 
 				{# @var menu \Awyiss\Model\Entity\Menu #}
 				{% for key, menu in menus %}
-					{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {
+					{{ FormHelper.control('addMenuEntry[' ~ key ~ ']', {
 						columnSpan: 3,
 						hiddenField: false,
 						label: menu.label,
@@ -272,12 +272,12 @@
 	{% block fieldsets %}
 		<div class="Fieldsets">
 			{% if hasDescendantsWithDifferentPageRole %}
-				{{ FormHelper.control('copy_descendants_with_different_page_role', {
+				{{ FormHelper.control('copyDescendantsWithDifferentPageRole', {
 					escape: false,
-					label: __df(pageRoleName, 'generic_pages', 'copy_descendants_with_different_page_role'),
+					label: __df(pageRoleName, 'GenericPages', 'copy_descendants_with_different_page_role'),
 					options: {
-						0: __df(pageRoleName, 'generic_pages', 'copy_descendants_with_different_page_role_no'),
-						1: __df(pageRoleName, 'generic_pages', 'copy_descendants_with_different_page_role_yes'),
+						0: __df(pageRoleName, 'GenericPages', 'copy_descendants_with_different_page_role_no'),
+						1: __df(pageRoleName, 'GenericPages', 'copy_descendants_with_different_page_role_yes'),
 					},
 					templateVars: {
 						containerClass: 'InfoArea',
@@ -326,7 +326,7 @@
 			{% endblock %}
 
 			{% block formInputReloadForm %}
-				{{ FormHelper.hidden('reload_form', {val: 0}) }}
+				{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 			{% endblock %}
 		</div>
 	{% endblock %}

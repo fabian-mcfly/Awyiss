@@ -76,7 +76,7 @@ class AuditTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $usersAssociation);
 		$this->assertFalse($usersAssociation->getCascadeCallbacks());
 		$this->assertFalse($usersAssociation->getDependent());
-		$this->assertEquals('created_by', $usersAssociation->getForeignKey());
+		$this->assertEquals('createdBy', $usersAssociation->getForeignKey());
 
 		// 'CreatedByUser' must exist
 		$this->assertTrue($this->auditTable->hasAssociation('CreatedByUser'));
@@ -96,7 +96,7 @@ class AuditTableTest extends TestCase {
 		$result = $this->auditTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('audit', $result->getI18nDomain());
+		$this->assertSame('Audit', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('scope'));
@@ -131,7 +131,7 @@ class AuditTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'transactionId' => 'abc-123-def-456',
 			'type' => 'u',
@@ -260,7 +260,7 @@ class AuditTableTest extends TestCase {
 		$validTypes = ['u', 'd'];
 		foreach ($validTypes as $type) {
 			$data = [
-				'scope' => 'pages',
+				'scope' => 'Pages',
 				'foreignKey' => 123,
 				'transactionId' => 'abc-123-def-456',
 				'type' => $type,
@@ -276,7 +276,7 @@ class AuditTableTest extends TestCase {
 
 		// Test invalid type
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'transactionId' => 'abc-123-def-456',
 			'type' => 'invalid_type',
@@ -301,7 +301,7 @@ class AuditTableTest extends TestCase {
 		$largeArray = array_fill(0, 50000, str_repeat('x', 1000));
 
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'transactionId' => 'abc-123-def-456',
 			'type' => 'u',
@@ -325,7 +325,7 @@ class AuditTableTest extends TestCase {
 	public function testEntityValidationValidDiffArray(): void {
 		// Test with valid diff array
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'transactionId' => 'abc-123-def-456',
 			'type' => 'u',
@@ -350,7 +350,7 @@ class AuditTableTest extends TestCase {
 	 */
 	public function testEntityValidationAllowEmptyOptionalFields(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123,
 			'transactionId' => 'abc-123-def-456',
 			'type' => 'u',
@@ -400,7 +400,7 @@ class AuditTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 456,
 			'transactionId' => 'test-transaction-id',
 			'type' => 'd',
@@ -418,7 +418,7 @@ class AuditTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		// Check custom values
-		$this->assertSame('test_scope', $entity->scope);
+		$this->assertSame('TestScope', $entity->scope);
 		$this->assertSame(456, $entity->foreignKey);
 		$this->assertSame('test-transaction-id', $entity->transactionId);
 		$this->assertSame('d', $entity->type);

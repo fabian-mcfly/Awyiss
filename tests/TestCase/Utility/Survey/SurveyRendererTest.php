@@ -107,7 +107,7 @@ class SurveyRendererTest extends TestCase {
 		$result = $renderer->getSurveyByIdentifier(1);
 
 		$this->assertInstanceOf(Survey::class, $result);
-		$this->assertEquals('dummy_survey', $result->identifier);
+		$this->assertEquals('dummySurvey', $result->identifier);
 	}
 
 
@@ -117,10 +117,14 @@ class SurveyRendererTest extends TestCase {
 	 */
 	public function testGetSurveyByIdentifierWithStringIdentifierReturnsSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
-		$result = $renderer->getSurveyByIdentifier('dummy_survey');
+		$result = $renderer->getSurveyByIdentifier('dummySurvey');
 
 		$this->assertInstanceOf(Survey::class, $result);
-		$this->assertEquals('dummy_survey', $result->identifier);
+		$this->assertEquals('dummySurvey', $result->identifier);
+		$result = $renderer->getSurveyByIdentifier('dummySurvey');
+
+		$this->assertInstanceOf(Survey::class, $result);
+		$this->assertEquals('dummySurvey', $result->identifier);
 	}
 
 
@@ -130,7 +134,7 @@ class SurveyRendererTest extends TestCase {
 	 */
 	public function testGetSurveyByIdentifierReturnsNullIfInactive(): void {
 		$renderer = new SurveyRenderer($this->view);
-		$result = $renderer->getSurveyByIdentifier('dummy_survey2');
+		$result = $renderer->getSurveyByIdentifier('dummySurvey2');
 
 		$this->assertNull($result);
 	}
@@ -147,10 +151,10 @@ class SurveyRendererTest extends TestCase {
 			->getMock();
 		$renderer->method('isPreview')->willReturn(true);
 
-		$result = $renderer->getSurveyByIdentifier('dummy_survey2');
+		$result = $renderer->getSurveyByIdentifier('dummySurvey2');
 
 		$this->assertInstanceOf(Survey::class, $result);
-		$this->assertEquals('dummy_survey2', $result->identifier);
+		$this->assertEquals('dummySurvey2', $result->identifier);
 	}
 
 
@@ -177,7 +181,7 @@ class SurveyRendererTest extends TestCase {
 
 		$this->assertSame($renderer, $result);
 		$this->assertInstanceOf(Survey::class, $renderer->getSurvey());
-		$this->assertEquals('dummy_survey', $renderer->getSurvey()->identifier);
+		$this->assertEquals('dummySurvey', $renderer->getSurvey()->identifier);
 	}
 
 
@@ -188,11 +192,11 @@ class SurveyRendererTest extends TestCase {
 	public function testInitSurveyInitializesSurveyWithValidIdentifier(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$result = $renderer->initSurvey('dummy_survey', []);
+		$result = $renderer->initSurvey('dummySurvey', []);
 
 		$this->assertSame($renderer, $result);
 		$this->assertInstanceOf(Survey::class, $renderer->getSurvey());
-		$this->assertEquals('dummy_survey', $renderer->getSurvey()->identifier);
+		$this->assertEquals('dummySurvey', $renderer->getSurvey()->identifier);
 	}
 
 
@@ -216,7 +220,7 @@ class SurveyRendererTest extends TestCase {
 	 */
 	public function testInitSurveyWithInactiveSurveyReturnsNull(): void {
 		$renderer = new SurveyRenderer($this->view);
-		$result = $renderer->initSurvey('dummy_survey2', []);
+		$result = $renderer->initSurvey('dummySurvey2', []);
 		$this->assertSame($renderer, $result);
 		$this->assertNull($renderer->getSurvey());
 	}
@@ -230,10 +234,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
 		$renderer->method('isPreview')->willReturn(true);
 
-		$result = $renderer->initSurvey('dummy_survey2', []);
+		$result = $renderer->initSurvey('dummySurvey2', []);
 		$this->assertSame($renderer, $result);
 		$this->assertInstanceOf(Survey::class, $renderer->getSurvey());
-		$this->assertEquals('dummy_survey2', $renderer->getSurvey()->identifier);
+		$this->assertEquals('dummySurvey2', $renderer->getSurvey()->identifier);
 	}
 
 
@@ -249,7 +253,7 @@ class SurveyRendererTest extends TestCase {
 		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
 		$renderer->method('isPreview')->willReturn($previewMode);
 
-		$renderer->initSurvey('dummy_survey', []);
+		$renderer->initSurvey('dummySurvey', []);
 
 		$survey = $renderer->getSurvey();
 		$questions = $survey->getQuestions();
@@ -266,15 +270,15 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 		$requestData = [
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [7, 8],
 				],
 			],
 		];
-		$renderer->initSurvey('dummy_survey', $requestData);
+		$renderer->initSurvey('dummySurvey', $requestData);
 
-		$this->assertEquals($requestData['survey']['dummy_survey'], $renderer->getSurvey()->getProgress());
+		$this->assertEquals($requestData['survey']['dummySurvey'], $renderer->getSurvey()->getProgress());
 	}
 
 
@@ -286,13 +290,13 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 		$requestData = [
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'foo' => 'bar',
 				],
 			],
 		];
-		$renderer->initSurvey('dummy_survey', $requestData);
+		$renderer->initSurvey('dummySurvey', $requestData);
 
 		$this->assertEquals(['8524de5e' => 4], $renderer->getSurvey()->getProgress());
 	}
@@ -307,14 +311,14 @@ class SurveyRendererTest extends TestCase {
 	 */
 	public function testProcess(): void {
 		$renderer = new SurveyRenderer($this->view);
-		$renderer->initSurvey('dummy_survey', []);
+		$renderer->initSurvey('dummySurvey', []);
 		$renderer->process();
 
 		$result = $renderer->getSurveyBody([]);
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $result);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="_survey_identifier" value="dummy_survey">', $result);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $result);
 	}
 
 
@@ -342,7 +346,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessSavesAndRedirectsWhenConditionsMet(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 		$survey = $renderer->getSurvey();
 		$survey->setCurrentAction($action);
 
@@ -381,7 +385,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessNotSavesAndRedirectsWhenDifferentSurvey(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey2']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey2']);
 		$survey = $renderer->getSurvey();
 		$survey->setCurrentAction($action);
 
@@ -418,9 +422,9 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessNotSavesAndRedirectsWhenFormIdentifierIsSet(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
-			'_form_identifier' => 'form_123',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
+			'_formIdentifier' => 'form123',
 		]);
 		$survey = $renderer->getSurvey();
 		$survey->setCurrentAction($action);
@@ -458,8 +462,8 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessDoesNotSavesAndRedirectsForOtherActions(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 		]);
 		$survey = $renderer->getSurvey();
 		$survey->setCurrentAction($action);
@@ -522,7 +526,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessProcessesEntryFromHash(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 
 		$survey = $renderer->getSurvey();
 
@@ -555,7 +559,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessProcessesEntryFromHashWithInvalidHash(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 
 		$survey = $renderer->getSurvey();
 
@@ -582,7 +586,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessLoadsProgressFromFormEntryHash(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 
 		$survey = $renderer->getSurvey();
 
@@ -611,7 +615,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessNotLoadsProgressFromFormEntryHash(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 
 		$survey = $renderer->getSurvey();
 
@@ -640,7 +644,7 @@ class SurveyRendererTest extends TestCase {
 	public function testProcessNotLoadsProgressFromFormEntryHashWithDataOfDifferentSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
 
-		$renderer->initSurvey('dummy_survey', ['_survey_identifier' => 'dummy_survey']);
+		$renderer->initSurvey('dummySurvey', ['_surveyIdentifier' => 'dummySurvey']);
 
 		$survey = $renderer->getSurvey();
 
@@ -671,8 +675,8 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 		]);
 
 		$table = $this->getTableLocator()->get('FormEntries');
@@ -693,13 +697,13 @@ class SurveyRendererTest extends TestCase {
 		$result = $renderer->getSurveyBody([]);
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey"', $result);
-		$this->assertStringContainsString('<input type="hidden" name="_form_identifier" value="contact">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="_formIdentifier" value="contact">', $result);
 
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][8524de5e]" value="4">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="8">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="9">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][7d654446]" value="custom">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][72054f17]" value="11', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][8524de5e]" value="4">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="8">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="9">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][7d654446]" value="custom">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][72054f17]" value="11', $result);
 
 		$this->assertSame($entries, $table->find('all')->count());
 	}
@@ -717,9 +721,9 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
-			'_form_identifier' => 'contact',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
+			'_formIdentifier' => 'contact',
 		]);
 
 		$table = $this->getTableLocator()->get('FormEntries');
@@ -740,13 +744,13 @@ class SurveyRendererTest extends TestCase {
 		$result = $renderer->getSurveyBody([]);
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey"', $result);
-		$this->assertStringContainsString('<input type="hidden" name="_form_identifier" value="contact">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="_formIdentifier" value="contact">', $result);
 
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][8524de5e]" value="4">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="8">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="9">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][7d654446]" value="custom">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][72054f17]" value="11', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][8524de5e]" value="4">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="8">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="9">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][7d654446]" value="custom">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][72054f17]" value="11', $result);
 
 		$this->assertStringContainsString('<div class="Form-ErrorMessage" id="Form-Contact">', $result);
 
@@ -766,9 +770,9 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
-			'_form_identifier' => 'contact2',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
+			'_formIdentifier' => 'contact2',
 		]);
 
 		$table = $this->getTableLocator()->get('FormEntries');
@@ -789,13 +793,13 @@ class SurveyRendererTest extends TestCase {
 		$result = $renderer->getSurveyBody([]);
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey"', $result);
-		$this->assertStringContainsString('<input type="hidden" name="_form_identifier" value="contact">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="_formIdentifier" value="contact">', $result);
 
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][8524de5e]" value="4">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="8">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][f69b1648][]" value="9">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][7d654446]" value="custom">', $result);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][72054f17]" value="11', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][8524de5e]" value="4">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="8">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][f69b1648][]" value="9">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][7d654446]" value="custom">', $result);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][72054f17]" value="11', $result);
 
 		$this->assertStringNotContainsString('<div class="Form-ErrorMessage">', $result);
 
@@ -816,13 +820,13 @@ class SurveyRendererTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
-			'_form_identifier' => 'contact',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
+			'_formIdentifier' => 'contact',
 			'vorname' => 'John',
 			'nachricht' => 'Dummy Message',
 			'nachname' => 'Doe',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 			'email' => 'domain@example.com',
 		], $page);
 
@@ -875,10 +879,10 @@ class SurveyRendererTest extends TestCase {
 
 		$renderer = new SurveyRenderer($view);
 
-		$renderer->initSurvey('dummy_survey3', [
-			'_survey_identifier' => 'dummy_survey3',
+		$renderer->initSurvey('dummySurvey3', [
+			'_surveyIdentifier' => 'dummySurvey3',
 			'survey' => [
-				'dummy_survey3' => [
+				'dummySurvey3' => [
 					'9f8b2c3d' => 13,
 				],
 			],
@@ -919,10 +923,10 @@ class SurveyRendererTest extends TestCase {
 
 		$renderer = new SurveyRenderer($view);
 
-		$renderer->initSurvey('dummy_survey3', [
-			'_survey_identifier' => 'dummy_survey3',
+		$renderer->initSurvey('dummySurvey3', [
+			'_surveyIdentifier' => 'dummySurvey3',
 			'survey' => [
-				'dummy_survey3' => [
+				'dummySurvey3' => [
 					'9f8b2c3d' => 14,
 				],
 			],
@@ -961,8 +965,8 @@ class SurveyRendererTest extends TestCase {
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 		]);
 
 		$survey = $renderer->getSurvey();
@@ -996,10 +1000,10 @@ class SurveyRendererTest extends TestCase {
 
 		$renderer = new SurveyRenderer($view);
 
-		$renderer->initSurvey('dummy_survey3', [
-			'_survey_identifier' => 'dummy_survey3',
+		$renderer->initSurvey('dummySurvey3', [
+			'_surveyIdentifier' => 'dummySurvey3',
 			'survey' => [
-				'dummy_survey3' => [
+				'dummySurvey3' => [
 					'9f8b2c3d' => 13,
 				],
 			],
@@ -1038,10 +1042,10 @@ class SurveyRendererTest extends TestCase {
 
 		$renderer = new SurveyRenderer($view);
 
-		$renderer->initSurvey('dummy_survey3', [
-			'_survey_identifier' => 'dummy_survey3',
+		$renderer->initSurvey('dummySurvey3', [
+			'_surveyIdentifier' => 'dummySurvey3',
 			'survey' => [
-				'dummy_survey3' => [
+				'dummySurvey3' => [
 					'9f8b2c3d' => 14,
 				],
 			],
@@ -1077,8 +1081,8 @@ class SurveyRendererTest extends TestCase {
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 		]);
 
 		$survey = $renderer->getSurvey();
@@ -1111,10 +1115,10 @@ class SurveyRendererTest extends TestCase {
 
 		$renderer = new SurveyRenderer($view);
 
-		$renderer->initSurvey('dummy_survey4', [
-			'_survey_identifier' => 'dummy_survey4',
+		$renderer->initSurvey('dummySurvey4', [
+			'_surveyIdentifier' => 'dummySurvey4',
 			'survey' => [
-				'dummy_survey4' => [
+				'dummySurvey4' => [
 					'c3b2a1e4' => 16,
 				],
 			],
@@ -1145,10 +1149,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getMock();
 		$renderer->method('isPreview')->willReturn(true);
 
-		$renderer->initSurvey('dummy_survey4', [
-			'_survey_identifier' => 'dummy_survey4',
+		$renderer->initSurvey('dummySurvey4', [
+			'_surveyIdentifier' => 'dummySurvey4',
 			'survey' => [
-				'dummy_survey4' => [
+				'dummySurvey4' => [
 					'c3b2a1e4' => 16,
 				],
 			],
@@ -1177,7 +1181,7 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', []);
+		$renderer->initSurvey('dummySurvey', []);
 
 		$renderer->process();
 
@@ -1185,9 +1189,9 @@ class SurveyRendererTest extends TestCase {
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $result);
 		$this->assertStringContainsString('<div class="SurveyQuestion SurveyQuestionType-SingleChoice" id="SurveyQuestion-8524de5e">', $result);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $result);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $result);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $result);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $result);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $result);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $result);
 	}
 
 
@@ -1202,10 +1206,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 				],
 			],
@@ -1217,9 +1221,9 @@ class SurveyRendererTest extends TestCase {
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $result);
 		$this->assertStringContainsString('<div class="SurveyQuestion SurveyQuestionType-MultipleChoice" id="SurveyQuestion-F69b1648">', $result);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="7" id="SurveyAnswer-Input7">', $result);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="8" id="SurveyAnswer-Input8">', $result);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="9" id="SurveyAnswer-Input9">', $result);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="7" id="SurveyAnswer-Input7">', $result);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="8" id="SurveyAnswer-Input8">', $result);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="9" id="SurveyAnswer-Input9">', $result);
 	}
 
 
@@ -1236,10 +1240,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [8, 9],
 				],
@@ -1267,10 +1271,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [8, 9],
 				],
@@ -1284,7 +1288,7 @@ class SurveyRendererTest extends TestCase {
 
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $result);
 		$this->assertStringContainsString('<div class="SurveyQuestion SurveyQuestionType-FreeText" id="SurveyQuestion-7d654446">', $result);
-		$this->assertStringContainsString('<textarea name="survey[dummy_survey][custom][7d654446]"', $result);
+		$this->assertStringContainsString('<textarea name="survey[dummySurvey][custom][7d654446]"', $result);
 	}
 
 
@@ -1298,10 +1302,10 @@ class SurveyRendererTest extends TestCase {
 		$renderer = new SurveyRenderer($this->view);
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [8, 9],
 				],

@@ -33,7 +33,7 @@
 				{% endblock %}
 
 				{% block formControlFileName %}
-					{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
+					{{ FormHelper.control('fileName', {'data-autofill-from': 'title'}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -50,11 +50,11 @@
 			<legend>{{ __('fieldset_content') }}</legend>
 
 			{% block formControlTextHtml %}
-				{{ FormHelper.control('text_html', {'data-editor': 'true'}) }}
+				{{ FormHelper.control('textHtml', {'data-editor': 'true'}) }}
 			{% endblock %}
 
 			{% block formControlTextPlain %}
-				{{ FormHelper.control('text_plain') }}
+				{{ FormHelper.control('textPlain') }}
 			{% endblock %}
 
 			{% block fieldsetContentInner %}
@@ -158,7 +158,7 @@
 			{{ fieldsetAttributes }}
 
 			<details class="HelpText Form-PlaceholderHelp">
-				{{ __d('forms', 'placeholder_help_text')|raw }}
+				{{ __d('Forms', 'placeholder_help_text')|raw }}
 				{{ __('placeholder_help_text')|raw }}
 			</details>
 		{% endif %}
@@ -182,7 +182,7 @@
 					{{ fieldsetAttributes }}
 
 					<details class="HelpText Form-PlaceholderHelp">
-						{{ __d('forms', 'placeholder_help_text')|raw }}
+						{{ __d('Forms', 'placeholder_help_text')|raw }}
 						{{ __('placeholder_help_text')|raw }}
 					</details>
 				</div>
@@ -190,7 +190,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

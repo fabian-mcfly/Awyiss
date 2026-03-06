@@ -45,6 +45,7 @@ class UsergroupPermissionsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Usergroups', [
+			'foreignKey' => 'usergroupId',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -125,13 +126,13 @@ class UsergroupPermissionsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
 			$rules->existsIn(
-				'usergroup_id',
+				'usergroupId',
 				'Usergroups'
 			),
 			'usergroupExists',
 			[
 				'errorField' => 'usergroupId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_usergroup_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_usergroup_exists'),
 			]
 		);
 
@@ -146,7 +147,7 @@ class UsergroupPermissionsTable extends Table {
 			'validAccess',
 			[
 				'errorField' => 'access',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_access'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_access'),
 			]
 		);
 

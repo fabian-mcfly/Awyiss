@@ -39,30 +39,30 @@
 								{{ FormHelper.button(__('remove_answer'), {
 									class: 'Button Button-Small Button-Delete',
 									type: 'button',
-									'data-confirm-title': __d('survey_answers', 'confirm_delete_title'),
-									'data-confirm-yes': __d('survey_answers', 'confirm_delete_yes'),
+									'data-confirm-title': __d('SurveyAnswers', 'confirm_delete_title'),
+									'data-confirm-yes': __d('SurveyAnswers', 'confirm_delete_yes'),
 									'data-confirm-yes-class': 'Button-Delete',
-									'data-confirm-no': __d('survey_answers', 'confirm_delete_no'),
-									'data-confirm': __d('survey_answers', 'confirm_delete', entity.id)
+									'data-confirm-no': __d('SurveyAnswers', 'confirm_delete_no'),
+									'data-confirm': __d('SurveyAnswers', 'confirm_delete', entity.id)
 								}) }}
 							{% endblock %}
 						</span>
 					{% endblock %}
 
 					{% block answersListItemInputs %}
-						{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][survey_answer_id]', {
+						{{ FormHelper.hidden('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][surveyAnswerId]', {
 							disabled: answerType == 'available',
 							val: answer.id
 						}) }}
 
-						{{ FormHelper.control('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][active]', {
+						{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][active]', {
 							checked: entity.surveySurveyAnswers[ answer.id ].active or answerType == 'available',
 							disabled: answerType == 'available',
 							type: 'checkbox',
 						}) }}
 
 						{% if answerType == 'assigned' %}
-							{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][id]', {
+							{{ FormHelper.hidden('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][id]', {
 								val: entity.surveySurveyAnswers[ answer.id ].id
 							}) }}
 						{% endif %}
@@ -74,7 +74,7 @@
 						<div class="Settings">
 							{% block answerListItemNextAction %}
 								<div class="NextAction">
-									{{ FormHelper.control('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][next_action]', {
+									{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][nextAction]', {
 										label: __('next_action'),
 										options: availableActions,
 										type: 'select',
@@ -83,7 +83,7 @@
 									}) }}
 
 									{% if entity.surveySurveyAnswers[ answer.id ].nextAction == enum(nextActionEnum).SpecificQuestion %}
-										{{ FormHelper.control('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][next_action_target]', {
+										{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][nextActionTarget]', {
 											disabled: [entity.identifier],
 											empty: false,
 											label: __('next_action_question'),
@@ -101,7 +101,7 @@
 										enum(nextActionEnum).SaveAndShowForm,
 										enum(nextActionEnum).ShowFormAndSave,
 									] %}
-										{{ FormHelper.control('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][next_action_target]', {
+										{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][surveySurveyAnswers][' ~ loop.index0 ~ '][nextActionTarget]', {
 											empty: __('next_action_inherit_form'),
 											label: __('next_action_form'),
 											options: availableForms,

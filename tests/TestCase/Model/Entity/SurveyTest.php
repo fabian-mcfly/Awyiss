@@ -87,11 +87,11 @@ class SurveyTest extends TestCase {
 			'id' => 1,
 			'type' => Type::Configurator,
 			'title' => 'Test Survey',
-			'identifier' => 'test_survey',
-			'success_message' => '<p>Success</p>',
-			'failure_message' => '<p>Failure</p>',
-			'final_action' => NextAction::SaveAndEnd,
-			'form_id' => 1,
+			'identifier' => 'testSurvey',
+			'successMessage' => '<p>Success</p>',
+			'failureMessage' => '<p>Failure</p>',
+			'finalAction' => NextAction::SaveAndEnd,
+			'formId' => 1,
 			'active' => true,
 		];
 
@@ -100,34 +100,12 @@ class SurveyTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(Type::Configurator, $entity->type);
 		$this->assertEquals('Test Survey', $entity->title);
-		$this->assertEquals('test_survey', $entity->identifier);
+		$this->assertEquals('testSurvey', $entity->identifier);
 		$this->assertEquals('<p>Success</p>', $entity->successMessage);
 		$this->assertEquals('<p>Failure</p>', $entity->failureMessage);
 		$this->assertEquals(NextAction::SaveAndEnd, $entity->finalAction);
 		$this->assertEquals(1, $entity->formId);
 		$this->assertTrue($entity->active);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Survey::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'success_message' => '<p>Success</p>',
-			'failure_message' => '<p>Failure</p>',
-			'final_action' => NextAction::SaveAndEnd,
-			'form_id' => 2,
-			'survey_survey_questions' => [],
-			'survey_entries' => [],
-		];
-		$entity = new Survey($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 
@@ -140,19 +118,19 @@ class SurveyTest extends TestCase {
 		$entity = new Survey();
 
 		$entity->identifier = 'testSurvey';
-		$this->assertEquals('testsurvey', $entity->identifier);
+		$this->assertEquals('testSurvey', $entity->identifier);
 
 		$entity->identifier = 'Test Survey Name';
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
 		$entity->identifier = 'Test-Survey-Name';
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
 		$entity->identifier = 'Test@Survey#Name';
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -167,19 +145,19 @@ class SurveyTest extends TestCase {
 		$entity = new Survey();
 
 		$entity->set('identifier', 'testSurvey');
-		$this->assertEquals('testsurvey', $entity->identifier);
+		$this->assertEquals('testSurvey', $entity->identifier);
 
 		$entity->set('identifier', 'Test Survey Name');
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
 		$entity->set('identifier', 'Test-Survey-Name');
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
 		$entity->set('identifier', 'Test@Survey#Name');
-		$this->assertEquals('test_survey_name', $entity->identifier);
+		$this->assertEquals('testSurveyName', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -364,7 +342,7 @@ class SurveyTest extends TestCase {
 		$view = new View();
 		$entity->initialize($view, [], null, true);
 
-		$invalidQuestion = new SurveySurveyQuestion(['id' => 999, 'survey_id' => 1]);
+		$invalidQuestion = new SurveySurveyQuestion(['id' => 999, 'surveyId' => 1]);
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('The provided question is not part of the survey.');

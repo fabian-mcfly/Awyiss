@@ -7,6 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Utility\Text;
 
@@ -23,16 +24,6 @@ use Cake\Utility\Text;
  */
 class Lock extends Entity {
 	use IdentityAwareTrait;
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'foreign_key' => 'foreignKey',
-		'unique_id' => 'uniqueId',
-	];
-
 
 	/**
 	 * @inheritDoc
@@ -78,6 +69,6 @@ class Lock extends Entity {
 			return null;
 		}
 
-		return mb_strtolower(Text::slug($scope, ['replacement' => '_']));
+		return Inflector::camelize(Text::slug($scope, ['replacement' => '_']));
 	}
 }

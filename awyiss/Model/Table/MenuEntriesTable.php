@@ -61,12 +61,14 @@ class MenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('Menus');
+		$this->belongsTo('Menus', [
+			'foreignKey' => 'menuId',
+		]);
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
 		]);
 	}
 
@@ -105,7 +107,7 @@ class MenuEntriesTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 2),
 				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
@@ -170,13 +172,13 @@ class MenuEntriesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
 			$rules->existsIn(
-				'language_shortcode',
+				'languageShortcode',
 				'Languages',
 			),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_language_exists'),
 			]
 		);
 

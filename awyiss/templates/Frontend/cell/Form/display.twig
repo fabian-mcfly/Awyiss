@@ -29,7 +29,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 {%- if form %}
 	{% if sent %}
 		{% block formSuccessMessage %}
-			<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+			<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|camelize }}">
 				{{ form.successMessage|raw }}
 			</div>
 		{% endblock %}
@@ -47,10 +47,10 @@ after a short delay to prevent spam bots from submitting the form directly.
 			{% set renderedForm %}
 				<form
 					action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
-					data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
+					data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|camelize }}"
 					{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 					method="post"
-					{% if form.errors is empty %}id="Form-{{ form.identifier|ucparts(false) }}"{% endif %}
+					{% if form.errors is empty %}id="Form-{{ form.identifier|camelize }}"{% endif %}
 				>
 					{% block formProtectionBefore %}
 						{{ FormHelper.renderFormProtection(form, 'before') }}
@@ -64,14 +64,14 @@ after a short delay to prevent spam bots from submitting the form directly.
 						{{ FormHelper.renderFormProtection(form, 'after') }}
 					{% endblock %}
 
-					<input type="hidden" name="_form_identifier" value="{{ form.identifier }}">
-					<input type="hidden" name="_page_id" value="{{ page.id }}">
+					<input type="hidden" name="_formIdentifier" value="{{ form.identifier }}">
+					<input type="hidden" name="_pageId" value="{{ page.id }}">
 				</form>
 			{% endset %}
 
 			{% if includeWrapper %}
 				{% block formWrapper %}
-					<div class="Form Form-{{ form.identifier|ucparts(false) }}">
+					<div class="Form Form-{{ form.identifier|camelize }}">
 						{% block formWrapperInner %}
 							{{ errorMessages }}
 							{{ renderedForm }}
@@ -87,7 +87,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 				<script nonce="{{ AssetHelper.getScriptNonce() }}">
 					setTimeout(function () {
 						const formElementsChecksum = '{{ now }}{{ formElementsChecksum }}';
-						let form = document.getElementById('Form-{{ form.identifier|ucparts(false) }}');
+						let form = document.getElementById('Form-{{ form.identifier|camelize }}');
 						{% if form.errors is not empty %}
 							form = form.parentElement.querySelector('form');
 						{% endif %}

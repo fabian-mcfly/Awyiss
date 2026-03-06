@@ -9,6 +9,7 @@ use Awyiss\Model\Table\AttributesTable;
 use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Queue\Task\Attributes\DeleteTask;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\I18n\DateTime;
@@ -90,8 +91,8 @@ class DeleteTaskTest extends TestCase {
 		$mockAttributesTable->expects($this->once())->method('updateAll')->with(
 			$this->callback(function (array $fields) use ($identityId): bool {
 				$this->assertTrue($fields['deleted']);
-				$this->assertSame($identityId, $fields['deleted_by']);
-				$this->assertInstanceOf(DateTime::class, $fields['deleted_on']);
+				$this->assertSame($identityId, $fields['deletedBy']);
+				$this->assertInstanceOf(DateTime::class, $fields['deletedOn']);
 
 				return true;
 			}),
@@ -104,7 +105,7 @@ class DeleteTaskTest extends TestCase {
 
 		$mockI18nTable = $this->createMock(Table::class);
 		$mockI18nTable->expects($this->once())->method('deleteAll')->with([
-			'model' => 'attributes_' . $identifier,
+			'model' => Inflector::camelize('attributes_' . Inflector::underscore($identifier)),
 		]);
 
 		$mockTableLocator = $this->createMock(TableLocator::class);
@@ -119,24 +120,24 @@ class DeleteTaskTest extends TestCase {
 			$this->callback(function (array $jobData) use ($identifier): bool {
 				$unlinkCommands = '';
 
-				if ($identifier === 'news') {
+				if ($identifier === 'News') {
 					// Special case for news, we need to unlink the files
 					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesNewsTable.php';
 					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesNews.php && ';
 				}
-				elseif ($identifier === 'pages') {
+				elseif ($identifier === 'Pages') {
 					// Special case for pages, we need to unlink the files
 					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesPagesTable.php';
 					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesPage.php && ';
 				}
-				elseif ($identifier === 'usergroups') {
+				elseif ($identifier === 'Usergroups') {
 					// Special case for usergroups, we need to unlink the files
 					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesUsergroupsTable.php';
 					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesUsergroup.php && ';
 				}
 
 				$this->assertSame(
-					'(' . $unlinkCommands . 'bin/cake bake migration drop_attributes_' . $identifier . ' --folder tests/customer/config/Migrations' .
+					'(' . $unlinkCommands . 'bin/cake bake migration drop_attributes_' . Inflector::underscore($identifier) . ' --folder tests/customer/config/Migrations' .
 					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
 					' && bin/cake schema_cache clear' .
 					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
@@ -149,7 +150,7 @@ class DeleteTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -172,13 +173,13 @@ class DeleteTaskTest extends TestCase {
 	 */
 	public static function scopeDataProvider(): array {
 		return [
-			['content_templates', 123],
-			['pages', 456],
-			['users', 789],
-			['news', 101],
-			['product_categories', 202],
-			['categories', 303],
-			['usergroups', 404],
+			['ContentTemplates', 123],
+			['Pages', 456],
+			['Users', 789],
+			['News', 101],
+			['ProductCategories', 202],
+			['Categories', 303],
+			['Usergroups', 404],
 		];
 	}
 }

@@ -92,9 +92,9 @@ export default class RoutePlanner {
 		formSelector: ':scope > .RoutePlanner-Form',
 		messageAreaSelector: '.RoutePlanner-Message',
 		routeSelector: '.RoutePlanner-Route',
-		startInputSelector: 'input[name^="route_planner"][name$="[start]"]',
+		startInputSelector: 'input[name^="routePlanner"][name$="[start]"]',
 		startChoicesSelector: '.RoutePlanner-StartChoices',
-		transportationInputSelector: '[name^="route_planner"][name$="[transportation_mode]"]',
+		transportationInputSelector: '[name^="routePlanner"][name$="[transportation_mode]"]',
 		coordinates: {
 			lat: undefined,
 			lng: undefined,
@@ -308,9 +308,9 @@ export default class RoutePlanner {
 
 		map.setPadding({
 			top: parseInt(padding[0]),
-			right: parseInt(padding[1]),
-			bottom: parseInt(padding[2]),
-			left: parseInt(padding[3]),
+			right: parseInt(padding[1] ?? padding[0]),
+			bottom: parseInt(padding[2] ?? padding[0]),
+			left: parseInt(padding[3] ?? padding[0]),
 		});
 
 		return map;

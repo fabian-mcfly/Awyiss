@@ -85,9 +85,9 @@ class MenuCell extends Cell {
 				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 				$entity = $backendMenuEntriesTable->find()->select('id')->find('withDeleted')->where([
 					'OR' => [
-						'created_on >' => $time,
-						'changed_on >' => $time,
-						'deleted_on >' => $time,
+						'createdOn >' => $time,
+						'changedOn >' => $time,
+						'deletedOn >' => $time,
 					],
 				])->first();
 

@@ -17,7 +17,7 @@ class FoobarsPolicyTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetScope(): void {
-		$this->assertSame('foobars', FoobarsPolicy::getScope());
+		$this->assertSame('Foobars', FoobarsPolicy::getScope());
 	}
 
 

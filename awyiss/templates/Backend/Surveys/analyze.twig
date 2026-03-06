@@ -57,7 +57,7 @@
 					{% for identifier, questionData in analysis.questions %}
 						<div class="QuestionsSummaryItem">
 							<h3>{{ questionData.title }}</h3>
-							<h4>{{ __d('survey_questions', 'question_type_' ~ questionData.type.value) }}</h4>
+							<h4>{{ __d('SurveyQuestions', 'question_type_' ~ questionData.type.value|underscore) }}</h4>
 
 							{% if
 								questionData.question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice or

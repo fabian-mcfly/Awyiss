@@ -43,7 +43,7 @@
 			{% endif %}
 
 			{% block headlineAddBatch %}
-				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add_batch', pageRole.title) }}</h1>
+				<h1>{{ __df(pageRoleName, 'GenericPages', 'headline_add_batch', pageRole.title) }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -61,7 +61,7 @@
 
 				{% block formAddButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 
@@ -85,7 +85,7 @@
 				{% block fieldsetGeneralInner %}
 					{% block formControlPages %}
 						{{ FormHelper.control('pages', {
-							label: __df(pageRoleName, 'generic_pages', 'pages'),
+							label: __df(pageRoleName, 'GenericPages', 'pages'),
 							type: 'textarea',
 						}) }}
 					{% endblock %}

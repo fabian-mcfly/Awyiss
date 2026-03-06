@@ -1,19 +1,19 @@
 {% if customer.firstname and customer.lastname %}
-	{% set greeting = __d('customers', 'account_verification_email_greeting_name', customer.firstname, customer.lastname) %}
+	{% set greeting = __d('Customers', 'account_verification_email_greeting_name', customer.firstname, customer.lastname) %}
 {% else %}
-	{% set greeting = __d('customers', 'account_verification_email_greeting_generic') %}
+	{% set greeting = __d('Customers', 'account_verification_email_greeting_generic') %}
 {% endif %}
 
 <p>
 	{{ greeting }}<br>
 	<br>
-	{{ __d('customers', 'account_verification_email_text') }}
+	{{ __d('Customers', 'account_verification_email_text') }}
 </p>
 <br>
-<p>{{ HtmlHelper.link(__d('customers', 'account_verification_email_link_text'), verifyUrl) }}</p>
+<p>{{ HtmlHelper.link(__d('Customers', 'account_verification_email_link_text'), verifyUrl) }}</p>
 <br>
 <p>
-	<strong>{{ __d('customers', 'verification_code') }}:</strong><br>
+	<strong>{{ __d('Customers', 'verification_code') }}:</strong><br>
 	<code style="font-family: monospace; background-color: #f0f0f0; padding: 5px; display: inline-block;">{{ verificationCode }}</code>
 </p>
 

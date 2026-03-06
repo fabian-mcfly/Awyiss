@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Table\MediaResizedImagesTable;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
 
@@ -90,20 +91,6 @@ class Media extends Entity {
 		'focusPoint' => true,
 		'systemOrder' => true,
 		'file' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'media_folder_id' => 'mediaFolderId',
-		'mime_type' => 'mimeType',
-		'meta_data' => 'metaData',
-		'average_color' => 'averageColor',
-		'focus_point' => 'focusPoint',
-		'system_order' => 'systemOrder',
-		'media_resized_images' => 'mediaResizedImages',
-		'media_assignments' => 'mediaAssignments',
-		'usage_count' => 'usageCount',
 	];
 
 
@@ -303,12 +290,12 @@ class Media extends Entity {
 		 * UPDATE media_resized_images SET
 		 * 	name = (CONCAT('newname', substr(name, <strlen(oldname) + 1>))),
 		 * 	path = (CONCAT('newpath', substr(path, <strlen(oldpath) + 1>)))
-		 * WHERE media_id = 1
+		 * WHERE mediaId = 1
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
 		 * @noinspection SpellCheckingInspection
 		 */
-		$query->update('media_resized_images')->set('name', $query->expr($query->func()->concat([
+		$query->update(MediaResizedImagesTable::TABLE)->set('name', $query->expr($query->func()->concat([
 			$fileName,
 			$query->func()->substr([
 				'name' => 'identifier',
@@ -326,7 +313,7 @@ class Media extends Entity {
 				null,
 				'integer',
 			]),
-		])))->where(['media_id' => $this->id])->execute();
+		])))->where(['mediaId' => $this->id])->execute();
 
 		if ($this->isImage()) {
 			$baseName = $this->originalCleanName ?? $this->cleanName;
@@ -404,7 +391,7 @@ class Media extends Entity {
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $table */
 		$table = FactoryLocator::get('Table')->get('MediaResizedImages');
 		$table->deleteAll([
-			'media_id' => $this->id,
+			'mediaId' => $this->id,
 		]);
 
 		$baseName = $this->isImage() ? $this->cleanName : $this->name;

@@ -37,18 +37,18 @@
 								{{ FormHelper.button(__('remove_answer'), {
 									class: 'Button Button-Small Button-Delete',
 									type: 'button',
-									'data-confirm-title': __d('survey_answers', 'confirm_delete_title'),
-									'data-confirm-yes': __d('survey_answers', 'confirm_delete_yes'),
+									'data-confirm-title': __d('SurveyAnswers', 'confirm_delete_title'),
+									'data-confirm-yes': __d('SurveyAnswers', 'confirm_delete_yes'),
 									'data-confirm-yes-class': 'Button-Delete',
-									'data-confirm-no': __d('survey_answers', 'confirm_delete_no'),
-									'data-confirm': __d('survey_answers', 'confirm_delete', entity.id)
+									'data-confirm-no': __d('SurveyAnswers', 'confirm_delete_no'),
+									'data-confirm': __d('SurveyAnswers', 'confirm_delete', entity.id)
 								}) }}
 							{% endblock %}
 						</span>
 					{% endblock %}
 
 					{% block answersListItemInputs %}
-						{{ FormHelper.control('survey_survey_questions[' ~ index ~'][allow_custom_answer]', {
+						{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][allowCustomAnswer]', {
 							checked: entity.allowCustomAnswer == true,
 							disabled: answerType == 'available',
 							type: 'checkbox',

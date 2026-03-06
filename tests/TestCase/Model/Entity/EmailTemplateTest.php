@@ -119,14 +119,14 @@ class EmailTemplateTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'title' => 'Test Email Template',
-			'text_html' => '<p>HTML content</p>',
-			'text_plain' => 'Plain text content',
-			'file_name' => 'TestTemplate',
+			'textHtml' => '<p>HTML content</p>',
+			'textPlain' => 'Plain text content',
+			'fileName' => 'TestTemplate',
 			'layout' => 'default',
 			'active' => true,
 			'deleted' => false,
-			'used_for_emails' => 5,
-			'used_for_confirmation_emails' => 3,
+			'usedForEmails' => 5,
+			'usedForConfirmationEmails' => 3,
 		];
 
 		$entity = new EmailTemplate($properties);
@@ -141,27 +141,5 @@ class EmailTemplateTest extends TestCase {
 		$this->assertFalse($entity->deleted);
 		$this->assertEquals(5, $entity->usedForEmails);
 		$this->assertEquals(3, $entity->usedForConfirmationEmails);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\EmailTemplate::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'text_html' => '<h1>HTML Title</h1>',
-			'text_plain' => 'Plain Title',
-			'file_name' => 'test-template',
-			'used_for_emails' => 10,
-			'used_for_confirmation_emails' => 2,
-		];
-
-		$entity = new EmailTemplate($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

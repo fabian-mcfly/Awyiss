@@ -92,7 +92,7 @@ class DesignsListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity);
 
-		$inUseDesign = $designsTable->find()->where(['in_use' => true])->first();
+		$inUseDesign = $designsTable->find()->where(['inUse' => true])->first();
 		$this->assertNotNull($inUseDesign);
 		$this->assertSame('design-2', $inUseDesign->identifier);
 
@@ -122,7 +122,7 @@ class DesignsListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity);
 
-		$inUseDesign = $designsTable->find()->where(['in_use' => true])->first();
+		$inUseDesign = $designsTable->find()->where(['inUse' => true])->first();
 		$this->assertNull($inUseDesign);
 
 		$this->deleteDummyDesigns();
@@ -152,7 +152,7 @@ class DesignsListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity);
 
-		$inUseDesign = $designsTable->find()->where(['in_use' => true])->first();
+		$inUseDesign = $designsTable->find()->where(['inUse' => true])->first();
 		$this->assertNotNull($inUseDesign);
 		$this->assertSame('design-2', $inUseDesign->identifier);
 
@@ -285,7 +285,7 @@ class DesignsListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'designs::webfont_download',
+				'reference' => 'Designs::webfontDownload',
 			]
 		);
 

@@ -87,7 +87,7 @@ class TranslateBehaviorTest extends TestCase {
 			'defaultLocale' => '',
 			'locale' => '',
 			'strategyClass' => EavStrategy::class,
-			'referenceName' => 'content_templates',
+			'referenceName' => 'ContentTemplates',
 			'tableLocator' => null,
 		];
 

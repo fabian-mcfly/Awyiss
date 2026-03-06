@@ -94,7 +94,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$result = $this->contentTemplateContentAreasTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('content_template_content_areas', $result->getI18nDomain());
+		$this->assertSame('ContentTemplateContentAreas', $result->getI18nDomain());
 
 		// Test fields exist
 		$this->assertTrue($result->hasField('id'));

@@ -67,13 +67,13 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('SurveyAnswers'));
 		$surveyAnswersAssociation = $this->surveySurveyAnswersTable->getAssociation('SurveyAnswers');
 		$this->assertInstanceOf(BelongsTo::class, $surveyAnswersAssociation);
-		$this->assertSame('survey_answer_id', $surveyAnswersAssociation->getForeignKey());
+		$this->assertSame('surveyAnswerId', $surveyAnswersAssociation->getForeignKey());
 		$this->assertSame('INNER', $surveyAnswersAssociation->getJoinType());
 
 		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('SurveySurveyQuestions'));
 		$surveySurveyQuestionsAssociation = $this->surveySurveyAnswersTable->getAssociation('SurveySurveyQuestions');
 		$this->assertInstanceOf(BelongsTo::class, $surveySurveyQuestionsAssociation);
-		$this->assertSame('survey_survey_question_id', $surveySurveyQuestionsAssociation->getForeignKey());
+		$this->assertSame('surveySurveyQuestionId', $surveySurveyQuestionsAssociation->getForeignKey());
 		$this->assertSame('INNER', $surveySurveyQuestionsAssociation->getJoinType());
 
 		// 'MediaAssignments' must also exist
@@ -144,7 +144,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$result = $this->surveySurveyAnswersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('survey_survey_answers', $result->getI18nDomain());
+		$this->assertSame('SurveySurveyAnswers', $result->getI18nDomain());
 
 		// Test that all fields have validation rules
 		$this->assertTrue($result->hasField('id'));
@@ -486,7 +486,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$data = [
 			'surveyAnswerId' => 1,
 			'surveySurveyQuestionId' => 2,
-			'nextAction' => 'show_form',  // Patching entity will convert to enum
+			'nextAction' => NextAction::ShowForm,  // Patching entity will convert to enum
 			'systemOrder' => 0,
 		];
 
@@ -599,7 +599,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 			'title' => 'Custom Answer Title',
 			'subtitle' => 'Custom Subtitle',
 			'text' => 'Custom answer text content',
-			'nextAction' => 'show_form',
+			'nextAction' => NextAction::ShowForm,
 			'nextActionTarget' => 'question_5',
 			'systemOrder' => 5,
 			'active' => false,
@@ -631,8 +631,8 @@ class SurveySurveyAnswersTableTest extends TestCase {
 	public function testInitializeSchemaNextActionColumn(): void {
 		$schema = $this->surveySurveyAnswersTable->getSchema();
 
-		// Test that next_action column is configured as an enum type
-		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('next_action'));
+		// Test that nextAction column is configured as an enum type
+		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('nextAction'));
 	}
 
 

@@ -52,11 +52,11 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @var string|null Session identifier for the selected insert_after_id
+	 * @var string|null Session identifier for the selected insertAfterId
 	 */
 	protected ?string $selectedInsertAfterIdSessionIdentifier = null;
 	/**
-	 * @var string|null Session identifier for the selected parent_id
+	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
 
@@ -67,8 +67,8 @@ class BackendMenuEntriesController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedInsertAfterIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.insert_after_id';
-		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+		$this->selectedInsertAfterIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.insertAfterId';
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
 	}
 
 
@@ -271,11 +271,11 @@ class BackendMenuEntriesController extends Controller {
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return [
-				'insert_after_id' => $insertAfterIdCase,
-				'parent_id' => $parentIdCase,
-				'system_order' => $systemOrderCase,
-				'deleted_by' => $identity?->id,
-				'deleted_on' => DateTime::now(),
+				'insertAfterId' => $insertAfterIdCase,
+				'parentId' => $parentIdCase,
+				'systemOrder' => $systemOrderCase,
+				'deletedBy' => $identity?->id,
+				'deletedOn' => DateTime::now(),
 			];
 		}, [
 			'id IN' => array_keys($requestData),
@@ -299,7 +299,7 @@ class BackendMenuEntriesController extends Controller {
 
 		$this->BackendMenuEntries->patchEntity($menuEntry, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		if (!empty($menuEntry->parentId)) {
@@ -307,14 +307,14 @@ class BackendMenuEntriesController extends Controller {
 
 			$request = $this->getRequest();
 			//When insertAfterId is part of the request data, overwrite it because it's might be outdated
-			if ($request->getData('insert_after_id') !== null) {
-				$request = $request->withData('insert_after_id', $menuEntry->insertAfterId);
+			if ($request->getData('insertAfterId') !== null) {
+				$request = $request->withData('insertAfterId', $menuEntry->insertAfterId);
 				$this->setRequest($request);
 			}
 		}
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->BackendMenuEntries->save($menuEntry, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -326,7 +326,7 @@ class BackendMenuEntriesController extends Controller {
 				$session->write($this->selectedInsertAfterIdSessionIdentifier, $menuEntry->insertAfterId);
 				$session->write($this->selectedParentIdSessionIdentifier, $menuEntry->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
@@ -452,9 +452,7 @@ class BackendMenuEntriesController extends Controller {
 		/** @var \Awyiss\Model\Table\DatatablesTable $table */
 		$table = $this->fetchTable('Datatables');
 		$table->findAllAndCache()->each(function (Datatable $datatable) {
-			$name = Inflector::camelize($datatable->identifier);
-
-			static::$controllers[ $name ] ??= static::$controllers['GenericDatatables'];
+			static::$controllers[ $datatable->identifier ] ??= static::$controllers['GenericDatatables'];
 		});
 		unset(static::$controllers['GenericDatatables']);
 

@@ -58,13 +58,13 @@ class MediaElementAssignmentsListener implements EventListenerInterface {
 		$scopes = [];
 		$associations = $table->associations()->getByType('HasMany');
 		foreach ($associations as $association) {
-			$scopes[] = $association->getTable();
+			$scopes[] = Inflector::camelize($association->getTable());
 		}
 
 		/** @var \Awyiss\Model\Table\MediaElementAssignmentsTable $mediaAssignmentsTable */
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 		$records = $mediaAssignmentsTable->find('all')->where([
-			'media_element_id' => $entity->mediaElementId,
+			'mediaElementId' => $entity->mediaElementId,
 			'scope IN' => $scopes,
 		])->all();
 

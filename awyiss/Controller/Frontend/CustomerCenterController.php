@@ -51,7 +51,7 @@ class CustomerCenterController extends AppController {
 		'lastname',
 		'email',
 		'password',
-		'password_confirm',
+		'passwordConfirm',
 	];
 	/**
 	 * @var string|null
@@ -104,7 +104,7 @@ class CustomerCenterController extends AppController {
 
 		// Register a new crumb for the Customer Center
 		$breadcrumbsWidgetClass::registerCrumb(
-			__d('customers', 'link_customer_center'),
+			__d('Customers', 'link_customer_center'),
 			Router::url([
 				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . ucfirst($this->languageShortcode),
 			])
@@ -117,7 +117,7 @@ class CustomerCenterController extends AppController {
 		}
 
 		$breadcrumbsWidgetClass::registerCrumb(
-			__d('customers', 'link_' . Inflector::underscore($action)),
+			__d('Customers', 'link_' . Inflector::underscore($action)),
 			Router::url([
 				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . Inflector::camelize($action) . ucfirst($this->languageShortcode),
 			])
@@ -206,7 +206,7 @@ class CustomerCenterController extends AppController {
 
 		// Handle validation errors
 		if ($customer->getErrors()) {
-			$this->Flash->error(__d('customers', 'error_registration_failed'));
+			$this->Flash->error(__d('Customers', 'error_registration_failed'));
 		}
 
 		return $customer;
@@ -221,7 +221,7 @@ class CustomerCenterController extends AppController {
 	 */
 	protected function handlePostRegistration(bool $requiresVerification, Customer $customer, ?string $verificationCode): void {
 		if (!$requiresVerification) {
-			$this->Flash->success(__d('customers', 'message_registration_success'));
+			$this->Flash->success(__d('Customers', 'message_registration_success'));
 
 			$this->redirect([
 				'_name' => $this->getLoginRouteName(),
@@ -232,7 +232,7 @@ class CustomerCenterController extends AppController {
 
 		// Send email verification
 		if ($this->sendVerificationEmail($customer, $verificationCode)) {
-			$this->Flash->success(__d('customers', 'message_registration_success_verification_required'));
+			$this->Flash->success(__d('Customers', 'message_registration_success_verification_required'));
 
 			$this->redirect([
 				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenterVerifyAccount' . ucfirst($this->languageShortcode),
@@ -242,7 +242,7 @@ class CustomerCenterController extends AppController {
 		}
 
 		// Email sending failed
-		$this->Flash->error(__d('customers', 'error_sending_verification_email'));
+		$this->Flash->error(__d('Customers', 'error_sending_verification_email'));
 
 		$this->customersTable->delete($customer, [
 			'audit' => ['skip' => true],
@@ -274,7 +274,7 @@ class CustomerCenterController extends AppController {
 			->setTemplate('account_verification')
 			->setTemplatePath('customer_center')
 			->setRecipientEmail($customer->email)
-			->setSubject(__d('customers', 'email_subject_verify_account'))
+			->setSubject(__d('Customers', 'email_subject_verify_account'))
 			->setData([
 				'customer' => $customer,
 				'verifyUrl' => $verifyUrl,
@@ -343,7 +343,7 @@ class CustomerCenterController extends AppController {
 				/** @var \Awyiss\Model\Entity\Customer $customer */
 				$customer = $this->customersTable->find()->where(['email' => $email])->first();
 				if ($customer && !$customer->verified) {
-					$errorMessage = __d('customers', 'error_account_not_verified');
+					$errorMessage = __d('Customers', 'error_account_not_verified');
 				}
 				elseif ($customer && !$customer->verified) {
 					// Increment failed attempts
@@ -361,7 +361,7 @@ class CustomerCenterController extends AppController {
 				}
 			}
 
-			$this->Flash->error($errorMessage ?? __d('customers', 'error_invalid_login'));
+			$this->Flash->error($errorMessage ?? __d('Customers', 'error_invalid_login'));
 
 			// Do something to slow down the process
 			password_hash(md5(Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
@@ -429,7 +429,7 @@ class CustomerCenterController extends AppController {
 		$customer = $this->Authentication->getIdentity()?->getOriginalData();
 
 		if (!$customer instanceof Customer) {
-			throw new ForbiddenException(__d('customers', 'error_not_authenticated'));
+			throw new ForbiddenException(__d('Customers', 'error_not_authenticated'));
 		}
 
 		$emailChangeAllowed = Configure::read('Awyiss.Customers.Frontend.profile.emailChangeAllowed', false);
@@ -474,7 +474,7 @@ class CustomerCenterController extends AppController {
 					]);
 
 					if ($this->sendVerificationEmail($customer, $verificationCode)) {
-						$this->Flash->success(__d('customers', 'message_profile_updated'));
+						$this->Flash->success(__d('Customers', 'message_profile_updated'));
 						$this->Authentication->logout();
 
 						$this->redirect([
@@ -485,7 +485,7 @@ class CustomerCenterController extends AppController {
 					}
 				}
 
-				$this->Flash->success(__d('customers', 'message_profile_updated'));
+				$this->Flash->success(__d('Customers', 'message_profile_updated'));
 
 				$this->redirect([
 					'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenterDashboard' . ucfirst($this->languageShortcode),
@@ -494,7 +494,7 @@ class CustomerCenterController extends AppController {
 				return;
 			}
 			else {
-				$this->Flash->error(__d('customers', 'error_profile_update_failed'));
+				$this->Flash->error(__d('Customers', 'error_profile_update_failed'));
 			}
 		}
 
@@ -518,14 +518,14 @@ class CustomerCenterController extends AppController {
 		$customer = $this->Authentication->getIdentity()?->getOriginalData();
 
 		if (!$customer instanceof Customer) {
-			throw new ForbiddenException(__d('customers', 'error_not_authenticated'));
+			throw new ForbiddenException(__d('Customers', 'error_not_authenticated'));
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$customer->clean();
 
 			$data = $this->request->getData();
-			$currentPassword = $data['current_password'] ?? null;
+			$currentPassword = $data['currentPassword'] ?? null;
 
 			if (Configure::read('Security.prehashPassword', false) && Security::getSalt()) {
 				$currentPassword = hash_hmac('sha256', $currentPassword, Security::getSalt());
@@ -533,11 +533,11 @@ class CustomerCenterController extends AppController {
 
 			// Validate current password
 			if (!$currentPassword || !password_verify($currentPassword, $customer->password)) {
-				$this->Flash->error(__d('customers', 'error_password_incorrect'));
+				$this->Flash->error(__d('Customers', 'error_password_incorrect'));
 			} else {
 				$data = array_intersect_key($data, array_flip([
 					'password',
-					'password_confirm',
+					'passwordConfirm',
 				]));
 
 				$this->customersTable->patchEntity($customer, $data);
@@ -548,7 +548,7 @@ class CustomerCenterController extends AppController {
 						'allowFrontendSave' => true,
 					])
 				) {
-					$this->Flash->success(__d('customers', 'message_password_changed'));
+					$this->Flash->success(__d('Customers', 'message_password_changed'));
 
 					$this->redirect([
 						'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenterDashboard' . ucfirst($this->languageShortcode),
@@ -557,7 +557,7 @@ class CustomerCenterController extends AppController {
 					return;
 				}
 
-				$this->Flash->error(__d('customers', 'error_password_change_failed'));
+				$this->Flash->error(__d('Customers', 'error_password_change_failed'));
 			}
 		}
 
@@ -594,7 +594,7 @@ class CustomerCenterController extends AppController {
 		$email = $this->request->getData('email');
 
 		if (!$email) {
-			$this->Flash->error(__d('customers', 'error_email_required'));
+			$this->Flash->error(__d('Customers', 'error_email_required'));
 
 			return;
 		}
@@ -604,8 +604,8 @@ class CustomerCenterController extends AppController {
 			->where([
 				'email' => $email,
 				'OR' => [
-					'password_reset_on IS' => null,
-					'password_reset_on <=' => DateTime::now()->subMinutes(60),
+					'passwordResetOn IS' => null,
+					'passwordResetOn <=' => DateTime::now()->subMinutes(60),
 				],
 			])
 			->first();
@@ -625,14 +625,14 @@ class CustomerCenterController extends AppController {
 
 			// Send reset email
 			if (!$this->sendPasswordResetEmail($customer, $resetCode)) {
-				$this->Flash->error(__d('customers', 'error_sending_password_reset_email'));
+				$this->Flash->error(__d('Customers', 'error_sending_password_reset_email'));
 
 				return;
 			}
 		}
 
 		// Always show success message for security (don't reveal if email exists)
-		$this->Flash->success(__d('customers', 'message_password_reset_sent'));
+		$this->Flash->success(__d('Customers', 'message_password_reset_sent'));
 
 		$this->redirect([
 			'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenterResetPassword' . ucfirst($this->languageShortcode),
@@ -660,25 +660,25 @@ class CustomerCenterController extends AppController {
 		$code = $this->request->getData('code');
 
 		if (!$code) {
-			$this->Flash->error(__d('customers', 'error_invalid_reset_code'));
+			$this->Flash->error(__d('Customers', 'error_invalid_reset_code'));
 
 			return;
 		}
 
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
 		$customer = $this->customersTable->find('active')
-			->where(['password_reset_code' => $code])
+			->where(['passwordResetCode' => $code])
 			->first();
 
 		if (!$customer || !$this->checkPasswordResetCodeValidity($customer)) {
-			$this->Flash->error(__d('customers', 'error_invalid_reset_code'));
+			$this->Flash->error(__d('Customers', 'error_invalid_reset_code'));
 
 			return;
 		}
 
 		// Check if password fields are being submitted (second step)
 		$password = $this->request->getData('password');
-		$passwordConfirm = $this->request->getData('password_confirm');
+		$passwordConfirm = $this->request->getData('passwordConfirm');
 
 		if (!$password) {
 			// First POST: Code was verified, show the password form
@@ -703,7 +703,7 @@ class CustomerCenterController extends AppController {
 				'allowFrontendSave' => true,
 			])
 		) {
-			$this->Flash->success(__d('customers', 'message_password_reset_success'));
+			$this->Flash->success(__d('Customers', 'message_password_reset_success'));
 
 			$this->redirect([
 				'_name' => $this->getLoginRouteName(),
@@ -712,7 +712,7 @@ class CustomerCenterController extends AppController {
 			return;
 		}
 
-		$this->Flash->error(__d('customers', 'error_password_reset_failed'));
+		$this->Flash->error(__d('Customers', 'error_password_reset_failed'));
 
 		// First POST: Code was verified, show the password form
 		$this->set([
@@ -774,7 +774,7 @@ class CustomerCenterController extends AppController {
 		$code = $this->request->getData('code');
 
 		if (!$code) {
-			$this->Flash->error(__d('customers', 'error_invalid_verification_code'));
+			$this->Flash->error(__d('Customers', 'error_invalid_verification_code'));
 
 			return;
 		}
@@ -782,7 +782,7 @@ class CustomerCenterController extends AppController {
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
 		$customer = $this->customersTable->find()
 			->where([
-				'verification_code' => $code,
+				'verificationCode' => $code,
 			])
 			->first();
 
@@ -799,7 +799,7 @@ class CustomerCenterController extends AppController {
 					'allowFrontendSave' => true,
 				])
 			) {
-				$this->Flash->success(__d('customers', 'message_account_verified'));
+				$this->Flash->success(__d('Customers', 'message_account_verified'));
 
 				$this->redirect([
 					'_name' => $this->getLoginRouteName(),
@@ -809,7 +809,7 @@ class CustomerCenterController extends AppController {
 			}
 		}
 
-		$this->Flash->error(__d('customers', 'error_account_verification_failed'));
+		$this->Flash->error(__d('Customers', 'error_account_verification_failed'));
 	}
 
 
@@ -840,7 +840,7 @@ class CustomerCenterController extends AppController {
 			->setTemplate('password_reset')
 			->setTemplatePath('customer_center')
 			->setRecipientEmail($customer->email)
-			->setSubject(__d('customers', 'email_subject_password_reset'))
+			->setSubject(__d('Customers', 'email_subject_password_reset'))
 			->setData([
 				'customer' => $customer,
 				'resetUrl' => $resetUrl,

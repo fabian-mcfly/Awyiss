@@ -137,8 +137,8 @@ class PageRoleTest extends TestCase {
 			'id' => 1,
 			'title' => 'Test Page Role',
 			'identifier' => 'Test123Pages456',
-			'include_in_linklist' => true,
-			'system_order' => 10,
+			'includeInLinklist' => true,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -152,24 +152,5 @@ class PageRoleTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\PageRole::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'include_in_linklist' => false,
-			'system_order' => 5,
-		];
-
-		$entity = new PageRole($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

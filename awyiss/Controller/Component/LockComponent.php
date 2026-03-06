@@ -231,20 +231,20 @@ class LockComponent extends Component {
 
 		$where = [
 			'scope' => $this->getConfig('tableName'),
-			'foreign_key' => $id,
+			'foreignKey' => $id,
 		];
 
 		if ($ownLock !== null) {
-			$where['created_by' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
+			$where['createdBy' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
 
 			$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
 			if ($sessionBased) {
-				$where[ 'unique_id' . ($ownLock ? '' : ' !=') ] = $session->read('Backend.lockIdentifier');
+				$where[ 'uniqueId' . ($ownLock ? '' : ' !=') ] = $session->read('Backend.lockIdentifier');
 			}
 		}
 
 		if ($createdOn) {
-			$where['created_on <='] = $createdOn;
+			$where['createdOn <='] = $createdOn;
 		}
 
 		return $this->locksTable->find()->where($where)->contain(['CreatedByUser'])->first();
@@ -256,7 +256,7 @@ class LockComponent extends Component {
 	 */
 	protected function deleteTimedOutLocks(): void {
 		$this->locksTable->deleteAll([
-			'created_on <' => new DateTime()->modify('-' . $this->getConfig('timeout') . ' seconds'),
+			'createdOn <' => new DateTime()->modify('-' . $this->getConfig('timeout') . ' seconds'),
 		]);
 	}
 }

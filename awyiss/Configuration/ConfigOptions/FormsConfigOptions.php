@@ -67,7 +67,7 @@ class FormsConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			'protection' => [
 				new ConfigOption(
-					defaultValue: ['altcha', 'duplicate_check', 'ip_check', 'hidden_input'],
+					defaultValue: ['altcha', 'duplicateCheck', 'ipCheck', 'hiddenInput'],
 					identifier: 'methods',
 					localizable: false,
 					nullable: true,
@@ -76,7 +76,7 @@ class FormsConfigOptions extends AbstractConfigOptions {
 						$protectionMethods = FormProtectionProvider::getFormProtectionFiles();
 
 						foreach ($protectionMethods as $identifier => $class) {
-							$protectionMethods[ $identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($identifier));
+							$protectionMethods[ $identifier ] = __d('Forms', 'protection_method_' . Inflector::underscore($identifier));
 						}
 
 						asort($protectionMethods);

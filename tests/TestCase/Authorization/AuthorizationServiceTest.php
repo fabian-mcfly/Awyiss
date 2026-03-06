@@ -56,24 +56,24 @@ class AuthorizationServiceTest extends TestCase {
 
 		$this->assertNotEmpty($policies);
 
-		//Make sure the key `languages` is a string (`\Awyiss\Authorization\Policy\Backend\LanguagesPolicy`)
-		$this->assertArrayHasKey('languages', $policies);
-		$this->assertEquals('\Awyiss\Authorization\Policy\Backend\LanguagesPolicy', $policies['languages']);
+		//Make sure the key `Languages` is a string (`\Awyiss\Authorization\Policy\Backend\LanguagesPolicy`)
+		$this->assertArrayHasKey('Languages', $policies);
+		$this->assertEquals('\Awyiss\Authorization\Policy\Backend\LanguagesPolicy', $policies['Languages']);
 
-		// Key `news` must be an instance of `\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy`
-		$this->assertArrayHasKey('news', $policies);
-		$this->assertInstanceOf('\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy', $policies['news']);
+		// Key `News` must be an instance of `\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy`
+		$this->assertArrayHasKey('News', $policies);
+		$this->assertInstanceOf('\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy', $policies['News']);
 
-		// Key `employees` must be an instance of `\Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy`
-		$this->assertArrayHasKey('employees', $policies);
-		$this->assertInstanceOf('\Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy', $policies['employees']);
+		// Key `Employees` must be an instance of `\Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy`
+		$this->assertArrayHasKey('Employees', $policies);
+		$this->assertInstanceOf('\Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy', $policies['Employees']);
 
-		// Scopes `ignored_tests` and `abstract_tests` must not exist
-		$this->assertArrayNotHasKey('abstract_tests', $policies);
-		$this->assertArrayNotHasKey('ignored_tests', $policies);
+		// Scopes `IgnoredTests` and `abstract_tests` must not exist
+		$this->assertArrayNotHasKey('AbstractTests', $policies);
+		$this->assertArrayNotHasKey('IgnoredTests', $policies);
 
-		// But `foobars` must exist
-		$this->assertArrayHasKey('foobars', $policies);
+		// But `Foobars` must exist
+		$this->assertArrayHasKey('Foobars', $policies);
 	}
 
 
@@ -121,12 +121,12 @@ class AuthorizationServiceTest extends TestCase {
 	public function testSanitizeScope(): void {
 		$service = new AuthorizationService('realm');
 
-		$this->assertEquals('foo_bars', $service->sanitizeScope('FooBar'));
-		$this->assertEquals('media', $service->sanitizeScope('Media'));
-		$this->assertEquals('news', $service->sanitizeScope('new'));
-		$this->assertEquals('news', $service->sanitizeScope('News'));
-		$this->assertEquals('pages', $service->sanitizeScope('Page'));
-		$this->assertEquals('system', $service->sanitizeScope('system'));
+		$this->assertEquals('FooBars', $service->sanitizeScope('FooBar'));
+		$this->assertEquals('Media', $service->sanitizeScope('Media'));
+		$this->assertEquals('News', $service->sanitizeScope('new'));
+		$this->assertEquals('News', $service->sanitizeScope('News'));
+		$this->assertEquals('Pages', $service->sanitizeScope('Page'));
+		$this->assertEquals('System', $service->sanitizeScope('system'));
 	}
 
 

@@ -57,9 +57,9 @@
 		{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
 		{% set newValue = newData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
 		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
-		{% set inputName = 'media_assignments[' ~ mediaElement.id ~ '][' ~ mediaSelector.identifier ~ ']' %}
+		{% set inputName = 'mediaAssignments[' ~ mediaElement.id ~ '][' ~ mediaSelector.identifier ~ ']' %}
 
-		{% if mediaSelector.mediaSelector.identifier == 'multi_file' %}
+		{% if mediaSelector.mediaSelector.identifier == 'multiFile' %}
 			{% set inputName = inputName ~ '[]' %}
 			{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
 			{% set currentValue = currentValue ? currentValue|column('mediaId') : null %}
@@ -67,7 +67,7 @@
 			{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
 			{% set oldValue = oldValue ? oldValue|column('mediaId') : null %}
 		{% else %}
-			{% set inputName = inputName ~ '[media_id]' %}
+			{% set inputName = inputName ~ '[mediaId]' %}
 		{% endif %}
 
 		{% set oldDiffersFromCurrent = oldValue != currentValue %}
@@ -92,7 +92,7 @@
 							{% set revertable = true %}
 							<a href="{{ baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
 
-							<input type="text" value="{{ mediaId }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][]">
+							<input type="text" value="{{ mediaId }}" name="mediaAssignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][]">
 						{% else %}
 							{{ __('unknown_file') }} (ID: {{ mediaId }})<br>
 						{% endif %}
@@ -115,7 +115,7 @@
 					{% endif %}
 
 					{% if revertable %}
-						<input type="text" value="{{ oldValue is array ? oldValue|jsonEncode : oldValue }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][media_id]">
+						<input type="text" value="{{ oldValue is array ? oldValue|jsonEncode : oldValue }}" name="mediaAssignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][mediaId]">
 
 						{% if oldDiffersFromCurrent and settings.isAjax %}
 							<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
@@ -203,7 +203,7 @@
 	#}
 
 	{% set isAttribute = attribute != null %}
-	{% set columnType = schema.columnType(isAttribute ? field|underscore : staticCall(entity, 'unmapField', field)) %}
+	{% set columnType = schema.columnType(field) %}
 	{% set isLanguage = language is not empty %}
 
 	{% set field = field|variable %}
@@ -333,16 +333,16 @@
 		"
 		data-field="{{ inputName }}">
 		<td class="TableCell-Field">
-			{% if field|underscore in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] %}
-				{{ __d('seo', field|underscore) }}
+			{% if field in ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow'] %}
+				{{ __d('Seo', field|underscore) }}
 			{% elseif isLanguage %}
 				{{ language.label }}
 			{% elseif isAttribute %}
 				{{ attribute.label }}
 			{% elseif settings.isPageRole %}
-				{% set label = __df(scope, 'pages', field|underscore) %}
+				{% set label = __df(scope, 'Pages', field|underscore) %}
 				{% if '::' in label %}
-					{% set label = __d('pages', field|underscore) %}
+					{% set label = __d('Pages', field|underscore) %}
 				{% endif %}
 				{{ label }}
 			{% else %}
@@ -523,7 +523,7 @@
 						{% if publicationDataEnabled %}
 							<tr>
 								<td colspan="3" class="TableCell-PublicationData-Label">
-									{{ __d('publication_data', 'fieldset_publication') }}
+									{{ __d('PublicationData', 'fieldset_publication') }}
 								</td>
 							</tr>
 
@@ -544,12 +544,12 @@
 									{%- if oldDiffersFromNew %} OldValueDiffersFromNew{% endif -%}
 									{%- if newDiffersFromCurrent %} NewValueDiffersFromCurrent{% endif -%}
 								"
-								data-field="_publication_data[start][date_time]">
-								<td class="TableCell-Field">{{ __d('publication_data', 'date_time_start') }}</td>
+								data-field="_publicationData[start][date_time]">
+								<td class="TableCell-Field">{{ __d('PublicationData', 'date_time_start') }}</td>
 								<td class="TableCell-OldValue">
 									{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
 
-									<input type="text" value="{{ oldValue }}" name="_publication_data[start][date_time]">
+									<input type="text" value="{{ oldValue }}" name="_publicationData[start][date_time]">
 
 									{% if oldDiffersFromCurrent and isAjax %}
 										<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
@@ -577,12 +577,12 @@
 									{%- if oldDiffersFromNew %} OldValueDiffersFromNew{% endif -%}
 									{%- if newDiffersFromCurrent %} NewValueDiffersFromCurrent{% endif -%}
 								"
-								data-field="_publication_data[end][date_time]">
-								<td class="TableCell-Field">{{ __d('publication_data', 'date_time_end') }}</td>
+								data-field="_publicationData[end][date_time]">
+								<td class="TableCell-Field">{{ __d('PublicationData', 'date_time_end') }}</td>
 								<td class="TableCell-OldValue">
 									{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
 
-									<input type="text" value="{{ oldValue }}" name="_publication_data[end][date_time]">
+									<input type="text" value="{{ oldValue }}" name="_publicationData[end][date_time]">
 
 									{% if oldDiffersFromCurrent and isAjax %}
 										<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
@@ -598,7 +598,7 @@
 						{% endif %}
 
 						{% for mediaElement in mediaElements %}
-							{% if mediaElement.identifier != 'inline_img_tag' %}
+							{% if mediaElement.identifier != 'inlineImgTag' %}
 								{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
 							{% endif %}
 						{% endfor %}

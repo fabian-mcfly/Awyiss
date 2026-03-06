@@ -4,8 +4,8 @@
 namespace Awyiss\Configuration;
 
 
+use Awyiss\config\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptions\GenericDatatablesConfigOptions;
-use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Core\App;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Utility\Inflector;

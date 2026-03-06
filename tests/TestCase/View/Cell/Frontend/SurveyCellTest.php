@@ -78,7 +78,7 @@ class SurveyCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
 		$output = (string)$this->cell('Frontend/Survey', [
-			'dummy_survey',
+			'dummySurvey',
 			$page,
 			$this->view,
 			[
@@ -90,11 +90,11 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<p class="Title SurveyQuestion-Title">Question #1</p>', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
-		$this->assertStringContainsString('<input type="hidden" name="_survey_identifier" value="dummy_survey">', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummy_survey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
 	}
 
 
@@ -108,18 +108,18 @@ class SurveyCellTest extends TestCase {
 
 		$postData = [
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'action' => 'proceed',
 					'8524de5e' => '5', // Answer to question 1
 				],
 			],
-			'_survey_identifier' => 'dummy_survey',
+			'_surveyIdentifier' => 'dummySurvey',
 		];
 
 		$this->request = $this->request->withParsedBody($postData);
 
 		$output = (string)$this->cell('Frontend/Survey', [
-			'dummy_survey',
+			'dummySurvey',
 			$page,
 			$this->view,
 			[
@@ -131,13 +131,13 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<p class="Title SurveyQuestion-Title">Question #2</p>', $output);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="7" id="SurveyAnswer-Input7">', $output);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="8" id="SurveyAnswer-Input8">', $output);
-		$this->assertStringContainsString('<input type="checkbox" name="survey[dummy_survey][f69b1648][]" value="9" id="SurveyAnswer-Input9">', $output);
-		$this->assertStringContainsString('<input type="hidden" name="_survey_identifier" value="dummy_survey">', $output);
-		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][last_action]" value="8524de5e">', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummy_survey][action]" value="go_back" class="Button Survey-GoBack" formnovalidate>surveys::back</button>', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummy_survey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="7" id="SurveyAnswer-Input7">', $output);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="8" id="SurveyAnswer-Input8">', $output);
+		$this->assertStringContainsString('<input type="checkbox" name="survey[dummySurvey][f69b1648][]" value="9" id="SurveyAnswer-Input9">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][lastAction]" value="8524de5e">', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>surveys::back</button>', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
 	}
 
 
@@ -151,19 +151,19 @@ class SurveyCellTest extends TestCase {
 
 		$postData = [
 			'survey' => [
-				'dummy_survey' => [
-					'action' => 'go_back',
-					'last_action' => '8524de5e',
+				'dummySurvey' => [
+					'action' => 'goBack',
+					'lastAction' => '8524de5e',
 					'8524de5e' => '5', // Answer to question 1
 				],
 			],
-			'_survey_identifier' => 'dummy_survey',
+			'_surveyIdentifier' => 'dummySurvey',
 		];
 
 		$this->request = $this->request->withParsedBody($postData);
 
 		$output = (string)$this->cell('Frontend/Survey', [
-			'dummy_survey',
+			'dummySurvey',
 			$page,
 			$this->view,
 			[
@@ -175,11 +175,11 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<p class="Title SurveyQuestion-Title">Question #1</p>', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
-		$this->assertStringContainsString('<input type="hidden" name="_survey_identifier" value="dummy_survey">', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummy_survey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>', $output);
 	}
 
 
@@ -198,19 +198,19 @@ class SurveyCellTest extends TestCase {
 
 		$postData = [
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'action' => 'proceed',
 					'8524de5e' => '5', // Answer to question 1
 					'f69b1648' => ['7', '8'], // Answers to question 2
 				],
 			],
-			'_survey_identifier' => 'dummy_survey',
+			'_surveyIdentifier' => 'dummySurvey',
 		];
 
 		$this->request = $this->request->withParsedBody($postData);
 
 		$output = (string)$this->cell('Frontend/Survey', [
-			'dummy_survey',
+			'dummySurvey',
 			$page,
 			$this->view,
 			[
@@ -232,7 +232,7 @@ class SurveyCellTest extends TestCase {
 		$surveyQuestionsTable->updateAll(['active' => true], ['id' => 3]);
 
 		$output = (string)$this->cell('Frontend/Survey', [
-			'dummy_survey',
+			'dummySurvey',
 			$page,
 			$this->view,
 			[

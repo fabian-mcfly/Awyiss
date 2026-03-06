@@ -28,13 +28,6 @@ class Datatable extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'identifier' => true,
@@ -43,7 +36,7 @@ class Datatable extends Entity {
 
 
 	/**
-	 * Make sure the identifier is always lowercase, underscored and free of special characters
+	 * Make sure the identifier is always CamelCased, pluralized and free of special characters
 	 *
 	 * @param string|null $identifier
 	 * @return string|null
@@ -61,6 +54,6 @@ class Datatable extends Entity {
 		$identifier = Inflector::pluralize($identifier);
 
 
-		return strtolower($identifier);
+		return Inflector::camelize($identifier);
 	}
 }

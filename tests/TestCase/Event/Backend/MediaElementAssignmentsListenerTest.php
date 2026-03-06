@@ -32,7 +32,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 		$this->listener = new MediaElementAssignmentsListener();
 
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$mediaAssignmentsTable->deleteAll(['foreign_key' => 124]);
+		$mediaAssignmentsTable->deleteAll(['foreignKey' => 124]);
 	}
 
 
@@ -70,7 +70,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 				'mediaElementSelectorIdentifier' => 'identifier',
 				'mediaId' => 10,
 				'mediaFolderId' => 1,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 2,
 			]),
@@ -79,7 +79,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 				'mediaElementSelectorIdentifier' => 'identifier',
 				'mediaId' => 11,
 				'mediaFolderId' => 1,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -88,7 +88,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 				'mediaElementSelectorIdentifier' => 'identifier',
 				'mediaId' => 11,
 				'mediaFolderId' => 1,
-				'scope' => 'global_contents',
+				'scope' => 'GlobalContents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -97,7 +97,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 				'mediaElementSelectorIdentifier' => 'identifier',
 				'mediaId' => 11,
 				'mediaFolderId' => 1,
-				'scope' => 'content_templates',
+				'scope' => 'ContentTemplates',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -111,7 +111,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 
 		$mediaElementAssignment = $mediaElementAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 890,
-			'scope' => 'content_templates',
+			'scope' => 'ContentTemplates',
 			'foreignKey' => 1,
 		]);
 
@@ -119,7 +119,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 
 		$this->listener->afterDelete($event, $mediaElementAssignment);
 
-		$mediaAssignments = $mediaAssignmentsTable->find('all')->where(['media_element_id' => 890])->all();
+		$mediaAssignments = $mediaAssignmentsTable->find('all')->where(['mediaElementId' => 890])->all();
 		$this->assertCount(2, $mediaAssignments);
 	}
 }

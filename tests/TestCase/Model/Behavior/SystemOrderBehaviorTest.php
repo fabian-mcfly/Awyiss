@@ -146,7 +146,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$sql = $query->sql();
 
-		$this->assertStringContainsString('ORDER BY Employers.system_order ASC', $sql);
+		$this->assertStringContainsString('ORDER BY Employers.systemOrder ASC', $sql);
 	}
 
 
@@ -167,7 +167,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$sql = $query->sql();
 
-		$this->assertStringNotContainsString('ORDER BY Employers.system_order ASC', $sql);
+		$this->assertStringNotContainsString('ORDER BY Employers.systemOrder ASC', $sql);
 	}
 
 
@@ -190,7 +190,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$sql = $query->sql();
 
-		$this->assertStringNotContainsString('ORDER BY Employers.system_order ASC', $sql);
+		$this->assertStringNotContainsString('ORDER BY Employers.systemOrder ASC', $sql);
 	}
 
 
@@ -233,29 +233,29 @@ class SystemOrderBehaviorTest extends TestCase {
 	public function testBeforeMarshalRemovesSnakeCaseCurrentValuePlaceholder(): void {
 		$data = new ArrayObject([
 			'title' => 'Test',
-			'system_order' => 5,
+			'systemOrder' => 5,
 		]);
 		$options = new ArrayObject();
 		$event = new Event('Model.beforeMarshal');
 
-		$this->assertTrue(isset($data['system_order']));
+		$this->assertTrue(isset($data['systemOrder']));
 
 		$this->behavior->beforeMarshal($event, $data, $options);
 
-		$this->assertSame(5, $data['system_order']);
+		$this->assertSame(5, $data['systemOrder']);
 		$this->assertSame('Test', $data['title']);
 
 		$data = new ArrayObject([
 			'title' => 'Test',
-			'system_order' => SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER,
+			'systemOrder' => SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER,
 		]);
 
-		$this->assertTrue(isset($data['system_order']));
+		$this->assertTrue(isset($data['systemOrder']));
 
 		$this->behavior->beforeMarshal($event, $data, $options);
 
 		/** @noinspection PhpConditionAlreadyCheckedInspection */
-		$this->assertFalse(isset($data['system_order']));
+		$this->assertFalse(isset($data['systemOrder']));
 		$this->assertSame('Test', $data['title']);
 	}
 
@@ -1207,7 +1207,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$event = new Event('Model.afterSave');
 		$this->behavior->afterSave($event, $first, $options);
 
-		$results = $this->table->find('all')->where(['title !=' => 'First', 'language_shortcode' => 'es'])->toArray();
+		$results = $this->table->find('all')->where(['title !=' => 'First', 'languageShortcode' => 'es'])->toArray();
 		$this->assertCount(3, $results);
 
 		$this->assertSame('Third', $results[0]->title);
@@ -1219,7 +1219,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$this->assertSame('Fifth', $results[2]->title);
 		$this->assertSame(4, $results[2]->systemOrder);
 
-		$results = $this->table->find('all')->where(['title !=' => 'First', 'language_shortcode' => 'de'])->toArray();
+		$results = $this->table->find('all')->where(['title !=' => 'First', 'languageShortcode' => 'de'])->toArray();
 		$this->assertCount(1, $results);
 
 		$this->assertSame('Second', $results[0]->title);
@@ -1719,7 +1719,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$this->assertInstanceOf(SelectQuery::class, $result);
 
 		$sql = $result->sql();
-		$this->assertStringContainsString('language_shortcode = :c0', $sql);
+		$this->assertStringContainsString('languageShortcode = :c0', $sql);
 		$values = $result->getValueBinder()->bindings();
 		$this->assertArrayHasKey(':c0', $values);
 		$this->assertSame('de', $values[':c0']['value']);
@@ -1734,15 +1734,15 @@ class SystemOrderBehaviorTest extends TestCase {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
 		$query = $this->table->find();
 
-		$this->behavior->setConfig('relatedColumns', ['id', 'systemOrder', 'system_order', 'languageShortcode'], false);
+		$this->behavior->setConfig('relatedColumns', ['id', 'systemOrder', 'systemOrder', 'languageShortcode'], false);
 
 		$result = $this->behavior->addQueryConditions($query, $entity);
 
 		$sql = $result->sql();
 
 		$this->assertStringNotContainsString('id =', $sql);
-		$this->assertStringNotContainsString('system_order =', $sql);
-		$this->assertStringContainsString('language_shortcode = :c0', $sql);
+		$this->assertStringNotContainsString('systemOrder =', $sql);
+		$this->assertStringContainsString('languageShortcode = :c0', $sql);
 	}
 
 
@@ -1759,7 +1759,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$sql = $result->sql();
 
 		// Must use IS NULL for null values
-		$this->assertStringContainsString('(Employers.language_shortcode) IS NULL', $sql);
+		$this->assertStringContainsString('(Employers.languageShortcode) IS NULL', $sql);
 	}
 
 
@@ -1779,7 +1779,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$sql = $result->sql();
 
 		// Must use the current value 'es'
-		$this->assertStringContainsString('language_shortcode = :c0', $sql);
+		$this->assertStringContainsString('languageShortcode = :c0', $sql);
 		$values = $result->getValueBinder()->bindings();
 		$this->assertArrayHasKey(':c0', $values);
 		$this->assertSame('es', $values[':c0']['value']);
@@ -1802,7 +1802,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$sql = $result->sql();
 
 		// Must use the original value 'de'
-		$this->assertStringContainsString('language_shortcode = :c0', $sql);
+		$this->assertStringContainsString('languageShortcode = :c0', $sql);
 		$values = $result->getValueBinder()->bindings();
 		$this->assertArrayHasKey(':c0', $values);
 		$this->assertSame('de', $values[':c0']['value']);
@@ -1825,7 +1825,7 @@ class SystemOrderBehaviorTest extends TestCase {
 		$sql = $result->sql();
 
 		// Must contain conditions for both columns
-		$this->assertStringContainsString('language_shortcode', $sql);
+		$this->assertStringContainsString('languageShortcode', $sql);
 		$this->assertStringContainsString('title', $sql);
 		$this->assertStringContainsString('de', $sql);
 		$this->assertStringContainsString('Test Title', $sql);
@@ -1861,7 +1861,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		// Must preserve existing conditions and add new ones
 		$this->assertStringContainsString('id > :c0', $sql);
-		$this->assertStringContainsString('language_shortcode = :c1', $sql);
+		$this->assertStringContainsString('languageShortcode = :c1', $sql);
 	}
 
 
@@ -1893,8 +1893,8 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$sql = $result->sql();
 
-		$this->assertStringContainsString('language_shortcode = :c8', $sql);
-		$this->assertStringContainsString('AttributesCars.dropdown_select = :c9', $sql);
+		$this->assertStringContainsString('languageShortcode = :c8', $sql);
+		$this->assertStringContainsString('AttributesCars.dropdownSelect = :c9', $sql);
 
 		$values = $result->getValueBinder()->bindings();
 
@@ -2112,7 +2112,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2136,7 +2136,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2178,7 +2178,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2216,11 +2216,11 @@ class SystemOrderBehaviorTest extends TestCase {
 		$this->assertNotFalse($result);
 
 		// Rebuild system order
-		$result = $this->behavior->rebuildSystemOrder('systemOrder', SORT_ASC, null, ['language_shortcode' => 'es']);
+		$result = $this->behavior->rebuildSystemOrder('systemOrder', SORT_ASC, null, ['languageShortcode' => 'es']);
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2257,7 +2257,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2283,7 +2283,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(5, $result);
 
@@ -2321,7 +2321,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 
@@ -2348,7 +2348,7 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 
@@ -2394,16 +2394,16 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 
 		// Rebuild system order
-		$result = $this->behavior->rebuildSystemOrder('dropdown_select');
+		$result = $this->behavior->rebuildSystemOrder('dropdownSelect');
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 
@@ -2455,16 +2455,16 @@ class SystemOrderBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 
 		// Rebuild system order
-		$result = $this->behavior->rebuildSystemOrder('attributes.dropdown_select');
+		$result = $this->behavior->rebuildSystemOrder('attributes.dropdownSelect');
 
 		$this->assertNotFalse($result);
 
-		$result = $this->table->find('all')->orderBy(['system_order' => 'ASC'])->toArray();
+		$result = $this->table->find('all')->orderBy(['systemOrder' => 'ASC'])->toArray();
 
 		$this->assertCount(6, $result);
 

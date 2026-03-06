@@ -328,7 +328,7 @@ abstract class MenuItem implements ArrayAccess {
 	 */
 	public function getLabel(): string {
 		if (!$this->active) {
-			return __d('menu', 'inactive') . ' ' . $this->getTitle();
+			return __d('Menu', 'inactive') . ' ' . $this->getTitle();
 		}
 
 

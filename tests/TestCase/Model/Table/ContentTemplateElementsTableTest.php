@@ -134,7 +134,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		$result = $this->contentTemplateElementsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('content_template_elements', $result->getI18nDomain());
+		$this->assertSame('ContentTemplateElements', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -159,7 +159,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'contentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'title' => 'Test Element',
 			'fieldset' => 'general',
 			'columnSpan' => '5/12',
@@ -249,7 +249,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		// Test invalid column span
 		$invalidData = [
 			'contentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 			'columnSpan' => 'invalid_span',
 		];
@@ -268,7 +268,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 	public function testEntityValidationEmptyTitle(): void {
 		$data = [
 			'contentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 			'title' => '',
 		];
@@ -289,7 +289,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		// Test with existing content template
 		$validData = [
 			'contentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 		];
 
@@ -300,7 +300,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		// Test with non-existing content template
 		$invalidData = [
 			'contentTemplateId' => 99999,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 		];
 
@@ -349,7 +349,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		$additionalData = [
 			'required' => true,
 			'contentTemplateId' => 1,
-			'identifier' => 'custom_element',
+			'identifier' => 'customElement',
 			'title' => 'Custom Element',
 			'fieldset' => 'content',
 			'systemOrder' => 5,
@@ -367,7 +367,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		$this->assertTrue($entity->required);
 		$this->assertSame(5, $entity->systemOrder);
 		$this->assertSame(1, $entity->contentTemplateId);
-		$this->assertSame('custom_element', $entity->identifier);
+		$this->assertSame('customElement', $entity->identifier);
 
 		$this->assertIsArray($entity->column);
 		$this->assertCount(1, $entity->column);

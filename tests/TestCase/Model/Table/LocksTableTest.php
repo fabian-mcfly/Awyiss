@@ -77,7 +77,7 @@ class LocksTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 123,
 			'uniqueId' => 'unique_test_id',
 			'createdBy' => 1,
@@ -92,7 +92,7 @@ class LocksTableTest extends TestCase {
 
 		// Check provided values
 		$this->assertNull($entity->id);
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals('unique_test_id', $entity->uniqueId);
 		$this->assertEquals(1, $entity->createdBy);

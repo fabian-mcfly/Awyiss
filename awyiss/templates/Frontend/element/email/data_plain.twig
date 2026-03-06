@@ -22,7 +22,7 @@
 					{{~ '-'|repeat((formElement.titleEmail ?: formElement.title)|length) }}
 				{%~ endblock %}
 
-			{%~ elseif formElement.type == 'free_text' %}
+			{%~ elseif formElement.type == 'freeText' %}
 				{%~ block formElementRowFreeText %}
 					{%~ if formElement.showInEmail %}
 						{{- formElement.text|raw }}

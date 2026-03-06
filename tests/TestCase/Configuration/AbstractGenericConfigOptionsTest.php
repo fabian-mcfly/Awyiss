@@ -4,8 +4,8 @@
 namespace Awyiss\Test\TestCase\Configuration;
 
 
+use Awyiss\config\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionsCollection;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Configuration\ConfigOptionType;
@@ -19,7 +19,7 @@ use InvalidArgumentException;
  */
 class AbstractGenericConfigOptionsTest extends TestCase {
 	/**
-	 * @var \Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions
+	 * @var \Awyiss\config\GenericPagesConfigOptions
 	 */
 	protected GenericPagesConfigOptions $configOptions;
 

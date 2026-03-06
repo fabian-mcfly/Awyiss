@@ -38,7 +38,7 @@
 				{% endblock %}
 
 				{% block formControlIdentifier %}
-					{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
+					{{ FormHelper.control('identifier', {'data-autofill-from': 'title', 'data-camelize': 'true'}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -64,34 +64,35 @@
 						{% set counter = 0 %}
 						{% for key, mediaElementSelector in mediaElement.mediaElementSelectors %}
 							<div class="FormInputType-ListItem">
-								{{ FormHelper.hidden('media_element_selectors.' ~ counter ~ '.id', {
+								{{ FormHelper.hidden('mediaElementSelectors.' ~ counter ~ '.id', {
 									val: mediaElementSelector.id,
 								}) }}
-								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.media_selector_id', {
+								{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.mediaSelectorId', {
 									options: mediaSelectors,
 									required: true,
 								}) }}
 
-								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.title', {
+								{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.title', {
 									required: true,
 									type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
 									templateVars: {
-										dialogTitle: __d('system', 'translations_dialog_title', __('title')),
+										dialogTitle: __d('System', 'translations_dialog_title', __('title')),
 									},
 								}) }}
 
-								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
+								{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.identifier', {
 									required: true,
 									'data-autofill-from': 'title',
+									'data-camelize': 'true',
 								}) }}
 
-								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {
+								{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.columnSpan', {
 									options: columnSpans,
 									required: true,
 								}) }}
 
 								<div class="AdditionalOptions">
-									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.required', {
+									{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.required', {
 										checked: mediaElementSelector.required,
 										type: checkbox,
 									}) }}
@@ -101,33 +102,33 @@
 						{% endfor %}
 
 						<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-							{{ FormHelper.hidden('media_element_selectors.' ~ counter ~ '.id', {
+							{{ FormHelper.hidden('mediaElementSelectors.' ~ counter ~ '.id', {
 								val: '',
 							}) }}
-							{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.media_selector_id', {
+							{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.mediaSelectorId', {
 								options: mediaSelectors,
 								required: false,
 								val: '',
 							}) }}
 
-							{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.title', {
+							{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.title', {
 								required: false,
 								type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
 							}) }}
 
-							{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
+							{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.identifier', {
 								required: false,
 								'data-autofill-from': 'title',
 							}) }}
 
-							{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {
+							{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.columnSpan', {
 								options: columnSpans,
 								required: false,
 								val: '',
 							}) }}
 
 							<div class="AdditionalOptions">
-								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.required', {
+								{{ FormHelper.control('mediaElementSelectors.' ~ counter ~ '.required', {
 									type: checkbox,
 								}) }}
 							</div>
@@ -154,16 +155,16 @@
 						{% set counter = 0 %}
 						{% for key, mediaElementAssignment in mediaElement.mediaElementAssignments %}
 							<div class="FormInputType-ListItem">
-								{{ FormHelper.hidden('media_element_assignments.' ~ counter ~ '.id', {
+								{{ FormHelper.hidden('mediaElementAssignments.' ~ counter ~ '.id', {
 									val: mediaElementAssignment.id,
 								}) }}
 
-								{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.scope', {
+								{{ FormHelper.control('mediaElementAssignments.' ~ counter ~ '.scope', {
 									options: models,
 									required: false,
 								}) }}
 
-								{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.foreign_key', {
+								{{ FormHelper.control('mediaElementAssignments.' ~ counter ~ '.foreignKey', {
 									disabled: entities[ mediaElementAssignment.scope ]|length == 0,
 									options: entities[ mediaElementAssignment.scope ],
 									required: false,
@@ -173,17 +174,17 @@
 						{% endfor %}
 
 						<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-							{{ FormHelper.hidden('media_element_assignments.' ~ counter ~ '.id', {
+							{{ FormHelper.hidden('mediaElementAssignments.' ~ counter ~ '.id', {
 								val: '',
 							}) }}
 
-							{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.scope', {
+							{{ FormHelper.control('mediaElementAssignments.' ~ counter ~ '.scope', {
 								options: models,
 								required: false,
 								val: '',
 							}) }}
 
-							{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.foreign_key', {
+							{{ FormHelper.control('mediaElementAssignments.' ~ counter ~ '.foreignKey', {
 								disabled: true,
 								options: [],
 								required: false,
@@ -222,7 +223,7 @@
 				{% endblock %}
 
 				{% block formControlColumnSpan %}
-					{{ FormHelper.control('column_span', {disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
+					{{ FormHelper.control('columnSpan', {disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}
@@ -241,7 +242,7 @@
 			{% block fieldsetConditionsInner %}
 				{% block formControlSystemOrder %}
 					{% if systemOrderField|variable == 'systemOrder' %}
-						{{ SystemOrderHelper.control('system_order') }}
+						{{ SystemOrderHelper.control('systemOrder') }}
 					{% endif %}
 				{% endblock %}
 
@@ -307,7 +308,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

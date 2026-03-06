@@ -40,23 +40,23 @@ class GlobalContentTemplatesTable extends Table {
 	 */
 	protected array $availableGlobalContentElements = [
 		'active' => false,
-		'global_content_template_id' => false,
+		'globalContentTemplateId' => false,
 		'identifier' => false,
-		'parent_id' => true,
-		'system_order' => false,
-		'css_class' => true,
-		'column_width' => true,
-		'column_indent' => true,
-		'column_last' => true,
-		'column_rtl' => true,
+		'parentId' => true,
+		'systemOrder' => false,
+		'cssClass' => true,
+		'columnWidth' => true,
+		'columnIndent' => true,
+		'columnLast' => true,
+		'columnRtl' => true,
 		'title' => true,
-		'title_tag' => true,
+		'titleTag' => true,
 		'subtitle' => true,
-		'subtitle_tag' => true,
+		'subtitleTag' => true,
 		'text' => true,
 		'link' => true,
-		'form_id' => true,
-		'survey_id' => true,
+		'formId' => true,
+		'surveyId' => true,
 	];
 	/**
 	 * @var array<int, string>
@@ -93,11 +93,15 @@ class GlobalContentTemplatesTable extends Table {
 		$this->hasMany('GlobalContents', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'globalContentTemplateId',
+			'propertyName' => 'globalContents',
 		]);
 
 		$this->hasMany('GlobalContentTemplateElements', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'globalContentTemplateId',
+			'propertyName' => 'globalContentTemplateElements',
 			'saveStrategy' => 'replace',
 		]);
 	}
@@ -109,7 +113,7 @@ class GlobalContentTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
-			'used_for_global_contents' => $query->func()->count('GlobalContents.id'),
+			'usedForGlobalContents' => $query->func()->count('GlobalContents.id'),
 		])->leftJoinWith('GlobalContents', function (SelectQuery $query) {
 			return $query->applyOptions([
 				'attributes' => [
@@ -175,7 +179,7 @@ class GlobalContentTemplatesTable extends Table {
 
 		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableGlobalContentAttributes[ $key ] = $attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'global_contents'])->all()->indexBy('identifier')->map(
+		$this->availableGlobalContentAttributes[ $key ] = $attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'GlobalContents'])->all()->indexBy('identifier')->map(
 			function (Attribute $attribute): array {
 				return [
 					'title' => $attribute->title,
@@ -259,7 +263,7 @@ class GlobalContentTemplatesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_file_name_unique'),
 		]);
 
 
@@ -290,16 +294,16 @@ class GlobalContentTemplatesTable extends Table {
 		}, 'validGlobalContentElements', [
 			'errorField' => 'globalContentTemplateElements',
 			//No domain fallback, since this is a message, specific to global content templates.
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_global_content_elements'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_global_content_elements'),
 		]);
 
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('GlobalContents', 'global_contents'),
+			$rules->isNotLinkedTo('GlobalContents', 'globalContents'),
 			'noLinkedGlobalContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_global_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_global_contents'),
 			]
 		);
 

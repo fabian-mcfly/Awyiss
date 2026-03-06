@@ -66,7 +66,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $customerGroupsAssociation);
 		$this->assertFalse($customerGroupsAssociation->getCascadeCallbacks());
 		$this->assertFalse($customerGroupsAssociation->getDependent());
-		$this->assertSame('customer_group_id', $customerGroupsAssociation->getForeignKey());
+		$this->assertSame('customerGroupId', $customerGroupsAssociation->getForeignKey());
 		$this->assertSame('INNER', $customerGroupsAssociation->getJoinType());
 
 		// Test user tracking associations
@@ -99,7 +99,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 		$result = $this->customerGroupAssignmentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('customer_group_assignments', $result->getI18nDomain());
+		$this->assertSame('CustomerGroupAssignments', $result->getI18nDomain());
 
 		// Test fields exist
 		$this->assertTrue($result->hasField('id'));
@@ -116,7 +116,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'customerGroupId' => 1,
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 		];
 
@@ -134,7 +134,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 	public function testEntityValidationSuccessWithNullForeignKey(): void {
 		$data = [
 			'customerGroupId' => 2,
-			'scope' => 'surveys',
+			'scope' => 'Surveys',
 			'foreignKey' => null,
 		];
 
@@ -249,7 +249,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 		// Test with existing customer group
 		$data = [
 			'customerGroupId' => 1,
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 		];
 
@@ -267,7 +267,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 		// Test with non-existing customer group
 		$data = [
 			'customerGroupId' => 99999,
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 		];
 
@@ -306,7 +306,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'customerGroupId' => 2,
-			'scope' => 'surveys',
+			'scope' => 'Surveys',
 			'foreignKey' => 2,
 		];
 
@@ -318,7 +318,7 @@ class CustomerGroupAssignmentsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame(2, $entity->customerGroupId);
-		$this->assertSame('surveys', $entity->scope);
+		$this->assertSame('Surveys', $entity->scope);
 		$this->assertSame(2, $entity->foreignKey);
 	}
 }

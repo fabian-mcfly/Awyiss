@@ -53,7 +53,7 @@ class PagesController extends Controller {
 	 */
 	protected ?int $forcedRootPageId = null;
 	/**
-	 * @var string|null Session identifier for the selected parent_id
+	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
 	/**
@@ -78,7 +78,7 @@ class PagesController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
 
 		if (!($this->categories['enabled'] ?? false)) {
 			$this->forcedRootPageId = Configure::read('Awyiss.' . $this->getName() . '.Frontend.categories.forcedRootPageId');
@@ -146,7 +146,7 @@ class PagesController extends Controller {
 			'pageTemplates' => $pageTemplates,
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
-			'pageRoleName' => Inflector::underscore($this->pageRoleName),
+			'pageRoleName' => Inflector::camelize($this->pageRoleName),
 		]);
 	}
 
@@ -199,7 +199,7 @@ class PagesController extends Controller {
 			}
 
 			$data = [
-				'page_role_id' => $this->getPageRole()->value,
+				'pageRoleId' => $this->getPageRole()->value,
 				'slug' => 'dummy',
 				'title' => 'dummy',
 			];
@@ -207,7 +207,7 @@ class PagesController extends Controller {
 
 			$this->Pages->patchEntity($page, $data, [
 				'associated' => $associated,
-				'validate' => !$this->request->getData('reload_form'),
+				'validate' => !$this->request->getData('reloadForm'),
 			]);
 
 			$this->Categories->setConfig('finder', [
@@ -218,7 +218,7 @@ class PagesController extends Controller {
 
 			$entities = $this->buildEntitiesFromIndentedRows($requestData['pages'], $requestData);
 
-			if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 				$success = false;
 
 				if ($entities->count()) {
@@ -239,7 +239,7 @@ class PagesController extends Controller {
 
 				if ($success) {
 					if (!$this->request->is('ajax')) {
-						$this->Flash->success(__df($this->pageRoleName, 'pages', 'add_batch_succeeded'));
+						$this->Flash->success(__df($this->pageRoleName, 'Pages', 'add_batch_succeeded'));
 					}
 
 					/*
@@ -253,7 +253,7 @@ class PagesController extends Controller {
 				}
 				else {
 					if (!$this->request->is('ajax')) {
-						$this->Flash->error(__df($this->pageRoleName, 'pages', 'add_batch_failed'));
+						$this->Flash->error(__df($this->pageRoleName, 'Pages', 'add_batch_failed'));
 						foreach ($page->getError('_general') as $error) {
 							$this->Flash->error($error);
 						}
@@ -284,7 +284,7 @@ class PagesController extends Controller {
 		$page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
 		if (!$page) {
-			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
+			$this->Flash->error(__df($this->pageRoleName, 'Pages', 'record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
@@ -303,7 +303,7 @@ class PagesController extends Controller {
 
 		$this->setViewVars($page);
 
-		$this->set('isDuplicated', $page->id && $this->Pages->exists(['duplicate_of' => $page->id]));
+		$this->set('isDuplicated', $page->id && $this->Pages->exists(['duplicateOf' => $page->id]));
 	}
 
 
@@ -322,7 +322,7 @@ class PagesController extends Controller {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $this->Pages->findById($id)->first();
 		if (!$page) {
-			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
+			$this->Flash->error(__df($this->pageRoleName, 'Pages', 'record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
@@ -330,12 +330,12 @@ class PagesController extends Controller {
 
 		if ($this->Pages->delete($page)) {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->success(__df($this->pageRoleName, 'pages', 'delete_succeeded'));
+				$this->Flash->success(__df($this->pageRoleName, 'Pages', 'delete_succeeded'));
 			}
 		}
 		else {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->pageRoleName, 'pages', 'delete_failed'));
+				$this->Flash->error(__df($this->pageRoleName, 'Pages', 'delete_failed'));
 				foreach ($page->getError('_general') as $error) {
 					$this->Flash->error($error);
 				}
@@ -363,7 +363,7 @@ class PagesController extends Controller {
 		$page = $this->Pages->findById($this->request->getParam('id'))->first();
 
 		if (!$page) {
-			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
+			$this->Flash->error(__df($this->pageRoleName, 'Pages', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -426,14 +426,14 @@ class PagesController extends Controller {
 	public function linkList(): void {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
 		$query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'page_role_id IN' => array_keys($pageRoles),
+			'pageRoleId IN' => array_keys($pageRoles),
 		]);
 
 		$pagesByPageRole = [];
@@ -484,14 +484,14 @@ class PagesController extends Controller {
 			$page->setAccess('attributes', true);
 		}
 
-		$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 		$hasDescendantsWithDifferentPageRole = false;
 		if (!$page->isNew() && $saveAsCopy) {
 			$hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($page);
 		}
 
-		$copyDescendantsWithDifferentPageRole = $this->request->getData('copy_descendants_with_different_page_role');
+		$copyDescendantsWithDifferentPageRole = $this->request->getData('copyDescendantsWithDifferentPageRole');
 		if ($copyDescendantsWithDifferentPageRole !== null && $hasDescendantsWithDifferentPageRole) {
 			$copyDescendantsWithDifferentPageRole = (bool)$copyDescendantsWithDifferentPageRole;
 		}
@@ -503,12 +503,12 @@ class PagesController extends Controller {
 		}
 
 		if ($this->forcedRootPageId) {
-			unset($requestData['parent_id']);
+			unset($requestData['parentId']);
 		}
 
-		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $requestData, [
+		$this->Pages->patchEntity($page, ['pageRoleId' => $this->getPageRole()->value] + $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		$this->Categories->setConfig('finder', [
@@ -518,7 +518,7 @@ class PagesController extends Controller {
 		]);
 
 		if (
-			!$this->request->getData('reload_form') && //reload_form is set when we need to reload options based on current values
+			!$this->request->getData('reloadForm') && //reloadForm is set when we need to reload options based on current values
 			(
 				//Only save pages if there are no descendants with different page role OR if the decision has been made
 				!$hasDescendantsWithDifferentPageRole ||
@@ -532,14 +532,14 @@ class PagesController extends Controller {
 				])
 			) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->pageRoleName, 'pages', ($saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__df($this->pageRoleName, 'Pages', ($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
 				$session = $this->request->getSession();
 				$session->write($this->selectedParentIdSessionIdentifier, $page->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
@@ -558,7 +558,7 @@ class PagesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->pageRoleName, 'pages', ($saveAsCopy ? 'add' : $method) . '_failed'));
+				$this->Flash->error(__df($this->pageRoleName, 'Pages', ($saveAsCopy ? 'add' : $method) . '_failed'));
 				foreach ($page->getError('_general') as $error) {
 					$this->Flash->error($error);
 				}
@@ -574,7 +574,7 @@ class PagesController extends Controller {
 
 	/**
 	 * Returns a ResultSet of all `\Awyiss\Model\Entity\PageTemplate` records available
-	 * for the current page_role_id, formatted as a list using `\Cake\ORM\Table::findList()`
+	 * for the current pageRoleId, formatted as a list using `\Cake\ORM\Table::findList()`
 	 *
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Awyiss\Model\Entity\PageTemplate
@@ -584,7 +584,7 @@ class PagesController extends Controller {
 		if (!isset($this->pageTemplates)) {
 			/** @uses \Awyiss\Model\Table::findActive() */
 			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
-				'page_role_id' => $this->getPageRole(),
+				'pageRoleId' => $this->getPageRole(),
 			])->all()->indexBy('id');
 		}
 
@@ -606,14 +606,14 @@ class PagesController extends Controller {
 			$categoryQueryConditions = $this->Categories->getQueryConditions($this->Categories->getSelectedCategory($page));
 			/*
 			 * Remove parent_id from the conditions.
-			 * Threaded pages are used for the parent_id and duplicate_of select box.
+			 * Threaded pages are used for the parentId and duplicateOf select box.
 			 *
-			 * For duplicate_of, the parent_id limitation is not needed. Duplicating a page with a different parent is allowed.
-			 * For the parent_id select box, the limitation doesn't apply since nesting is only possible if the category behavior
+			 * For duplicateOf, the parent_id limitation is not needed. Duplicating a page with a different parent is allowed.
+			 * For the parentId select box, the limitation doesn't apply since nesting is only possible if the category behavior
 			 * - is disabled or
-			 * - not using the parent_id field
+			 * - not using the parentId field
 			 */
-			unset($categoryQueryConditions['parent_id'], $categoryQueryConditions['parentId']);
+			unset($categoryQueryConditions['parentId'], $categoryQueryConditions['parentId']);
 
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
@@ -728,7 +728,7 @@ class PagesController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
-			'page_role_id' => $this->getPageRole(),
+			'pageRoleId' => $this->getPageRole(),
 		];
 	}
 
@@ -810,7 +810,7 @@ class PagesController extends Controller {
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'parentRecord' => $parentRecord ?? null,
 			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
-			'pageRoleName' => Inflector::underscore($this->pageRoleName),
+			'pageRoleName' => Inflector::camelize($this->pageRoleName),
 		]);
 	}
 
@@ -858,10 +858,10 @@ class PagesController extends Controller {
 		$sortCounter = []; // Array to keep track of the sort order at each level
 		$entities = collection([]);
 
-		$rootParentId = $requestData['parent_id'] ?? null;
-		$firstSystemOrder = $requestData['system_order'] ?? null;
+		$rootParentId = $requestData['parentId'] ?? null;
+		$firstSystemOrder = $requestData['systemOrder'] ?? null;
 
-		unset($requestData['parent_id'], $requestData['system_order']);
+		unset($requestData['parentId'], $requestData['systemOrder']);
 
 		$associated = [];
 		if ($this->Pages->hasAttributes()) {
@@ -901,7 +901,7 @@ class PagesController extends Controller {
 
 			$entity = $this->Pages->newDefaultEntity();
 
-			$data = ['page_role_id' => $this->getPageRole()->value];
+			$data = ['pageRoleId' => $this->getPageRole()->value];
 			$data += [
 				'tempId' => $currentId,
 				'title' => trim($title),
@@ -960,9 +960,9 @@ class PagesController extends Controller {
 		}
 
 		$request = $this->getRequest();
-		//When page_template_id is part of the request data, overwrite it since it might be outdated
-		if ($request->getData('page_template_id') !== null) {
-			$request = $request->withData('page_template_id', $page->pageTemplateId);
+		//When pageTemplateId is part of the request data, overwrite it since it might be outdated
+		if ($request->getData('pageTemplateId') !== null) {
+			$request = $request->withData('pageTemplateId', $page->pageTemplateId);
 			$this->setRequest($request);
 		}
 	}
@@ -975,7 +975,7 @@ class PagesController extends Controller {
 		$categoriesBehavior = $this->Pages->getBehavior('Categories');
 		if (
 			$categoriesBehavior->getConfig('enabled') &&
-			in_array($categoriesBehavior->getConfig('field'), ['parent_id', 'parentId'], true)
+			in_array($categoriesBehavior->getConfig('field'), ['parentId', 'parentId'], true)
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}

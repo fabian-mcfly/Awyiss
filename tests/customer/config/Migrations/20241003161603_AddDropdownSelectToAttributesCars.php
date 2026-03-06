@@ -16,7 +16,7 @@ class AddDropdownSelectToAttributesCars extends AbstractMigration {
 	 */
 	public function up(): void {
 		$table = $this->table('attributes_cars');
-		$table->addColumn('dropdown_select', 'string', [
+		$table->addColumn('dropdownSelect', 'string', [
 			'default' => null,
 			'limit' => 50,
 			'null' => false,

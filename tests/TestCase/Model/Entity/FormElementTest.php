@@ -73,22 +73,22 @@ class FormElementTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'form_id' => 1,
-			'parent_id' => null,
+			'formId' => 1,
+			'parentId' => null,
 			'type' => 'fieldset',
-			'identifier' => 'persoenliche_daten',
+			'identifier' => 'persoenlicheDaten',
 			'title' => 'Persönliche Daten',
-			'title_email' => null,
+			'titleEmail' => null,
 			'placeholder' => null,
 			'text' => null,
 			'options' => null,
-			'column_width' => '1/1',
-			'column_indent' => null,
-			'column_last' => false,
-			'column_rtl' => false,
-			'css_class' => null,
+			'columnWidth' => '1/1',
+			'columnIndent' => null,
+			'columnLast' => false,
+			'columnRtl' => false,
+			'cssClass' => null,
 			'required' => false,
-			'system_order' => 1,
+			'systemOrder' => 1,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -99,7 +99,7 @@ class FormElementTest extends TestCase {
 		$this->assertEquals(1, $entity->formId);
 		$this->assertNull($entity->parentId);
 		$this->assertEquals('fieldset', $entity->type);
-		$this->assertEquals('persoenliche_daten', $entity->identifier);
+		$this->assertEquals('persoenlicheDaten', $entity->identifier);
 		$this->assertEquals('Persönliche Daten', $entity->title);
 		$this->assertNull($entity->titleEmail);
 		$this->assertNull($entity->placeholder);
@@ -124,22 +124,22 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithTextFormElement(): void {
 		$properties = [
 			'id' => 2,
-			'form_id' => 1,
-			'parent_id' => 1,
+			'formId' => 1,
+			'parentId' => 1,
 			'type' => 'text',
 			'identifier' => 'vorname',
 			'title' => 'Vorname',
-			'title_email' => null,
+			'titleEmail' => null,
 			'placeholder' => null,
 			'text' => null,
 			'options' => null,
-			'column_width' => '1/2',
-			'column_indent' => null,
-			'column_last' => false,
-			'column_rtl' => false,
-			'css_class' => null,
+			'columnWidth' => '1/2',
+			'columnIndent' => null,
+			'columnLast' => false,
+			'columnRtl' => false,
+			'cssClass' => null,
 			'required' => true,
-			'system_order' => 2,
+			'systemOrder' => 2,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -165,8 +165,8 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithSelectFormElement(): void {
 		$properties = [
 			'id' => 4,
-			'form_id' => 1,
-			'parent_id' => 1,
+			'formId' => 1,
+			'parentId' => 1,
 			'type' => 'select',
 			'identifier' => 'anrede',
 			'title' => 'Anrede',
@@ -175,10 +175,10 @@ class FormElementTest extends TestCase {
 				['key' => null, 'value' => null, '_translations' => ['de' => ['key' => '', 'value' => 'Frau'], 'es' => ['key' => '', 'value' => '']]],
 				['key' => null, 'value' => null, '_translations' => ['de' => ['key' => '', 'value' => 'Herr'], 'es' => ['key' => '', 'value' => 'Senor']]],
 			],
-			'column_width' => '1/2',
-			'column_last' => true,
+			'columnWidth' => '1/2',
+			'columnLast' => true,
 			'required' => false,
-			'system_order' => 1,
+			'systemOrder' => 1,
 			'active' => true,
 		];
 
@@ -204,15 +204,15 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithTextareaFormElement(): void {
 		$properties = [
 			'id' => 7,
-			'form_id' => 1,
-			'parent_id' => null,
+			'formId' => 1,
+			'parentId' => null,
 			'type' => 'textarea',
 			'identifier' => 'nachricht',
 			'title' => 'Nachricht',
 			'text' => '<p>Test</p>',
-			'column_width' => '1/1',
+			'columnWidth' => '1/1',
 			'required' => true,
-			'system_order' => 2,
+			'systemOrder' => 2,
 			'active' => true,
 		];
 
@@ -234,14 +234,14 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithFileFormElement(): void {
 		$properties = [
 			'id' => 54,
-			'form_id' => 1,
-			'parent_id' => 1,
+			'formId' => 1,
+			'parentId' => 1,
 			'type' => 'file',
 			'identifier' => 'dateiupload',
 			'title' => 'Dateiupload',
-			'column_width' => '1/1',
+			'columnWidth' => '1/1',
 			'required' => false,
-			'system_order' => 13,
+			'systemOrder' => 13,
 			'active' => true,
 		];
 
@@ -262,22 +262,22 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithFreeTextFormElement(): void {
 		$properties = [
 			'id' => 56,
-			'form_id' => 2,
-			'parent_id' => null,
-			'type' => 'free_text',
+			'formId' => 2,
+			'parentId' => null,
+			'type' => 'freeText',
 			'identifier' => null,
 			'title' => null,
 			'text' => '<p>Form element with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
-			'column_width' => '4/5',
+			'columnWidth' => '4/5',
 			'required' => false,
-			'system_order' => 1,
+			'systemOrder' => 1,
 			'active' => true,
 		];
 
 		$entity = new FormElement($properties);
 
 		$this->assertEquals(56, $entity->id);
-		$this->assertEquals('free_text', $entity->type);
+		$this->assertEquals('freeText', $entity->type);
 		$this->assertNull($entity->identifier);
 		$this->assertNull($entity->title);
 		$this->assertStringContainsString('Form element with inline img tag', $entity->text);
@@ -293,44 +293,18 @@ class FormElementTest extends TestCase {
 	public function testEntityConstructionWithInactiveFormElement(): void {
 		$properties = [
 			'id' => 57,
-			'form_id' => 1,
-			'parent_id' => null,
-			'type' => 'free_text',
+			'formId' => 1,
+			'parentId' => null,
+			'type' => 'freeText',
 			'active' => false,
-			'system_order' => 1,
+			'systemOrder' => 1,
 		];
 
 		$entity = new FormElement($properties);
 
 		$this->assertEquals(57, $entity->id);
-		$this->assertEquals('free_text', $entity->type);
+		$this->assertEquals('freeText', $entity->type);
 		$this->assertFalse($entity->active);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\FormElement::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'form_id' => 1,
-			'parent_id' => 1,
-			'title_email' => 'Email Title',
-			'column_width' => '1/2',
-			'column_indent' => '1/12',
-			'column_last' => true,
-			'column_rtl' => false,
-			'css_class' => 'test-class',
-			'system_order' => 5,
-		];
-
-		$entity = new FormElement($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 
@@ -402,7 +376,7 @@ class FormElementTest extends TestCase {
 		$this->assertNotNull($parent);
 		$this->assertEquals(1, $parent->id); // should be the fieldset
 		$this->assertEquals('fieldset', $parent->type);
-		$this->assertEquals('persoenliche_daten', $parent->identifier);
+		$this->assertEquals('persoenlicheDaten', $parent->identifier);
 	}
 
 
@@ -428,7 +402,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextBasic(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '<p>Simple text content</p>',
 		]);
 
@@ -444,7 +418,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextWidgetTags(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '<p>Content with <widget data-identifier="test-widget">Widget Content</widget> inside</p>',
 		]);
 
@@ -460,7 +434,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextHtmlEntities(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '<p>Text with&nbsp;non-breaking spaces<br>and line breaks</p>',
 		]);
 
@@ -476,7 +450,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextMultiline(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => "<p>First line of text\nSecond line of text\nThird line of text</p>",
 		]);
 
@@ -493,7 +467,7 @@ class FormElementTest extends TestCase {
 	public function testLabelVirtualPropertyWithFreeTextLongContent(): void {
 		$longText = str_repeat('This is a very long text that should be truncated. ', 10);
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => "<p>$longText</p>",
 		]);
 
@@ -510,7 +484,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextComplexHtml(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '<div><h2>Title</h2><p>Content with <strong>bold</strong> and <em>italic</em> text</p></div>',
 		]);
 
@@ -526,7 +500,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextEmptyContent(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '',
 		]);
 		$entity->setSource('FormElements');
@@ -543,7 +517,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextNullContent(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => null,
 		]);
 		$entity->setSource('FormElements');
@@ -560,7 +534,7 @@ class FormElementTest extends TestCase {
 	 */
 	public function testLabelVirtualPropertyWithFreeTextResponsiveImage(): void {
 		$entity = new FormElement([
-			'type' => 'free_text',
+			'type' => 'freeText',
 			'text' => '<p>Form element with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
 		]);
 		$entity->setSource('FormElements');
@@ -673,25 +647,28 @@ class FormElementTest extends TestCase {
 		$entity = new FormElement();
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('testidentifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'Test Identifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'Test-Identifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'Test Identifier!@#$%';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'UPPERCASE IDENTIFIER';
-		$this->assertEquals('uppercase_identifier', $entity->identifier);
+		$this->assertEquals('uPPERCASEIDENTIFIER', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('testhtmlelement', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
+
+		$entity->identifier = 'alreadyVariableLike';
+		$this->assertEquals('alreadyVariableLike', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -706,25 +683,28 @@ class FormElementTest extends TestCase {
 		$entity = new FormElement();
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('testidentifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'Test Identifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'Test-Identifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'Test Identifier!@#$%');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'UPPERCASE IDENTIFIER');
-		$this->assertEquals('uppercase_identifier', $entity->identifier);
+		$this->assertEquals('uPPERCASEIDENTIFIER', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('testhtmlelement', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
+
+		$entity->set('identifier', 'alreadyVariableLike');
+		$this->assertEquals('alreadyVariableLike', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);

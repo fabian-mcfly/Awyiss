@@ -37,28 +37,9 @@ class Validator extends BaseValidator {
 	 * @return static
 	 */
 	public function setI18nDomain(string $domain): static {
-		$this->i18nDomain = Inflector::underscore($domain);
+		$this->i18nDomain = Inflector::camelize($domain);
 
 		return $this;
-	}
-
-
-	/**
-	 * @param array $data
-	 * @param bool $newRecord
-	 * @param array $context
-	 * @inheritDoc
-	 */
-	public function validate(array $data, bool $newRecord = true, array $context = []): array {
-		return parent::validate($this->underscoreFields($data, true), $newRecord, $context);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function allowEmptyFor(string $field, ?int $flags = null, $when = true, ?string $message = null): static {
-		return parent::allowEmptyFor($this->underscoreField($field), $flags, $when, $message);
 	}
 
 
@@ -68,40 +49,14 @@ class Validator extends BaseValidator {
 	 * @noinspection PhpHierarchyChecksInspection (CakePHP marks the `name` argument as optional` which is not the case)
 	 */
 	public function field(string $name, ?ValidationSet $validationSet = null): ValidationSet {
-		$underscoredName = $this->underscoreField($name);
-
-		if (empty($this->_fields[ $underscoredName ])) {
-			$this->_fields[ $underscoredName ] = $validationSet ?? new ValidationSet();
+		if (empty($this->_fields[ $name ])) {
+			$this->_fields[ $name ] = $validationSet ?? new ValidationSet();
 
 			//Allow an empty string per default. Makes much more sense
 			$this->allowEmptyString($name);
 		}
 
-
-		return $this->_fields[ $underscoredName ];
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function hasField(string $name): bool {
-		return isset($this->_fields[ $this->underscoreField($name) ]);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function remove(string $field, ?string $rule = null): static {
-		if ($rule === null) {
-			unset($this->_fields[ $this->underscoreField($field) ]);
-		}
-		else {
-			$this->field($field)->remove($rule);
-		}
-
-		return $this;
+		return $this->_fields[ $name ];
 	}
 
 
@@ -110,8 +65,6 @@ class Validator extends BaseValidator {
 	 * @return string|null
 	 */
 	public function getRequiredMessage(string $field): ?string {
-		$field = $this->underscoreField($field);
-
 		if (!isset($this->_fields[ $field ])) {
 			return null;
 		}
@@ -120,7 +73,7 @@ class Validator extends BaseValidator {
 			return $this->_presenceMessages[ $field ];
 		}
 
-		return __df($this->i18nDomain, 'validation', 'error_required');
+		return __df($this->i18nDomain, 'Validation', 'error_required');
 	}
 
 
@@ -129,8 +82,6 @@ class Validator extends BaseValidator {
 	 * @return string|null
 	 */
 	public function getNotEmptyMessage(string $field): ?string {
-		$field = $this->underscoreField($field);
-
 		if (!isset($this->_fields[ $field ])) {
 			return null;
 		}
@@ -145,7 +96,7 @@ class Validator extends BaseValidator {
 			return $this->_allowEmptyMessages[ $field ];
 		}
 
-		return __df($this->i18nDomain, 'validation', 'error_not_empty');
+		return __df($this->i18nDomain, 'Validation', 'error_not_empty');
 	}
 
 
@@ -155,7 +106,7 @@ class Validator extends BaseValidator {
 	 * translated arguments:
 	 * ```
 	 * $validator->add('password', [
-	 * 	'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+	 * 	'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
 	 * ]);
 	 * ```
 	 * Result: `This value does not match the field "Confirm password"`
@@ -194,13 +145,13 @@ class Validator extends BaseValidator {
 			}
 
 			$pass = [
-				'field' => __df($this->i18nDomain, 'system', Inflector::underscore($field)),
+				'field' => __df($this->i18nDomain, 'System', Inflector::underscore($field)),
 			];
 
 			$param = $rule->get('pass')[0] ?? [];
 
 			if (!$param) {
-				$errors[ $name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($name));
+				$errors[ $name ] = __df($this->i18nDomain, 'Validation', 'error_' . Inflector::underscore($name));
 
 				if ($rule->isLast()) {
 					break;
@@ -228,7 +179,7 @@ class Validator extends BaseValidator {
 
 			$pass[ $name ] = $param;
 
-			$errors[ $name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($name), $pass[ $name ] ?? '');
+			$errors[ $name ] = __df($this->i18nDomain, 'Validation', 'error_' . Inflector::underscore($name), $pass[ $name ] ?? '');
 
 			if ($rule->isLast()) {
 				break;
@@ -237,53 +188,5 @@ class Validator extends BaseValidator {
 
 
 		return $errors;
-	}
-
-
-	/**
-	 * Transforms the given array so that keys or values (depending on $underscoreKeys)
-	 * are written in underscored-format.
-	 *
-	 * @param array $fields
-	 * @param bool $underscoreKeys Whether to transform the keys or the values of the array.
-	 * @return array
-	 */
-	protected function underscoreFields(array $fields, bool $underscoreKeys = false): array {
-		$underscoredFields = [];
-
-		foreach ($fields as $field => $value) {
-			$mapped = ($underscoreKeys ? 'field' : 'value');
-			$$mapped = $this->underscoreField($$mapped);
-
-			$underscoredFields[ $field ] = $value;
-		}
-
-		return $underscoredFields;
-	}
-
-
-	/**
-	 * Transforms the given field to underscored format, but skips
-	 * fields that are empty, not a string or start with an underscore.
-	 *
-	 * If `$field` contains a dot, only the part after the last dot is transformed.
-	 *
-	 * @param mixed $field
-	 * @return mixed
-	 */
-	protected function underscoreField(mixed $field): mixed {
-		if (!$field || !is_string($field) || str_starts_with($field, '_')) {
-			return $field;
-		}
-
-		$lastPos = strrpos($field, '.');
-		if ($lastPos === false) {
-			return Inflector::underscore($field);
-		}
-
-		$prefix = substr($field, 0, $lastPos);
-		$field = substr($field, $lastPos + 1);
-
-		return $prefix . '.' . Inflector::underscore($field);
 	}
 }

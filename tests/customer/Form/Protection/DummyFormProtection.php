@@ -68,15 +68,15 @@ class DummyFormProtection implements FormProtectionInterface {
 	 */
 	public function getHtml(string $templatePosition): ?string {
 		if ($templatePosition === static::POSITION_BEFORE) {
-			return 'dummy_before';
+			return 'dummyBefore';
 		}
 
 		if ($templatePosition === static::POSITION_BEFORE_SUBMIT) {
-			return 'dummy_before_submit';
+			return 'dummyBeforeSubmit';
 		}
 
 		if ($templatePosition === static::POSITION_AFTER) {
-			return 'dummy_after';
+			return 'dummyAfter';
 		}
 
 		return null;

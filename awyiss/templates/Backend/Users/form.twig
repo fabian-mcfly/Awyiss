@@ -44,12 +44,12 @@
 						maxlength: 100,
 						type: 'password',
 						value: '',
-						'data-show-password-label': __d('users', 'show_password'),
+						'data-show-password-label': __d('Users', 'show_password'),
 					}) }}
 				{% endblock %}
 
 				{% block formControlPasswordConfirm %}
-					{{ FormHelper.control('password_confirm', {
+					{{ FormHelper.control('passwordConfirm', {
 						autocapitalize: 'off',
 						autocomplete: 'new-password',
 						columnSpan: 6,
@@ -57,7 +57,7 @@
 						maxlength: 100,
 						type: 'password',
 						value: '',
-						'data-show-password-label': __d('users', 'show_password'),
+						'data-show-password-label': __d('Users', 'show_password'),
 					}) }}
 				{% endblock %}
 
@@ -220,7 +220,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

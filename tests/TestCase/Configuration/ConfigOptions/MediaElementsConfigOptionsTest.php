@@ -56,14 +56,14 @@ class MediaElementsConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
 			'identifier' => 'media_elements::identifier',
-			'column_span' => 'media_elements::column_span',
+			'columnSpan' => 'media_elements::column_span',
 			'internal' => 'media_elements::internal',
-			'system_order' => 'media_elements::system_order',
+			'systemOrder' => 'media_elements::system_order',
 			'active' => 'media_elements::active',
-			'created_by' => 'media_elements::created_by',
-			'created_on' => 'media_elements::created_on',
-			'changed_by' => 'media_elements::changed_by',
-			'changed_on' => 'media_elements::changed_on',
+			'createdBy' => 'media_elements::created_by',
+			'createdOn' => 'media_elements::created_on',
+			'changedBy' => 'media_elements::changed_by',
+			'changedOn' => 'media_elements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

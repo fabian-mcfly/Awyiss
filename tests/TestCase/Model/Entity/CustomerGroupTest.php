@@ -71,22 +71,4 @@ class CustomerGroupTest extends TestCase {
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
 	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\CustomerGroup::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'title' => 'Test Group',
-		];
-
-		$entity = new CustomerGroup($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
-	}
 }

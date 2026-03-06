@@ -85,8 +85,8 @@ class FormOptionsTest extends TestCase {
 		$this->assertFalse($validator->isPresenceRequired('anrede', true));
 		$this->assertTrue($validator->hasField('email'));
 		$this->assertTrue($validator->isPresenceRequired('email', true));
-		$this->assertTrue($validator->hasField('datenschutz_akzeptiert'));
-		$this->assertTrue($validator->isPresenceRequired('datenschutz_akzeptiert', true));
+		$this->assertTrue($validator->hasField('datenschutzAkzeptiert'));
+		$this->assertTrue($validator->isPresenceRequired('datenschutzAkzeptiert', true));
 	}
 
 
@@ -167,10 +167,10 @@ class FormOptionsTest extends TestCase {
 
 		$form->getFormOptions()->setValidationRules($validator);
 
-		$this->assertTrue($validator->hasField('datum_und_uhrzeit'));
-		$this->assertTrue($validator->field('datum_und_uhrzeit')->isEmptyAllowed());
-		$this->assertNotEmpty($validator->field('datum_und_uhrzeit')->rule('datetime'));
-		$this->assertSame('datetime', $validator->field('datum_und_uhrzeit')->rule('datetime')->get('rule'));
+		$this->assertTrue($validator->hasField('datumUndUhrzeit'));
+		$this->assertTrue($validator->field('datumUndUhrzeit')->isEmptyAllowed());
+		$this->assertNotEmpty($validator->field('datumUndUhrzeit')->rule('datetime'));
+		$this->assertSame('datetime', $validator->field('datumUndUhrzeit')->rule('datetime')->get('rule'));
 	}
 
 
@@ -188,10 +188,10 @@ class FormOptionsTest extends TestCase {
 
 		$form->getFormOptions()->setValidationRules($validator);
 
-		$this->assertTrue($validator->hasField('multi_radio'));
-		$this->assertTrue($validator->field('multi_radio')->isEmptyAllowed());
-		$this->assertNotEmpty($validator->field('multi_radio')->rule('inList'));
-		$this->assertSame('inList', $validator->field('multi_radio')->rule('inList')->get('rule'));
+		$this->assertTrue($validator->hasField('multiRadio'));
+		$this->assertTrue($validator->field('multiRadio')->isEmptyAllowed());
+		$this->assertNotEmpty($validator->field('multiRadio')->rule('inList'));
+		$this->assertSame('inList', $validator->field('multiRadio')->rule('inList')->get('rule'));
 	}
 
 
@@ -230,10 +230,10 @@ class FormOptionsTest extends TestCase {
 
 		$form->getFormOptions()->setValidationRules($validator);
 
-		$this->assertTrue($validator->hasField('multi_select'));
-		$this->assertTrue($validator->field('multi_select')->isEmptyAllowed());
-		$this->assertNotEmpty($validator->field('multi_select')->rule('inList'));
-		$this->assertIsCallable($validator->field('multi_select')->rule('inList')->get('rule'));
+		$this->assertTrue($validator->hasField('multiSelect'));
+		$this->assertTrue($validator->field('multiSelect')->isEmptyAllowed());
+		$this->assertNotEmpty($validator->field('multiSelect')->rule('inList'));
+		$this->assertIsCallable($validator->field('multiSelect')->rule('inList')->get('rule'));
 	}
 
 
@@ -251,11 +251,11 @@ class FormOptionsTest extends TestCase {
 
 		$form->getFormOptions()->setValidationRules($validator);
 
-		$this->assertTrue($validator->hasField('datenschutz_akzeptiert'));
-		$this->assertTrue($validator->field('datenschutz_akzeptiert')->isPresenceRequired());
-		$this->assertFalse($validator->field('datenschutz_akzeptiert')->isEmptyAllowed());
-		$this->assertNotEmpty($validator->field('datenschutz_akzeptiert')->rule('inList'));
-		$this->assertSame('inList', $validator->field('datenschutz_akzeptiert')->rule('inList')->get('rule'));
+		$this->assertTrue($validator->hasField('datenschutzAkzeptiert'));
+		$this->assertTrue($validator->field('datenschutzAkzeptiert')->isPresenceRequired());
+		$this->assertFalse($validator->field('datenschutzAkzeptiert')->isEmptyAllowed());
+		$this->assertNotEmpty($validator->field('datenschutzAkzeptiert')->rule('inList'));
+		$this->assertSame('inList', $validator->field('datenschutzAkzeptiert')->rule('inList')->get('rule'));
 	}
 
 
@@ -273,10 +273,10 @@ class FormOptionsTest extends TestCase {
 
 		$form->getFormOptions()->setValidationRules($validator);
 
-		$this->assertTrue($validator->hasField('multi_checkbox'));
-		$this->assertTrue($validator->field('multi_checkbox')->isEmptyAllowed());
-		$this->assertNotEmpty($validator->field('multi_checkbox')->rule('inList'));
-		$this->assertIsCallable($validator->field('multi_checkbox')->rule('inList')->get('rule'));
+		$this->assertTrue($validator->hasField('multiCheckbox'));
+		$this->assertTrue($validator->field('multiCheckbox')->isEmptyAllowed());
+		$this->assertNotEmpty($validator->field('multiCheckbox')->rule('inList'));
+		$this->assertIsCallable($validator->field('multiCheckbox')->rule('inList')->get('rule'));
 	}
 
 
@@ -330,7 +330,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy1@domain.com', $form->ownerEmail);
@@ -343,7 +343,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy2@domain.com', $form->ownerEmail);
@@ -356,7 +356,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
@@ -383,7 +383,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
@@ -396,7 +396,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy2@domain.com', $form->ownerEmail);
@@ -409,7 +409,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
@@ -436,7 +436,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
@@ -461,7 +461,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
@@ -488,7 +488,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
@@ -501,7 +501,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
@@ -514,7 +514,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertNotEmpty($form->formConditionalRecipients);
+		$this->assertNotEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
@@ -539,7 +539,7 @@ class FormOptionsTest extends TestCase {
 
 		$result = $form->getFormOptions()->setConditionalRecipient();
 
-		$this->assertEmpty($form->formConditionalRecipients);
+		$this->assertEmpty($form->conditionalRecipients);
 
 		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);

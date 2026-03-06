@@ -116,7 +116,7 @@ class Forms {
 			'limit' => null,
 			'null' => false,
 		])->addColumn('conditional_recipients_strategy', 'string', [
-			'default' => 'match_first',
+			'default' => 'matchFirst',
 			'limit' => 20,
 			'null' => false,
 		])->addColumn('transport_profile', 'string', [

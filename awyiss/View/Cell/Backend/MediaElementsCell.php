@@ -10,6 +10,7 @@ use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -64,7 +65,7 @@ class MediaElementsCell extends Cell {
 
 		/** @var \Awyiss\Model\Table $table */
 		$table = $this->fetchTable($entity->getSource());
-		if (!$table->hasBehavior('MediaElementAssignment') || !$identity->scopeIsAccessible('media', [], 'read')) {
+		if (!$table->hasBehavior('MediaElementAssignment') || !$identity->scopeIsAccessible('Media', [], 'read')) {
 			return;
 		}
 
@@ -165,14 +166,14 @@ class MediaElementsCell extends Cell {
 			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
 			 */
 			static::$elements = $this->fetchTable('MediaElements')->find('active')
-			->where(['internal' => 0])
-			->contain([
-				'MediaElementSelectors' => [
-					'MediaSelectors',
-				],
-			])
-			->all()
-			->compile();
+				->where(['internal' => 0])
+				->contain([
+					'MediaElementSelectors' => [
+						'MediaSelectors',
+					],
+				])
+				->all()
+				->compile();
 		}
 
 		return static::$elements;
@@ -200,9 +201,9 @@ class MediaElementsCell extends Cell {
 				$foreignKey = array_shift($foreignKey);
 			}
 
-			// Skip parent_id as the parent cannot provide different elements
+			// Skip parentId as the parent cannot provide different elements
 			// and skip if the property is empty
-			if ($foreignKey === 'parent_id' || !$entity->get($foreignKey)) {
+			if ($foreignKey === 'parentId' || !$entity->get($foreignKey)) {
 				continue;
 			}
 
@@ -218,15 +219,15 @@ class MediaElementsCell extends Cell {
 			}
 
 			$where[] = [
-				'scope' => $relatedEntityTable->getTable(),
-				'foreign_key' => $entity->get($foreignKey),
+				'scope' => Inflector::camelize($relatedEntityTable->getTable()),
+				'foreignKey' => $entity->get($foreignKey),
 			];
 		}
 
 		if ($where) {
 			$mediaElementAssignmentsTable = $this->fetchTable('MediaElementAssignments');
 
-			$relatedEntityElements = $mediaElementAssignmentsTable->find()->where(['OR' => $where])->groupBy('media_element_id')->all();
+			$relatedEntityElements = $mediaElementAssignmentsTable->find()->where(['OR' => $where])->groupBy('mediaElementId')->all();
 		}
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */

@@ -41,21 +41,21 @@ class UrlHistoryTable extends Table {
 	public function initializeAssociations(): void {
 		$this->belongsTo('Pages', [
 			'conditions' => [
-				'UrlHistory.scope' => 'pages',
+				'UrlHistory.scope' => 'Pages',
 			],
 			'finder' => [
 				'all' => [
 					'skipPageRoleCheck' => true,
 				],
 			],
-			'foreignKey' => 'foreign_key',
+			'foreignKey' => 'foreignKey',
 		]);
 
 		$this->belongsTo('Media', [
 			'conditions' => [
-				'UrlHistory.scope' => 'media',
+				'UrlHistory.scope' => 'Media',
 			],
-			'foreignKey' => 'foreign_key',
+			'foreignKey' => 'foreignKey',
 		]);
 	}
 
@@ -139,7 +139,7 @@ class UrlHistoryTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (UrlHistory $entity, array $options) use ($rules) {
 			$tableLocator = FactoryLocator::get('Table');
-			if ($entity->scope === 'pages') {
+			if ($entity->scope === 'Pages') {
 				/** @var \Awyiss\Model\Table\PagesTable $table */
 				$table = $tableLocator->get('Pages');
 				$existsIn = $rules->existsIn(['foreignKey'], $table, [
@@ -153,7 +153,7 @@ class UrlHistoryTable extends Table {
 				return $existsIn($entity, $options);
 			}
 
-			if ($entity->scope === 'media') {
+			if ($entity->scope === 'Media') {
 				/** @var \Awyiss\Model\Table\MediaTable $table */
 				$table = $tableLocator->get('Media');
 				$existsIn = $rules->existsIn(['foreignKey'], $table);
@@ -164,7 +164,7 @@ class UrlHistoryTable extends Table {
 			return empty($entity->foreignKey);
 		}, 'validForeignKey', [
 			'errorField' => 'foreignKey',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_foreign_key'),
 		]);
 
 		$rules->add(function (UrlHistory $entity/*, array $options*/) use ($rules) {
@@ -175,7 +175,7 @@ class UrlHistoryTable extends Table {
 			return !empty($entity->target);
 		}, 'validTarget', [
 			'errorField' => 'target',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_target'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_target'),
 		]);
 
 		return $rules;

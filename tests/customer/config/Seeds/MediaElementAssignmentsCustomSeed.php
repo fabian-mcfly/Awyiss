@@ -15,27 +15,27 @@ class MediaElementAssignmentsCustomSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 3,
-				'media_element_id' => 3,
-				'scope' => 'cars',
-				'foreign_key' => null,
+				'mediaElementId' => 3,
+				'scope' => 'Cars',
+				'foreignKey' => null,
 			],
 			[
 				'id' => 2,
-				'media_element_id' => 2,
-				'scope' => 'global_content_templates',
-				'foreign_key' => 1,
+				'mediaElementId' => 2,
+				'scope' => 'GlobalContentTemplates',
+				'foreignKey' => 1,
 			],
 			[
 				'id' => 4,
-				'media_element_id' => 4,
-				'scope' => 'content_templates',
-				'foreign_key' => 2,
+				'mediaElementId' => 4,
+				'scope' => 'ContentTemplates',
+				'foreignKey' => 2,
 			],
 			[
 				'id' => 5,
-				'media_element_id' => 4,
-				'scope' => 'page_templates',
-				'foreign_key' => 2,
+				'mediaElementId' => 4,
+				'scope' => 'PageTemplates',
+				'foreignKey' => 2,
 			],
 		];
 

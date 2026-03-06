@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\Form\Protection;
 
 
 use Awyiss\Form\FormOptions;
+use Awyiss\Form\Protection\FormProtectionInterface;
 use Awyiss\Form\Protection\IpCheckFormProtection;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
@@ -113,13 +114,13 @@ class IpCheckFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$result = $this->ipCheckFormProtection->getHtml('before');
+		$result = $this->ipCheckFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertNull($result);
 
-		$result = $this->ipCheckFormProtection->getHtml('before_submit');
+		$result = $this->ipCheckFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertNull($result);
 
-		$result = $this->ipCheckFormProtection->getHtml('after');
+		$result = $this->ipCheckFormProtection->getHtml(FormProtectionInterface::POSITION_AFTER);
 		$this->assertNull($result);
 	}
 
@@ -161,10 +162,10 @@ class IpCheckFormProtectionTest extends TestCase {
 
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'ip_hash' => $ipHash,
+			'formId' => $this->form->id,
+			'ipHash' => $ipHash,
 			'data' => json_encode(['test' => 'data']),
-			'post_hash' => '',
+			'postHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$result = $formEntriesTable->save($formEntry);
@@ -175,7 +176,7 @@ class IpCheckFormProtectionTest extends TestCase {
 		$result = $this->ipCheckFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_ip_check_error_duplicate_found'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_ip_check_error_duplicate_found'), $result);
 	}
 
 
@@ -200,10 +201,10 @@ class IpCheckFormProtectionTest extends TestCase {
 
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'ip_hash' => $ipHash,
+			'formId' => $this->form->id,
+			'ipHash' => $ipHash,
 			'data' => json_encode(['test' => 'data']),
-			'post_hash' => '',
+			'postHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$formEntry->createdOn = new DateTime()->subSeconds(600);
@@ -214,7 +215,7 @@ class IpCheckFormProtectionTest extends TestCase {
 		$result = $this->ipCheckFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_ip_check_error_duplicate_found'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_ip_check_error_duplicate_found'), $result);
 	}
 
 
@@ -236,10 +237,10 @@ class IpCheckFormProtectionTest extends TestCase {
 
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'ip_hash' => $ipHash,
+			'formId' => $this->form->id,
+			'ipHash' => $ipHash,
 			'data' => json_encode(['test' => 'data']),
-			'post_hash' => '',
+			'postHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$formEntry->createdOn = new DateTime()->subSeconds(600);
@@ -269,10 +270,10 @@ class IpCheckFormProtectionTest extends TestCase {
 
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'ip_hash' => $ipHash,
+			'formId' => $this->form->id,
+			'ipHash' => $ipHash,
 			'data' => json_encode(['test' => 'data']),
-			'post_hash' => '',
+			'postHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$result = $formEntriesTable->save($formEntry);
@@ -318,7 +319,7 @@ class IpCheckFormProtectionTest extends TestCase {
 		);
 
 		$formEntry = new FormEntry([
-			'form_id' => $this->form->id,
+			'formId' => $this->form->id,
 			'data' => json_encode(['test' => 'data']),
 		]);
 

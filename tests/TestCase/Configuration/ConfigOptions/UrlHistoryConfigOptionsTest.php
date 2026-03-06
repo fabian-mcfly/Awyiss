@@ -55,13 +55,13 @@ class UrlHistoryConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'url' => 'url_history::url',
 			'scope' => 'url_history::scope',
-			'foreign_key' => 'url_history::foreign_key',
+			'foreignKey' => 'url_history::foreign_key',
 			'target' => 'url_history::target',
 			'status' => 'url_history::status',
-			'created_by' => 'url_history::created_by',
-			'created_on' => 'url_history::created_on',
-			'changed_by' => 'url_history::changed_by',
-			'changed_on' => 'url_history::changed_on',
+			'createdBy' => 'url_history::created_by',
+			'createdOn' => 'url_history::created_on',
+			'changedBy' => 'url_history::changed_by',
+			'changedOn' => 'url_history::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

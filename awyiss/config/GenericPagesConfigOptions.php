@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Configuration\ConfigOptions;
+namespace Awyiss\config;
 
 
 use Awyiss\Awyiss;
@@ -122,7 +122,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'page_template_id',
+						'pageTemplateId',
 					],
 					identifier: 'displayedFields',
 					localizable: false,
@@ -202,8 +202,8 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 						return null;
 					},
 					values: [
-						SORT_ASC => __d(Inflector::underscore($this->getDynamicScope()), 'sort_asc'),
-						SORT_DESC => __d(Inflector::underscore($this->getDynamicScope()), 'sort_desc'),
+						SORT_ASC => __d(Inflector::camelize($this->getDynamicScope()), 'sort_asc'),
+						SORT_DESC => __d(Inflector::camelize($this->getDynamicScope()), 'sort_desc'),
 					],
 				),
 				new ConfigOption(

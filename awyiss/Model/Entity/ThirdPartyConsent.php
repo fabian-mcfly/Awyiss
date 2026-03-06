@@ -21,17 +21,6 @@ class ThirdPartyConsent extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'consent_id' => 'consentId',
-		'accept_type' => 'acceptType',
-		'accepted_categories' => 'acceptedCategories',
-		'rejected_categories' => 'rejectedCategories',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'consentId' => true,
 		'acceptType' => true,

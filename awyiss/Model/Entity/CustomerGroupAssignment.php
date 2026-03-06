@@ -27,16 +27,6 @@ class CustomerGroupAssignment extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'customer_group_id' => 'customerGroupId',
-		'foreign_key' => 'foreignKey',
-		'customer_group' => 'customerGroup',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'customerGroupId' => true,
 		'scope' => true,

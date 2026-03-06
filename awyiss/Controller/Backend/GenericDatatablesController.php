@@ -161,7 +161,7 @@ abstract class GenericDatatablesController extends Controller {
 		$entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
 		if (!$entity) {
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
+			$this->Flash->error(__df($this->datatable->identifier, 'GenericDatatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -198,19 +198,19 @@ abstract class GenericDatatablesController extends Controller {
 		/** @var \Awyiss\Model\Entity\Datatable $datatable */
 		$datatable = $this->Datatable->findById($id)->first();
 		if (!$datatable) {
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
+			$this->Flash->error(__df($this->datatable->identifier, 'GenericDatatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Datatable->delete($datatable)) {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', 'delete_succeeded'));
+				$this->Flash->success(__df($this->datatable->identifier, 'GenericDatatables', 'delete_succeeded'));
 			}
 		}
 		else {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'delete_failed'));
+				$this->Flash->error(__df($this->datatable->identifier, 'GenericDatatables', 'delete_failed'));
 				foreach ($datatable->getError('_general') as $error) {
 					$this->Flash->error($error);
 				}
@@ -236,7 +236,7 @@ abstract class GenericDatatablesController extends Controller {
 
 		$this->Datatable->patchEntity($entity, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		if (LocalConfig::read('splitIntoLanguages')) {
@@ -253,15 +253,15 @@ abstract class GenericDatatablesController extends Controller {
 			}
 		}
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Datatable->save($entity, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $method . '_succeeded'));
+					$this->Flash->success(__df($this->datatable->identifier, 'GenericDatatables', $method . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
@@ -282,7 +282,7 @@ abstract class GenericDatatablesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($saveAsCopy ? 'add' : $method) . '_failed'));
+				$this->Flash->error(__df($this->datatable->identifier, 'GenericDatatables', ($saveAsCopy ? 'add' : $method) . '_failed'));
 				foreach ($entity->getError('_general') as $error) {
 					$this->Flash->error($error);
 				}
@@ -500,9 +500,9 @@ abstract class GenericDatatablesController extends Controller {
 
 		if (
 			$categoriesBehavior->getConfig('enabled') &&
-			$categoriesBehavior->getConfig('foreignKey') === 'parent_id'
+			$categoriesBehavior->getConfig('foreignKey') === 'parentId'
 		) {
-			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
+			throw new RuntimeException('Cannot use nesting with categories that uses `parentId` as the foreign key.');
 		}
 	}
 }

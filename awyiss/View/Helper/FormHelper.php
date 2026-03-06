@@ -60,8 +60,8 @@ class FormHelper extends BaseFormHelper {
 			$config + [
 				'templateClass' => StringTemplate::class,
 				'widgets' => [
-					'input_list' => ['InputList'],
-					'input_key_value_list' => ['InputKeyValueList'],
+					'inputList' => ['InputList'],
+					'inputKeyValueList' => ['InputKeyValueList'],
 					'linkSelect' => ['LinkSelect'],
 					'translatableText' => ['TranslatableText'],
 				],
@@ -100,8 +100,7 @@ class FormHelper extends BaseFormHelper {
 		$sourceTable = $context->fetchTable($context->entity()->getSource());
 
 		$translateBehavior = $sourceTable->hasBehavior('Translate') ? $sourceTable->getBehavior('Translate') : null;
-
-		$this->translatableFields = array_map(fn ($field) => Inflector::underscore($field), $translateBehavior?->getConfig('fields') ?? []);
+		$this->translatableFields = $translateBehavior?->getConfig('fields') ?? [];
 
 		$this->languageRealm = $options['languageRealm'] ?? $translateBehavior?->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
@@ -152,7 +151,7 @@ class FormHelper extends BaseFormHelper {
 			$text = array_pop($fieldElements);
 		}
 
-		$translation = __($text);
+		$translation = __(Inflector::underscore($text));
 
 		if (!str_contains($translation, '::')) {
 			return $translation;
@@ -208,7 +207,7 @@ class FormHelper extends BaseFormHelper {
 
 		$options['templateVars'] ??= [];
 		$options['templateVars']['containerAttrs'] ??= [];
-		if (in_array(($options['type'] ?? null), ['input_list', 'input_key_value_list'])) {
+		if (in_array(($options['type'] ?? null), ['inputList', 'inputKeyValueList'])) {
 			$options['templateVars']['containerAttrs']['data-list-item-add'] = __('list_item_add');
 			$options['templateVars']['containerAttrs']['data-list-item-remove'] = __('list_item_remove');
 		}
@@ -233,8 +232,8 @@ class FormHelper extends BaseFormHelper {
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
 		return parent::select($fieldName, $options, $attributes + [
 			'empty' => !($attributes['multiple'] ?? false),
-			'data-filter-placeholder' => __d('system', 'select_filter_placeholder'),
-			'data-empty-label' => __d('system', 'select_empty_label'),
+			'data-filter-placeholder' => __d('System', 'select_filter_placeholder'),
+			'data-empty-label' => __d('System', 'select_empty_label'),
 		]);
 	}
 
@@ -636,7 +635,6 @@ class FormHelper extends BaseFormHelper {
 		else {
 			$domId = Inflector::camelize($value);
 		}
-
 
 		if ($this->_idPrefix) {
 			$domId = Inflector::camelize($this->_idPrefix) . '-' . $domId;

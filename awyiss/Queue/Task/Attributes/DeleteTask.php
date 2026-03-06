@@ -38,7 +38,7 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 	 * @noinspection DuplicatedCode
 	 */
 	public function run(array $data, int $jobId): void {
-		$attributesTableName = 'attributes_' . $data['identifier'];
+		$attributesTableName = 'attributes_' . Inflector::underscore($data['identifier']);
 
 		$tableLocator = FactoryLocator::get('Table');
 
@@ -47,15 +47,15 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 		//Update all records
 		$attributesTable->updateAll([
 			'deleted' => true,
-			'deleted_by' => $data['identityId'],
-			'deleted_on' => DateTime::now(),
+			'deletedBy' => $data['identityId'],
+			'deletedOn' => DateTime::now(),
 		], [
-			'scope' => Inflector::tableize($data['identifier']),
+			'scope' => Inflector::camelize($data['identifier']),
 		]);
 
 		$i18nTable = $tableLocator->get('I18n');
 		$i18nTable->deleteAll([
-			'model' => $attributesTableName,
+			'model' => Inflector::camelize($attributesTableName),
 		]);
 
 		$commands = [];
@@ -91,7 +91,7 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'attributes::table_changes',
+			'reference' => 'Attributes::tableChanges',
 		]);
 	}
 }

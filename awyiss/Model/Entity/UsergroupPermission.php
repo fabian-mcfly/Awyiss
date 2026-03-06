@@ -24,12 +24,6 @@ use Cake\Datasource\FactoryLocator;
  */
 class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'usergroup_id' => 'usergroupId',
-	];
-	/**
 	 * @var array<string, \Awyiss\Model\Entity\Datatable>
 	 */
 	protected static array $datatables;
@@ -63,7 +57,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 			return null;
 		}
 
-		return Inflector::underscore($scope);
+		return Inflector::camelize($scope);
 	}
 
 
@@ -79,7 +73,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 			return null;
 		}
 
-		return Inflector::underscore($identifier);
+		return Inflector::variable($identifier);
 	}
 
 
@@ -166,9 +160,9 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 			}
 		}
 
-		$identifierTitle = $this->scope ? __df($this->scope, 'usergroups', 'permission_' . Inflector::underscore($this->identifier)) : null;
+		$identifierTitle = $this->scope ? __df($this->scope, 'Usergroups', 'permission_' . Inflector::underscore($this->identifier)) : null;
 
-		$accessTitle = $this->access ? __d('authorization', 'simple_permission_option_' . Inflector::underscore($this->access->name)) : null;
+		$accessTitle = $this->access ? __d('Authorization', 'simple_permission_option_' . Inflector::underscore($this->access->name)) : null;
 
 		return [
 			'scope' => $scopeTitle,

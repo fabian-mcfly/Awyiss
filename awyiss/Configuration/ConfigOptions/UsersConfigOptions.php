@@ -27,7 +27,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 				new ConfigOption(
 					defaultValue: [
 						'email',
-						'last_login',
+						'lastLogin',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

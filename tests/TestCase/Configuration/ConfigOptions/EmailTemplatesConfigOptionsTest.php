@@ -53,15 +53,15 @@ class EmailTemplatesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'text_html' => 'email_templates::text_html',
-			'text_plain' => 'email_templates::text_plain',
-			'file_name' => 'email_templates::file_name',
+			'textHtml' => 'email_templates::text_html',
+			'textPlain' => 'email_templates::text_plain',
+			'fileName' => 'email_templates::file_name',
 			'layout' => 'email_templates::layout',
 			'active' => 'email_templates::active',
-			'created_by' => 'email_templates::created_by',
-			'created_on' => 'email_templates::created_on',
-			'changed_by' => 'email_templates::changed_by',
-			'changed_on' => 'email_templates::changed_on',
+			'createdBy' => 'email_templates::created_by',
+			'createdOn' => 'email_templates::created_on',
+			'changedBy' => 'email_templates::changed_by',
+			'changedOn' => 'email_templates::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

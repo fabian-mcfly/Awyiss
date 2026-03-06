@@ -580,7 +580,7 @@ class AwyissExtensionTest extends TestCase {
 		$globalContentFunction = $functions[6];
 		$callable = $globalContentFunction->getCallable();
 
-		$output = $callable(['_view' => $this->view], 'dummy_row_overflow', [
+		$output = $callable(['_view' => $this->view], 'dummyRowOverflow', [
 			'fullWidth' => 1440.00,
 			'singleColumnBreakpoint' => 768.00,
 		]);
@@ -603,7 +603,7 @@ class AwyissExtensionTest extends TestCase {
 
 		$output = $callable(
 			['_view' => $this->view],
-			'inline_img',
+			'inlineImg',
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -713,7 +713,7 @@ class AwyissExtensionTest extends TestCase {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('The "menu" function requires languageShortcode string in the context.');
 
-		$callable([], 'main_menu');
+		$callable([], 'mainMenu');
 	}
 
 
@@ -791,18 +791,18 @@ class AwyissExtensionTest extends TestCase {
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
 			],
-			'dummy_survey'
+			'dummySurvey'
 		);
 
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<p class="Title SurveyQuestion-Title">Question #1</p>', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
-		$this->assertStringContainsString('<input type="radio" name="survey[dummy_survey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
-		$this->assertStringContainsString('<input type="hidden" name="_survey_identifier" value="dummy_survey">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
+		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
 		$this->assertStringContainsString(
-			'<button type="submit" name="survey[dummy_survey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>',
+			'<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">surveys::next</button>',
 			$output
 		);
 	}
@@ -823,13 +823,13 @@ class AwyissExtensionTest extends TestCase {
 
 		$postData = [
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'action' => 'proceed',
 					'8524de5e' => '5', // Answer to question 1
 					'f69b1648' => ['7', '8'], // Answers to question 2
 				],
 			],
-			'_survey_identifier' => 'dummy_survey',
+			'_surveyIdentifier' => 'dummySurvey',
 		];
 
 		$request = $this->view->getRequest()->withParsedBody($postData);
@@ -840,7 +840,7 @@ class AwyissExtensionTest extends TestCase {
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
 			],
-			'dummy_survey',
+			'dummySurvey',
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,

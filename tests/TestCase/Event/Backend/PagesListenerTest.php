@@ -366,13 +366,13 @@ class PagesListenerTest extends TestCase {
 
 		$this->assertTrue($entity->parentsActive);
 
-		$pagesTable->updateAll(['parents_active' => false], ['id' => 36]);
+		$pagesTable->updateAll(['parentsActive' => false], ['id' => 36]);
 
 		$this->listener->beforeSave($event, $entity, new ArrayObject());
 
 		$this->assertFalse($entity->parentsActive);
 
-		$pagesTable->updateAll(['parents_active' => true], ['id' => 36]);
+		$pagesTable->updateAll(['parentsActive' => true], ['id' => 36]);
 
 		$this->listener->beforeSave($event, $entity, new ArrayObject());
 
@@ -598,7 +598,7 @@ class PagesListenerTest extends TestCase {
 		$this->assertCount(1, $attributesPagesTable->find()->all());
 		$this->assertCount(2, $attributesNewsTable->find()->all());
 
-		$attributesNewsTable->deleteAll(['page_id >=' => 345]);
+		$attributesNewsTable->deleteAll(['pageId >=' => 345]);
 	}
 
 
@@ -712,17 +712,17 @@ class PagesListenerTest extends TestCase {
 		$page->id = 369;
 
 		$contentsTable = $this->fetchTable('Contents');
-		$this->assertCount(24, $contentsTable->find()->where(['page_id' => 1])->all());
-		$this->assertCount(0, $contentsTable->find()->where(['page_id' => 369])->all());
+		$this->assertCount(24, $contentsTable->find()->where(['pageId' => 1])->all());
+		$this->assertCount(0, $contentsTable->find()->where(['pageId' => 369])->all());
 
 		$event = new Event('Model.Pages.afterCopy', $pagesTable);
 
 		$this->listener->afterCopy($event, $page, $options);
 
-		$this->assertCount(24, $contentsTable->find()->where(['page_id' => 1])->all());
-		$this->assertCount(24, $contentsTable->find()->where(['page_id' => 369])->all());
+		$this->assertCount(24, $contentsTable->find()->where(['pageId' => 1])->all());
+		$this->assertCount(24, $contentsTable->find()->where(['pageId' => 369])->all());
 
-		$contentsTable->deleteAll(['page_id' => 369]);
+		$contentsTable->deleteAll(['pageId' => 369]);
 	}
 
 
@@ -742,16 +742,16 @@ class PagesListenerTest extends TestCase {
 		$page = $pagesTable->get(1);
 
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$this->assertCount(17, $mediaAssignmentsTable->find()->where(['scope' => 'contents'])->all());
+		$this->assertCount(17, $mediaAssignmentsTable->find()->where(['scope' => 'Contents'])->all());
 
 		$page = $pagesTable->save($page, ['asCopy' => true, 'audit' => ['skip' => true], 'systemOrder' => ['skip' => true]]);
 		$this->assertNotFalse($page);
 
-		$this->assertCount(21, $mediaAssignmentsTable->find()->where(['scope' => 'contents'])->all());
+		$this->assertCount(21, $mediaAssignmentsTable->find()->where(['scope' => 'Contents'])->all());
 
 		$pagesTable->deleteAll(['id' => $page->id]);
 		$mediaAssignmentsTable->deleteAll(['id >' => 37]);
-		$this->fetchTable('Contents')->deleteAll(['page_id' => $page->id]);
+		$this->fetchTable('Contents')->deleteAll(['pageId' => $page->id]);
 	}
 
 
@@ -784,7 +784,7 @@ class PagesListenerTest extends TestCase {
 		$this->assertSame($auditCount, $auditTable->find()->count());
 
 		$contentsTable = $this->fetchTable('Contents');
-		$contentsTable->deleteAll(['page_id' => 369]);
+		$contentsTable->deleteAll(['pageId' => 369]);
 	}
 
 
@@ -803,18 +803,18 @@ class PagesListenerTest extends TestCase {
 		]);
 
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(12, $menuEntriesTable->find()->where(['menu_id' => 2])->all());
-		$this->assertCount(3, $menuEntriesTable->find()->where(['menu_id' => 3])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(12, $menuEntriesTable->find()->where(['menuId' => 2])->all());
+		$this->assertCount(3, $menuEntriesTable->find()->where(['menuId' => 3])->all());
 		$this->assertCount(0, $menuEntriesTable->find()->where(['link' => 'de/new-test-page'])->all());
 
 		$event = new Event('Model.Pages.afterSave', $pagesTable);
 
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$this->assertCount(36, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(13, $menuEntriesTable->find()->where(['menu_id' => 2])->all());
-		$this->assertCount(3, $menuEntriesTable->find()->where(['menu_id' => 3])->all());
+		$this->assertCount(36, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(13, $menuEntriesTable->find()->where(['menuId' => 2])->all());
+		$this->assertCount(3, $menuEntriesTable->find()->where(['menuId' => 3])->all());
 		$this->assertCount(2, $menuEntriesTable->find()->where(['link' => 'de/new-test-page'])->all());
 
 		$menuEntriesTable->deleteAll(['link' => 'de/new-test-page']);
@@ -836,16 +836,16 @@ class PagesListenerTest extends TestCase {
 		]);
 
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(12, $menuEntriesTable->find()->where(['menu_id' => 2])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(12, $menuEntriesTable->find()->where(['menuId' => 2])->all());
 		$this->assertCount(0, $menuEntriesTable->find()->where(['link' => 'de/new-test-page'])->all());
 
 		$event = new Event('Model.Pages.afterSave', $pagesTable);
 
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(12, $menuEntriesTable->find()->where(['menu_id' => 2])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(12, $menuEntriesTable->find()->where(['menuId' => 2])->all());
 		$this->assertCount(0, $menuEntriesTable->find()->where(['link' => 'de/new-test-page'])->all());
 
 		$menuEntriesTable->deleteAll(['link' => 'de/new-test-page']);
@@ -876,8 +876,8 @@ class PagesListenerTest extends TestCase {
 
 		$historicalSlug = $urlHistoryTable->find()->where([
 			'url' => $page->languageShortcode . '/' . $originalSlug,
-			'scope' => 'pages',
-			'foreign_key' => $page->id,
+			'scope' => 'Pages',
+			'foreignKey' => $page->id,
 			'status' => 308,
 		]);
 
@@ -914,8 +914,8 @@ class PagesListenerTest extends TestCase {
 
 		$historicalSlug = $urlHistoryTable->find()->where([
 			'url' => $page->languageShortcode . '/' . $originalSlug,
-			'scope' => 'pages',
-			'foreign_key' => $page->id,
+			'scope' => 'Pages',
+			'foreignKey' => $page->id,
 			'status' => 308,
 		]);
 
@@ -947,8 +947,8 @@ class PagesListenerTest extends TestCase {
 
 		$historicalSlug = $urlHistoryTable->find()->where([
 			'url' => $originalShortcode . '/' . $page->slug,
-			'scope' => 'pages',
-			'foreign_key' => $page->id,
+			'scope' => 'Pages',
+			'foreignKey' => $page->id,
 			'status' => 308,
 		]);
 
@@ -985,8 +985,8 @@ class PagesListenerTest extends TestCase {
 
 		$historicalSlug = $urlHistoryTable->find()->where([
 			'url' => $originalShortcode . '/' . $page->slug,
-			'scope' => 'pages',
-			'foreign_key' => $page->id,
+			'scope' => 'Pages',
+			'foreignKey' => $page->id,
 			'status' => 308,
 		]);
 
@@ -1004,14 +1004,14 @@ class PagesListenerTest extends TestCase {
 
 		$menuEntries = [
 			$menuEntry1 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 1,
+				'menuId' => 1,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
 				'systemOrder' => 999,
 			]),
 			$menuEntry2 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 2,
+				'menuId' => 2,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
@@ -1062,14 +1062,14 @@ class PagesListenerTest extends TestCase {
 
 		$menuEntries = [
 			$menuEntry1 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 1,
+				'menuId' => 1,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
 				'systemOrder' => 999,
 			]),
 			$menuEntry2 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 2,
+				'menuId' => 2,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
@@ -1115,14 +1115,14 @@ class PagesListenerTest extends TestCase {
 
 		$menuEntries = [
 			$menuEntry1 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 1,
+				'menuId' => 1,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
 				'systemOrder' => 999,
 			]),
 			$menuEntry2 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 2,
+				'menuId' => 2,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
@@ -1173,14 +1173,14 @@ class PagesListenerTest extends TestCase {
 
 		$menuEntries = [
 			$menuEntry1 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 1,
+				'menuId' => 1,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
 				'systemOrder' => 999,
 			]),
 			$menuEntry2 = $menuEntriesTable->newDefaultEntity([
-				'menu_id' => 2,
+				'menuId' => 2,
 				'link' => 'de/startseite',
 				'title' => 'Dummy Entry',
 				'languageShortcode' => 'de',
@@ -1228,7 +1228,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->slug = 'new-root-slug';
@@ -1238,7 +1238,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$slugs = $pages->extract('slug')->toList();
 
 		$this->assertSame([
@@ -1253,7 +1253,7 @@ class PagesListenerTest extends TestCase {
 			'new-root-slug/child-employer-5/grandchild-employer-3',
 		], $slugs);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$slugs = $otherLanguagePages->extract('slug')->toList();
 
 		$this->assertSame([
@@ -1278,7 +1278,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Child Employer 1',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->slug = 'new-child-slug';
@@ -1292,7 +1292,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$slugs = $pages->extract('slug')->toList();
 
 		$this->assertSame([
@@ -1307,7 +1307,7 @@ class PagesListenerTest extends TestCase {
 			'root-employer/child-employer-5/grandchild-employer-3',
 		], $slugs);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$slugs = $otherLanguagePages->extract('slug')->toList();
 
 		$this->assertSame([
@@ -1332,7 +1332,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
@@ -1348,7 +1348,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$slugs = $pages->extract('slug')->toList();
 
 		$this->assertSame([
@@ -1379,7 +1379,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->active = false;
@@ -1393,7 +1393,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1410,7 +1410,7 @@ class PagesListenerTest extends TestCase {
 			[true, false],
 		], $actives);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$actives = $otherLanguagePages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1428,7 +1428,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1461,7 +1461,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Child Employer 1',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->active = false;
@@ -1475,7 +1475,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1492,7 +1492,7 @@ class PagesListenerTest extends TestCase {
 			[true, true],
 		], $actives);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$actives = $otherLanguagePages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1519,7 +1519,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find()->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
@@ -1535,7 +1535,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1568,7 +1568,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->parentsActive = false;
@@ -1582,7 +1582,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1599,7 +1599,7 @@ class PagesListenerTest extends TestCase {
 			[true, false],
 		], $actives);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$actives = $otherLanguagePages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1617,7 +1617,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1650,7 +1650,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find('all', skipPageRoleCheck: true)->where([
 			'title' => 'Child Employer 1',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		$page->parentsActive = false;
@@ -1664,7 +1664,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1681,7 +1681,7 @@ class PagesListenerTest extends TestCase {
 			[true, true],
 		], $actives);
 
-		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->orderByAsc('Pages.id')->all();
+		$otherLanguagePages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->orderByAsc('Pages.id')->all();
 		$actives = $otherLanguagePages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1708,7 +1708,7 @@ class PagesListenerTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->find()->where([
 			'title' => 'Root Employer',
-			'language_shortcode' => 'xy',
+			'languageShortcode' => 'xy',
 		])->first();
 
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
@@ -1724,7 +1724,7 @@ class PagesListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $page, $options);
 
-		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->orderByAsc('Pages.id')->all();
+		$pages = $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->orderByAsc('Pages.id')->all();
 		$actives = $pages->extract(function (Page $page): array {
 			return [$page->active, $page->parentsActive];
 		})->toList();
@@ -1956,170 +1956,170 @@ class PagesListenerTest extends TestCase {
 	protected function createDummyPages(): void {
 		$pagesTable = $this->fetchTable('Pages');
 
-		$pagesTable->deleteAll(['language_shortcode' => 'xy']);
-		$pagesTable->deleteAll(['language_shortcode' => 'yx']);
+		$pagesTable->deleteAll(['languageShortcode' => 'xy']);
+		$pagesTable->deleteAll(['languageShortcode' => 'yx']);
 
 		$insertQuery = $pagesTable->insertQuery();
 		$insertQuery->insert([
 			'id',
 			'title',
 			'slug',
-			'page_role_id',
-			'page_template_id',
+			'pageRoleId',
+			'pageTemplateId',
 			'active',
-			'language_shortcode',
-			'parent_id',
-			'system_order',
+			'languageShortcode',
+			'parentId',
+			'systemOrder',
 		]);
 
 		$insertQuery->values([
 			'id' => 890,
 			'title' => 'Root Employer',
 			'slug' => 'root-employer',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => null,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => null,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 891,
 			'title' => 'Child Employer 1',
 			'slug' => 'root-employer/child-employer-1',
-			'page_role_id' => 2,
-			'page_template_id' => 1,
+			'pageRoleId' => 2,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 892,
 			'title' => 'Grandchild Employer 1',
 			'slug' => 'root-employer/child-employer-1/grandchild-employer-1',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 891,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => 891,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 893,
 			'title' => 'Grandchild Employer 2',
 			'slug' => 'root-employer/child-employer-1/grandchild-employer-2',
-			'page_role_id' => 2,
-			'page_template_id' => 1,
+			'pageRoleId' => 2,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 891,
-			'system_order' => 2,
+			'languageShortcode' => 'xy',
+			'parentId' => 891,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 894,
 			'title' => 'Child Employer 2',
 			'slug' => 'root-employer/child-employer-2',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 2,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
 			'id' => 895,
 			'title' => 'Child Employer 3',
 			'slug' => 'root-employer/child-employer-3',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 3,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 3,
 		]);
 
 		$insertQuery->values([
 			'id' => 896,
 			'title' => 'Child Employer 4',
 			'slug' => 'root-employer/child-employer-4',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 4,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 4,
 		]);
 
 		$insertQuery->values([
 			'id' => 897,
 			'title' => 'Child Employer 5',
 			'slug' => 'root-employer/child-employer-5',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 5,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 5,
 		]);
 
 		$insertQuery->values([
 			'id' => 898,
 			'title' => 'Grandchild Employer 3',
 			'slug' => 'root-employer/child-employer-5/grandchild-employer-3',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 897,
-			'system_order' => 3,
+			'languageShortcode' => 'xy',
+			'parentId' => 897,
+			'systemOrder' => 3,
 		]);
 
 		$insertQuery->values([
 			'id' => 899,
 			'title' => 'Root in Different Language',
 			'slug' => 'root-employer',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => null,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => null,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 900,
 			'title' => 'Child Employer 1',
 			'slug' => 'root-employer/child-employer-1',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => 899,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => 899,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
 			'id' => 901,
 			'title' => 'Grandchild Employer 1',
 			'slug' => 'root-employer/child-employer-1/grandchild-employer-1',
-			'page_role_id' => 1,
-			'page_template_id' => 1,
+			'pageRoleId' => 1,
+			'pageTemplateId' => 1,
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => 900,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => 900,
+			'systemOrder' => 1,
 		]);
 
 		$this->assertNotFalse($insertQuery->execute());
 
-		$this->assertCount(9, $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->all());
-		$this->assertCount(3, $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->all());
+		$this->assertCount(9, $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->all());
+		$this->assertCount(3, $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->all());
 	}
 
 
@@ -2129,11 +2129,11 @@ class PagesListenerTest extends TestCase {
 	protected function deleteDummyPages(): void {
 		$pagesTable = $this->fetchTable('Pages');
 
-		$pagesTable->deleteAll(['language_shortcode' => 'xy']);
-		$pagesTable->deleteAll(['language_shortcode' => 'yx']);
+		$pagesTable->deleteAll(['languageShortcode' => 'xy']);
+		$pagesTable->deleteAll(['languageShortcode' => 'yx']);
 
-		$this->assertCount(0, $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'xy'])->all());
-		$this->assertCount(0, $pagesTable->find('all', skipPageRoleCheck: true)->where(['language_shortcode' => 'yx'])->all());
+		$this->assertCount(0, $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'xy'])->all());
+		$this->assertCount(0, $pagesTable->find('all', skipPageRoleCheck: true)->where(['languageShortcode' => 'yx'])->all());
 	}
 
 
@@ -2179,7 +2179,7 @@ class PagesListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 
@@ -2192,7 +2192,7 @@ class PagesListenerTest extends TestCase {
 			->with(
 				$this->callback(function ($locks) {
 					return count($locks) === 1
-						&& $locks[0]->scope === 'pages'
+						&& $locks[0]->scope === 'Pages'
 						&& $locks[0]->foreignKey === 1
 						&& $locks[0]->uniqueId === 'autoTranslate';
 				}),
@@ -2257,7 +2257,7 @@ class PagesListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 
@@ -2348,7 +2348,7 @@ class PagesListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 
@@ -2362,11 +2362,11 @@ class PagesListenerTest extends TestCase {
 				$this->callback(function ($locks) {
 					// Either it's the news lock or the page lock
 					$isNewsLock = count($locks) === 1
-						&& $locks[0]->scope === 'news'
+						&& $locks[0]->scope === 'News'
 						&& $locks[0]->foreignKey === 40;
 
 					$isPageLock = count($locks) === 1
-						&& $locks[0]->scope === 'pages'
+						&& $locks[0]->scope === 'Pages'
 						&& $locks[0]->foreignKey === 1;
 
 					return $isNewsLock || $isPageLock;

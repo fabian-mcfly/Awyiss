@@ -92,7 +92,7 @@ class ConfigurationTableTest extends TestCase {
 		$languagesAssociation = $this->configurationTable->getAssociation('Languages');
 		$this->assertInstanceOf(BelongsTo::class, $languagesAssociation);
 		$this->assertSame(['realm', 'shortcode'], $languagesAssociation->getBindingKey());
-		$this->assertSame(['realm', 'language_shortcode'], $languagesAssociation->getForeignKey());
+		$this->assertSame(['realm', 'languageShortcode'], $languagesAssociation->getForeignKey());
 		$this->assertSame('LEFT', $languagesAssociation->getJoinType());
 
 		// 'MediaAssignments' must also exist
@@ -132,7 +132,7 @@ class ConfigurationTableTest extends TestCase {
 		$result = $this->configurationTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('configuration', $result->getI18nDomain());
+		$this->assertSame('Configuration', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('realm'));
@@ -158,7 +158,7 @@ class ConfigurationTableTest extends TestCase {
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
 			'scope' => 'System',
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'value' => 'test_value',
 			'languageShortcode' => 'de',
 			'description' => 'Test configuration',
@@ -253,7 +253,7 @@ class ConfigurationTableTest extends TestCase {
 		// Test valid realm
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 		];
 
 		$entity = $this->configurationTable->newEntity($data);
@@ -301,7 +301,7 @@ class ConfigurationTableTest extends TestCase {
 	public function testEntityValidationOptionalFields(): void {
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'scope' => null, // Should be allowed
 			'value' => null, // Should be allowed
 			'languageShortcode' => null, // Should be allowed
@@ -326,7 +326,7 @@ class ConfigurationTableTest extends TestCase {
 		$entity = $this->configurationTable->newEntity([
 			'realm' => Awyiss::REALM_FRONTEND,
 			'scope' => 'System',
-			'identifier' => 'unique_config',
+			'identifier' => 'uniqueConfig',
 			'languageShortcode' => 'de',
 			'value' => 'test_value',
 		]);
@@ -387,7 +387,7 @@ class ConfigurationTableTest extends TestCase {
 		// Test with valid realm
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'scope' => 'System',
 			'value' => 'test_value',
 		];
@@ -406,7 +406,7 @@ class ConfigurationTableTest extends TestCase {
 		// Test with invalid realm
 		$data = [
 			'realm' => 'invalid_realm',
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'scope' => 'System',
 			'value' => 'test_value',
 		];
@@ -429,7 +429,7 @@ class ConfigurationTableTest extends TestCase {
 		// Test with valid scope
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'scope' => 'System',
 			'value' => 'test_value',
 		];
@@ -448,7 +448,7 @@ class ConfigurationTableTest extends TestCase {
 		// Test with invalid scope
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'test_config',
+			'identifier' => 'testConfig',
 			'scope' => 'InvalidScope',
 			'value' => 'test_value',
 		];
@@ -474,9 +474,9 @@ class ConfigurationTableTest extends TestCase {
 
 		$data = [
 			'userId' => 1,
-			'scope' => 'forms',
+			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->configurationTable->newDefaultEntity();
@@ -501,7 +501,7 @@ class ConfigurationTableTest extends TestCase {
 		// Non-existing config identifiers should PASS validation
 		$data = [
 			'realm' => Awyiss::REALM_FRONTEND,
-			'identifier' => 'non_existing_config_option',
+			'identifier' => 'nonExistingConfigOption',
 			'scope' => 'System',
 			'value' => 'any_value_should_work',
 		];
@@ -520,8 +520,8 @@ class ConfigurationTableTest extends TestCase {
 		// Test with valid value
 		$data = [
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
-			'scope' => 'products',
+			'identifier' => 'systemOrder.field',
+			'scope' => 'Products',
 			'value' => 'id',
 		];
 
@@ -539,8 +539,8 @@ class ConfigurationTableTest extends TestCase {
 		// Test with invalid value
 		$data = [
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'system_order.field',
-			'scope' => 'products',
+			'identifier' => 'systemOrder.field',
+			'scope' => 'Products',
 			'value' => 'invalid_value', // Invalid value for this config option will be cast to null
 		];
 
@@ -745,7 +745,7 @@ class ConfigurationTableTest extends TestCase {
 		// Check default values
 		$this->assertNull($entity->id);
 		$this->assertSame(Awyiss::REALM_FRONTEND, $entity->realm);
-		$this->assertSame('system', $entity->scope);
+		$this->assertSame('System', $entity->scope);
 		$this->assertNull($entity->identifier);
 		$this->assertNull($entity->value);
 		$this->assertNull($entity->languageShortcode);
@@ -761,7 +761,7 @@ class ConfigurationTableTest extends TestCase {
 		$additionalData = [
 			'realm' => Awyiss::REALM_BACKEND,
 			'scope' => 'System',
-			'identifier' => 'custom_config',
+			'identifier' => 'customConfig',
 			'value' => 'custom_value',
 			'languageShortcode' => 'en',
 			'description' => 'Custom configuration',
@@ -776,7 +776,7 @@ class ConfigurationTableTest extends TestCase {
 		// Check custom values
 		$this->assertSame(Awyiss::REALM_BACKEND, $entity->realm);
 		$this->assertSame('System', $entity->scope);
-		$this->assertSame('custom_config', $entity->identifier);
+		$this->assertSame('customConfig', $entity->identifier);
 		$this->assertSame('custom_value', $entity->value);
 		$this->assertSame('en', $entity->languageShortcode);
 		$this->assertSame('Custom configuration', $entity->description);
@@ -793,41 +793,41 @@ class ConfigurationTableTest extends TestCase {
 
 		$this->assertIsArray($categories);
 		$this->assertSame([
-			'employers' => 'Arbeitgeber',
-			'attributes' => 'attributes::menu_title',
-			'cars' => 'Autos',
-			'content_templates' => 'content_templates::menu_title',
-			'contents' => 'contents::menu_title',
-			'customer_groups' => 'customer_groups::menu_title',
-			'customers' => 'customers::menu_title',
-			'dashboard_elements' => 'dashboard_elements::menu_title',
-			'datatables' => 'datatables::menu_title',
-			'email_templates' => 'email_templates::menu_title',
-			'form_elements' => 'form_elements::menu_title',
-			'forms' => 'forms::menu_title',
-			'global_content_templates' => 'global_content_templates::menu_title',
-			'global_contents' => 'global_contents::menu_title',
-			'languages' => 'languages::menu_title',
-			'media_elements' => 'media_elements::menu_title',
-			'media_folders' => 'media_folders::menu_title',
-			'media_selectors' => 'media_selectors::menu_title',
-			'media' => 'media::menu_title',
-			'menu_entries' => 'menu_entries::menu_title',
-			'menus' => 'menus::menu_title',
-			'employees' => 'Mitarbeiter',
-			'news' => 'News',
-			'newscategories' => 'Newskategorie',
-			'products' => 'page_roles::inactive Produkt',
-			'page_roles' => 'page_roles::menu_title',
-			'page_templates' => 'page_templates::menu_title',
-			'pages' => 'pages::menu_title',
-			'survey_questions' => 'survey_questions::menu_title',
-			'surveys' => 'surveys::menu_title',
-			'system' => 'system::menu_title',
-			'url_history' => 'url_history::menu_title',
-			'urls_not_found' => 'urls_not_found::menu_title',
-			'usergroups' => 'usergroups::menu_title',
-			'users' => 'users::menu_title',
+			'Employers' => 'Arbeitgeber',
+			'Attributes' => 'attributes::menu_title',
+			'Cars' => 'Autos',
+			'ContentTemplates' => 'content_templates::menu_title',
+			'Contents' => 'contents::menu_title',
+			'CustomerGroups' => 'customer_groups::menu_title',
+			'Customers' => 'customers::menu_title',
+			'DashboardElements' => 'dashboard_elements::menu_title',
+			'Datatables' => 'datatables::menu_title',
+			'EmailTemplates' => 'email_templates::menu_title',
+			'FormElements' => 'form_elements::menu_title',
+			'Forms' => 'forms::menu_title',
+			'GlobalContentTemplates' => 'global_content_templates::menu_title',
+			'GlobalContents' => 'global_contents::menu_title',
+			'Languages' => 'languages::menu_title',
+			'MediaElements' => 'media_elements::menu_title',
+			'MediaFolders' => 'media_folders::menu_title',
+			'MediaSelectors' => 'media_selectors::menu_title',
+			'Media' => 'media::menu_title',
+			'MenuEntries' => 'menu_entries::menu_title',
+			'Menus' => 'menus::menu_title',
+			'Employees' => 'Mitarbeiter',
+			'News' => 'News',
+			'Newscategories' => 'Newskategorie',
+			'Products' => 'page_roles::inactive Produkt',
+			'PageRoles' => 'page_roles::menu_title',
+			'PageTemplates' => 'page_templates::menu_title',
+			'Pages' => 'pages::menu_title',
+			'SurveyQuestions' => 'survey_questions::menu_title',
+			'Surveys' => 'surveys::menu_title',
+			'System' => 'system::menu_title',
+			'UrlHistory' => 'url_history::menu_title',
+			'UrlsNotFound' => 'urls_not_found::menu_title',
+			'Usergroups' => 'usergroups::menu_title',
+			'Users' => 'users::menu_title',
 		], $categories);
 	}
 

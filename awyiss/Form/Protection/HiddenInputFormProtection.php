@@ -21,7 +21,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	 * @var array
 	 */
 	protected array $defaultOptions = [
-		'elementName' => 'email_confirmation',
+		'elementName' => 'emailConfirmation',
 	];
 	/**
 	 * @var \Awyiss\Model\Entity\Form
@@ -54,7 +54,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 		$elementName = $this->options['elementName'];
 
 		// 'emailConfirmation' is the last resort since form elements are all underscored
-		$alternatives = ['email_confirmation', 'mail_confirmation', 'e_mail_confirmation', 'mail', 'e_mail', 'emailConfirmation'];
+		$alternatives = ['emailConfirmation', 'mailConfirmation', 'eMailConfirmation', 'mail', 'eMail', '_email'];
 
 		// Check if the name is already used by form elements and try alternatives until a free name is found
 		while (!$elementName || array_key_exists($elementName, $this->formElements)) {
@@ -108,7 +108,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	public function validateData(array $data): string|true {
 		$fieldName = $this->getFieldName();
 
-		return empty($data[ $fieldName ]) ? true : __d('form', 'protection_method_hidden_input_error_field_empty');
+		return empty($data[ $fieldName ]) ? true : __d('Form', 'protection_method_hidden_input_error_field_empty');
 	}
 
 

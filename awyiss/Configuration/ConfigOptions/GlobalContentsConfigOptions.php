@@ -43,9 +43,9 @@ class GlobalContentsConfigOptions extends AbstractConfigOptions {
 				],
 				new ConfigOption(
 					defaultValue: [
-						'global_content_template_id',
-						'column_width',
-						'column_indent',
+						'globalContentTemplateId',
+						'columnWidth',
+						'columnIndent',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

@@ -60,8 +60,8 @@ class CustomerGroupAccessSettingTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'scope' => 'Pages',
-			'foreign_key' => 101,
-			'access_type' => 'specific_groups',
+			'foreignKey' => 101,
+			'accessType' => 'specificGroups',
 		];
 
 		$entity = new CustomerGroupAccessSetting($properties);
@@ -69,26 +69,6 @@ class CustomerGroupAccessSettingTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Pages', $entity->scope);
 		$this->assertEquals(101, $entity->foreignKey);
-		$this->assertEquals('specific_groups', $entity->accessType);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\CustomerGroupAccessSetting::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'scope' => 'Surveys',
-			'foreign_key' => 202,
-			'access_type' => 'all_groups',
-		];
-
-		$entity = new CustomerGroupAccessSetting($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
+		$this->assertEquals('specificGroups', $entity->accessType);
 	}
 }

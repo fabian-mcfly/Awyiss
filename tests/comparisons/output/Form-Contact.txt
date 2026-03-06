@@ -1,5 +1,5 @@
 <div class="Form Form-Contact">
-<form action="/de/_form/" data-{{now}}975b93a15e30f4db3b73677f9603b54f="http://localhost/xy/dummy-slug#Form-Contact" enctype="multipart/form-data" method="post" id="Form-Contact" >
+<form action="/de/_form/" data-{{now}}8252bca55259673bb8db59439dc8ca8f="http://localhost/xy/dummy-slug#Form-Contact" enctype="multipart/form-data" method="post" id="Form-Contact" >
 <fieldset class="FormRow FormElement Column-100 FormElementType-Fieldset FormElement-PersoenlicheDaten" id="FormElement1">
 <legend>Persönliche Daten</legend>
 <div class="FormRow">
@@ -50,7 +50,7 @@
 <div class="FormRow">
 <div class="FormElement Column-100 FormElementType-Datetime FormElement-DatumUndUhrzeit" id="FormElement49">
 <label for="FormInput49" class="FormElement-Label">Datum und Uhrzeit</label>
-<input id="FormInput49" type="datetime-local" name="datum_und_uhrzeit" value="" placeholder="Datum und Uhrzeit bitte" class="FormInputType-Input">
+<input id="FormInput49" type="datetime-local" name="datumUndUhrzeit" value="" placeholder="Datum und Uhrzeit bitte" class="FormInputType-Input">
 </div>
 </div>
 <div class="FormRow">
@@ -58,20 +58,20 @@
 <label for="FormInput50" class="FormElement-Label">Multi Checkbox</label>
 <span class="FormElement-Checkboxes">
 <span class="FormInputType-Checkbox-Item">
-<input type="hidden" name="multi_checkbox" value="">
-<input id="FormInput50-A" type="checkbox" name="multi_checkbox[]" value="a" class="FormInputType-Checkbox">
+<input type="hidden" name="multiCheckbox" value="">
+<input id="FormInput50-A" type="checkbox" name="multiCheckbox[]" value="a" class="FormInputType-Checkbox">
 <label for="FormInput50-A" class="FormInputType-Checkbox-Label">Label A</label>
 </span>
 <span class="FormInputType-Checkbox-Item">
-<input id="FormInput50-B" type="checkbox" name="multi_checkbox[]" value="b" class="FormInputType-Checkbox">
+<input id="FormInput50-B" type="checkbox" name="multiCheckbox[]" value="b" class="FormInputType-Checkbox">
 <label for="FormInput50-B" class="FormInputType-Checkbox-Label">Label B</label>
 </span>
 <span class="FormInputType-Checkbox-Item">
-<input id="FormInput50-LabelC(keinValue)" type="checkbox" name="multi_checkbox[]" value="Label C (kein Value)" class="FormInputType-Checkbox">
+<input id="FormInput50-LabelC(keinValue)" type="checkbox" name="multiCheckbox[]" value="Label C (kein Value)" class="FormInputType-Checkbox">
 <label for="FormInput50-LabelC(keinValue)" class="FormInputType-Checkbox-Label">Label C (kein Value)</label>
 </span>
 <span class="FormInputType-Checkbox-Item">
-<input id="FormInput50-ValueD(keinWert)" type="checkbox" name="multi_checkbox[]" value="Value D (kein Wert)" class="FormInputType-Checkbox">
+<input id="FormInput50-ValueD(keinWert)" type="checkbox" name="multiCheckbox[]" value="Value D (kein Wert)" class="FormInputType-Checkbox">
 <label for="FormInput50-ValueD(keinWert)" class="FormInputType-Checkbox-Label">Value D (kein Wert)</label>
 </span>
 </span>
@@ -82,20 +82,20 @@
 <label for="FormInput51" class="FormElement-Label">Multi Radio</label>
 <span class="FormElement-Radios">
 <span class="FormInputType-Radio-Item">
-<input type="hidden" name="multi_radio" value="">
-<input id="FormInput51-A" type="Radio" name="multi_radio" value="a" class="FormInputType-Radio">
+<input type="hidden" name="multiRadio" value="">
+<input id="FormInput51-A" type="Radio" name="multiRadio" value="a" class="FormInputType-Radio">
 <label for="FormInput51-A" class="FormInputType-Radio-Label">Label A</label>
 </span>
 <span class="FormInputType-Radio-Item">
-<input id="FormInput51-B" type="Radio" name="multi_radio" value="b" class="FormInputType-Radio">
+<input id="FormInput51-B" type="Radio" name="multiRadio" value="b" class="FormInputType-Radio">
 <label for="FormInput51-B" class="FormInputType-Radio-Label">Label B</label>
 </span>
 <span class="FormInputType-Radio-Item">
-<input id="FormInput51-LabelC(keinValue)" type="Radio" name="multi_radio" value="Label C (kein Value)" class="FormInputType-Radio">
+<input id="FormInput51-LabelC(keinValue)" type="Radio" name="multiRadio" value="Label C (kein Value)" class="FormInputType-Radio">
 <label for="FormInput51-LabelC(keinValue)" class="FormInputType-Radio-Label">Label C (kein Value)</label>
 </span>
 <span class="FormInputType-Radio-Item">
-<input id="FormInput51-ValueD(keinWert)" type="Radio" name="multi_radio" value="Value D (kein Wert)" class="FormInputType-Radio">
+<input id="FormInput51-ValueD(keinWert)" type="Radio" name="multiRadio" value="Value D (kein Wert)" class="FormInputType-Radio">
 <label for="FormInput51-ValueD(keinWert)" class="FormInputType-Radio-Label">Value D (kein Wert)</label>
 </span>
 </span>
@@ -104,7 +104,7 @@
 <div class="FormRow">
 <div class="FormElement Column-100 FormElementType-SelectMultiple FormElement-MultiSelect" id="FormElement52">
 <label for="FormInput52" class="FormElement-Label">Multi Select</label>
-<select id="FormInput52" name="multi_select[]" class="FormInputType-Select" multiple>
+<select id="FormInput52" name="multiSelect[]" class="FormInputType-Select" multiple>
 <option value="a" >Label A</option>
 <option value="b" >Label B</option>
 <option value="Label C (kein Value)" >Label C (kein Value)</option>
@@ -130,7 +130,7 @@
 <input id="FormInput54" type="file" name="dateiupload" class="FormInputType-File">
 </div>
 </div>
-<input type="hidden" name="verstecktes_feld" value="Verstecktes Feld">
+<input type="hidden" name="verstecktesFeld" value="Verstecktes Feld">
 </fieldset>
 <div class="FormRow">
 <div class="FormElement Column-100 FormElementType-Textarea FormElement-Nachricht" id="FormElement7">
@@ -142,8 +142,8 @@
 <div class="FormElement Column-100 FormElementType-Checkbox FormElement-DatenschutzAkzeptiert" id="FormElement9">
 <label for="FormInput9" class="FormElement-Label">Datenschutz akzeptiert</label>
 <span class="FormInputType-Checkbox-Item">
-<input type="hidden" name="datenschutz_akzeptiert" value="">
-<input id="FormInput9-Ja" type="checkbox" name="datenschutz_akzeptiert" value="Ja" required class="FormInputType-Checkbox">
+<input type="hidden" name="datenschutzAkzeptiert" value="">
+<input id="FormInput9-Ja" type="checkbox" name="datenschutzAkzeptiert" value="Ja" required class="FormInputType-Checkbox">
 <label for="FormInput9-Ja" class="FormInputType-Checkbox-Label">Ich habe die Datenschutzerklärung gelesen und akzeptiert</label>
 </span>
 </div>
@@ -153,9 +153,9 @@
 <button type="submit" name="" class="FormInputType-Button Button">Absenden</button>
 </div>
 </div>
-<input type="hidden" name="_form_identifier" value="contact">
-<input type="hidden" name="_page_id" value="1">
+<input type="hidden" name="_formIdentifier" value="contact">
+<input type="hidden" name="_pageId" value="1">
 </form>
 </div>
 <script nonce="">
-setTimeout(function () { const formElementsChecksum = '{{now}}975b93a15e30f4db3b73677f9603b54f'; let form = document.getElementById('Form-Contact'); if (form) { const action = form.getAttribute('data-' + formElementsChecksum); form.removeAttribute('data-' + formElementsChecksum); if (action) { form.setAttribute('action', action); } } }, 8500); </script>
+setTimeout(function () { const formElementsChecksum = '{{now}}8252bca55259673bb8db59439dc8ca8f'; let form = document.getElementById('Form-Contact'); if (form) { const action = form.getAttribute('data-' + formElementsChecksum); form.removeAttribute('data-' + formElementsChecksum); if (action) { form.setAttribute('action', action); } } }, 8500); </script>

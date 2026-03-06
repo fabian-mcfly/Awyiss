@@ -241,7 +241,7 @@ class SurveysController extends Controller {
 			$surveyEntriesTable = $this->fetchTable('SurveyEntries');
 			$entry = $surveyEntriesTable->find()->where([
 				'id' => $entryId,
-				'survey_id' => $id,
+				'surveyId' => $id,
 			])->first();
 
 			if ($entry) {
@@ -297,8 +297,8 @@ class SurveysController extends Controller {
 		// Fetch all entries for this survey
 		$surveyEntriesTable = $this->fetchTable('SurveyEntries');
 		$entries = $surveyEntriesTable->find()->where([
-			'survey_id' => $id,
-		])->orderBy(['created_on' => 'DESC'])->all();
+			'surveyId' => $id,
+		])->orderBy(['createdOn' => 'DESC'])->all();
 
 		// Analyze the data
 		$analysis = $this->analyzeEntries($survey, $entries);
@@ -307,11 +307,11 @@ class SurveysController extends Controller {
 		$questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
 		$entries = $this->paginate($surveyEntriesTable->find()->where([
-			'survey_id' => $id,
+			'surveyId' => $id,
 		]), [
 			'limit' => 20,
 			'order' => [
-				'created_on' => 'DESC',
+				'createdOn' => 'DESC',
 			],
 		]);
 
@@ -483,18 +483,18 @@ class SurveysController extends Controller {
 
 		$this->Surveys->patchEntity($survey, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Surveys->save($survey, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($survey),
@@ -615,18 +615,18 @@ class SurveysController extends Controller {
 		$count = 0;
 
 		if (
-			!isset($data['survey_survey_questions']) ||
-			!is_array($data['survey_survey_questions'])
+			!isset($data['surveySurveyQuestions']) ||
+			!is_array($data['surveySurveyQuestions'])
 		) {
-			$data['survey_survey_questions'] = [];
+			$data['surveySurveyQuestions'] = [];
 		}
 
-		foreach ($data['survey_survey_questions'] as $key => $questionData) {
+		foreach ($data['surveySurveyQuestions'] as $key => $questionData) {
 			if (
 				!is_array($questionData) ||
-				!isset($questionData['survey_question_id'])
+				!isset($questionData['surveyQuestionId'])
 			) {
-				unset($data['survey_survey_questions'][$key]);
+				unset($data['surveySurveyQuestions'][$key]);
 				continue;
 			}
 
@@ -639,16 +639,16 @@ class SurveysController extends Controller {
 				$identifier = bin2hex($identifier);
 			}
 
-			$data['survey_survey_questions'][ $key ] = [
+			$data['surveySurveyQuestions'][ $key ] = [
 				'id' => $questionData['id'] ?? null,
 				'active' => $questionData['active'] ?? true,
-				'surveyQuestionId' => $questionData['survey_question_id'],
+				'surveyQuestionId' => $questionData['surveyQuestionId'],
 				'identifier' => $identifier,
-				'nextAction' => $questionData['next_action'] ?? null,
-				'nextActionTarget' => $questionData['next_action_target'] ?? null,
-				'allowCustomAnswer' => $questionData['allow_custom_answer'] ?? null,
+				'nextAction' => $questionData['nextAction'] ?? null,
+				'nextActionTarget' => $questionData['nextActionTarget'] ?? null,
+				'allowCustomAnswer' => $questionData['allowCustomAnswer'] ?? null,
 				'systemOrder' => $count + 1,
-				'surveySurveyAnswers' => $questionData['survey_survey_answers'] ?? [],
+				'surveySurveyAnswers' => $questionData['surveySurveyAnswers'] ?? [],
 			];
 
 			$count++;
@@ -666,26 +666,26 @@ class SurveysController extends Controller {
 		$count = 0;
 
 		if (
-			!isset($data['survey_survey_answers']) ||
-			!is_array($data['survey_survey_answers'])
+			!isset($data['surveySurveyAnswers']) ||
+			!is_array($data['surveySurveyAnswers'])
 		) {
-			$data['survey_survey_answers'] = [];
+			$data['surveySurveyAnswers'] = [];
 		}
 
-		foreach ($data['survey_survey_answers'] as $key => $answerData) {
+		foreach ($data['surveySurveyAnswers'] as $key => $answerData) {
 			if (
 				!is_array($answerData) ||
-				!isset($answerData['survey_answer_id'])
+				!isset($answerData['surveyAnswerId'])
 			) {
-				unset($data['survey_survey_answers'][ $key ]);
+				unset($data['surveySurveyAnswers'][ $key ]);
 				continue;
 			}
 
-			$data['survey_survey_answers'][ $key ] = [
+			$data['surveySurveyAnswers'][ $key ] = [
 				'id' => $answerData['id'] ?? null,
-				'surveyAnswerId' => $answerData['survey_answer_id'],
-				'nextAction' => $answerData['next_action'] ?? null,
-				'nextActionTarget' => $answerData['next_action_target'] ?? null,
+				'surveyAnswerId' => $answerData['surveyAnswerId'],
+				'nextAction' => $answerData['nextAction'] ?? null,
+				'nextActionTarget' => $answerData['nextActionTarget'] ?? null,
 				'systemOrder' => $count + 1,
 				'active' => $answerData['active'] ?? false,
 			];

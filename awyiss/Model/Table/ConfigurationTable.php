@@ -69,14 +69,14 @@ class ConfigurationTable extends Table {
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
+			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
 		})->toArray();
 
 		$configScopes = [];
 		foreach ($this->getScopes() as $identifier => $className) {
-			$identifier = Inflector::underscore($identifier);
+			$identifier = Inflector::camelize($identifier);
 
-			if (isset($pageRoles[ $identifier ]) && $identifier !== 'pages') {
+			if (isset($pageRoles[ $identifier ]) && $identifier !== 'Pages') {
 				$configScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
 				continue;
@@ -108,7 +108,7 @@ class ConfigurationTable extends Table {
 			],
 			'foreignKey' => [
 				'realm',
-				'language_shortcode',
+				'languageShortcode',
 			],
 			'joinType' => 'LEFT',
 		]);
@@ -207,7 +207,7 @@ class ConfigurationTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -216,7 +216,7 @@ class ConfigurationTable extends Table {
 			return in_array($entity->realm, Awyiss::getRealms(), true);
 		}, 'validRealm', [
 			'errorField' => 'realm',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_realm'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_realm'),
 		]);
 
 
@@ -259,7 +259,7 @@ class ConfigurationTable extends Table {
 			return $valid;
 		}, 'validValue', [
 			'errorField' => 'value',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_value'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_value'),
 		]);
 
 
@@ -273,7 +273,7 @@ class ConfigurationTable extends Table {
 				'languageShortcode',
 			], 'Languages', [
 				'errorField' => 'languageShortcode',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_language_exists'),
 			]);
 
 

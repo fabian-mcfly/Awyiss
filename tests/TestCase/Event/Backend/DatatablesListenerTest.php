@@ -105,7 +105,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -134,7 +134,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -160,7 +160,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$backendMenuEntriesTable = $this->fetchTable('BackendMenuEntries');
@@ -178,7 +178,7 @@ class DatatablesListenerTest extends TestCase {
 		$entries = $entries->combine('title', 'link')->toArray();
 
 		$this->assertSame([
-			'generic_datatables::menu_configure' => 'Configuration::overview::scope:test_datatable',
+			'generic_datatables::menu_configure' => 'Configuration::overview::scope:TestDatatable',
 			'generic_datatables::menu_add' => 'TestDatatable::add',
 			'generic_datatables::menu_overview' => 'TestDatatable::overview',
 			'' => 'TestDatatable::overview',
@@ -197,7 +197,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$backendMenuEntriesTable = $this->fetchTable('BackendMenuEntries');
@@ -221,7 +221,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 		$entity->setNew(false);
 
@@ -244,7 +244,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSaveCommitBakesMigrationAndModelForNewEntity(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
@@ -254,25 +254,25 @@ class DatatablesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				$expectedColumns = [
-					'parent_id:integer?[11]:index',
-					'language_shortcode:char?[2]:index',
+					'parentId:integer?[11]:index',
+					'languageShortcode:char?[2]:index',
 					'title:string?[255]',
-					'system_order:integer[11](0)',
+					'systemOrder:integer[11](0)',
 					'active:tinyinteger[1](1):index',
 					'deleted:tinyinteger[1](0):index',
-					'created_by:integer?[11]',
-					'created_on:datetime?',
-					'changed_by:integer?[11]',
-					'changed_on:datetime?',
-					'deleted_by:integer?[11]',
-					'deleted_on:datetime?',
+					'createdBy:integer?[11]',
+					'createdOn:datetime?',
+					'changedBy:integer?[11]',
+					'changedOn:datetime?',
+					'deletedBy:integer?[11]',
+					'deletedOn:datetime?',
 				];
 
 				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'bin' . DS . 'cake bake migration create_test_datatable ' . implode(' ', $expectedColumns) . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						'bin' . DS . 'cake bake migration create_testDatatable ' . implode(' ', $expectedColumns) . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
 						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
 						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake model test_datatable --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable',
+						'bin' . DS . 'cake bake model testDatatable --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable',
 						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
 					])) . ')';
 
@@ -281,7 +281,7 @@ class DatatablesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'datatables::table_changes',
+				'reference' => 'Datatables::tableChanges',
 			]
 		);
 
@@ -302,7 +302,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSaveCommitNotBakesMigrationAndModelForExistingEntity(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 		$entity->setNew(false);
 
@@ -327,7 +327,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSaveCommitDispatchesDeleteCustomConfigEventWhenNew(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$eventSent = false;
@@ -351,7 +351,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSaveCommitNotDispatchesDeleteCustomConfigEventWhenNotNew(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 		$entity->setNew(false);
 
@@ -378,7 +378,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$backendMenuEntriesTable = $this->fetchTable('BackendMenuEntries');
@@ -412,25 +412,25 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSoftDeleteCleansUpConfiguration(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$configurationTable = $this->fetchTable('Configuration');
 
 		$configs = [
 			$configurationTable->newDefaultEntity([
-				'scope' => 'test_datatable',
-				'identifier' => 'test_config_1',
+				'scope' => 'TestDatatable',
+				'identifier' => 'testConfig1',
 				'value' => 'test_value_1',
 			]),
 			$configurationTable->newDefaultEntity([
-				'scope' => 'test_datatable',
-				'identifier' => 'test_config_2',
+				'scope' => 'TestDatatable',
+				'identifier' => 'testConfig2',
 				'value' => 'test_value_2',
 			]),
 			$configurationTable->newDefaultEntity([
-				'scope' => 'other_scope',
-				'identifier' => 'other_config',
+				'scope' => 'OtherScope',
+				'identifier' => 'otherConfig',
 				'value' => 'other_value',
 			]),
 		];
@@ -442,10 +442,10 @@ class DatatablesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $configurationTable->find()->where(['scope' => 'test_datatable'])->count());
-		$this->assertSame(1, $configurationTable->find()->where(['scope' => 'other_scope'])->count());
+		$this->assertSame(0, $configurationTable->find()->where(['scope' => 'TestDatatable'])->count());
+		$this->assertSame(1, $configurationTable->find()->where(['scope' => 'OtherScope'])->count());
 
-		$configurationTable->deleteAll(['scope' => 'other_scope']);
+		$configurationTable->deleteAll(['scope' => 'OtherScope']);
 	}
 
 
@@ -457,7 +457,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSoftDeleteCleansUpI18n(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$i18nTable = $this->fetchTable('I18n');
@@ -465,22 +465,22 @@ class DatatablesListenerTest extends TestCase {
 		$i18n = [
 			$i18nTable->newEntity([
 				'locale' => 'de',
-				'model' => 'test_datatable',
-				'foreign_key' => 1,
+				'model' => 'TestDatatable',
+				'foreignKey' => 1,
 				'field' => 'title',
 				'content' => 'Test German',
 			]),
 			$i18nTable->newEntity([
 				'locale' => 'en',
-				'model' => 'test_datatable',
-				'foreign_key' => 2,
+				'model' => 'TestDatatable',
+				'foreignKey' => 2,
 				'field' => 'description',
 				'content' => 'Test English',
 			]),
 			$i18nTable->newEntity([
 				'locale' => 'de',
-				'model' => 'other_model',
-				'foreign_key' => 1,
+				'model' => 'OtherModel',
+				'foreignKey' => 1,
 				'field' => 'title',
 				'content' => 'Other Content',
 			]),
@@ -493,10 +493,10 @@ class DatatablesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $i18nTable->find()->where(['model' => 'test_datatable'])->count());
-		$this->assertSame(1, $i18nTable->find()->where(['model' => 'other_model'])->count());
+		$this->assertSame(0, $i18nTable->find()->where(['model' => 'TestDatatable'])->count());
+		$this->assertSame(1, $i18nTable->find()->where(['model' => 'OtherModel'])->count());
 
-		$i18nTable->deleteAll(['model' => 'other_model']);
+		$i18nTable->deleteAll(['model' => 'OtherModel']);
 	}
 
 
@@ -508,26 +508,26 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSoftDeleteCleansUpUsergroupPermissions(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$usergroupPermissionsTable = $this->fetchTable('UsergroupPermissions');
 
 		$permissions = [
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'test_datatable',
+				'scope' => 'TestDatatable',
 				'identifier' => 'index',
 				'usergroupId' => 1,
 				'access' => 1,
 			]),
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'test_datatable',
+				'scope' => 'TestDatatable',
 				'identifier' => 'edit',
 				'usergroupId' => 2,
 				'access' => 1,
 			]),
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'other_scope',
+				'scope' => 'OtherScope',
 				'identifier' => 'view',
 				'usergroupId' => 1,
 				'access' => 1,
@@ -541,10 +541,10 @@ class DatatablesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $usergroupPermissionsTable->find()->where(['scope' => 'test_datatable'])->count());
-		$this->assertSame(1, $usergroupPermissionsTable->find()->where(['scope' => 'other_scope'])->count());
+		$this->assertSame(0, $usergroupPermissionsTable->find()->where(['scope' => 'TestDatatable'])->count());
+		$this->assertSame(1, $usergroupPermissionsTable->find()->where(['scope' => 'OtherScope'])->count());
 
-		$usergroupPermissionsTable->deleteAll(['scope' => 'other_scope']);
+		$usergroupPermissionsTable->deleteAll(['scope' => 'OtherScope']);
 	}
 
 
@@ -555,7 +555,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSoftDeleteCommitQueuesDropCommands(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
@@ -564,7 +564,7 @@ class DatatablesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'bin' . DS . 'cake bake migration drop_test_datatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						'bin' . DS . 'cake bake migration drop_testDatatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
 						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
 						'bin' . DS . 'cake schema_cache clear',
 						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
@@ -575,7 +575,7 @@ class DatatablesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'datatables::drop_table',
+				'reference' => 'Datatables::dropTable',
 			]
 		);
 
@@ -596,7 +596,7 @@ class DatatablesListenerTest extends TestCase {
 	public function testAfterSoftDeleteCommitQueueUnlinksModelFilesIfExists(): void {
 		$datatableTable = $this->fetchTable('Datatables');
 		$entity = $datatableTable->newDefaultEntity([
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 		]);
 
 		$entityFile = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php']);
@@ -615,7 +615,7 @@ class DatatablesListenerTest extends TestCase {
 				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
 						'unlink ' . ROOT . DS . CUSTOM_DIR . '/Model/Entity/TestDatatable.php',
 						'unlink ' . ROOT . DS . CUSTOM_DIR . '/Model/Table/TestDatatableTable.php',
-						'bin' . DS . 'cake bake migration drop_test_datatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						'bin' . DS . 'cake bake migration drop_testDatatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
 						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
 						'bin' . DS . 'cake schema_cache clear',
 						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
@@ -626,7 +626,7 @@ class DatatablesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'datatables::drop_table',
+				'reference' => 'Datatables::dropTable',
 			]
 		);
 
@@ -664,7 +664,7 @@ class DatatablesListenerTest extends TestCase {
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
-					return $data['identifier'] === 'cars';
+					return $data['identifier'] === 'Cars';
 				}
 
 				return true;
@@ -674,14 +674,14 @@ class DatatablesListenerTest extends TestCase {
 					return $options === [
 							'group' => 'general',
 							'priority' => 1,
-							'reference' => 'attributes::table_changes',
+							'reference' => 'Attributes::tableChanges',
 						];
 				}
 
 				return $options === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'datatables::drop_table',
+						'reference' => 'Datatables::dropTable',
 					];
 			})
 		);

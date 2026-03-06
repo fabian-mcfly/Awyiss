@@ -155,8 +155,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => null,
 			],
 			'new' => [
-				'scope' => 'users',
-				'identifier' => 'test_col',
+				'scope' => 'Users',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -173,7 +173,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration create_attributes_users user_id:integer[11]:index test_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration create_attributes_users userId:integer[11]:index testCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[0]
@@ -216,8 +216,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => null,
 			],
 			'new' => [
-				'scope' => 'contents',
-				'identifier' => 'test_col',
+				'scope' => 'Contents',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -234,7 +234,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_test_col_to_attributes_contents test_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration add_testCol_to_attributes_contents testCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[0]
@@ -268,8 +268,8 @@ class UpsertTaskTest extends TestCase {
 	public function testRunWithRenamedAttribute(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
-				'scope' => 'contents',
-				'identifier' => 'old_col',
+				'scope' => 'Contents',
+				'identifier' => 'oldCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -277,8 +277,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'contents',
-				'identifier' => 'new_col',
+				'scope' => 'Contents',
+				'identifier' => 'newCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -295,7 +295,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration alter_old_col_on_attributes_contents new_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration alter_oldCol_on_attributes_contents newCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[0]
@@ -329,8 +329,8 @@ class UpsertTaskTest extends TestCase {
 	public function testRunWithChangedScopeAndNewAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
-				'scope' => 'contents',
-				'identifier' => 'test_col',
+				'scope' => 'Contents',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -338,8 +338,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'users',
-				'identifier' => 'renamed_col',
+				'scope' => 'Users',
+				'identifier' => 'renamedCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -355,7 +355,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(3, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_test_col_from_attributes_contents test_col --folder tests/customer/config/Migrations',
+					'bin/cake bake migration remove_testCol_from_attributes_contents testCol --folder tests/customer/config/Migrations',
 					$commands[0]
 				);
 
@@ -363,7 +363,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration create_attributes_users user_id:integer[11]:index renamed_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration create_attributes_users userId:integer[11]:index renamedCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[2]
@@ -397,8 +397,8 @@ class UpsertTaskTest extends TestCase {
 	public function testRunWithChangedScopeAndExistingAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
-				'scope' => 'news',
-				'identifier' => 'test_col',
+				'scope' => 'News',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -406,8 +406,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'contents',
-				'identifier' => 'renamed_col',
+				'scope' => 'Contents',
+				'identifier' => 'renamedCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -423,7 +423,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(3, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_test_col_from_attributes_news test_col --folder tests/customer/config/Migrations',
+					'bin/cake bake migration remove_testCol_from_attributes_news testCol --folder tests/customer/config/Migrations',
 					$commands[0]
 				);
 
@@ -431,7 +431,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_renamed_col_to_attributes_contents renamed_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration add_renamedCol_to_attributes_contents renamedCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[2]
@@ -471,8 +471,8 @@ class UpsertTaskTest extends TestCase {
 	): void {
 		$data = [
 			'old' => [
-				'scope' => 'usergroups',
-				'identifier' => 'test_col',
+				'scope' => 'Usergroups',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -480,8 +480,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'contents',
-				'identifier' => 'renamed_col',
+				'scope' => 'Contents',
+				'identifier' => 'renamedCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -515,7 +515,7 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_renamed_col_to_attributes_contents renamed_col:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration add_renamedCol_to_attributes_contents renamedCol:%s --folder tests/customer/config/Migrations',
 						$colString
 					),
 					$commands[4]
@@ -552,8 +552,8 @@ class UpsertTaskTest extends TestCase {
 	public function testRunWithDeletedAttribute(string $type, bool $required, ?string $defaultValue, bool $index): void {
 		$data = [
 			'old' => [
-				'scope' => 'contents',
-				'identifier' => 'test_col',
+				'scope' => 'Contents',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -561,8 +561,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'contents',
-				'identifier' => 'test_col',
+				'scope' => 'Contents',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -578,7 +578,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(1, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_test_col_from_attributes_contents test_col --folder tests/customer/config/Migrations',
+					'bin/cake bake migration remove_testCol_from_attributes_contents testCol --folder tests/customer/config/Migrations',
 					$commands[0]
 				);
 
@@ -609,8 +609,8 @@ class UpsertTaskTest extends TestCase {
 	public function testRunWithDeletedAttributeForLastColumnInTable(string $type, bool $required, ?string $defaultValue, bool $index): void {
 		$data = [
 			'old' => [
-				'scope' => 'usergroups',
-				'identifier' => 'test_col',
+				'scope' => 'Usergroups',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -618,8 +618,8 @@ class UpsertTaskTest extends TestCase {
 				'deleted' => false,
 			],
 			'new' => [
-				'scope' => 'usergroups',
-				'identifier' => 'test_col',
+				'scope' => 'Usergroups',
+				'identifier' => 'testCol',
 				'type' => $type,
 				'required' => $required,
 				'defaultValue' => $defaultValue,
@@ -683,7 +683,7 @@ class UpsertTaskTest extends TestCase {
 		$mockQueuedJobs->expects($this->never())->method('createJob');
 		$task->QueuedJobs = $mockQueuedJobs;
 
-		$data = ['new' => ['scope' => 'contents', 'deleted' => false], 'old' => ['scope' => 'pages']];
+		$data = ['new' => ['scope' => 'Contents', 'deleted' => false], 'old' => ['scope' => 'Pages']];
 
 		$this->callProtectedMethod($task, 'createJob', [], $data, false, false);
 	}
@@ -718,7 +718,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -728,8 +728,8 @@ class UpsertTaskTest extends TestCase {
 		$task->QueuedJobs = $mockQueuedJobs;
 
 		$data = [
-			'new' => ['scope' => 'contents', 'deleted' => false],
-			'old' => ['scope' => 'pages'],
+			'new' => ['scope' => 'Contents', 'deleted' => false],
+			'old' => ['scope' => 'Pages'],
 		];
 
 		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration create_attributes_contents'], $data, false, false);
@@ -750,7 +750,7 @@ class UpsertTaskTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
-					'(bin/cake bake migration remove_test_col_from_attributes_contents' .
+					'(bin/cake bake migration remove_testCol_from_attributes_contents' .
 					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
 					' && bin/cake schema_cache clear' .
 					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
@@ -763,7 +763,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -773,11 +773,11 @@ class UpsertTaskTest extends TestCase {
 		$task->QueuedJobs = $mockQueuedJobs;
 
 		$data = [
-			'new' => ['scope' => 'contents', 'deleted' => true],
-			'old' => ['scope' => 'contents'],
+			'new' => ['scope' => 'Contents', 'deleted' => true],
+			'old' => ['scope' => 'Contents'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration remove_test_col_from_attributes_contents'], $data, false, false);
+		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration remove_testCol_from_attributes_contents'], $data, false, false);
 	}
 
 
@@ -798,7 +798,7 @@ class UpsertTaskTest extends TestCase {
 					'(bin/cake bake migration add_test_to_attributes_news' .
 					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole news' .
+					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole News' .
 					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
 					$jobData['command']
 				);
@@ -809,7 +809,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -819,8 +819,8 @@ class UpsertTaskTest extends TestCase {
 		$task->QueuedJobs = $mockQueuedJobs;
 
 		$data = [
-			'new' => ['scope' => 'news', 'deleted' => false],
-			'old' => ['scope' => 'news'],
+			'new' => ['scope' => 'News', 'deleted' => false],
+			'old' => ['scope' => 'News'],
 		];
 
 		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_news'], $data, true, false);
@@ -844,7 +844,7 @@ class UpsertTaskTest extends TestCase {
 					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
 					' && bin/cake schema_cache clear' .
 					' && bin/cake bake model attributes_contents --namespace Customer --no-fixture --no-test --update --force' .
-					' && bin/cake bake model attributes_pages --namespace Customer --no-fixture --no-test --update --force --for-pagerole pages' .
+					' && bin/cake bake model attributes_pages --namespace Customer --no-fixture --no-test --update --force --for-pagerole Pages' .
 					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
 					$jobData['command']
 				);
@@ -855,7 +855,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -865,8 +865,8 @@ class UpsertTaskTest extends TestCase {
 		$task->QueuedJobs = $mockQueuedJobs;
 
 		$data = [
-			'new' => ['scope' => 'contents', 'deleted' => false],
-			'old' => ['scope' => 'pages'],
+			'new' => ['scope' => 'Contents', 'deleted' => false],
+			'old' => ['scope' => 'Pages'],
 		];
 
 		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_contents'], $data, false, true);
@@ -889,8 +889,8 @@ class UpsertTaskTest extends TestCase {
 					'(bin/cake bake migration add_test_to_attributes_products' .
 					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_products --namespace Customer --no-fixture --no-test --update --force --for-pagerole products' .
-					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole news' .
+					' && bin/cake bake model attributes_products --namespace Customer --no-fixture --no-test --update --force --for-pagerole Products' .
+					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole News' .
 					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
 					$jobData['command']
 				);
@@ -901,7 +901,7 @@ class UpsertTaskTest extends TestCase {
 				$this->assertSame([
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'attributes::table_changes',
+					'reference' => 'Attributes::tableChanges',
 				], $options);
 
 				return true;
@@ -911,8 +911,8 @@ class UpsertTaskTest extends TestCase {
 		$task->QueuedJobs = $mockQueuedJobs;
 
 		$data = [
-			'new' => ['scope' => 'products', 'deleted' => false],
-			'old' => ['scope' => 'news'],
+			'new' => ['scope' => 'Products', 'deleted' => false],
+			'old' => ['scope' => 'News'],
 		];
 
 		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_products'], $data, true, true);

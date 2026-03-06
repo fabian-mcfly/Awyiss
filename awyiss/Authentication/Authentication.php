@@ -100,7 +100,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			return $this->service;
 		}
 
-		throw new Exception(__d('authenticator', 'unknown_authentication'));
+		throw new Exception(__d('Authenticator', 'unknown_authentication'));
 	}
 
 
@@ -138,14 +138,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			if (is_callable($authenticator)) {
 				$authenticator = $authenticator();
 				if (!isset($authenticator['name'])) {
-					throw new Exception(__d('authenticator', 'authenticator_name_missing'));
+					throw new Exception(__d('Authenticator', 'authenticator_name_missing'));
 				}
 
 				if (!isset($authenticator['config'])) {
 					$authenticator['config'] = [];
 				}
 				elseif (!is_array($authenticator['config'])) {
-					throw new Exception(__d('authenticator', 'authenticator_config_not_array'));
+					throw new Exception(__d('Authenticator', 'authenticator_config_not_array'));
 				}
 			}
 
@@ -256,14 +256,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			if (is_callable($identifier)) {
 				$identifier = $identifier();
 				if (!isset($identifier['name'])) {
-					throw new Exception(__d('authenticator', 'identifier_name_missing'));
+					throw new Exception(__d('Authenticator', 'identifier_name_missing'));
 				}
 
 				if (!isset($identifier['config'])) {
 					$identifier['config'] = [];
 				}
 				if (!is_array($identifier['config'])) {
-					throw new Exception(__d('authenticator', 'identifier_config_not_array'));
+					throw new Exception(__d('Authenticator', 'identifier_config_not_array'));
 				}
 			}
 

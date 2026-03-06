@@ -22,7 +22,7 @@
 
 {% block permissionOptions %}
 	{% set fieldName = 'permissions[' ~ scope ~ '][' ~ identifier ~ ']' %}
-	{% set label = 'Permissions-' ~ scope|camelize ~ '-' ~ identifier|camelize %}
+	{% set label = 'Permissions-' ~ scope ~ '-' ~ identifier|camelize %}
 	{% set value = entity.usergroupPermissions[ scope ][ identifier ].access ?? null %}
 	{% set options = permission.getOptions %}
 
@@ -49,20 +49,20 @@
 			<span class="Labels">
 				{% block optionsLabelsInner %}
 					{% block optionDeniedLabel %}
-						<label for="{{ label ~ '-' ~ options.denied.value }}" title="{{ __d('authorization', 'simple_permission_option_denied') }}">
-							{{ __d('authorization', 'simple_permission_option_denied') }}
+						<label for="{{ label ~ '-' ~ options.denied.value }}" title="{{ __d('Authorization', 'simple_permission_option_denied') }}">
+							{{ __d('Authorization', 'simple_permission_option_denied') }}
 						</label>
 					{% endblock %}
 
 					{% block optionIndifferentLabel %}
-						<label for="{{ label }}" title="{{ __d('authorization', 'simple_permission_option_indifferent') }}">
-							{{ __d('authorization', 'simple_permission_option_indifferent') }}
+						<label for="{{ label }}" title="{{ __d('Authorization', 'simple_permission_option_indifferent') }}">
+							{{ __d('Authorization', 'simple_permission_option_indifferent') }}
 						</label>
 					{% endblock %}
 
 					{% block optionGrantedLabel %}
-						<label for="{{ label ~ '-' ~ options.granted.value }}" title="{{ __d('authorization', 'simple_permission_option_granted') }}">
-							{{ __d('authorization', 'simple_permission_option_granted') }}
+						<label for="{{ label ~ '-' ~ options.granted.value }}" title="{{ __d('Authorization', 'simple_permission_option_granted') }}">
+							{{ __d('Authorization', 'simple_permission_option_granted') }}
 						</label>
 					{% endblock %}
 				{% endblock %}

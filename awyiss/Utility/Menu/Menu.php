@@ -82,12 +82,14 @@ abstract class Menu {
 
 	/**
 	 * @param array $entries
-	 * @param string $identifier
+	 * @param string|int $identifier
 	 * @param bool $determineVisibility
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
+	public function appendEntries(array $entries, string|int $identifier, bool $determineVisibility = true): void {
+		$identifier = (string)$identifier;
+
 		$item = $this->getItem($identifier);
 
 		if (!$item) {
@@ -178,12 +180,12 @@ abstract class Menu {
 
 	/**
 	 * @param array $entries
-	 * @param string|null $identifier
+	 * @param string|int|null $identifier
 	 * @param bool $determineVisibility
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
+	public function insertEntriesAfter(array $entries, string|int|null $identifier = null, bool $determineVisibility = true): void {
 		if ($identifier && !isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
 			throw new MenuValidationException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
 		}

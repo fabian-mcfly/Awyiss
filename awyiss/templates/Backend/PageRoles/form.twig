@@ -95,7 +95,7 @@
 				{% endblock %}
 
 				{% block formControlIncludeInLinklist %}
-					{{ FormHelper.control('include_in_linklist', {columnSpan: 6}) }}
+					{{ FormHelper.control('includeInLinklist', {columnSpan: 6}) }}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}
@@ -113,7 +113,7 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: pageRole}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: pageRole}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -178,7 +178,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

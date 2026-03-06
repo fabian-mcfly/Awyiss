@@ -129,12 +129,12 @@ class AltchaFormProtection implements FormProtectionInterface {
 		$fieldName = $this->defaultOptions['htmlAttributes']['name'];
 
 		if (empty($data[ $fieldName ])) {
-			return __d('form', 'altcha_error');
+			return __d('Form', 'altcha_error');
 		}
 
 		$altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
 		if (!$altcha->verifySolution($data[ $fieldName ])) {
-			return __d('form', 'altcha_error');
+			return __d('Form', 'altcha_error');
 		}
 
 		return true;

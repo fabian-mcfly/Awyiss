@@ -458,7 +458,7 @@ trait ConfigTrait {
 
 		$configTable->patchEntity($config, [
 			'realm' => Awyiss::REALM_BACKEND,
-			'scope' => 'system',
+			'scope' => 'System',
 			'identifier' => 'interface.editor',
 			'value' => strtolower($this->rtEditor),
 		]);

@@ -28,10 +28,10 @@ class QuestionTypeTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\QuestionType
 	 */
 	public function testEnumCases(): void {
-		$this->assertEquals('single_choice', QuestionType::SingleChoice->value);
-		$this->assertEquals('multiple_choice', QuestionType::MultiChoice->value);
-		$this->assertEquals('free_text', QuestionType::FreeText->value);
-		$this->assertEquals('info_text', QuestionType::InfoText->value);
+		$this->assertEquals('singleChoice', QuestionType::SingleChoice->value);
+		$this->assertEquals('multipleChoice', QuestionType::MultiChoice->value);
+		$this->assertEquals('freeText', QuestionType::FreeText->value);
+		$this->assertEquals('infoText', QuestionType::InfoText->value);
 	}
 
 
@@ -40,10 +40,10 @@ class QuestionTypeTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\QuestionType
 	 */
 	public function testEnumFromMethod(): void {
-		$this->assertEquals(QuestionType::SingleChoice, QuestionType::from('single_choice'));
-		$this->assertEquals(QuestionType::MultiChoice, QuestionType::from('multiple_choice'));
-		$this->assertEquals(QuestionType::FreeText, QuestionType::from('free_text'));
-		$this->assertEquals(QuestionType::InfoText, QuestionType::from('info_text'));
+		$this->assertEquals(QuestionType::SingleChoice, QuestionType::from('singleChoice'));
+		$this->assertEquals(QuestionType::MultiChoice, QuestionType::from('multipleChoice'));
+		$this->assertEquals(QuestionType::FreeText, QuestionType::from('freeText'));
+		$this->assertEquals(QuestionType::InfoText, QuestionType::from('infoText'));
 	}
 
 
@@ -66,10 +66,10 @@ class QuestionTypeTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\QuestionType
 	 */
 	public function testEnumTryFromMethodValid(): void {
-		$this->assertEquals(QuestionType::SingleChoice, QuestionType::tryFrom('single_choice'));
-		$this->assertEquals(QuestionType::MultiChoice, QuestionType::tryFrom('multiple_choice'));
-		$this->assertEquals(QuestionType::FreeText, QuestionType::tryFrom('free_text'));
-		$this->assertEquals(QuestionType::InfoText, QuestionType::tryFrom('info_text'));
+		$this->assertEquals(QuestionType::SingleChoice, QuestionType::tryFrom('singleChoice'));
+		$this->assertEquals(QuestionType::MultiChoice, QuestionType::tryFrom('multipleChoice'));
+		$this->assertEquals(QuestionType::FreeText, QuestionType::tryFrom('freeText'));
+		$this->assertEquals(QuestionType::InfoText, QuestionType::tryFrom('infoText'));
 	}
 
 

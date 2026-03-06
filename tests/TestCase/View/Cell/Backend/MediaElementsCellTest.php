@@ -93,7 +93,7 @@ class MediaElementsCellTest extends TestCase {
 			[fn() => $tableLocator->get('Cars')->newDefaultEntity(), 'single'],
 			[fn() => $tableLocator->get('Pages')->get(1, 'mediaAssignments'), false],
 			[fn() => $tableLocator->get('Pages')->newDefaultEntity(), false],
-			[fn() => $tableLocator->get('News')->get(21, 'mediaAssignments'), 'hidden_folder'],
+			[fn() => $tableLocator->get('News')->get(21, 'mediaAssignments'), 'hiddenFolder'],
 			[fn() => $tableLocator->get('News')->newDefaultEntity(), 'false'],
 			[fn() => $tableLocator->get('GlobalContents')->get(1, 'mediaAssignments'), 'single'],
 			[fn() => $tableLocator->get('GlobalContents')->get(13, 'mediaAssignments'), 'single'],
@@ -143,19 +143,23 @@ class MediaElementsCellTest extends TestCase {
 
 		$output = trim((string)$this->view->cell('Backend/MediaElements', [$entity]));
 
+		if ($type === 'single') {
+			$this->assertStringContainsString('<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile', $output);
+			return;
+		}
+
 		if ($type === 'multi') {
 			$this->assertStringContainsString('<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-MultiFile', $output);
+			return;
 		}
-		elseif ($type === 'single') {
-			$this->assertStringContainsString('<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile', $output);
+
+		if ($type === 'hiddenFolder') {
+			$this->assertStringContainsString('<input type="hidden" name="mediaAssignments[1][hiddenFolder][id]"', $output);
+			$this->assertStringContainsString('<input type="hidden" name="mediaAssignments[1][hiddenFolder][mediaFolderId]"', $output);
+			return;
 		}
-		elseif ($type === 'hidden_folder') {
-			$this->assertStringContainsString('<input type="hidden" name="media_assignments[1][hidden_folder][id]"', $output);
-			$this->assertStringContainsString('<input type="hidden" name="media_assignments[1][hidden_folder][media_folder_id]"', $output);
-		}
-		else {
-			$this->assertSame('', $output);
-		}
+
+		$this->assertSame('', $output);
 	}
 
 
@@ -192,13 +196,13 @@ class MediaElementsCellTest extends TestCase {
 		$entity->mediaAssignments = [
 			$this->fetchTable('MediaAssignments')->newDefaultEntity([
 				'id' => 9,
-				'media_element_id' => 2,
-				'media_element_selector_identifier' => 'media',
-				'media_id' => 2,
-				'media_folder_id' => null,
-				'scope' => 'contents',
-				'foreign_key' => 16,
-				'system_order' => 1,
+				'mediaElementId' => 2,
+				'mediaElementSelectorIdentifier' => 'media',
+				'mediaId' => 2,
+				'mediaFolderId' => null,
+				'scope' => 'Contents',
+				'foreignKey' => 16,
+				'systemOrder' => 1,
 				'deleted' => 0,
 			])->setNew(false),
 		];

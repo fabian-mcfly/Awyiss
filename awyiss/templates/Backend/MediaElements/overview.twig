@@ -35,7 +35,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -46,7 +46,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'media_elements'}) }}
+					{{ element('search/filter_button', {scope: 'MediaElements'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
@@ -81,7 +81,7 @@
 					{{ nestedList(mediaElements, _context|merge({
 						data: {
 							nestable: false,
-							sortable: _filter['media_elements']['active'] == false,
+							sortable: _filter['mediaElements']['active'] == false,
 						},
 						displayedFields: localConfig.overview.displayedFields,
 						identifier: 'MediaElements',
@@ -99,6 +99,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'media_elements'}) }}
+		{{ element('search/filter', {scope: 'MediaElements'}) }}
 	{% endblock %}
 </div>

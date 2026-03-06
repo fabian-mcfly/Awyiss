@@ -71,7 +71,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $surveyAnswersAssociation);
 		$this->assertTrue($surveyAnswersAssociation->getCascadeCallbacks());
 		$this->assertTrue($surveyAnswersAssociation->getDependent());
-		$this->assertEquals('survey_question_id', $surveyAnswersAssociation->getForeignKey());
+		$this->assertEquals('surveyQuestionId', $surveyAnswersAssociation->getForeignKey());
 		$this->assertEquals('replace', $surveyAnswersAssociation->getSaveStrategy());
 
 		// Test SurveySurveyQuestions association
@@ -80,7 +80,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $surveySurveyQuestionsAssociation);
 		$this->assertTrue($surveySurveyQuestionsAssociation->getCascadeCallbacks());
 		$this->assertTrue($surveySurveyQuestionsAssociation->getDependent());
-		$this->assertEquals('survey_question_id', $surveySurveyQuestionsAssociation->getForeignKey());
+		$this->assertEquals('surveyQuestionId', $surveySurveyQuestionsAssociation->getForeignKey());
 		$this->assertEquals('replace', $surveySurveyQuestionsAssociation->getSaveStrategy());
 
 		// 'MediaAssignments' must also exist
@@ -146,7 +146,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		$result = $this->surveyQuestionsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('survey_questions', $result->getI18nDomain());
+		$this->assertSame('SurveyQuestions', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -168,7 +168,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'type' => 'single_choice',
+			'type' => 'singleChoice',
 			'title' => 'Test Survey Question',
 			'subtitle' => 'Test subtitle',
 			'text' => 'This is a test question text.',
@@ -189,7 +189,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
-			'type' => 'single_choice',
+			'type' => 'singleChoice',
 			'subtitle' => 'Test subtitle',
 		];
 
@@ -309,7 +309,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationOptionalFields(): void {
 		$data = [
-			'type' => 'single_choice',
+			'type' => 'singleChoice',
 			'title' => 'Test Question',
 			'subtitle' => '', // Empty string should be allowed
 			'text' => '', // Empty string should be allowed
@@ -331,7 +331,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidType(): void {
 		$data = [
-			'type' => 'single_choice', // Patching entity will convert to enum
+			'type' => 'singleChoice', // Patching entity will convert to enum
 			'title' => 'Valid Question',
 		];
 
@@ -394,7 +394,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		// Create a survey question that is not linked to any surveys
 		$data = [
 			'id' => 999,
-			'type' => 'single_choice',
+			'type' => 'singleChoice',
 			'title' => 'Unlinked Question',
 			'active' => true,
 			'deleted' => false,
@@ -454,7 +454,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'type' => 'multiple_choice',
+			'type' => 'multipleChoice',
 			'title' => 'Custom Question',
 			'subtitle' => 'Custom subtitle',
 			'text' => 'Custom question text',

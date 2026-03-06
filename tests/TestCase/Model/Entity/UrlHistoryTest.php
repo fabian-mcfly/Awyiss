@@ -118,8 +118,8 @@ class UrlHistoryTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'url' => '/old-page',
-			'scope' => 'page',
-			'foreign_key' => 123,
+			'scope' => 'Page',
+			'foreignKey' => 123,
 			'target' => '/new-page',
 			'status' => 301,
 		];
@@ -128,24 +128,9 @@ class UrlHistoryTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('/old-page', $entity->url);
-		$this->assertEquals('page', $entity->scope);
+		$this->assertEquals('Page', $entity->scope);
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals('/new-page', $entity->target);
 		$this->assertEquals(301, $entity->status);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\UrlHistory::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = ['foreign_key' => 456];
-		$entity = new UrlHistory($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

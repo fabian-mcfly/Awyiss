@@ -51,8 +51,8 @@ export default class AccessHelperDialog {
 		this.eventHandler.add('click', event => {
 			event.preventDefault();
 
-			const scope = this.dialog.querySelector('select[name="access_helper[scope]"]').value;
-			const permission = this.dialog.querySelector('select[name="access_helper[permission]"]').value;
+			const scope = this.dialog.querySelector('select[name="accessHelper[scope]"]').value;
+			const permission = this.dialog.querySelector('select[name="accessHelper[permission]"]').value;
 
 			// Set the value of the access input
 			this.openerElement.value = `{"scope":"${scope}","identifier":"${permission}"}`;
@@ -101,8 +101,8 @@ export default class AccessHelperDialog {
 
 		this.openerElement = event.target.closest('.FormInput').querySelector(this.selector);
 
-		const scopeSelect = this.dialog.querySelector('select[name="access_helper[scope]"]');
-		const permissionSelect = this.dialog.querySelector('select[name="access_helper[permission]"]');
+		const scopeSelect = this.dialog.querySelector('select[name="accessHelper[scope]"]');
+		const permissionSelect = this.dialog.querySelector('select[name="accessHelper[permission]"]');
 
 		// Get the access helper select
 		const helperSelect = this.openerElement.parentElement.querySelector('.AccessHelper select');
@@ -152,7 +152,7 @@ export default class AccessHelperDialog {
 	 * @param {Event} event
 	 */
 	handleControllerSelectChange(event) {
-		const permissionSelect = this.dialog.querySelector('select[name="access_helper[permission]"]');
+		const permissionSelect = this.dialog.querySelector('select[name="accessHelper[permission]"]');
 
 		// Get the selected scope
 		const selectedController = event.target.value;

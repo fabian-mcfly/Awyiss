@@ -28,13 +28,13 @@
 		<legend>{{ __('fieldset_customer_groups_access_type') }}</legend>
 
 		{% block formControlAccessType %}
-			{{ FormHelper.control('customer_group_access_settings.access_type', {
-				empty: __d('customer_groups', 'access_type_available_for_all'),
-				label: __d('customer_groups', 'access_type'),
+			{{ FormHelper.control('customerGroupAccessSettings.accessType', {
+				empty: __d('CustomerGroups', 'access_type_available_for_all'),
+				label: __d('CustomerGroups', 'access_type'),
 				options: {
-					'hide_on_login': __d('customer_groups', 'access_type_hide_on_login'),
-					'all_groups': __d('customer_groups', 'access_type_all_groups'),
-					'specific_groups': __d('customer_groups', 'access_type_specific_groups'),
+					'hideOnLogin': __d('CustomerGroups', 'access_type_hide_on_login'),
+					'allGroups': __d('CustomerGroups', 'access_type_all_groups'),
+					'specificGroups': __d('CustomerGroups', 'access_type_specific_groups'),
 				},
 				type: 'select',
 				value: currentAccessType,
@@ -43,7 +43,7 @@
 		{% endblock %}
 
 		{% block formControlAccessId %}
-			{{ FormHelper.hidden('customer_group_access_settings.id', {
+			{{ FormHelper.hidden('customerGroupAccessSettings.id', {
 				value: customerGroupAccessSettings.id,
 			}) }}
 		{% endblock %}
@@ -64,7 +64,7 @@
 						{% if availableGroup.id not in assignedGroupIds %}
 							<li class="Item CustomerGroup">
 								<span class="Title">
-									{{ FormHelper.checkbox('customer_group_assignments.' ~ loop.index0 ~ '.customer_group_id', {
+									{{ FormHelper.checkbox('customerGroupAssignments.' ~ loop.index0 ~ '.customerGroupId', {
 										checked: false,
 										hiddenField: false,
 										id: 'CustomerGroup-Group-' ~ availableGroup.id,
@@ -88,13 +88,13 @@
 							{% set assignedGroup = assignedGroups[ availableGroup.id ] %}
 							<li class="Item CustomerGroup">
 								<span class="Title">
-									{{ FormHelper.checkbox('customer_group_assignments.' ~ loop.index0 ~ '.customer_group_id', {
+									{{ FormHelper.checkbox('customerGroupAssignments.' ~ loop.index0 ~ '.customerGroupId', {
 										checked: true,
 										id: 'CustomerGroup-Group-' ~ availableGroup.id,
 										value: availableGroup.id,
 									}) }}
 
-									{{ FormHelper.hidden('customer_group_assignments.' ~ loop.index0 ~ '.id', {
+									{{ FormHelper.hidden('customerGroupAssignments.' ~ loop.index0 ~ '.id', {
 										value: assignedGroup.id,
 									}) }}
 

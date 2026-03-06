@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\GlobalContent;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\DebugTimer;
+use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -43,11 +44,12 @@ class GlobalContentsCell extends Cell {
 		$this->View = $view;
 
 		$options = $this->initCellOptions($options);
+		$identifier = Inflector::variable($identifier);
 		$options['viewVars']['identifier'] = $identifier;
 
 		$globalContents = $this->getThreadedGlobalContents($identifier, $this->isPreview());
 
-		$this->cacheAssignedMediaItems($globalContents, 'global_contents');
+		$this->cacheAssignedMediaItems($globalContents, 'GlobalContents');
 
 		$this->prepareEntities($globalContents, (float)$options['columnWidth']);
 
@@ -56,7 +58,7 @@ class GlobalContentsCell extends Cell {
 		$renderedGlobalContents = $this->buildContents($globalContents->toArray());
 
 		$currentRoute = Router::url($this->request->getRequestTarget());
-		if ($renderedGlobalContents && $currentRoute !== '/') {
+		if ($renderedGlobalContents && $currentRoute !== '/' && str_contains($renderedGlobalContents, 'href="#')) {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
 			$renderedGlobalContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($currentRoute, '/') . '$1"', $renderedGlobalContents);
 		}
@@ -65,7 +67,7 @@ class GlobalContentsCell extends Cell {
 		$this->set([
 			'fullWidth' => $options['fullWidth'],
 			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
-			'global_contents' => $renderedGlobalContents,
+			'globalContents' => $renderedGlobalContents,
 			...$options['viewVars'],
 		]);
 
@@ -129,7 +131,7 @@ class GlobalContentsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedGlobalContents(string $identifier, bool $isPreview = false): CollectionInterface {
-		DebugTimer::start('GlobalContentsCell::getThreadedGlobalContents', sprintf('GlobalContentsCell::getThreadedGlobalContents: Loading global_contents for identifier "%s"', $identifier));
+		DebugTimer::start('GlobalContentsCell::getThreadedGlobalContents', sprintf('GlobalContentsCell::getThreadedGlobalContents: Loading global contents for identifier "%s"', $identifier));
 
 		/** @var \Awyiss\Model\Table\GlobalContentsTable $globalContentsTable */
 		$globalContentsTable = $this->fetchTable('GlobalContents');
@@ -162,7 +164,7 @@ class GlobalContentsCell extends Cell {
 		$globalContents = $query->all();
 
 		/*
-		 * Filter out all first level global_contents with a parent_id
+		 * Filter out all first level global_contents with a parentId
 		 * This is done to prevent the display of nested global_contents whose parent isn't
 		 * part of the result set.
 		 *

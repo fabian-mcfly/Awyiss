@@ -21,8 +21,8 @@
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-InUse{% if PaginatorHelper.isCurrentSortKey('in_use') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('in_use', __('in_use')) }}
+	<th class="TableHeader-InUse{% if PaginatorHelper.isCurrentSortKey('inUse') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('inUse', __('in_use')) }}
 	</th>
 {% endblock %}
 

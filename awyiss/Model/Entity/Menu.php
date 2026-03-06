@@ -6,6 +6,7 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Model\Entity;
 use Awyiss\Model\Trait\CustomerGroupAccessTrait;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 
 
@@ -29,13 +30,6 @@ use Cake\Utility\Text;
  */
 class Menu extends Entity {
 	use CustomerGroupAccessTrait;
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'menu_entries' => 'menuEntries',
-	];
 
 
 	/**
@@ -63,6 +57,6 @@ class Menu extends Entity {
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 }

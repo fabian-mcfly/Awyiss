@@ -23,16 +23,16 @@
 {% block nestedListItemDataTitle %}
 	<li class="Title">
 		{{- entity.label -}}
-		{%- if localConfig.overview.columnView.enabled and entity.type not in ['free_text', 'submit'] %}
+		{%- if localConfig.overview.columnView.enabled and entity.type not in ['freeText', 'submit'] %}
 			<span class="Identifier">({{ entity.identifier }})</span>
 		{%- endif -%}
 	</li>
 {% endblock %}
 
 {% block nestedListItemDataDisplayedFieldDefaultValue %}
-	{% if field == 'column_width' %}
+	{% if field == 'columnWidth' %}
 		{{ entity.column.width.label }}
-	{% elseif field == 'column_indent' %}
+	{% elseif field == 'columnIndent' %}
 		{{ entity.column.indent.label }}
 	{% elseif field == 'type' %}
 		{{ __('type_' ~ entity.type) }}

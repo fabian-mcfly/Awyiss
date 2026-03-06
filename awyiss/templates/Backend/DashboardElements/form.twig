@@ -47,7 +47,7 @@
 
 				{% set accessHelperFormControl %}
 					<div class="AccessHelper">
-						{{ FormHelper.select('access_helper_options', policies) }}
+						{{ FormHelper.select('accessHelperOptions', policies) }}
 					</div>
 				{% endset %}
 
@@ -103,9 +103,9 @@
 								<div class="Column Column-{{ column|camelize }}{% if settings.operator or (settings.type == 'boolean' and settings.value != null) %} Active{% endif %}" data-column="{{ column }}">
 									{{ FormHelper.label(
 										'settings.filter.' ~ column ~ '.value',
-										settings.title ?? (column in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ?
-											__d('seo', column) :
-											(i18nDomain == 'generic_pages' ? __df(scope, 'generic_pages', column) : __d(i18nDomain ?? scope, column))
+										settings.title ?? (column in ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow'] ?
+											__d('Seo', column) :
+											(i18nDomain == 'GenericPages' ? __df(scope, 'GenericPages', column|underscore) : __d(i18nDomain ?? scope, column|underscore))
 										),
 									) }}
 
@@ -117,7 +117,7 @@
 										{% if settings.type in ['date', 'datetime'] %}
 											{{ FormHelper.control('settings.filter.' ~ column ~ '.operator', {
 												disabled: settings.disabledOperators,
-												label: __d('search', 'filter_operator'),
+												label: __d('Search', 'filter_operator'),
 												options: dateOperators + operators,
 												required: false,
 												val: settings.operator,
@@ -126,7 +126,7 @@
 										{% else %}
 											{{ FormHelper.control('settings.filter.' ~ column ~ '.operator', {
 												disabled: settings.type == 'boolean' ? true : settings.disabledOperators,
-												label: __d('search', 'filter_operator'),
+												label: __d('Search', 'filter_operator'),
 												options: operators,
 												required: false,
 												val: settings.operator,
@@ -140,19 +140,19 @@
 												hiddenField: false,
 												label: false,
 												options: {
-													'': __d('search', 'label_boolean_all'),
-													'1': __d('search', 'label_boolean_true'),
-													'0': __d('search', 'label_boolean_false'),
+													'': __d('Search', 'label_boolean_all'),
+													'1': __d('Search', 'label_boolean_true'),
+													'0': __d('Search', 'label_boolean_false'),
 												},
 												type: 'radio',
 												val: settings.value ?? '',
 											}) }}
 										</div>
 									{% elseif (settings.operator is empty or dateOperators[ settings.operator ] is empty) %}
-										<div class="Input InputType-{{ settings.type|ucparts }}">
+										<div class="Input InputType-{{ settings.type|camelize }}">
 											{% set helperFormControl %}
 												{% if settings.values %}
-													{{ FormHelper.select('value_helper_options', settings.values, {
+													{{ FormHelper.select('valueHelperOptions', settings.values, {
 														'data-options-for': 'DashboardElement-Settings-Filter-' ~ column|camelize ~ '-Value',
 													}) }}
 												{% endif %}
@@ -165,7 +165,7 @@
 												},
 												val: settings.value,
 												'data-type': settings.type,
-												'data-allow-multiple-values': settings.operator in ['in', 'not_in', 'between', 'not_between'] ? 'true' : 'false',
+												'data-allow-multiple-values': settings.operator in ['in', 'notIn', 'between', 'notBetween'] ? 'true' : 'false',
 											}) }}
 										</div>
 									{% endif %}
@@ -282,7 +282,7 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: dashboardElement}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: dashboardElement}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -349,7 +349,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

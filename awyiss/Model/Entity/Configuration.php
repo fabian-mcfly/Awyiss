@@ -31,11 +31,6 @@ use Awyiss\Utility\Inflector;
  * @property mixed $printableValue
  */
 class Configuration extends Entity {
-	protected static array $fieldMap = [
-		'language_shortcode' => 'languageShortcode',
-	];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -52,7 +47,7 @@ class Configuration extends Entity {
 	 */
 	protected array $defaultValues = [
 		'realm' => Awyiss::REALM_FRONTEND,
-		'scope' => 'system',
+		'scope' => 'System',
 	];
 	/**
 	 * @inheritDoc
@@ -63,7 +58,7 @@ class Configuration extends Entity {
 
 
 	/**
-	 * Make sure the identifier is always underscored
+	 * Make sure the identifier is always variableCase
 	 *
 	 * @param string|null $identifier
 	 * @return string|null
@@ -75,7 +70,7 @@ class Configuration extends Entity {
 		}
 
 
-		return Inflector::underscore($identifier);
+		return Inflector::variable($identifier);
 	}
 
 
@@ -140,7 +135,7 @@ class Configuration extends Entity {
 		$scope = Inflector::pluralize($scope);
 
 
-		return Inflector::underscore($scope);
+		return Inflector::camelize($scope);
 	}
 
 

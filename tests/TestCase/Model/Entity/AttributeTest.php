@@ -83,19 +83,19 @@ class AttributeTest extends TestCase {
 		$entity = new Attribute();
 
 		$entity->identifier = 'Test Identifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('testidentifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'Test-Identifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'Test Identifier!@#$%';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'UPPERCASE IDENTIFIER';
-		$this->assertEquals('uppercase_identifier', $entity->identifier);
+		$this->assertEquals('uPPERCASEIDENTIFIER', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -110,19 +110,19 @@ class AttributeTest extends TestCase {
 		$entity = new Attribute();
 
 		$entity->set('identifier', 'Test Identifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('testidentifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'Test-Identifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'Test Identifier!@#$%');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'UPPERCASE IDENTIFIER');
-		$this->assertEquals('uppercase_identifier', $entity->identifier);
+		$this->assertEquals('uPPERCASEIDENTIFIER', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -139,19 +139,19 @@ class AttributeTest extends TestCase {
 		$entity = new Attribute();
 
 		$entity->scope = 'Test Scope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'TestScope';
-		$this->assertEquals('testscope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'Test-Scope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'Test Scope!@#$%';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'UPPERCASE SCOPE';
-		$this->assertEquals('uppercase_scope', $entity->scope);
+		$this->assertEquals('UPPERCASESCOPE', $entity->scope);
 
 		$entity->scope = null;
 		$this->assertNull($entity->scope);
@@ -166,19 +166,19 @@ class AttributeTest extends TestCase {
 		$entity = new Attribute();
 
 		$entity->set('scope', 'Test Scope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'TestScope');
-		$this->assertEquals('testscope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'Test-Scope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'Test Scope!@#$%');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'UPPERCASE SCOPE');
-		$this->assertEquals('uppercase_scope', $entity->scope);
+		$this->assertEquals('UPPERCASESCOPE', $entity->scope);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('scope', null);
@@ -242,15 +242,15 @@ class AttributeTest extends TestCase {
 			'scope' => 'Test Scope',
 			'title' => 'Test Attribute',
 			'identifier' => 'Test Identifier',
-			'default_value' => 'default_test_value',
+			'defaultValue' => 'default_test_value',
 			'fieldset' => 'basic',
-			'input_type' => 'text',
+			'inputType' => 'text',
 			'type' => 'string',
-			'has_index' => true,
+			'hasIndex' => true,
 			'required' => false,
 			'translatable' => true,
-			'column_span' => '6/12',
-			'system_order' => 10,
+			'columnSpan' => '6/12',
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -258,9 +258,9 @@ class AttributeTest extends TestCase {
 		$entity = new Attribute($properties);
 
 		$this->assertEquals(1, $entity->id);
-		$this->assertEquals('test_scope', $entity->scope); // Should be cleaned by setter
+		$this->assertEquals('TestScope', $entity->scope); // Should be cleaned by setter
 		$this->assertEquals('Test Attribute', $entity->title);
-		$this->assertEquals('test_identifier', $entity->identifier); // Should be cleaned by setter
+		$this->assertEquals('testIdentifier', $entity->identifier); // Should be cleaned by setter
 		$this->assertEquals('default_test_value', $entity->defaultValue);
 		$this->assertEquals('basic', $entity->fieldset);
 		$this->assertEquals('text', $entity->inputType);
@@ -272,27 +272,5 @@ class AttributeTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Attribute::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'has_index' => true,
-			'input_type' => 'text',
-			'default_value' => 'test_value',
-			'column_span' => '4/12',
-			'system_order' => 5,
-		];
-
-		$entity = new Attribute($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

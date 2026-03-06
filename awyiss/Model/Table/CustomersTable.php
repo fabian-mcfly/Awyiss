@@ -56,6 +56,9 @@ class CustomersTable extends Table {
 		$this->belongsToMany('CustomerGroups', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'customerId',
+			'targetForeignKey' => 'customerGroupId',
+			'propertyName' => 'customerGroups',
 		]);
 	}
 
@@ -72,8 +75,8 @@ class CustomersTable extends Table {
 			'verified' => true,
 			'password IS NOT' => null,
 			'OR' => [
-				'failed_attempts <' => 5,
-				'last_login <=' => DateTime::now()->subMinutes(10),
+				'failedAttempts <' => 5,
+				'lastLogin <=' => DateTime::now()->subMinutes(10),
 			],
 		]);
 
@@ -116,7 +119,7 @@ class CustomersTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
-			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+			'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
 		]);
 
 
@@ -184,7 +187,7 @@ class CustomersTable extends Table {
 		$validator->requirePresence([
 			'email',
 			'password',
-			'password_confirm',
+			'passwordConfirm',
 		]);
 
 
@@ -209,7 +212,7 @@ class CustomersTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
-			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+			'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
 		]);
 
 
@@ -288,7 +291,7 @@ class CustomersTable extends Table {
 			'emailUnique',
 			[
 				'errorField' => 'email',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_email_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_email_unique'),
 			]
 		);
 

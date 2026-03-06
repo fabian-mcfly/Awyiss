@@ -42,7 +42,7 @@
 
 				{% set helperFormControl %}
 					<div class="LinkHelper">
-						{{ FormHelper.select('link_helper_options', controllers) }}
+						{{ FormHelper.select('linkHelperOptions', controllers) }}
 					</div>
 				{% endset %}
 
@@ -59,7 +59,7 @@
 
 				{% set helperFormControl %}
 					<div class="AccessHelper">
-						{{ FormHelper.select('access_helper_options', policies) }}
+						{{ FormHelper.select('accessHelperOptions', policies) }}
 					</div>
 				{% endset %}
 
@@ -148,15 +148,15 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlParentId %}
-					{{ FormHelper.control('parent_id', {columnSpan: 6, options: hashPrinter(possibleParentMenuEntries.toArray(), 'label', 'key', '- ', 1), required: false, 'data-form-updater': true}) }}
+					{{ FormHelper.control('parentId', {columnSpan: 6, options: hashPrinter(possibleParentMenuEntries.toArray(), 'label', 'key', '- ', 1), required: false, 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlInsertAfterId %}
-					{{ FormHelper.control('insert_after_id', {columnSpan: 6, options: insertAfterOptions, required: false, 'data-form-updater': true}) }}
+					{{ FormHelper.control('insertAfterId', {columnSpan: 6, options: insertAfterOptions, required: false, 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: backendMenuEntry}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: backendMenuEntry}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -221,7 +221,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

@@ -32,14 +32,14 @@
 				<li><strong>ID:</strong> {{ entity.id }}</li>
 			</ul>
 
-			{{ HtmlHelper.link(__d('audit', 'show_history'), {
+			{{ HtmlHelper.link(__d('Audit', 'show_history'), {
 				controller: 'audit',
 				action: 'history',
 				scope: entity.source|underscore,
 				id: entity.id
 			}, {
 				escape: false,
-				title: __d('audit', 'show_history'),
+				title: __d('Audit', 'show_history'),
 			}) }}
 		</div>
 
@@ -65,8 +65,8 @@
 	<td class="TableCell-Actions">
 		<div class="Actions">
 			{% block tableOverviewCellActionsViewContents %}
-				{% if entity.hasContentTemplate() and entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-					{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
+				{% if entity.hasContentTemplate() and entity.duplicateOf is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+					{{ HtmlHelper.link(__df(pageRoleName, 'GenericPages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
 				{% endif %}
 			{% endblock %}
 

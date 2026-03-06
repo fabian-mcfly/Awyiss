@@ -15,7 +15,7 @@ class AddBackgroundColorToAttributesContents extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_contents')->addColumn('background_color', 'string', [
+		$this->table('attributes_contents')->addColumn('backgroundColor', 'string', [
 			'default' => null,
 			'limit' => 50,
 			'null' => true,

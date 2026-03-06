@@ -322,8 +322,8 @@ class AbstractTranslationServiceTest extends TestCase {
 
 		$this->assertIsArray($fields);
 		$this->assertContains('title', $fields);
-		$this->assertContains('meta_title', $fields);
-		$this->assertContains('meta_description', $fields);
+		$this->assertContains('metaTitle', $fields);
+		$this->assertContains('metaDescription', $fields);
 	}
 
 
@@ -455,8 +455,8 @@ class AbstractTranslationServiceTest extends TestCase {
 		$this->assertIsArray($fields);
 		// Should always include base fields
 		$this->assertContains('title', $fields);
-		$this->assertContains('meta_title', $fields);
-		$this->assertContains('meta_description', $fields);
+		$this->assertContains('metaTitle', $fields);
+		$this->assertContains('metaDescription', $fields);
 	}
 
 

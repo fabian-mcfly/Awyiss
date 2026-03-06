@@ -70,8 +70,8 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
 		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
 		$this->assertEquals('replace', $mediaAssignmentsAssociation->getSaveStrategy());
-		$this->assertSame(['media_element_id', 'identifier'], $mediaAssignmentsAssociation->getBindingKey());
-		$this->assertSame(['media_element_id', 'media_element_selector_identifier'], $mediaAssignmentsAssociation->getForeignKey());
+		$this->assertSame(['mediaElementId', 'identifier'], $mediaAssignmentsAssociation->getBindingKey());
+		$this->assertSame(['mediaElementId', 'mediaElementSelectorIdentifier'], $mediaAssignmentsAssociation->getForeignKey());
 
 		// Test MediaElements association (BelongsTo)
 		$this->assertTrue($this->mediaElementSelectorsTable->hasAssociation('MediaElements'));
@@ -145,7 +145,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$result = $this->mediaElementSelectorsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_element_selectors', $result->getI18nDomain());
+		$this->assertSame('MediaElementSelectors', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -169,7 +169,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 			'title' => 'Test Media Element Selector',
 			'columnSpan' => '12/12',
 			'required' => false,
@@ -280,7 +280,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 			'columnSpan' => $validColumnSpan,
 		];
 
@@ -299,7 +299,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 			'columnSpan' => 'invalid_column_span',
 		];
 
@@ -319,7 +319,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 		];
 
 		$entity = $this->mediaElementSelectorsTable->newEntity($data);
@@ -337,7 +337,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 99999,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 		];
 
 		$entity = $this->mediaElementSelectorsTable->newEntity($data);
@@ -359,7 +359,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 1,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 		];
 
 		$entity = $this->mediaElementSelectorsTable->newEntity($data);
@@ -377,7 +377,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaSelectorId' => 99999,
-			'identifier' => 'test_selector',
+			'identifier' => 'testSelector',
 		];
 
 		$entity = $this->mediaElementSelectorsTable->newEntity($data);
@@ -439,7 +439,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		$additionalData = [
 			'mediaElementId' => 3,
 			'mediaSelectorId' => 2,
-			'identifier' => 'custom_selector',
+			'identifier' => 'customSelector',
 			'title' => 'Custom Media Element Selector',
 			'columnSpan' => '6/12',
 			'required' => true,
@@ -455,7 +455,7 @@ class MediaElementSelectorsTableTest extends TestCase {
 		// Check custom values
 		$this->assertSame(3, $entity->mediaElementId);
 		$this->assertSame(2, $entity->mediaSelectorId);
-		$this->assertSame('custom_selector', $entity->identifier);
+		$this->assertSame('customSelector', $entity->identifier);
 		$this->assertSame('Custom Media Element Selector', $entity->title);
 		$this->assertSame('6/12', $entity->columnSpan);
 		$this->assertTrue($entity->required);

@@ -155,7 +155,7 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * Before finding entities, add a default order by clause (ascending by system_order)
+	 * Before finding entities, add a default order by clause (ascending by systemOrder)
 	 *
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \Cake\ORM\Query\SelectQuery $query
@@ -173,13 +173,13 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		$query->orderByAsc($this->table()->aliasField('system_order'));
+		$query->orderByAsc($this->table()->aliasField('systemOrder'));
 	}
 
 
 	/**
-	 * When marshalling an entity, unset the `system_order`-property in case it's value equals static::CURRENT_VALUE_PLACEHOLDER.
-	 * This means, no changes to the system_order column have been made.
+	 * When marshalling an entity, unset the `systemOrder`-property in case it's value equals static::CURRENT_VALUE_PLACEHOLDER.
+	 * This means, no changes to the systemOrder column have been made.
 	 *
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \ArrayObject $data
@@ -195,8 +195,8 @@ class SystemOrderBehavior extends Behavior {
 			unset($data['systemOrder']);
 		}
 
-		if (isset($data['system_order']) && $data['system_order'] === static::CURRENT_VALUE_PLACEHOLDER) {
-			unset($data['system_order']);
+		if (isset($data['systemOrder']) && $data['systemOrder'] === static::CURRENT_VALUE_PLACEHOLDER) {
+			unset($data['systemOrder']);
 		}
 	}
 
@@ -233,7 +233,7 @@ class SystemOrderBehavior extends Behavior {
 	}
 
 	/**
-	 * Before saving an entity, make sure the value for system_order is valid.
+	 * Before saving an entity, make sure the value for systemOrder is valid.
 	 *
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \Awyiss\Model\Entity $entity
@@ -252,7 +252,7 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		$queryOptions['field'] = !empty($queryOptions['field']) ? $entity::mapField($queryOptions['field']) : 'systemOrder';
+		$queryOptions['field'] = !empty($queryOptions['field']) ? $queryOptions['field'] : 'systemOrder';
 
 		$hightesSystemOrder = null;
 		$autoOrder = $queryOptions['field'] !== 'systemOrder';
@@ -281,7 +281,7 @@ class SystemOrderBehavior extends Behavior {
 		 * Convert related column names from database to entity name and
 		 * get all original values of related columns, including attributes.
 		 */
-		$relatedColumns = $entity::mapFields($this->getConfig('relatedColumns'));
+		$relatedColumns = $this->getConfig('relatedColumns');
 		$dirtyRelatedData = array_merge(
 			$entity->extractOriginalChanged($relatedColumns),
 			$entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($relatedColumns), true) ?? []
@@ -416,8 +416,8 @@ class SystemOrderBehavior extends Behavior {
 		 */
 		if ($systemOrderNew < $systemOrderOld) {
 			$query->where([
-				$tableAlias . '.system_order >=' => $systemOrderNew,
-				$tableAlias . '.system_order <' => $systemOrderOld,
+				$tableAlias . '.systemOrder >=' => $systemOrderNew,
+				$tableAlias . '.systemOrder <' => $systemOrderOld,
 			]);
 		}
 		/**
@@ -427,13 +427,13 @@ class SystemOrderBehavior extends Behavior {
 		 * - `A B C D E        =>        A C D B E`
 		 * - `1 2 3 4 5        =>        1 2 3 4 5`
 		 *
-		 * Moving B to position 4 means C and D need their system_order decreased by 1,
+		 * Moving B to position 4 means C and D need their systemOrder decreased by 1,
 		 * while A and E need to stay untouched.
 		 */
 		else {
 			$query->where([
-				$tableAlias . '.system_order >' => $systemOrderOld,
-				$tableAlias . '.system_order <=' => $systemOrderNew,
+				$tableAlias . '.systemOrder >' => $systemOrderOld,
+				$tableAlias . '.systemOrder <=' => $systemOrderNew,
 			]);
 		}
 
@@ -602,8 +602,6 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$table = $this->table();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $table->getEntityClass();
 		$tableAlias = $table->getAlias();
 
 		if (!$query) {
@@ -614,7 +612,7 @@ class SystemOrderBehavior extends Behavior {
 		/** @var \Awyiss\Model\Entity $attributes */
 		$attributes = $entity->get('attributes');
 		foreach ($this->getConfig('relatedColumns') as $column) {
-			if (in_array($column, ['id', 'systemOrder', 'system_order'])) {
+			if (in_array($column, ['id', 'systemOrder'])) {
 				continue;
 			}
 
@@ -626,8 +624,6 @@ class SystemOrderBehavior extends Behavior {
 					$value = $attributes->getOriginal($column);
 				}
 
-				$column = $attributes::unmapField($column);
-
 				$column = $table->getAttributesTableName(true) . '.' . $column;
 			}
 			else {
@@ -637,8 +633,6 @@ class SystemOrderBehavior extends Behavior {
 				if ($preferOriginal && $entity->hasOriginal($column)) {
 					$value = $entity->getOriginal($column);
 				}
-
-				$column = $entityClass::unmapField($column);
 			}
 
 			if (!str_contains($column, '.')) {
@@ -668,7 +662,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$query = $this->addQueryConditions($table->find(), $entity);
 
-		$record = $query->select('system_order')->orderByDesc('system_order')->first();
+		$record = $query->select('systemOrder')->orderByDesc('systemOrder')->first();
 
 
 		return $record ? $record->get('systemOrder') : 0;
@@ -758,15 +752,11 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$table = $this->table();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $table->getEntityClass();
 		if (str_starts_with($field, 'attributes.')) {
-			$field = $entityClass::unmapField(substr($field, 11));
-			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);
+			$dbField = substr($field, 11);
+			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($dbField);
 		}
 		else {
-			$field = $entityClass::unmapField($field);
-
 			if ($table->fieldIsAttribute($field)) {
 				$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);
 			}
@@ -816,7 +806,7 @@ class SystemOrderBehavior extends Behavior {
 		//that are not the entity itself and have a systemOrder larger than or equal the entity's.
 		$query->where([
 			$tableAlias . '.id !=' => $entity->get('id'),
-			$tableAlias . '.system_order >=' => $entity->get('systemOrder'),
+			$tableAlias . '.systemOrder >=' => $entity->get('systemOrder'),
 		]);
 
 		$records = $query->all();
@@ -898,7 +888,7 @@ class SystemOrderBehavior extends Behavior {
 		//that are not the entity itself and have a systemOrder larger than or equal the entity's old position.
 		$query->where([
 			$tableAlias . '.id !=' => $entity->get('id'),
-			$tableAlias . '.system_order >=' => $systemOrder,
+			$tableAlias . '.systemOrder >=' => $systemOrder,
 		]);
 
 		$records = $query->all();
@@ -943,14 +933,7 @@ class SystemOrderBehavior extends Behavior {
 
 		if ($table->fieldIsAttribute($field)) {
 			$attributesTableName = $table->getAttributesTableName(true);
-			/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-			$entityClass = $table->$attributesTableName->getEntityClass();
-
-			$field = $attributesTableName . '.' . $entityClass::unmapField($field);
-		}
-		else {
-			/** @var \Awyiss\Model\Entity $entity */
-			$field = $entity::unmapField($field);
+			$field = $attributesTableName . '.' . $field;
 		}
 
 		$query->select(['id', $field]);
@@ -1067,7 +1050,7 @@ class SystemOrderBehavior extends Behavior {
 			$query->where($additionalWhere);
 		}
 
-		$records = $query->all()->sortBy('system_order', $direction);
+		$records = $query->all()->sortBy('systemOrder', $direction);
 
 		return $this->_rebuildSystemOrder($table, $records, $event);
 	}

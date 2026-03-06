@@ -43,7 +43,7 @@
 				{% endblock %}
 
 				{% block formControlAverageColor %}
-					{{ FormHelper.control('average_color', {
+					{{ FormHelper.control('averageColor', {
 						type: 'color',
 						val: (media.averageColor and media.averageColor[:1] != '#' ? '#' : '') ~ media.averageColor,
 					}) }}
@@ -96,7 +96,7 @@
 										}) }}
 									{% endblock %}
 									{% block formControlResizeWidth %}
-										{{ FormHelper.control('crop[resize_width]', {
+										{{ FormHelper.control('crop[resizeWidth]', {
 											label: __('resize_width'),
 											max: media.width,
 											type: 'number',
@@ -105,7 +105,7 @@
 									{% endblock %}
 
 									{% block formControlResizeHeight %}
-										{{ FormHelper.control('crop[resize_height]', {
+										{{ FormHelper.control('crop[resizeHeight]', {
 											label: __('resize_height'),
 											max: media.height,
 											type: 'number',
@@ -127,7 +127,7 @@
 										}) }}
 									{% endblock %}
 
-									{{ FormHelper.hidden('focus_point') }}
+									{{ FormHelper.hidden('focusPoint') }}
 								</div>
 							{% endblock %}
 						</div>
@@ -177,7 +177,7 @@
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: media}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: media}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -240,7 +240,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

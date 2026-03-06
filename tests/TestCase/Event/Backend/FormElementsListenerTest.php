@@ -59,7 +59,7 @@ class FormElementsListenerTest extends TestCase {
 		$children = collection($formElement->childFormElements)->listNested('desc', 'childFormElements');
 
 		foreach ($children as $child) {
-			$this->assertStringNotContainsString('_copy_', $child->identifier);
+			$this->assertStringNotContainsString('Copy', $child->identifier);
 		}
 
 		$data = new ArrayObject(['_primary' => true]);
@@ -68,7 +68,7 @@ class FormElementsListenerTest extends TestCase {
 		$this->listener->beforeCopy($event, $formElement, $data);
 
 		foreach ($children as $child) {
-			$this->assertStringContainsString('_copy_', $child->identifier);
+			$this->assertStringContainsString('Copy', $child->identifier);
 		}
 	}
 
@@ -87,7 +87,7 @@ class FormElementsListenerTest extends TestCase {
 		$children = collection($formElement->childFormElements)->listNested('desc', 'childFormElements');
 
 		foreach ($children as $child) {
-			$this->assertStringNotContainsString('_copy_', $child->identifier);
+			$this->assertStringNotContainsString('Copy', $child->identifier);
 		}
 
 		$data = new ArrayObject(['_primary' => false]);
@@ -98,7 +98,7 @@ class FormElementsListenerTest extends TestCase {
 		$children = collection($formElement->childFormElements)->listNested('desc', 'childFormElements');
 
 		foreach ($children as $child) {
-			$this->assertStringNotContainsString('_copy_', $child->identifier);
+			$this->assertStringNotContainsString('Copy', $child->identifier);
 		}
 	}
 }

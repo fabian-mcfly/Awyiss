@@ -61,7 +61,10 @@ class PageRolesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->hasOne('PageTemplates');
+		$this->hasOne('PageTemplates', [
+			'foreignKey' => 'pageRoleId',
+			'propertyName' => 'pageTemplates',
+		]);
 
 		$this->hasMany('Pages', [
 			'finder' => [
@@ -69,6 +72,7 @@ class PageRolesTable extends Table {
 					'skipPageRoleCheck' => true,
 				],
 			],
+			'foreignKey' => 'pageRoleId',
 		]);
 	}
 
@@ -79,7 +83,7 @@ class PageRolesTable extends Table {
 	public function findAllAndCache(): CollectionInterface {
 		if (!isset(static::$cachedPageRoles)) {
 			/** @uses \Awyiss\Model\Table::findTranslations() */
-			static::$cachedPageRoles = static::find('translations')->all();
+			static::$cachedPageRoles = $this->find('translations')->all();
 		}
 
 
@@ -164,7 +168,7 @@ class PageRolesTable extends Table {
 					$entity->hasOriginal('identifier') &&
 					$entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unchanged');
 				}
 
 				$pluralIdentifier = Inflector::pluralize($entity->identifier);
@@ -176,13 +180,13 @@ class PageRolesTable extends Table {
 				if (
 					$entity->isDirty('identifier') &&
 					(
-						str_starts_with($entity->identifier, 'attributes_') ||
+						str_starts_with($entity->identifier, 'attributes') ||
 						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
 						App::className(Inflector::camelize($pluralIdentifier), 'Controller/Backend', 'Controller') ||
 						$datatables->firstMatch(['active' => true, 'identifier' => $pluralIdentifier])
 					)
 				) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_allowed');
 				}
 
 				$isUnique = $rules->isUnique(['identifier'], [
@@ -191,7 +195,7 @@ class PageRolesTable extends Table {
 				$isUnique = $isUnique($entity, $options);
 
 				if (!$isUnique) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique');
 				}
 
 				return true;
@@ -209,16 +213,16 @@ class PageRolesTable extends Table {
 			'notPageRolePageDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_page_role_page_deletion'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_page_role_page_deletion'),
 			]
 		);
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('PageTemplates', 'page_templates'),
+			$rules->isNotLinkedTo('PageTemplates', 'pageTemplates'),
 			'noLinkedPageTemplates',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_linked_page_templates'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_linked_page_templates'),
 			]
 		);
 

@@ -937,13 +937,13 @@ class DesignMiddlewareTest extends TestCase {
 		$this->assertSame([], $variables);
 
 		$table = $this->fetchTable('Designs');
-		$table->updateAll(['in_use' => true], ['id' => 2]);
+		$table->updateAll(['inUse' => true], ['id' => 2]);
 
 		$designMiddleware->resetDesignVariables();
 		$variables = $designMiddleware->getDesignVariables();
 
 		$table = $this->fetchTable('Designs');
-		$table->updateAll(['in_use' => false], ['id' => 2]);
+		$table->updateAll(['inUse' => false], ['id' => 2]);
 
 		$this->assertSame([
 			'colorDark' => '#101820',

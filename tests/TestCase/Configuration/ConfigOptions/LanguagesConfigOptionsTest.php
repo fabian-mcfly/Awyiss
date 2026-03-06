@@ -61,14 +61,14 @@ class LanguagesConfigOptionsTest extends TestCase {
 			'shortcode' => 'languages::shortcode',
 			'timezone' => 'languages::timezone',
 			'locale' => 'languages::locale',
-			'date_format' => 'languages::date_format',
-			'time_format' => 'languages::time_format',
-			'system_order' => 'languages::system_order',
+			'dateFormat' => 'languages::date_format',
+			'timeFormat' => 'languages::time_format',
+			'systemOrder' => 'languages::system_order',
 			'active' => 'languages::active',
-			'created_by' => 'languages::created_by',
-			'created_on' => 'languages::created_on',
-			'changed_by' => 'languages::changed_by',
-			'changed_on' => 'languages::changed_on',
+			'createdBy' => 'languages::created_by',
+			'createdOn' => 'languages::created_on',
+			'changedBy' => 'languages::changed_by',
+			'changedOn' => 'languages::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

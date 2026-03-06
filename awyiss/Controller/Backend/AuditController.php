@@ -19,6 +19,7 @@ use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
+use Awyiss\Model\Table\MediaAssignmentsTable;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\Routing\Router;
@@ -84,7 +85,16 @@ class AuditController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$entity = $table->findById($id)->find('translations')->find('mediaAssignments')->first();
+		$query = $table->findById($id);
+
+		if ($table->hasBehavior('Translate')) {
+			$query->find('translations');
+		}
+		if ($table->hasBehavior('MediaAssignment')) {
+			$query->find('mediaAssignments');
+		}
+
+		$entity = $query->first();
 
 		if (!$entity) {
 			if ($this->request->is('ajax')) {
@@ -99,11 +109,11 @@ class AuditController extends Controller {
 		 * Check if the scope is accessible
 		 * For all scopes except 'contents', the scope must be accessible for the 'update' action
 		 */
-		if ($scope === 'contents') {
+		if ($scope === 'Contents') {
 			// Ensure that the user has access to the `content`-permission of the page-role of the content's page.
 			$this->ensurePageRoleAccess($entity);
 		}
-		elseif ($scope === 'configuration') {
+		elseif ($scope === 'Configuration') {
 			$this->Authorization->scopeIsAccessible($scope, [
 				'scope' => $entity->scope,
 			], 'update');
@@ -132,7 +142,7 @@ class AuditController extends Controller {
 
 		// Get the audit history of the record
 		$audits = $this->findAudits([
-			'foreign_key' => $id,
+			'foreignKey' => $id,
 			'scope' => $realScope,
 		]);
 
@@ -141,9 +151,6 @@ class AuditController extends Controller {
 		// Check audits for changes in the associations and load the associated entities
 		$this->loadOldAssociationEntities($entity, $audits, $associations);
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-
 		/** @var array<\Awyiss\Model\Entity\Attribute> $attributes */
 		$attributes = $table->hasAttributes() ? $table->getAttributes() : [];
 		if ($attributes) {
@@ -151,7 +158,7 @@ class AuditController extends Controller {
 			$attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile($scope, true);
 		}
 
-		if (in_array($scope, ['contents', 'global_contents'], true)) {
+		if (in_array($scope, ['Contents', 'GlobalContents'], true)) {
 			$audits = $this->setColumnData($table, $audits);
 		}
 
@@ -182,7 +189,7 @@ class AuditController extends Controller {
 		$associations = array_map(fn (Association $association) => [
 			'association' => $association,
 			'name' => $association->getName(),
-			'property' => $entityClass::mapField($association->getProperty()),
+			'property' => $association->getProperty(),
 			'type' => $association->type(),
 		], $associations);
 
@@ -335,9 +342,6 @@ class AuditController extends Controller {
 	protected function getAssociations(Table $table, array $historyFields): array {
 		$tableName = Inflector::camelize($table->getTable());
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-
 		$blocklistAssociations = [
 			'Attributes' . $tableName,
 			'Child' . $tableName,
@@ -355,20 +359,20 @@ class AuditController extends Controller {
 			}
 
 			if ($association instanceof BelongsToMany) {
-				$foreignKey = $entityClass::mapField($association->getProperty());
+				$foreignKey = $association->getProperty();
 			}
 			elseif (
 				$association instanceof HasMany &&
 				$association->getCascadeCallbacks() &&
 				$association->getDependent() &&
 				!in_array($association->getTarget()->getTable(), [
-					'media_assignments',
+					MediaAssignmentsTable::TABLE,
 				])
 			) {
-				$foreignKey = $entityClass::mapField($association->getProperty());
+				$foreignKey = $association->getProperty();
 			}
 			else {
-				$foreignKey = $entityClass::mapFields((array)$association->getForeignKey())[0];
+				$foreignKey = (array)$association->getForeignKey()[0];
 			}
 
 			// If the key of the association is in the history fields, add it to the associations using the key as the key
@@ -388,9 +392,9 @@ class AuditController extends Controller {
 	 */
 	protected function getMedia(Entity $entity, CollectionInterface $audits): CollectionInterface {
 		$mediaIds = array_merge(
-			Hash::extract($entity->mediaAssignments, '{s}.{n}.mediaId'),
-			Hash::extract($entity->mediaAssignments, '{s}.{s}.mediaId'),
-			Hash::extract($entity->mediaAssignments, '{s}.{s}.{n}.mediaId')
+			Hash::extract($entity->mediaAssignments ?? [], '{s}.{n}.mediaId'),
+			Hash::extract($entity->mediaAssignments ?? [], '{s}.{s}.mediaId'),
+			Hash::extract($entity->mediaAssignments ?? [], '{s}.{s}.{n}.mediaId')
 		);
 
 		$audits = $audits->toList();
@@ -425,7 +429,7 @@ class AuditController extends Controller {
 			Hash::extract($audits, '{n}.dataOld.mediaAssignments'),
 			Hash::extract($audits, '{n}.dataNew.mediaAssignments')
 		);
-		$oldMediaElements = array_unique(array_merge(...array_map('array_keys', $oldMediaElements)));
+		$oldMediaElements = array_unique(array_merge(...array_map(array_keys(...), $oldMediaElements)));
 
 		$currentMediaElements = array_keys($entity->mediaAssignments ?? []);
 
@@ -444,13 +448,10 @@ class AuditController extends Controller {
 	 * @return void
 	 */
 	protected function loadOldAssociationEntities(Entity $entity, CollectionInterface $audits, array $associations): void {
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = get_class($entity);
-
 		$associationProperties = array_map(fn (Association $association) => [
 			'association' => $association,
 			'name' => $association->getName(),
-			'property' => $entityClass::mapField($association->getProperty()),
+			'property' => $association->getProperty(),
 		], $associations);
 
 		$audits = $audits->toList();
@@ -598,7 +599,7 @@ class AuditController extends Controller {
 			->find()
 			->where($where)
 			->contain(['Users'])
-			->orderBy(['Audit.created_on' => 'desc'])
+			->orderBy(['Audit.createdOn' => 'desc'])
 			->formatResults(function (ResultSetInterface $results): CollectionInterface {
 				return $results->map(function (Audit $audit) {
 					$audit->dataOld = $audit->dataOld ? json_decode(gzuncompress(base64_decode($audit->dataOld)), true) : null;
@@ -656,12 +657,12 @@ class AuditController extends Controller {
 		$pivotTableAudits = $this->findAudits([
 			'OR' => [
 				[
-					'subject_left_foreign_key' => $entity->id,
-					'subject_left_table' => $table->getTable(),
+					'subjectLeftForeignKey' => $entity->id,
+					'subjectLeftTable' => $table->getTable(),
 				],
 				[
-					'subject_right_foreign_key' => $entity->id,
-					'subject_right_table' => $table->getTable(),
+					'subjectRightForeignKey' => $entity->id,
+					'subjectRightTable' => $table->getTable(),
 				],
 			],
 		]);
@@ -814,7 +815,7 @@ class AuditController extends Controller {
 
 		return [
 			'association' => $association,
-			'property' => $entity::mapField($association->getProperty()),
+			'property' => $association->getProperty(),
 			'targetTable' => $targetTable,
 		];
 	}
@@ -875,7 +876,7 @@ class AuditController extends Controller {
 		$firstEntityAuditIndex = null;
 
 		foreach ($audits as $index => $audit) {
-			if ($audit->scope === $table->getTable()) {
+			if ($audit->scope === Inflector::camelize($table->getTable())) {
 				$firstEntityAuditIndex = $index;
 				break;
 			}
@@ -914,7 +915,7 @@ class AuditController extends Controller {
 	 * @return array
 	 */
 	protected function buildReferenceDataFromEntity(Entity $entity, Table $table): array {
-		$referenceData = $entity->extract(null, false, false);
+		$referenceData = $entity->extract();
 
 		// Add media assignments
 		if ($entity->get('mediaAssignments')) {
@@ -936,7 +937,7 @@ class AuditController extends Controller {
 			foreach ($entity->get('mediaAssignments') as $elementIdentifier => $elementAssignments) {
 				foreach ($elementAssignments as $selectorIdentifier => $selectorAssignments) {
 					if ($selectorAssignments instanceof Entity) {
-						$values = $selectorAssignments->extract(null, false, false);
+						$values = $selectorAssignments->extract();
 						$values = array_diff_key($values, array_flip($blocklistedFields));
 						ksort($values);
 						$mediaData[ $elementIdentifier ][ $selectorIdentifier ] = $values;
@@ -944,7 +945,7 @@ class AuditController extends Controller {
 					}
 
 					foreach ($selectorAssignments as $key => $mediaAssignment) {
-						$values = $mediaAssignment->extract(null, false, false);
+						$values = $mediaAssignment->extract();
 						$values = array_diff_key($values, array_flip($blocklistedFields));
 						ksort($values);
 						$mediaData[ $elementIdentifier ][ $selectorIdentifier ][ $key ] = $values;
@@ -1086,7 +1087,7 @@ class AuditController extends Controller {
 		$lastEntityData = null;
 
 		foreach (array_slice($audits, $startIndex) as $audit) {
-			if ($audit->scope === $table->getTable()) {
+			if ($audit->scope === Inflector::camelize($table->getTable())) {
 				// This is an entity audit - it becomes the new baseline
 				$lastEntityData = $audit->dataNew ?? [];
 				continue;

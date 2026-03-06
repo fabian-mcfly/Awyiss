@@ -29,8 +29,8 @@ use Cake\Utility\Hash;
 
 /**
  * Behavior for managing customer group access settings and assignments.
- * Controls frontend visibility/access per entity via customer groups (all_groups, hide_on_login, specific_groups).
- * Also manages customer group assignments for entities when access type is 'specific_groups'.
+ * Controls frontend visibility/access per entity via customer groups (allGroups, hideOnLogin, specificGroups).
+ * Also manages customer group assignments for entities when access type is 'specificGroups'.
  */
 class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMarshalInterface {
 	use IdentityAwareTrait;
@@ -124,9 +124,6 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 * @return void
 	 */
 	protected function setupAssociations(bool $forPages = false): void {
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $this->_table->getEntityClass();
-
 		if ($forPages) {
 			$accessSettingConditions['CustomerGroupAccessSettings.scope IN'] = static::$pageRoles;
 			$assignmentConditions['CustomerGroupAssignments.scope IN'] = static::$pageRoles;
@@ -141,7 +138,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			'cascadeCallbacks' => true,
 			'conditions' => $accessSettingConditions,
 			'dependent' => true,
-			'foreignKey' => 'foreign_key',
+			'foreignKey' => 'foreignKey',
 			'propertyName' => 'customerGroupAccessSettings',
 			'saveStrategy' => 'replace',
 		]);
@@ -151,14 +148,11 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			'cascadeCallbacks' => true,
 			'conditions' => $assignmentConditions,
 			'dependent' => true,
-			'foreignKey' => 'foreign_key',
+			'foreignKey' => 'foreignKey',
 			'propertyName' => 'customerGroupAssignments',
 			'saveStrategy' => 'replace',
 			'strategy' => $this->getConfig('strategy'),
 		]);
-
-		$entityClass::addFieldMapping('customer_group_access_settings', 'customerGroupAccessSettings');
-		$entityClass::addFieldMapping('customer_group_assignments', 'customerGroupAssignments');
 	}
 
 
@@ -201,7 +195,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 	/**
 	 * Handle saving of access settings and customer group assignments before entity is saved.
-	 * Only saves assignments when access type is 'specific_groups'.
+	 * Only saves assignments when access type is 'specificGroups'.
 	 *
 	 * @param \Cake\Event\EventInterface $event The event
 	 * @param \Cake\Datasource\EntityInterface $entity The entity
@@ -230,9 +224,9 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 		 */
 		$accessSetting = $entity->has('customerGroupAccessSettings') ? $entity->customerGroupAccessSettings : null;
 
-		// Only save assignments if access type is 'specific_groups'
+		// Only save assignments if access type is 'specificGroups'
 		if ($accessSetting?->accessType !== CustomerGroupAccessType::SpecificGroups) {
-			// Clear assignments if not specific_groups
+			// Clear assignments if not specificGroups
 			$entity->set('customerGroupAssignments', []);
 
 			return;
@@ -313,7 +307,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			->find()
 			->where([
 				'scope' => $this->getScope($this->table()),
-				'foreign_key' => $entityId,
+				'foreignKey' => $entityId,
 				'deleted' => false,
 			])
 			->first();
@@ -331,7 +325,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 		// Handle customer group access settings
 		if ($this->getConfig('enabled') && ($options['customerGroupAccessSettings'] ?? true) !== false) {
-			$result['customer_group_access_settings'] = function (array $values, EntityInterface $entity) {
+			$result['customerGroupAccessSettings'] = function (array $values, EntityInterface $entity) {
 				if (!$values) {
 					return null;
 				}
@@ -341,7 +335,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 				$accessSettingData = [
 					'scope' => $this->getConfig('referenceName'),
-					'accessType' => $values['access_type'] ?? $values['accessType'] ?? null,
+					'accessType' => $values['accessType'] ?? null,
 				];
 
 				if (!$accessSettingData['accessType']) {
@@ -384,7 +378,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			'foreignKey',
 		];
 
-		$result['customer_group_assignments'] = function (array $values, EntityInterface $entity) use ($options): array {
+		$result['customerGroupAssignments'] = function (array $values, EntityInterface $entity) use ($options): array {
 			/**
 			 * @var array<\Awyiss\Model\Entity\CustomerGroupAssignment> $customerGroupAssignments
 			 */
@@ -396,7 +390,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			foreach ($values as $assignmentData) {
 				// Handle both simple ID values and array data with id
 				if (is_array($assignmentData)) {
-					$customerGroupId = $assignmentData['customer_group_id'] ?? $assignmentData['customerGroupId'] ?? null;
+					$customerGroupId = $assignmentData['customerGroupId'] ?? null;
 					$assignmentId = $assignmentData['id'] ?? null;
 				}
 				else {
@@ -462,6 +456,6 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			$name = $table->getTable() ?: $table->getAlias();
 		}
 
-		return Inflector::underscore($name);
+		return Inflector::camelize($name);
 	}
 }

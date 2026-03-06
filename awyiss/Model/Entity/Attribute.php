@@ -6,6 +6,7 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
+use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 
 
@@ -40,16 +41,6 @@ class Attribute extends Entity {
 	 * @var array The column spans
 	 */
 	protected static array $columnSpans;
-	/**
-	 * @inheritdoc
-	 */
-	protected static array $fieldMap = [
-		'has_index' => 'hasIndex',
-		'input_type' => 'inputType',
-		'default_value' => 'defaultValue',
-		'column_span' => 'columnSpan',
-		'system_order' => 'systemOrder',
-	];
 
 
 	/**
@@ -105,7 +96,7 @@ class Attribute extends Entity {
 
 
 	/**
-	 * Make sure the identifier is always lowercase, underscored and free of special characters
+	 * Make sure the identifier is always variableCase and free of special characters
 	 *
 	 * @param string|null $identifier
 	 * @return string|null
@@ -116,12 +107,12 @@ class Attribute extends Entity {
 			return null;
 		}
 
-		return mb_strtolower(Text::slug($identifier, ['replacement' => '_']));
+		return Inflector::variable(Text::slug($identifier, ['replacement' => '_']));
 	}
 
 
 	/**
-	 * Make sure the scope is always lowercase, underscored and free of special characters
+	 * Make sure the scope is always CamelCase and free of special characters
 	 *
 	 * @param string|null $scope
 	 * @return string|null
@@ -132,6 +123,6 @@ class Attribute extends Entity {
 			return null;
 		}
 
-		return mb_strtolower(Text::slug($scope, ['replacement' => '_']));
+		return Inflector::camelize(Text::slug($scope, ['replacement' => '_']));
 	}
 }

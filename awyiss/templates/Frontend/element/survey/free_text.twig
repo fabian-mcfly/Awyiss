@@ -24,7 +24,7 @@
 
 {% block answers %}
 	<div class="SurveyAnswer-FreeText">
-		<label for="SurveyAnswer-Input">{{ __d('surveys', 'free_answer_label') }}</label>
+		<label for="SurveyAnswer-Input">{{ __d('Surveys', 'free_answer_label') }}</label>
 		<textarea name="survey[{{ survey.identifier }}][custom][{{ question.identifier }}]" id="SurveyAnswer-Input" required></textarea>
 		<input type="hidden" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="custom">
 	</div>

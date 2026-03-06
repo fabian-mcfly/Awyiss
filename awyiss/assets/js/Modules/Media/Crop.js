@@ -139,9 +139,9 @@ export default class ImageCropper {
 			y: parent.querySelector('input[name="crop[y]"]'),
 			width: parent.querySelector('input[name="crop[width]"]'),
 			height: parent.querySelector('input[name="crop[height]"]'),
-			resizeWidth: parent.querySelector('input[name="crop[resize_width]"]'),
-			resizeHeight: parent.querySelector('input[name="crop[resize_height]"]'),
-			focusPoint: parent.querySelector('input[name="focus_point"]')
+			resizeWidth: parent.querySelector('input[name="crop[resizeWidth]"]'),
+			resizeHeight: parent.querySelector('input[name="crop[resizeHeight]"]'),
+			focusPoint: parent.querySelector('input[name="focusPoint"]')
 		}
 
 		this.focusPoint = this.inputs.focusPoint.value.split(',').map(Number);

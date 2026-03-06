@@ -8,14 +8,14 @@ namespace Awyiss\Model\Enum;
  * DateComparisonOperator Enum
  */
 enum DateComparisonOperator: string {
-	case SinceLastLogin = 'since_last_login';
-	case Last24Hours = 'last_24_hours';
+	case SinceLastLogin = 'sinceLastLogin';
+	case Last24Hours = 'last24Hours';
 	case Today = 'today';
 	case Yesterday = 'yesterday';
-	case ThisWeek = 'this_week';
-	case LastWeek = 'last_week';
-	case ThisMonth = 'this_month';
-	case LastMonth = 'last_month';
-	case ThisYear = 'this_year';
-	case LastYear = 'last_year';
+	case ThisWeek = 'thisWeek';
+	case LastWeek = 'lastWeek';
+	case ThisMonth = 'thisMonth';
+	case LastMonth = 'lastMonth';
+	case ThisYear = 'thisYear';
+	case LastYear = 'lastYear';
 }

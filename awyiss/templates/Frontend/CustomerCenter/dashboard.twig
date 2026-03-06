@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block assignMetaTitle %}
-	{% do _view.assign('metaTitle', __d('customers', 'page_title_dashboard') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+	{% do _view.assign('metaTitle', __d('Customers', 'page_title_dashboard') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
 {% endblock %}
 
 {% block contentArea %}
@@ -29,7 +29,7 @@
 				{% block dashboardContent %}
 					<div class="ContentElement Template-Standard Column-75">
 						{% block dashboardWelcome %}
-							<h1>{{ __d('customers', 'section_welcome') }}, {{ customer.firstname ?? customer.email }}</h1>
+							<h1>{{ __d('Customers', 'section_welcome') }}, {{ customer.firstname ?? customer.email }}</h1>
 						{% endblock %}
 
 						{% block flashMessages %}
@@ -44,7 +44,7 @@
 											<ul class="CustomerCenter-InfoList">
 												{% block emailInfoItem %}
 													<li>
-														<span class="Label">{{ __d('customers', 'email') }}:</span>
+														<span class="Label">{{ __d('Customers', 'email') }}:</span>
 														<span class="Value">{{ customer.email }}</span>
 													</li>
 												{% endblock %}
@@ -52,7 +52,7 @@
 												{% block firstnameInfoItem %}
 													{% if customer.firstname %}
 														<li>
-															<span class="Label">{{ __d('customers', 'firstname') }}:</span>
+															<span class="Label">{{ __d('Customers', 'firstname') }}:</span>
 															<span class="Value">{{ customer.firstname }}</span>
 														</li>
 													{% endif %}
@@ -61,7 +61,7 @@
 												{% block lastnameInfoItem %}
 													{% if customer.lastname %}
 														<li>
-															<span class="Label">{{ __d('customers', 'lastname') }}:</span>
+															<span class="Label">{{ __d('Customers', 'lastname') }}:</span>
 															<span class="Value">{{ customer.lastname }}</span>
 														</li>
 													{% endif %}

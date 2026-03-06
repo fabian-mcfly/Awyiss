@@ -113,7 +113,7 @@ class DesignsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 		]);
 
 		$rules->addDelete(
@@ -123,7 +123,7 @@ class DesignsTable extends Table {
 			'notInUse',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_in_use'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_in_use'),
 			]
 		);
 

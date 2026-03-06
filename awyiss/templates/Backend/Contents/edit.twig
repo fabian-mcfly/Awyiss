@@ -44,7 +44,7 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'ContentForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+	{{ FormHelper.checkbox('saveAsCopy', {form: 'ContentForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
@@ -65,7 +65,7 @@
 
 				{% block formEditButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'ContentForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'ContentForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

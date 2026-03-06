@@ -26,7 +26,7 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'file_name',
+						'fileName',
 					],
 					identifier: 'displayedFields',
 					localizable: false,
@@ -35,7 +35,7 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$fields = $this->getTableFields();
 
-						unset($fields['id'], $fields['title'], $fields['page_role_id']);
+						unset($fields['id'], $fields['title'], $fields['pageRoleId']);
 
 						return $fields;
 					},

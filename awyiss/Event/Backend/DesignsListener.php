@@ -51,7 +51,7 @@ class DesignsListener implements EventListenerInterface {
 		if ($entity->inUse) {
 			$designsTable = $this->fetchTable('Designs');
 			$designsTable->updateAll([
-				'in_use' => false,
+				'inUse' => false,
 			], [
 				'id !=' => $entity->id,
 			]);
@@ -92,7 +92,7 @@ class DesignsListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'designs::webfont_download',
+			'reference' => 'Designs::webfontDownload',
 		]);
 
 		/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */

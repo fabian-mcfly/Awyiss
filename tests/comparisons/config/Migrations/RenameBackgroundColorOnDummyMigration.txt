@@ -14,14 +14,14 @@ class AlterBackgroundColorOnDummyMigration extends BaseMigration {
 	 */
 	public function change(): void {
 		$table = $this->table('dummy_migration');
-		$table->renameColumn('background_color', 'background_color_renamed');
-		$table->changeColumn('background_color_renamed', 'string', [
+		$table->renameColumn('backgroundColor', 'backgroundColorRenamed');
+		$table->changeColumn('backgroundColorRenamed', 'string', [
             'default' => null,
             'limit' => 50,
             'null' => true,
         ]);
-		if ($table->hasIndexByName('BY_BACKGROUND_COLOR_RENAMED')) {
-			$table->removeIndexByName('BY_BACKGROUND_COLOR_RENAMED');
+		if ($table->hasIndexByName('BY_BACKGROUNDCOLOR')) {
+			$table->removeIndexByName('BY_BACKGROUNDCOLOR');
 		}
 		$table->update();
 	}

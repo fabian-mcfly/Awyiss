@@ -93,15 +93,15 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+					{{ LocaleHelper.control('languageShortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlParentId %}
-					{{ FormHelper.control('parent_id', {disabled: [1], options: hashPrinter(possibleParentMediaFolders, 'label', 'id', '- '), 'data-form-updater': true}) }}
+					{{ FormHelper.control('parentId', {disabled: [1], options: hashPrinter(possibleParentMediaFolders, 'label', 'id', '- '), 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: mediaFolder}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: mediaFolder}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -162,7 +162,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

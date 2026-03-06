@@ -77,17 +77,17 @@ class GlobalContentTemplateElementTest extends TestCase {
 		$entity = new GlobalContentTemplateElement();
 
 		$entity->identifier = 'testIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
 		// Test already underscored string remains unchanged
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		// Test null value
 		$entity->identifier = null;
@@ -103,17 +103,17 @@ class GlobalContentTemplateElementTest extends TestCase {
 		$entity = new GlobalContentTemplateElement();
 
 		$entity->set('identifier', 'testIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
 		// Test already underscored string remains unchanged
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		// Test null value
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -152,25 +152,5 @@ class GlobalContentTemplateElementTest extends TestCase {
 		// Should return the first (reset) column span when invalid
 		$this->assertInstanceOf(BootstrapColumn::class, $column['span']);
 		$this->assertEquals('12/12', $column['span']->getFraction());
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\GlobalContentTemplateElement::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'global_content_template_id' => 456,
-			'column_span' => 'col-8',
-			'system_order' => 15,
-		];
-
-		$entity = new GlobalContentTemplateElement($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

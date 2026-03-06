@@ -32,12 +32,11 @@
 
 			<td class="TableCell-{{ class|ucparts(false) }}">
 				{% if field starts with 'attributes.' %}
-					{% set field = field|slice(11)|underscore %}
+					{% set field = field|slice(11) %}
 					{% block tableOverviewBodyCellDisplayedFieldAttributeValue %}
 						{% include '@Backend/element/overview/list_item_attribute_value.twig' %}
 					{% endblock %}
 				{% else %}
-					{% set field = field|underscore %}
 					{% block tableOverviewBodyCellDisplayedFieldValue %}
 						{% include '@Backend/element/overview/list_item_value.twig' %}
 					{% endblock %}

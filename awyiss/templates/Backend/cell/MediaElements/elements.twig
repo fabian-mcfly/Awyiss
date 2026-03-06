@@ -24,7 +24,7 @@
 	{% if element and element.mediaElementSelectors %}
 		<div class="FormInput FormInputType-MediaElement MediaElement ColumnSpan-{{ element.column.span.numerator }}">
 			{% for mediaElementSelector in element.mediaElementSelectors %}
-				{{ element('media/selector/' ~ mediaElementSelector.mediaSelector.identifier, {
+				{{ element('media/selector/' ~ mediaElementSelector.mediaSelector.identifier|underscore, {
 					columnSpan: mediaElementSelector.column.span.numerator,
 					element: element,
 					elementSelector: mediaElementSelector,
@@ -37,6 +37,6 @@
 {% endfor %}
 
 {% if autoCreateFolder and entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
-	<input type="hidden" name="media_assignments[1][hidden_folder][id]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.id }}">
-	<input type="hidden" name="media_assignments[1][hidden_folder][media_folder_id]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId }}">
+	<input type="hidden" name="mediaAssignments[1][hiddenFolder][id]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.id }}">
+	<input type="hidden" name="mediaAssignments[1][hiddenFolder][mediaFolderId]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId }}">
 {% endif %}

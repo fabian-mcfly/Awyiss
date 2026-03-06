@@ -37,15 +37,15 @@
 				{% endblock %}
 
 				{% block formControlIdentifier %}
-					{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
+					{{ FormHelper.control('identifier', {'data-autofill-from': 'title', 'data-camelize': 'true'}) }}
 				{% endblock %}
 
 				{% block formControlDefaultValue %}
-					{{ FormHelper.control('default_value', {columnSpan: 6}) }}
+					{{ FormHelper.control('defaultValue', {columnSpan: 6}) }}
 				{% endblock %}
 
 				{% set typeHelperFormControl %}
-					{{ FormHelper.select('link_helper_options', {
+					{{ FormHelper.select('linkHelperOptions', {
 						'datetime': 'datetime',
 						'date': 'date',
 						'decimal(10,2)': 'decimal(10,2)',
@@ -62,7 +62,7 @@
 				{% block formControlType %}
 					{{ FormHelper.control('type', {
 						columnSpan: 6,
-						readonly: attribute.inputType in ['input_list', 'input_key_value_list'],
+						readonly: attribute.inputType in ['inputList', 'inputKeyValueList'],
 						templateVars: {
 							additionalContent: typeHelperFormControl
 						},
@@ -132,16 +132,16 @@
 				{% endblock %}
 
 				{% block formControlInputType %}
-					{{ FormHelper.control('input_type', {
+					{{ FormHelper.control('inputType', {
 						columnSpan: 6,
 						empty: false,
-						options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType))),
+						options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType|underscore))),
 						'data-form-updater': true,
 					}) }}
 				{% endblock %}
 
 				{% block formControlColumnSpan %}
-					{{ FormHelper.control('column_span', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
+					{{ FormHelper.control('columnSpan', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}
@@ -167,17 +167,17 @@
 						columnSpan: 6,
 						empty: false,
 						options: combine(availableFieldsets, availableFieldsets|map(fieldset => __d(attribute.scope, 'fieldset_' ~ fieldset))),
-						disabled: attribute.scope in ['contents', 'global_contents'],
+						disabled: attribute.scope in ['Contents', 'GlobalContents'],
 						'data-form-updater': true
 					}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {columnSpan: 6, entity: attribute}) }}
+					{{ SystemOrderHelper.control('systemOrder', {columnSpan: 6, entity: attribute}) }}
 				{% endblock %}
 
 				{% block formControlHasIndex %}
-					{{ FormHelper.control('has_index', {columnSpan: 6}) }}
+					{{ FormHelper.control('hasIndex', {columnSpan: 6}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -242,7 +242,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

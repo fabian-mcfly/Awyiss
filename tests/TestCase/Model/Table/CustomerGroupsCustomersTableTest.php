@@ -81,7 +81,7 @@ class CustomerGroupsCustomersTableTest extends TestCase {
 		$result = $this->customerGroupsCustomersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('customer_groups_customers', $result->getI18nDomain());
+		$this->assertSame('CustomerGroupsCustomers', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('id'));

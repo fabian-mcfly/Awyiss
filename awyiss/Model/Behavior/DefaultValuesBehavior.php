@@ -12,9 +12,9 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Database\Type\EnumType;
 use Cake\Database\TypeFactory;
@@ -95,11 +95,6 @@ class DefaultValuesBehavior extends Behavior {
 		//Typecast the defaults based on the schema
 		$this->typecastDefaults($defaults, $schema);
 
-		if ($additionalData) {
-			// Unmap the fields in case the additional data contains mapped keys
-			$additionalData = $entityClass::unmapFields($additionalData, true);
-		}
-
 		if (
 			$table->hasBehavior('Categories') &&
 			$table->getBehavior('Categories')->getConfig('enabled') === true &&
@@ -111,21 +106,17 @@ class DefaultValuesBehavior extends Behavior {
 		if ($table->hasAttributes()) {
 			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $attributesTable */
 			$attributesTable = $table->getAssociation($table->getAttributesTableName(true));
-			/** @var \Awyiss\Model\Entity $attributesEntityClass */
-			$attributesEntityClass = $attributesTable->getEntityClass();
 			$attributeColumns = $attributesTable->getSchema()->columns();
 			$attributeData = $additionalData['attributes'] ?? [];
 
 			// Check if any of the attribute columns are part of the additional data directly
 			foreach ($attributeColumns as $column) {
-				$column = $attributesEntityClass::unmapField($column);
 				if (array_key_exists($column, $additionalData)) {
 					$attributeData[ $column ] = $additionalData[ $column ];
 					unset($additionalData[ $column ]);
 					continue;
 				}
 
-				$column = $attributesEntityClass::mapField($column);
 				if (array_key_exists($column, $additionalData)) {
 					$attributeData[ $column ] = $additionalData[ $column ];
 					unset($additionalData[ $column ]);
@@ -172,18 +163,27 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categories */
 		$categories = $table->getBehavior('Categories');
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-
 		$column = $categories->getConfig('field') ?: $categories->getConfig('identifier');
-		$column = $entityClass::unmapField($column);
+
+		try {
+			$categoryKeys = array_combine(
+				array_map(fn (mixed $key) => is_string($key) ? Inflector::variable($key) : $key, array_keys($categories->getCategories() ?? [])),
+				array_keys($categories->getCategories() ?? []),
+			);
+		}
+		catch (RuntimeException) {
+			$categoryKeys = [];
+		}
+
+		$selectedValue = $categories->getConfig('selectedCategory');
+		$selectedValue = $categoryKeys[ $selectedValue ] ?? $selectedValue;
 
 		if ($attributes && $attributes->getSchema()->getColumn($column)) {
-			$defaults[ $attributes->getProperty() ][ $column ] = $categories->getConfig('selectedCategory');
+			$defaults[ $attributes->getProperty() ][ $column ] = $selectedValue;
 		}
 
 		if ($table->getSchema()->getColumn($column)) {
-			$defaults[ $column ] = $categories->getConfig('selectedCategory');
+			$defaults[ $column ] = $selectedValue;
 		}
 	}
 
@@ -197,7 +197,7 @@ class DefaultValuesBehavior extends Behavior {
 	 */
 	protected function marshallDefaults(EntityInterface $entity, array $defaults, array $additionalData, array $options): EntityInterface {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$defaults = $additionalData + $entity::unmapFields($entity->defaultValues(), true) + $defaults;
+		$defaults = $additionalData + $entity->defaultValues() + $defaults;
 
 		$options += [
 			'fields' => array_keys($defaults),
@@ -224,12 +224,9 @@ class DefaultValuesBehavior extends Behavior {
 	protected function processArray(ArrayObject $data, Table $table): void {
 		$associations = [];
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-
 		/** @var \Cake\ORM\Association $association */
 		foreach ($table->associations() as $association) {
-			$associations[ $entityClass::unmapField($association->getProperty()) ] = $association->getName();
+			$associations[ $association->getProperty() ] = $association->getName();
 		}
 
 		foreach ($data as $key => $value) {
@@ -249,7 +246,7 @@ class DefaultValuesBehavior extends Behavior {
 					/** @noinspection PhpParamsInspection */
 					$value = $this->processEntity(
 						$value,
-						$table->getAssociation($associations[ $entityClass::unmapField($key) ])->getTarget()
+						$table->getAssociation($associations[ $key ])->getTarget()
 					);
 				}
 				elseif (is_array($value) || $value instanceof ArrayObject) {
@@ -260,7 +257,7 @@ class DefaultValuesBehavior extends Behavior {
 					/** @noinspection PhpParamsInspection */
 					$this->processArray(
 						$value,
-						$table->getAssociation($associations[ $entityClass::unmapField($key) ])->getTarget()
+						$table->getAssociation($associations[ $key ])->getTarget()
 					);
 
 					$value = $value->getArrayCopy();
@@ -271,7 +268,7 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$nullable = Hash::get((array)$table->getSchema()->getColumn($entityClass::unmapField($key)), 'null');
+			$nullable = Hash::get((array)$table->getSchema()->getColumn($key), 'null');
 
 			if ($nullable !== true) {
 				continue;
@@ -281,7 +278,7 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$data[ $key ] = Hash::get((array)$table->getSchema()->getColumn($entityClass::unmapField($key)), 'default');
+			$data[ $key ] = Hash::get((array)$table->getSchema()->getColumn($key), 'default');
 		}
 	}
 
@@ -299,7 +296,7 @@ class DefaultValuesBehavior extends Behavior {
 		$associations = [];
 		/** @var \Cake\ORM\Association $association */
 		foreach ($table->associations() as $association) {
-			$associations[ $entity::mapField($association->getProperty()) ] = $association->getName();
+			$associations[ $association->getProperty() ] = $association->getName();
 		}
 
 		foreach ($entity->getDirty() as $field) {
@@ -329,11 +326,6 @@ class DefaultValuesBehavior extends Behavior {
 				}
 
 				continue;
-			}
-
-
-			if ($entity instanceof Entity) {
-				$field = $entity::unmapField($field);
 			}
 
 			$nullable = Hash::get((array)$table->getSchema()->getColumn($field), 'null');

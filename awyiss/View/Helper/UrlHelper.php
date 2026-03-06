@@ -17,7 +17,7 @@ class UrlHelper extends BaseUrlHelper {
 	/**
 	 * @inheritDoc
 	 * @param array|string|null $url
-	 * @param array $options
+	 * @param array{fullBase?: bool, escape?: bool, withParams?: mixed, withoutParams?: mixed} $options
 	 * @return string
 	 */
 	public function build(array|string|null $url = null, array $options = []): string {

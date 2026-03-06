@@ -15,7 +15,7 @@ class CreateAttributesPages extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_pages')->addColumn('page_id', 'integer', [
+		$this->table('attributes_pages')->addColumn('pageId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => false,

@@ -25,7 +25,7 @@ class GlobalContentTemplatesController extends Controller {
 	 */
 	protected array $paginate = [
 		'enabled' => true,
-		'defaultSortableFields' => ['used_for_global_contents'],
+		'defaultSortableFields' => ['usedForGlobalContents'],
 	];
 
 
@@ -180,27 +180,27 @@ class GlobalContentTemplatesController extends Controller {
 			$globalContentTemplate->setAccess('attributes', true);
 		}
 
-		$requestData = $this->request->getData() + ['global_content_template_elements' => []];
+		$requestData = $this->request->getData() + ['globalContentTemplateElements' => []];
 
-		if (!empty($requestData['global_content_template_elements'])) {
-			$requestData['global_content_template_elements'] = array_filter($requestData['global_content_template_elements'], function ($element) {
+		if (!empty($requestData['globalContentTemplateElements'])) {
+			$requestData['globalContentTemplateElements'] = array_filter($requestData['globalContentTemplateElements'], function ($element) {
 				return !empty($element['identifier']);
 			});
 
 			$currentFieldset = '';
 			$systemOrder = 1;
-			$requestData['global_content_template_elements'] = array_map(function (array $element) use (&$currentFieldset, &$systemOrder): array {
+			$requestData['globalContentTemplateElements'] = array_map(function (array $element) use (&$currentFieldset, &$systemOrder): array {
 				if ($element['fieldset'] !== $currentFieldset) {
 					$currentFieldset = $element['fieldset'];
 					$systemOrder = 1;
 				}
 
-				$element['system_order'] = $systemOrder++;
+				$element['systemOrder'] = $systemOrder++;
 
 				return $element;
-			}, $requestData['global_content_template_elements']);
+			}, $requestData['globalContentTemplateElements']);
 
-			$request = $this->request->withData('global_content_template_elements', $requestData['global_content_template_elements']);
+			$request = $this->request->withData('globalContentTemplateElements', $requestData['globalContentTemplateElements']);
 			$this->setRequest($request);
 
 			$associated[] = 'GlobalContentTemplateElements';
@@ -208,18 +208,18 @@ class GlobalContentTemplatesController extends Controller {
 
 		$this->GlobalContentTemplates->patchEntity($globalContentTemplate, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->GlobalContentTemplates->save($globalContentTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($globalContentTemplate),

@@ -75,7 +75,7 @@ class ContentAreasTableTest extends TestCase {
 		$pageTemplatesAssociation = $this->contentAreasTable->getAssociation('PageTemplates');
 		$this->assertInstanceOf(BelongsToMany::class, $pageTemplatesAssociation);
 		$this->assertSame('PageTemplateContentAreas', $pageTemplatesAssociation->getThrough());
-		$this->assertSame(['system_order' => 'ASC'], $pageTemplatesAssociation->getSort());
+		$this->assertSame(['systemOrder' => 'ASC'], $pageTemplatesAssociation->getSort());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->contentAreasTable->hasAssociation('MediaAssignments'));
@@ -129,7 +129,7 @@ class ContentAreasTableTest extends TestCase {
 		$result = $this->contentAreasTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('content_areas', $result->getI18nDomain());
+		$this->assertSame('ContentAreas', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -150,7 +150,7 @@ class ContentAreasTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Content Area',
-			'identifier' => 'test_content_area',
+			'identifier' => 'testContentArea',
 			'active' => true,
 		];
 
@@ -244,7 +244,7 @@ class ContentAreasTableTest extends TestCase {
 	public function testBuildRulesIdentifierUniqueValid(): void {
 		$entity = $this->contentAreasTable->newEntity([
 			'title' => 'Unique Content Area',
-			'identifier' => 'unique_content_area',
+			'identifier' => 'uniqueContentArea',
 			'active' => true,
 		]);
 
@@ -303,7 +303,7 @@ class ContentAreasTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Content Area',
-			'identifier' => 'custom_content_area',
+			'identifier' => 'customContentArea',
 			'active' => false,
 		];
 
@@ -315,7 +315,7 @@ class ContentAreasTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Content Area', $entity->title);
-		$this->assertSame('custom_content_area', $entity->identifier);
+		$this->assertSame('customContentArea', $entity->identifier);
 		$this->assertFalse($entity->active);
 		$this->assertFalse($entity->deleted); // Should remain default
 	}

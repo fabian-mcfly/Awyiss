@@ -86,7 +86,7 @@ class SearchBehavior extends Behavior {
 	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true): array {
 		$schema = $this->table()->getSchema();
 
-		$blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
+		$blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deletedOn', 'deletedBy']);
 
 		if ($this->getConfig('columns') && $selectedOperators === null && $selectedValues === null) {
 			$columns = $this->getConfig('columns');
@@ -207,7 +207,7 @@ class SearchBehavior extends Behavior {
 			}
 		}
 
-		if ($column === 'language_shortcode') {
+		if ($column === 'languageShortcode') {
 			$languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
 
 			return array_column($languages, 'label', 'shortcode');
@@ -225,7 +225,7 @@ class SearchBehavior extends Behavior {
 			}
 		}
 
-		if (in_array($column, ['created_by', 'changed_by'])) {
+		if (in_array($column, ['createdBy', 'changedBy'])) {
 			return $this->getUsers();
 		}
 
@@ -324,31 +324,31 @@ class SearchBehavior extends Behavior {
 			'>' => $this->addGreaterThanCondition($query, $column, $columnSettings),
 			'>=' => $this->addGreaterThanCondition($query, $column, $columnSettings, true),
 			'between' => $this->addBetweenCondition($query, $column, $columnSettings),
-			'not_between' => $this->addBetweenCondition($query, $column, $columnSettings, true),
-			'length_equal' => $this->addLengthEqualToCondition($query, $column, $columnSettings),
-			'length_not_equal' => $this->addLengthEqualToCondition($query, $column, $columnSettings, true),
-			'shorter_than' => $this->addLongerThanCondition($query, $column, $columnSettings, false, true),
-			'shorter_than_or_equal' => $this->addLongerThanCondition($query, $column, $columnSettings, true, true),
-			'longer_than' => $this->addLongerThanCondition($query, $column, $columnSettings),
-			'longer_than_or_equal' => $this->addLongerThanCondition($query, $column, $columnSettings, true),
+			'notBetween' => $this->addBetweenCondition($query, $column, $columnSettings, true),
+			'lengthEqual' => $this->addLengthEqualToCondition($query, $column, $columnSettings),
+			'lengthNotEqual' => $this->addLengthEqualToCondition($query, $column, $columnSettings, true),
+			'shorterThan' => $this->addLongerThanCondition($query, $column, $columnSettings, false, true),
+			'shorterThanOrEqual' => $this->addLongerThanCondition($query, $column, $columnSettings, true, true),
+			'longerThan' => $this->addLongerThanCondition($query, $column, $columnSettings),
+			'longerThanOrEqual' => $this->addLongerThanCondition($query, $column, $columnSettings, true),
 			'in' => $this->addInCondition($query, $column, $columnSettings),
-			'not_in' => $this->addInCondition($query, $column, $columnSettings, true),
+			'notIn' => $this->addInCondition($query, $column, $columnSettings, true),
 			'contains' => $this->addContainsCondition($query, $column, $columnSettings),
-			'not_contains' => $this->addContainsCondition($query, $column, $columnSettings, true),
-			'starts_with' => $this->addContainsCondition($query, $column, $columnSettings, false, 'end'),
-			'not_starts_with' => $this->addContainsCondition($query, $column, $columnSettings, true, 'end'),
-			'ends_with' => $this->addContainsCondition($query, $column, $columnSettings, false, 'start'),
-			'not_ends_with' => $this->addContainsCondition($query, $column, $columnSettings, true, 'start'),
-			'since_last_login' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::SinceLastLogin),
-			'last_24_hours' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Last24Hours),
+			'notContains' => $this->addContainsCondition($query, $column, $columnSettings, true),
+			'startsWith' => $this->addContainsCondition($query, $column, $columnSettings, false, 'end'),
+			'notStartsWith' => $this->addContainsCondition($query, $column, $columnSettings, true, 'end'),
+			'endsWith' => $this->addContainsCondition($query, $column, $columnSettings, false, 'start'),
+			'notEndsWith' => $this->addContainsCondition($query, $column, $columnSettings, true, 'start'),
+			'sinceLastLogin' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::SinceLastLogin),
+			'last24Hours' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Last24Hours),
 			'today' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Today),
 			'yesterday' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Yesterday),
-			'this_week' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisWeek),
-			'last_week' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastWeek),
-			'this_month' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisMonth),
-			'last_month' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastMonth),
-			'this_year' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisYear),
-			'last_year' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastYear),
+			'thisWeek' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisWeek),
+			'lastWeek' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastWeek),
+			'thisMonth' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisMonth),
+			'lastMonth' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastMonth),
+			'thisYear' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisYear),
+			'lastYear' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastYear),
 			default => $query,
 		};
 	}

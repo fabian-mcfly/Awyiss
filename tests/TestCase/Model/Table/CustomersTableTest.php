@@ -162,7 +162,7 @@ class CustomersTableTest extends TestCase {
 		$result = $this->customersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('customers', $result->getI18nDomain());
+		$this->assertSame('Customers', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('email'));
@@ -189,7 +189,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'testcustomer@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'firstname' => 'Test',
 			'lastname' => 'Customer',
 			'active' => true,
@@ -297,7 +297,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'testcustomer@example.com',
 			'password' => str_repeat('a', 101), // exceeds 100 char limit
-			'password_confirm' => str_repeat('a', 101),
+			'passwordConfirm' => str_repeat('a', 101),
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -316,7 +316,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'testcustomer@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'differentpassword',
+			'passwordConfirm' => 'differentpassword',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -355,7 +355,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'invalid-email',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -374,7 +374,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'unique-customer@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -394,7 +394,7 @@ class CustomersTableTest extends TestCase {
 		$data1 = [
 			'email' => 'existing@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity1 = $this->customersTable->newDefaultEntity();
@@ -405,7 +405,7 @@ class CustomersTableTest extends TestCase {
 		$data2 = [
 			'email' => 'existing@example.com',
 			'password' => 'password456',
-			'password_confirm' => 'password456',
+			'passwordConfirm' => 'password456',
 		];
 
 		$entity2 = $this->customersTable->newDefaultEntity();
@@ -431,7 +431,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'update-test@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -534,12 +534,12 @@ class CustomersTableTest extends TestCase {
 		$result = $this->customersTable->validationRegistration($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('customers', $result->getI18nDomain());
+		$this->assertSame('Customers', $result->getI18nDomain());
 
 		// Test required fields for registration
 		$this->assertTrue($result->hasField('email'));
 		$this->assertTrue($result->hasField('password'));
-		$this->assertTrue($result->hasField('password_confirm'));
+		$this->assertTrue($result->hasField('passwordConfirm'));
 
 		// Test other fields exist
 		$this->assertTrue($result->hasField('id'));
@@ -562,7 +562,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'firstname' => 'Test',
 			'lastname' => 'User',
 		];
@@ -583,7 +583,7 @@ class CustomersTableTest extends TestCase {
 	public function testRegistrationValidationMissingEmail(): void {
 		$data = [
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -604,7 +604,7 @@ class CustomersTableTest extends TestCase {
 	public function testRegistrationValidationMissingPassword(): void {
 		$data = [
 			'email' => 'registration@example.com',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -634,9 +634,9 @@ class CustomersTableTest extends TestCase {
 		]);
 		$errors = $entity->getErrors();
 
-		$this->assertArrayHasKey('password_confirm', $errors);
-		$this->assertArrayHasKey('_required', $errors['password_confirm']);
-		$this->assertSame('customers::error_required', $errors['password_confirm']['_required']);
+		$this->assertArrayHasKey('passwordConfirm', $errors);
+		$this->assertArrayHasKey('_required', $errors['passwordConfirm']);
+		$this->assertSame('customers::error_required', $errors['passwordConfirm']['_required']);
 	}
 
 	/**
@@ -647,7 +647,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => '',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -667,7 +667,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => '',
-			'password_confirm' => '',
+			'passwordConfirm' => '',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -687,7 +687,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'invalid-email',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -708,7 +708,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'short',
-			'password_confirm' => 'short',
+			'passwordConfirm' => 'short',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -729,7 +729,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => str_repeat('a', 101),
-			'password_confirm' => str_repeat('a', 101),
+			'passwordConfirm' => str_repeat('a', 101),
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -750,7 +750,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'differentpassword',
+			'passwordConfirm' => 'differentpassword',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -771,7 +771,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => str_repeat('a', 245) . '@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->customersTable->newDefaultEntity();
@@ -792,7 +792,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'firstname' => str_repeat('a', 256),
 		];
 
@@ -814,7 +814,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'lastname' => str_repeat('a', 256),
 		];
 
@@ -836,7 +836,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'firstname' => '',
 			'lastname' => '',
 		];
@@ -859,7 +859,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verificationCode' => str_repeat('a', 65),
 		];
 
@@ -881,7 +881,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'passwordResetCode' => str_repeat('a', 65),
 		];
 
@@ -925,7 +925,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'passwordResetOn' => 'not_a_datetime',
 		];
 
@@ -947,7 +947,7 @@ class CustomersTableTest extends TestCase {
 		$data = [
 			'email' => 'registration@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => 'not_a_boolean',
 			'active' => 'not_a_boolean',
 			'deleted' => 'not_a_boolean',

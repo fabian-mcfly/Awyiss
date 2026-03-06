@@ -15,7 +15,7 @@ class CreateAttributesUsergroups extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_usergroups')->addColumn('page_id', 'integer', [
+		$this->table('attributes_usergroups')->addColumn('pageId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => false,

@@ -35,7 +35,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -83,7 +83,7 @@
 							{{ nestedList(globalContentTemplates, _context|merge({
 								data: {
 									nestable: false,
-									sortable: _filter['global_content_templates']['active'] == false,
+									sortable: _filter['globalContentTemplates']['active'] == false,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'GlobalContentTemplates',

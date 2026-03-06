@@ -652,7 +652,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/branch1/leaf1',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);
@@ -663,7 +663,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/branch1/leaf2',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);
@@ -674,7 +674,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/leaf3',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);
@@ -685,7 +685,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/leaf4',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);
@@ -696,7 +696,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/branch3/leaf5',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);
@@ -707,7 +707,7 @@ class BackendMenuItemTest extends TestCase {
 			'active' => true,
 			'link' => '/branch3/leaf6',
 			'access' => (object)[
-				'scope' => 'test-scope',
+				'scope' => 'TestScope',
 				'identifier' => 'test-permission',
 			],
 		]);

@@ -114,7 +114,7 @@ export default class FormLock {
 			const formData = new FormData();
 			formData.append('controller', form.lockDialog.dataset.controller);
 			formData.append('id', parseInt(form.lockDialog.dataset.entityId));
-			formData.append('created_on', form.lockDialog.dataset.createdOn);
+			formData.append('createdOn', form.lockDialog.dataset.createdOn);
 
 			navigator.sendBeacon(`${baseUrl}backend/${languageShortcode}/${form.lockDialog.dataset.controller}/release-lock/`, formData);
 		});

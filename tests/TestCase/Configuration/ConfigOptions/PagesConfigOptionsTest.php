@@ -69,7 +69,7 @@ class PagesConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
-			'page_template_id',
+			'pageTemplateId',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('pages::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -77,25 +77,25 @@ class PagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'page_role_id' => 'pages::page_role_id',
-			'page_template_id' => 'pages::page_template_id',
-			'parent_id' => 'pages::parent_id',
-			'language_shortcode' => 'pages::language_shortcode',
-			'redirect_link' => 'pages::redirect_link',
-			'meta_title' => 'seo::meta_title',
-			'meta_description' => 'seo::meta_description',
-			'robots_index' => 'seo::robots_index',
-			'robots_follow' => 'seo::robots_follow',
-			'duplicate_of' => 'pages::duplicate_of',
-			'form_id' => 'pages::form_id',
-			'survey_id' => 'pages::survey_id',
-			'system_order' => 'pages::system_order',
+			'pageRoleId' => 'pages::page_role_id',
+			'pageTemplateId' => 'pages::page_template_id',
+			'parentId' => 'pages::parent_id',
+			'languageShortcode' => 'pages::language_shortcode',
+			'redirectLink' => 'pages::redirect_link',
+			'metaTitle' => 'seo::meta_title',
+			'metaDescription' => 'seo::meta_description',
+			'robotsIndex' => 'seo::robots_index',
+			'robotsFollow' => 'seo::robots_follow',
+			'duplicateOf' => 'pages::duplicate_of',
+			'formId' => 'pages::form_id',
+			'surveyId' => 'pages::survey_id',
+			'systemOrder' => 'pages::system_order',
 			'active' => 'pages::active',
-			'parents_active' => 'pages::parents_active',
-			'created_by' => 'pages::created_by',
-			'created_on' => 'pages::created_on',
-			'changed_by' => 'pages::changed_by',
-			'changed_on' => 'pages::changed_on',
+			'parentsActive' => 'pages::parents_active',
+			'createdBy' => 'pages::created_by',
+			'createdOn' => 'pages::created_on',
+			'changedBy' => 'pages::changed_by',
+			'changedOn' => 'pages::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

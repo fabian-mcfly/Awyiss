@@ -63,15 +63,16 @@ class PagesListener implements EventListenerInterface {
 		$pagesTable = $event->getSubject();
 
 		if (($options['skipPageRoleCheck'] ?? false) !== true) {
-			$query->where(['page_role_id' => $pagesTable->getPageRole()]);
+			$query->where(['pageRoleId' => $pagesTable->getPageRole()]);
 			return;
 		}
 
 		$pageRoles = $this->fetchTable('PageRoles')->findAllAndCache()->indexBy('identifier')->toArray();
 
-		$prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
+		$prefixedColumn = $query->getRepository()->getAlias() . '.pageRoleId';
 
 		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */

@@ -10,10 +10,10 @@
 				{
 					"type": "object",
 					"patternProperties": {
-						"^[a-z][a-z0-9_]{1,49}+$": {
+						"^[a-z][a-zA-Z0-9]{1,49}+$": {
 							"type": "object",
 							"patternProperties": {
-								"^[a-z][a-z0-9_]{1,49}+$": {
+								"^[a-z][a-zA-Z0-9]{1,49}+$": {
 									"$ref": "menu.schema.json#/definitions/menuItem"
 								}
 							},
@@ -34,10 +34,10 @@
 				{
 					"type": "object",
 					"patternProperties": {
-						"^[a-z][a-z0-9_]{1,49}+$": {
+						"^[a-z][a-zA-Z0-9]{1,49}+$": {
 							"type": "object",
 							"patternProperties": {
-								"^[a-z][a-z0-9_]{1,49}+$": {
+								"^[a-z][a-zA-Z0-9]{1,49}+$": {
 									"$ref": "menu.schema.json#/definitions/menuItem"
 								}
 							},

@@ -203,7 +203,7 @@ class PagesListener implements EventListenerInterface {
 
 			$conditions = [
 				$field => $slug,
-				'language_shortcode' => $entity->languageShortcode,
+				'languageShortcode' => $entity->languageShortcode,
 			];
 
 			$primaryKey = $pagesTable->getPrimaryKey();
@@ -218,7 +218,7 @@ class PagesListener implements EventListenerInterface {
 			 * ```
 			 * [
 			 *    "Pages.slug" => "new/slug/of/the/current/page"
-			 *    "language_shortcode" => "de"
+			 *    "languageShortcode" => "de"
 			 *    "NOT" => [
 			 *        "Pages.id" => 1234
 			 *    ]
@@ -283,7 +283,7 @@ class PagesListener implements EventListenerInterface {
 		$entries = $pagesTable->Contents->find('threaded', nestingKey: 'childContents')
 			->find('mediaAssignments', formatResult: false)
 			->find('translations')
-			->where(['page_id' => $originalEntity->id])
+			->where(['pageId' => $originalEntity->id])
 			->all();
 
 		$listedEntries = $entries->listNested('desc', 'childContents');
@@ -435,9 +435,9 @@ class PagesListener implements EventListenerInterface {
 			$testSlug .= substr($entity->slug, 0, strrpos($entity->slug, '/'));
 
 			$records = $menuEntriesTable->find()->where([
-				'language_shortcode' => $entity->languageShortcode,
+				'languageShortcode' => $entity->languageShortcode,
 				'link' => $testSlug,
-				'menu_id' => $menuId,
+				'menuId' => $menuId,
 			])->all();
 
 			if ($records->count()) {
@@ -467,14 +467,14 @@ class PagesListener implements EventListenerInterface {
 		$now = new DateTime('now');
 
 		// Create a new historical slug entry for the original slug of the provided page
-		$query = $table->UrlHistory->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+		$query = $table->UrlHistory->insertQuery()->insert(['url', 'scope', 'foreignKey', 'status', 'createdBy', 'createdOn']);
 		$query->values([
 			'url' => $languageShortcode . '/' . $slug,
-			'scope' => 'pages',
-			'foreign_key' => $entity->id,
+			'scope' => 'Pages',
+			'foreignKey' => $entity->id,
 			'status' => 308,
-			'created_by' => $userId,
-			'created_on' => $now,
+			'createdBy' => $userId,
+			'createdOn' => $now,
 		]);
 
 		// Find all pages whose slug starts with the original slug of the provided page
@@ -497,11 +497,11 @@ class PagesListener implements EventListenerInterface {
 		foreach ($records as $page) {
 			$query->values([
 				'url' => $page->languageShortcode . '/' . $page->slug,
-				'scope' => 'pages',
-				'foreign_key' => $page->id,
+				'scope' => 'Pages',
+				'foreignKey' => $page->id,
 				'status' => 308,
-				'created_by' => $userId,
-				'created_on' => $now,
+				'createdBy' => $userId,
+				'createdOn' => $now,
 			]);
 		}
 
@@ -569,7 +569,7 @@ class PagesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('AutoTranslate', $jobData, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]);
 
 			/** @var \Awyiss\Model\Table\LocksTable $locksTable */
@@ -579,7 +579,7 @@ class PagesListener implements EventListenerInterface {
 
 			foreach ($jobData['ids'] as $pageId) {
 				$locks[] = $locksTable->newDefaultEntity([
-					'scope' => Inflector::pluralize($jobData['type']),
+					'scope' => Inflector::camelize(Inflector::pluralize($jobData['type'])),
 					'foreignKey' => $pageId,
 					'uniqueId' => 'autoTranslate',
 					'createdOn' => $dateTimeNow,
@@ -654,7 +654,7 @@ class PagesListener implements EventListenerInterface {
 		bool $parentsActiveChanged
 	): void {
 		$query = $table->updateQuery()->where([
-			'language_shortcode' => $originalLanguage ?? $entity->languageShortcode,
+			'languageShortcode' => $originalLanguage ?? $entity->languageShortcode,
 		]);
 
 		if ($slugChanged) {
@@ -683,7 +683,7 @@ class PagesListener implements EventListenerInterface {
 			if ($parentsActive) {
 				/**
 				 * When updating all pages with the same slug (LIKE 'oldslug/%'),
-				 * do not set the parents_active to true for pages that
+				 * do not set the parentsActive to true for pages that
 				 * are descendants of inactive sites.
 				 *
 				 * @noinspection SpellCheckingInspection
@@ -701,7 +701,7 @@ class PagesListener implements EventListenerInterface {
 				}
 			}
 
-			($subQuery ?? $query)->set('parents_active', $parentsActive);
+			($subQuery ?? $query)->set('parentsActive', $parentsActive);
 		}
 
 		/**
@@ -836,7 +836,7 @@ class PagesListener implements EventListenerInterface {
 
 			// Retrieve all attributes for the original pages
 			$attributesTable = $this->fetchTable($pageRoleTable->getAttributesTableName(true));
-			$attributes = $attributesTable->find()->where(['page_id IN' => $originalIds])->all()->indexBy('page_id')->toArray();
+			$attributes = $attributesTable->find()->where(['pageId IN' => $originalIds])->all()->indexBy('pageId')->toArray();
 
 			// Skip if no attributes are found for any of the original pages
 			if (!$attributes) {

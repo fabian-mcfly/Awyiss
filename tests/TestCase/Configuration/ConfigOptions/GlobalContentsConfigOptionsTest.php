@@ -69,9 +69,9 @@ class GlobalContentsConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
-			'global_content_template_id',
-			'column_width',
-			'column_indent',
+			'globalContentTemplateId',
+			'columnWidth',
+			'columnIndent',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('global_contents::global_content_template_id, global_contents::column_width, global_contents::column_indent', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -80,30 +80,30 @@ class GlobalContentsConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertEquals([
 			'identifier' => 'global_contents::identifier',
-			'global_content_template_id' => 'global_contents::global_content_template_id',
-			'parent_id' => 'global_contents::parent_id',
+			'globalContentTemplateId' => 'global_contents::global_content_template_id',
+			'parentId' => 'global_contents::parent_id',
 			'title' => 'global_contents::title',
-			'title_tag' => 'global_contents::title_tag',
+			'titleTag' => 'global_contents::title_tag',
 			'subtitle' => 'global_contents::subtitle',
-			'subtitle_tag' => 'global_contents::subtitle_tag',
+			'subtitleTag' => 'global_contents::subtitle_tag',
 			'text' => 'global_contents::text',
 			'link' => 'global_contents::link',
-			'column_width' => 'global_contents::column_width',
-			'column_indent' => 'global_contents::column_indent',
-			'column_last' => 'global_contents::column_last',
-			'column_rtl' => 'global_contents::column_rtl',
-			'css_class' => 'global_contents::css_class',
+			'columnWidth' => 'global_contents::column_width',
+			'columnIndent' => 'global_contents::column_indent',
+			'columnLast' => 'global_contents::column_last',
+			'columnRtl' => 'global_contents::column_rtl',
+			'cssClass' => 'global_contents::css_class',
 			'css' => 'global_contents::css',
 			'data' => 'global_contents::data',
-			'form_id' => 'global_contents::form_id',
-			'survey_id' => 'global_contents::survey_id',
-			'system_order' => 'global_contents::system_order',
+			'formId' => 'global_contents::form_id',
+			'surveyId' => 'global_contents::survey_id',
+			'systemOrder' => 'global_contents::system_order',
 			'active' => 'global_contents::active',
-			'created_by' => 'global_contents::created_by',
-			'created_on' => 'global_contents::created_on',
-			'changed_by' => 'global_contents::changed_by',
-			'changed_on' => 'global_contents::changed_on',
-			'attributes.free_text' => 'Freitext',
+			'createdBy' => 'global_contents::created_by',
+			'createdOn' => 'global_contents::created_on',
+			'changedBy' => 'global_contents::changed_by',
+			'changedOn' => 'global_contents::changed_on',
+			'attributes.freeText' => 'Freitext',
 			'attributes.teaser' => 'Teaser',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 

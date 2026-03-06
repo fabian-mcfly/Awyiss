@@ -48,9 +48,9 @@ class DatatablesListener implements EventListenerInterface {
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			if ($queuedJobsTable->isQueued('attributes::table_changes')) {
+			if ($queuedJobsTable->isQueued('Attributes::tableChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+				$entity->setError('_general', __d('Attributes', 'table_changes_in_progress'));
 			}
 		}
 	}
@@ -103,23 +103,23 @@ class DatatablesListener implements EventListenerInterface {
 		$menuEntries->deleteAll([
 			'OR' => [
 				'link LIKE' => Inflector::camelize($entity->identifier) . '::%',
-				'link' => 'Configuration::overview::scope:' . $entity->identifier,
+				'link' => 'Configuration::overview::scope:' . Inflector::camelize($entity->identifier),
 			],
 		]);
 
 		$configuration = $tableLocator->get('Configuration');
 		$configuration->deleteAll([
-			'scope' => $entity->identifier,
+			'scope' => Inflector::camelize($entity->identifier),
 		]);
 
 		$i18n = $tableLocator->get('I18n');
 		$i18n->deleteAll([
-			'model' => $entity->identifier,
+			'model' => Inflector::camelize($entity->identifier),
 		]);
 
 		$usergroupPermissions = $tableLocator->get('UsergroupPermissions');
 		$usergroupPermissions->deleteAll([
-			'scope' => $entity->identifier,
+			'scope' => Inflector::camelize($entity->identifier),
 		]);
 	}
 
@@ -146,12 +146,12 @@ class DatatablesListener implements EventListenerInterface {
 			$identityId = $attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$queuedJobsTable->createJob('Attributes/Delete', [
-				'identifier' => $entity->identifier,
+				'identifier' => Inflector::camelize($entity->identifier),
 				'identityId' => $identityId,
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'attributes::table_changes',
+				'reference' => 'Attributes::tableChanges',
 			]);
 		}
 
@@ -187,7 +187,7 @@ class DatatablesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'datatables::drop_table',
+			'reference' => 'Datatables::dropTable',
 		]);
 	}
 
@@ -207,18 +207,18 @@ class DatatablesListener implements EventListenerInterface {
 		$migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		$columns = [
-			'parent_id:integer?[11]:index',
-			'language_shortcode:char?[2]:index',
+			'parentId:integer?[11]:index',
+			'languageShortcode:char?[2]:index',
 			'title:string?[255]',
-			'system_order:integer[11](0)',
+			'systemOrder:integer[11](0)',
 			'active:tinyinteger[1](1):index',
 			'deleted:tinyinteger[1](0):index',
-			'created_by:integer?[11]',
-			'created_on:datetime?',
-			'changed_by:integer?[11]',
-			'changed_on:datetime?',
-			'deleted_by:integer?[11]',
-			'deleted_on:datetime?',
+			'createdBy:integer?[11]',
+			'createdOn:datetime?',
+			'changedBy:integer?[11]',
+			'changedOn:datetime?',
+			'deletedBy:integer?[11]',
+			'deletedOn:datetime?',
 		];
 
 		//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
@@ -247,7 +247,7 @@ class DatatablesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'datatables::table_changes',
+			'reference' => 'Datatables::tableChanges',
 		]);
 	}
 

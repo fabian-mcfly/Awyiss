@@ -202,7 +202,7 @@ export default class AuditHistory {
 			const inputName = row.dataset.field;
 
 			// Check if the input is a multi-media input
-			if (inputName.startsWith('media_assignments[') && inputName.endsWith('[]')) {
+			if (inputName.startsWith('mediaAssignments[') && inputName.endsWith('[]')) {
 				this.useMultiFile(inputName, row);
 			}
 			// Check if the input is a data input

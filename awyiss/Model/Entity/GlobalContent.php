@@ -67,24 +67,6 @@ class GlobalContent extends Entity {
 	 * @var array The column widths
 	 */
 	protected static array $columnWidths;
-	/**
-	 * @inheritdoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'global_content_template_id' => 'globalContentTemplateId',
-		'title_tag' => 'titleTag',
-		'subtitle_tag' => 'subtitleTag',
-		'css_class' => 'cssClass',
-		'column_width' => 'columnWidth',
-		'column_indent' => 'columnIndent',
-		'column_last' => 'columnLast',
-		'column_rtl' => 'columnRtl',
-		'form_id' => 'formId',
-		'survey_id' => 'surveyId',
-		'system_order' => 'systemOrder',
-		'global_content_template' => 'globalContentTemplate',
-	];
 
 
 	/**

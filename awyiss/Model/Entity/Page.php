@@ -60,29 +60,7 @@ use Cake\Utility\Text;
 class Page extends Entity {
 	use CustomerGroupAccessTrait;
 
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'language_shortcode' => 'languageShortcode',
-		'redirect_link' => 'redirectLink',
-		'meta_title' => 'metaTitle',
-		'meta_description' => 'metaDescription',
-		'robots_index' => 'robotsIndex',
-		'robots_follow' => 'robotsFollow',
-		'page_role_id' => 'pageRoleId',
-		'page_template_id' => 'pageTemplateId',
-		'duplicate_of' => 'duplicateOf',
-		'form_id' => 'formId',
-		'survey_id' => 'surveyId',
-		'system_order' => 'systemOrder',
-		'parents_active' => 'parentsActive',
-		'duplicated_by' => 'duplicatedBy',
-		'page_role' => 'pageRole',
-		'page_template' => 'pageTemplate',
-		'add_menu_entry' => 'addMenuEntry',
-	];
+
 	/**
 	 * @var bool
 	 */

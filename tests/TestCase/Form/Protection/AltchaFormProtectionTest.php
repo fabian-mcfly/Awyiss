@@ -8,6 +8,7 @@ use AltchaOrg\Altcha\Altcha;
 use AltchaOrg\Altcha\Hasher\Algorithm;
 use Awyiss\Form\FormOptions;
 use Awyiss\Form\Protection\AltchaFormProtection;
+use Awyiss\Form\Protection\FormProtectionInterface;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\FormEntry;
@@ -107,16 +108,16 @@ class AltchaFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$result = $this->altchaFormProtection->getHtml('before');
+		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertNull($result);
 
-		$result = $this->altchaFormProtection->getHtml('before_submit');
+		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertStringContainsString('<altcha-widget', $result);
 		$this->assertStringContainsString('auto="onfocus" delay="0" hidefooter="1" name="_altcha"', $result);
 		$this->assertStringContainsString('?expires=', $result);
 		$this->assertStringContainsString('</altcha-widget>', $result);
 
-		$result = $this->altchaFormProtection->getHtml('after');
+		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_AFTER);
 		$this->assertNull($result);
 	}
 
@@ -139,7 +140,7 @@ class AltchaFormProtectionTest extends TestCase {
 
 		$this->assertEmpty($assetHelper->getAssets()['js']['nonCritical']);
 
-		$result = $this->altchaFormProtection->getHtml('before');
+		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertNull($result);
 
 		$this->assertNotEmpty($assetHelper->getAssets()['js']['nonCritical']);
@@ -177,7 +178,7 @@ class AltchaFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$result = $this->altchaFormProtection->getHtml('before_submit');
+		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 
 		$this->assertStringContainsString('&quot;maxNumber&quot;:123456', $result);
 	}
@@ -203,7 +204,7 @@ class AltchaFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$altcha = $this->altchaFormProtection->getHtml('before_submit');
+		$altcha = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 
 		$dom = HTMLDocument::createFromString($altcha, LIBXML_NOERROR, 'UTF-8');
 		$widget = $dom->querySelector('altcha-widget');
@@ -259,7 +260,7 @@ class AltchaFormProtectionTest extends TestCase {
 		$result = $this->altchaFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'altcha_error'), $result);
+		$this->assertEquals(__d('Form', 'altcha_error'), $result);
 	}
 
 
@@ -284,7 +285,7 @@ class AltchaFormProtectionTest extends TestCase {
 		$result = $this->altchaFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'altcha_error'), $result);
+		$this->assertEquals(__d('Form', 'altcha_error'), $result);
 	}
 
 
@@ -320,7 +321,7 @@ class AltchaFormProtectionTest extends TestCase {
 		);
 
 		$formEntry = new FormEntry([
-			'form_id' => $this->form->id,
+			'formId' => $this->form->id,
 			'data' => json_encode(['test' => 'data']),
 		]);
 

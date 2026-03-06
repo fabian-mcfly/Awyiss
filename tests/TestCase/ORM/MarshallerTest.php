@@ -4,7 +4,6 @@
 namespace Awyiss\Test\TestCase\ORM;
 
 
-use Awyiss\Model\Entity\PageRole;
 use Awyiss\ORM\Marshaller;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Event\EventInterface;
@@ -64,7 +63,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->exactly(2))->method('set');
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -105,7 +104,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->exactly(2))->method('set');
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -146,7 +145,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->exactly(2))->method('set');
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -174,7 +173,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('set')->with('name', 'Test Name', ['setter' => false]);
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -204,7 +203,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('patch')->with(['name' => 'Test Name'], ['setter' => false]);
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -231,7 +230,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('set')->with('name', 'Test Name', ['setter' => true]);
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -261,7 +260,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('patch')->with(['name' => 'Test Name'], ['setter' => true]);
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -289,7 +288,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('patch');
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -318,7 +317,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('patch')->with($this->isType('array'));
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -359,7 +358,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('patch')->with($this->isType('array'));
 
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
+		$this->mockTable->expects($this->never())->method('getEntityClass');
 
 		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
 
@@ -381,55 +380,5 @@ class MarshallerTest extends TestCase {
 		$result = $this->marshaller->merge($this->mockEntity, $data, $options);
 
 		$this->assertSame($this->mockEntity, $result);
-	}
-
-
-	/**
-	 * Test _prepareDataAndOptions unmaps field names when entity has unmapField method
-	 *
-	 * @return void
-	 * @see \Awyiss\ORM\Marshaller::_prepareDataAndOptions()
-	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
-	 */
-	public function testMergeUnmapsFieldNames(): void {
-		$data = ['includeInLinklist' => true, 'systemOrder' => 5, 'title' => 'Test Title'];
-		$options = ['events' => false];
-
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(PageRole::class);
-
-		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
-
-		$result = $this->callProtectedMethod($this->marshaller, '_prepareDataAndOptions', $data, $options);
-
-		$this->assertEquals([
-			['title' => 'Test Title', 'include_in_linklist' => true, 'system_order' => 5],
-			['events' => false, 'validate' => true, 'fields' => null, 'strictFields' => false],
-		], $result);
-	}
-
-
-	/**
-	 * Test _prepareDataAndOptions with entity that doesn't have unmapField method
-	 *
-	 * @return void
-	 * @see \Awyiss\ORM\Marshaller::_prepareDataAndOptions()
-	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
-	 */
-	public function testPrepareDataAndOptionsWithoutUnmapFieldMethod(): void {
-		$data = ['includeInLinklist' => true, 'systemOrder' => 5, 'title' => 'Test Title'];
-		$options = ['events' => false];
-
-		$this->mockTable->expects($this->once())->method('getEntityClass')->willReturn(Entity::class);
-
-		$this->mockTable->expects($this->once())->method('getAlias')->willReturn('TestTable');
-
-		$result = $this->callProtectedMethod($this->marshaller, '_prepareDataAndOptions', $data, $options);
-
-		$this->assertEquals([
-			['title' => 'Test Title', 'includeInLinklist' => true, 'systemOrder' => 5],
-			['events' => false, 'validate' => true, 'fields' => null, 'strictFields' => false],
-		], $result);
 	}
 }

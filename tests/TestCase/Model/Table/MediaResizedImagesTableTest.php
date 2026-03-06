@@ -66,6 +66,7 @@ class MediaResizedImagesTableTest extends TestCase {
 		// Test Media association (BelongsTo)
 		$this->assertTrue($this->mediaResizedImagesTable->hasAssociation('Media'));
 		$mediaAssociation = $this->mediaResizedImagesTable->getAssociation('Media');
+		$this->assertSame('mediaId', $mediaAssociation->getForeignKey());
 		$this->assertInstanceOf(BelongsTo::class, $mediaAssociation);
 		$this->assertFalse($mediaAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaAssociation->getDependent());
@@ -188,7 +189,7 @@ class MediaResizedImagesTableTest extends TestCase {
 		$result = $this->mediaResizedImagesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_resized_images', $result->getI18nDomain());
+		$this->assertSame('MediaResizedImages', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('mediaId'));

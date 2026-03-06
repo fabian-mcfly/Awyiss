@@ -120,9 +120,9 @@ class SystemOrderHelper extends Helper {
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->Form->control(
-			$fieldName ?? 'system_order',
+			$fieldName ?? 'systemOrder',
 			$attributes + [
-				'disabled' => $this->_View->getRequest()->getData('save_as_copy') ? false : [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
+				'disabled' => $this->_View->getRequest()->getData('saveAsCopy') ? false : [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
 				'val' => $entity->systemOrder,
 			]
 		);
@@ -144,7 +144,7 @@ class SystemOrderHelper extends Helper {
 
 		//If the option `first`-option should be part of the options, add it
 		if ($attributes['includeFirst']) {
-			$firstOrder = $this->_View->getRequest()->getData('save_as_copy') ? 0 : 1;
+			$firstOrder = $this->_View->getRequest()->getData('saveAsCopy') ? 0 : 1;
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$systemOrderOptions[ $firstOrder ] = $this->formatFirstTitle(
 				$attributes + [
@@ -181,7 +181,7 @@ class SystemOrderHelper extends Helper {
 				$reachedOriginalSystemOrder = true;
 			}
 
-			//The value should be the `system_order`-property of the option
+			//The value should be the `systemOrder`-property of the option
 			$systemOrder = $option['systemOrder'];
 			if (!$reachedOriginalSystemOrder) {
 				/**
@@ -208,12 +208,12 @@ class SystemOrderHelper extends Helper {
 			 *
 			 * @see SystemOrderBehavior::beforeMarshal
 			 */
-			if ($isOriginalSystemOrder && !$this->_View->getRequest()->getData('save_as_copy')) {
+			if ($isOriginalSystemOrder && !$this->_View->getRequest()->getData('saveAsCopy')) {
 				$systemOrder = SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER;
 			}
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			//Append a new option with the system_order as its value.
+			//Append a new option with the systemOrder as its value.
 			$systemOrderOptions[ $systemOrder ] = $this->formatTitle(
 				$option,
 				$attributes + [

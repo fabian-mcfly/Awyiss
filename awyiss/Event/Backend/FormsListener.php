@@ -53,7 +53,7 @@ class FormsListener implements EventListenerInterface {
 		$elements = $formsTable->FormElements->find('threaded', nestingKey: 'childFormElements')
 			->find('mediaAssignments', formatResult: false)
 			->find('translations')
-			->where(['form_id' => $originalEntity->id])
+			->where(['formId' => $originalEntity->id])
 			->all();
 
 		$listedElements = $elements->listNested('desc', 'childFormElements');

@@ -91,7 +91,7 @@ export default class Search {
 
 			const hiddenInput = document.createElement('button');
 			hiddenInput.type = 'submit';
-			hiddenInput.name = 'submit_type';
+			hiddenInput.name = 'submitType';
 			hiddenInput.value = 'reset';
 
 			const form = target.querySelector('form');
@@ -198,7 +198,7 @@ export class SearchFilter {
 
 		if (removeButton) {
 			const row = target.closest('.Column');
-			const select = this.element.querySelector('select[name="filter_add_column"]');
+			const select = this.element.querySelector('select[name="filterAddColumn"]');
 			const column = row.dataset.column;
 
 			row.classList.remove('Active');
@@ -242,14 +242,14 @@ export class SearchFilter {
 			const value = target.value;
 			const valueInput = target.closest('.Column').querySelector('input[name^="filter["][name$="[value]"]');
 
-			const multipleValueOperators = ['in', 'not_in', 'between', 'not_between'];
+			const multipleValueOperators = ['in', 'notIn', 'between', 'notBetween'];
 			valueInput.setAttribute('data-allow-multiple-values', multipleValueOperators.includes(value) ? 'true' : 'false');
 
 			if (valueInput.closest('.InputType-Datetime')) {
 				const datePicker = valueInput.datepicker;
 				datePicker.update({
-					multipleDates: multipleValueOperators.includes(value) && (value === 'in' || value === 'not_in'),
-					range: multipleValueOperators.includes(value) && value !== 'in' && value !== 'not_in',
+					multipleDates: multipleValueOperators.includes(value) && (value === 'in' || value === 'notIn'),
+					range: multipleValueOperators.includes(value) && value !== 'in' && value !== 'notIn',
 				}, true);
 			}
 
@@ -330,7 +330,7 @@ export class SearchFilter {
 				container: this.element,
 				keyboardNav: true,
 				locale: airDatepickerLocale,
-				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'not_in'),
+				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'notIn'),
 				multipleDatesSeparator: ', ',
 				onlyTimepicker: timePicker,
 				position: function ({$datepicker, $target, $pointer}) {
@@ -350,7 +350,7 @@ export class SearchFilter {
 					this.datepicker._setPositionClasses('left bottom');
 					this.datepicker.setPosition('left bottom');
 				}.bind(valueInput),
-				range: valueInput.dataset.allowMultipleValues === 'true' && operator !== 'in' && operator !== 'not_in',
+				range: valueInput.dataset.allowMultipleValues === 'true' && operator !== 'in' && operator !== 'notIn',
 				timepicker: dateTimePicker || timePicker,
 				onSelect: function (data) {
 					const element = data.datepicker.$el;

@@ -1,7 +1,7 @@
 {
 	"appendTo": {
 		"media": {
-			"dummy_entry1": {
+			"dummyEntry1": {
 				"title": "Dummy Entry 1",
 				"link": "https://example.com/dummy",
 				"access": null,
@@ -11,7 +11,7 @@
 	},
 	"insertAfter": {
 		"media": {
-			"dummy_entry2": {
+			"dummyEntry2": {
 				"title": "Dummy Entry 2",
 				"link": "https://example.com/dummy",
 				"access": null,

@@ -55,7 +55,7 @@ class DesignsController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
-			'is_preview' => false,
+			'isPreview' => false,
 		];
 	}
 
@@ -83,7 +83,7 @@ class DesignsController extends Controller {
 
 		$preview = null;
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			if ($this->request->getData('cancel_preview') !== null) {
+			if ($this->request->getData('cancelPreview') !== null) {
 				$this->cancelPreview();
 			}
 			elseif ($this->request->getData('preview') !== null) {
@@ -193,7 +193,7 @@ class DesignsController extends Controller {
 		$design->isPreview = false;
 
 		$this->Designs->patchEntity($design, $requestData, [
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		if (!$design->title) {
@@ -209,8 +209,8 @@ class DesignsController extends Controller {
 
 		$design->css = $this->generateCss($requestData);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Designs->save($design, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -272,12 +272,12 @@ class DesignsController extends Controller {
 		$data = ['settings' => []];
 
 		// Create a map of the internal variables and their underscored names
-		$underscoredNames = array_map(fn ($key) => Inflector::underscore($key), array_keys($internalVariables));
-		$variableMap = array_combine($underscoredNames, array_keys($internalVariables));
+		$keys = array_map(fn ($key) => Inflector::variable($key), array_keys($internalVariables));
+		$variableMap = array_combine($keys, array_keys($internalVariables));
 		$internalVariables = new Collection($internalVariables);
 
 		foreach ($requestData as $key => $value) {
-			if (in_array($key, ['custom', 'font_variants', 'save_as_copy', 'reload_form', 'preview', 'save', 'use'])) {
+			if (in_array($key, ['custom', 'fontVariants', 'saveAsCopy', 'reloadForm', 'preview', 'save', 'use'])) {
 				continue;
 			}
 
@@ -291,14 +291,14 @@ class DesignsController extends Controller {
 			}
 
 			$variableOptions = $internalVariables->filter(function ($variableOptions, $variableKey) use ($key) {
-				return Inflector::underscore($variableKey) === $key;
+				return Inflector::variable($variableKey) === $key;
 			})->first();
 
 			if ($variableOptions && $variableOptions['type'] === ScssVariableType::FontName) {
 				if (isset($webfonts[ $value ])) {
 					$value = [
 						'font' => $webfonts[ $value ],
-						'variants' => $requestData['font_variants'][ $key ] ?? [],
+						'variants' => $requestData['fontVariants'][ $key ] ?? [],
 					];
 				}
 				else {
@@ -306,7 +306,7 @@ class DesignsController extends Controller {
 						'font' => [
 							'name' => $value,
 						],
-						'variants' => $requestData['font_variants'][ $key ] ?? [],
+						'variants' => $requestData['fontVariants'][ $key ] ?? [],
 					];
 				}
 			}
@@ -322,8 +322,8 @@ class DesignsController extends Controller {
 
 			$key = $variableMap[ $key ] ?? $key;
 
-			if (str_ends_with($key, '_unit')) {
-				$key = substr($key, 0, -5);
+			if (str_ends_with($key, 'Unit')) {
+				$key = substr($key, 0, -4);
 				$key = $variableMap[ $key ] ?? $key;
 				$key .= 'Unit';
 			}

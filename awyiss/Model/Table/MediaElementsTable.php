@@ -77,18 +77,24 @@ class MediaElementsTable extends Table {
 		$this->hasMany('MediaAssignments', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaElementId',
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('MediaElementAssignments', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaElementId',
+			'propertyName' => 'mediaElementAssignments',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('MediaElementSelectors', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaElementId',
+			'propertyName' => 'mediaElementSelectors',
 			'saveStrategy' => 'replace',
 		]);
 	}
@@ -173,7 +179,7 @@ class MediaElementsTable extends Table {
 			'identifierUnique',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 			]
 		);
 
@@ -182,7 +188,7 @@ class MediaElementsTable extends Table {
 			'noLinkedMediaAssignments',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_assignments'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_media_assignments'),
 			]
 		);
 
@@ -193,7 +199,7 @@ class MediaElementsTable extends Table {
 			'notDefaultElementDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_default_element_deletion'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_default_element_deletion'),
 			]
 		);
 
@@ -219,18 +225,19 @@ class MediaElementsTable extends Table {
 	 * @return array
 	 * @throws \ReflectionException
 	 */
-	public function getAssignableModels(bool $includeEntities = false, bool $allowGrouping = true): array {
+	public function getAssignableModels(bool $includeEntities = false, bool $allowGrouping = true, bool $useCache = true): array {
 		$withEntitiesKey = $includeEntities ? 'withEntities' : 'withoutEntities';
 		$allowGroupingKey = $allowGrouping ? 'allowGrouping' : 'noGrouping';
 
-		if (isset($this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ])) {
+		if ($useCache && isset($this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ])) {
 			return $this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ];
 		}
 
 		$availableModels = [];
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$datatables = FactoryLocator::get('Table')->get('Datatables')->findAllAndCache()->indexBy(fn($datatable) => $datatable->identifier)->toArray();
+		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$datatables = $useCache ? $datatablesTable->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all() : $datatablesTable->findAllAndCache();
+		$datatables = $datatables->indexBy('identifier')->toArray();
 
 		/**
 		 * @var \Cake\Collection\Collection $pageRoles
@@ -267,7 +274,7 @@ class MediaElementsTable extends Table {
 				$table = FactoryLocator::get('Table')->get(Inflector::camelize($tableName));
 				$entities = $table->find()->all()->indexBy('id');
 
-				if ($allowGrouping && $tableName === 'page_templates') {
+				if ($allowGrouping && $tableName === PageTemplatesTable::TABLE) {
 					$entities = $entities->groupBy(function (EntityInterface $entity) use ($pageRoles): string {
 						/** @var \Awyiss\Model\Entity\PageTemplate $entity */
 						return $pageRoles[ $entity->pageRoleId->value ];
@@ -287,12 +294,24 @@ class MediaElementsTable extends Table {
 				}
 			}
 
-			$availableModels[ $tableName ] = [
+			$camelizedTableName = Inflector::camelize($tableName);
+			$availableModels[ $camelizedTableName ] = [
 				'entityLevel' => $entityLevel,
 				'modelLevel' => (bool)($attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
-				'label' => isset($datatables[ $tableName ]) ? $datatables[ $tableName ]->label : __d($tableName, 'headline_overview'),
+				'label' => isset($datatables[ $camelizedTableName ]) ? $datatables[ $camelizedTableName ]->label : __d($tableName, 'headline_overview'),
 				'entities' => $entities,
 			];
+		}
+
+		foreach ($datatables as $datatable) {
+			if (!isset($availableModels[ $datatable->identifier ])) {
+				$availableModels[ $datatable->identifier ] = [
+					'entityLevel' => false,
+					'modelLevel' => true,
+					'label' => $datatable->label,
+					'entities' => false,
+				];
+			}
 		}
 
 		uasort($availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));

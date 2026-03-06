@@ -252,8 +252,8 @@ class AuthorizationHelper extends Helper {
 		$viewData = [
 			'permission' => $permission,
 			'entity' => $entity,
-			'scope' => Inflector::underscore($permission->getPermissionOptionCollection()->getScope()),
-			'identifier' => Inflector::underscore($permission->getConfig('identifier')),
+			'scope' => $permission->getPermissionOptionCollection()->getScope(),
+			'identifier' => $permission->getConfig('identifier'),
 			'AuthorizationHelper' => $this,
 		];
 

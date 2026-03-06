@@ -101,7 +101,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->assertTrue($config['enabled']);
 		$this->assertSame('parentId', $config['field']);
 		$this->assertSame('forCurrentLanguage', $config['finder']);
-		$this->assertSame('parent_id', $config['foreignKey']);
+		$this->assertSame('parentId', $config['foreignKey']);
 		$this->assertTrue($config['includeParentCategories']);
 		$this->assertSame('category', $config['identifier']);
 		$this->assertSame([], $config['queryConditions']);
@@ -398,7 +398,7 @@ class CategoriesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(News::class, $entity);
 			$this->assertSame(36, $entity->parentId);
 		}
-		$this->assertStringContainsString('News.parent_id = :c15', $query->sql());
+		$this->assertStringContainsString('News.parentId = :c6', $query->sql());
 
 		$this->behavior->setConfig('allowUnassigned', true);
 
@@ -413,7 +413,7 @@ class CategoriesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(News::class, $entity);
 			$this->assertSame(19, $entity->parentId);
 		}
-		$this->assertStringContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN (:c15,:c16,:c17,:c18)', $query->sql());
+		$this->assertStringContainsString('((News.parentId) IS NULL OR News.parentId NOT IN (:c6,:c7,:c8,:c9)', $query->sql());
 
 		$this->behavior->setConfig('allowAggregation', true);
 
@@ -423,8 +423,8 @@ class CategoriesBehaviorTest extends TestCase {
 		$result = $query->all();
 
 		$this->assertCount(6, $result);
-		$this->assertStringNotContainsString('News.parent_id = :c15', $query->sql());
-		$this->assertStringNotContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN', $query->sql());
+		$this->assertStringNotContainsString('News.parentId = :c6', $query->sql());
+		$this->assertStringNotContainsString('((News.parentId) IS NULL OR News.parentId NOT IN', $query->sql());
 	}
 
 
@@ -480,7 +480,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->assertSame(34, $this->behavior->getSelectedCategory());
 
 		$result = $this->behavior->getQueryConditions();
-		$this->assertSame(['parent_id' => 34], $result);
+		$this->assertSame(['parentId' => 34], $result);
 	}
 
 
@@ -494,7 +494,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->behavior->setConfig('allowUnassigned', false);
 
 		$result = $this->behavior->getQueryConditions();
-		$this->assertSame(['parent_id' => 36], $result);
+		$this->assertSame(['parentId' => 36], $result);
 
 		$this->behavior->setConfig('allowUnassigned', true);
 
@@ -502,8 +502,8 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->assertIsArray($result);
 		$this->assertSame([
 			'OR' => [
-				'parent_id IS' => null,
-				'parent_id NOT IN' => [36, 34, 35, 59],
+				'parentId IS' => null,
+				'parentId NOT IN' => [36, 34, 35, 59],
 			],
 		], $result);
 
@@ -522,7 +522,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->behavior->setConfig('selectedCategory', 'dummy');
 
 		$result = $this->behavior->getQueryConditions('dummy');
-		$this->assertSame(['parent_id' => 'dummy'], $result);
+		$this->assertSame(['parentId' => 'dummy'], $result);
 
 		$this->behavior->setConfig('aggregationKey', 'dummy');
 
@@ -539,15 +539,15 @@ class CategoriesBehaviorTest extends TestCase {
 		$this->behavior->setConfig('selectedCategory', 'dummy');
 
 		$result = $this->behavior->getQueryConditions('dummy');
-		$this->assertSame(['parent_id' => 'dummy'], $result);
+		$this->assertSame(['parentId' => 'dummy'], $result);
 
 		$this->behavior->setConfig('unassignedKey', 'dummy');
 
 		$result = $this->behavior->getQueryConditions('dummy');
 		$this->assertSame([
 			'OR' => [
-				'parent_id IS' => null,
-				'parent_id NOT IN' => [36, 34, 35, 59],
+				'parentId IS' => null,
+				'parentId NOT IN' => [36, 34, 35, 59],
 			],
 		], $result);
 	}
@@ -582,7 +582,7 @@ class CategoriesBehaviorTest extends TestCase {
 
 		$result = $behavior->getQueryConditions('unassigned');
 
-		$this->assertSame(['page_id IS' => null], $result);
+		$this->assertSame(['pageId IS' => null], $result);
 	}
 
 
@@ -995,11 +995,11 @@ class CategoriesBehaviorTest extends TestCase {
 	public function testVerifySelectionWithStringConversion(): void {
 		$this->behavior->setConfig('useDatasource', false);
 		$this->behavior->setConfig('categories', [
-			'tech_category' => 'Technology',
+			'techCategory' => 'Technology',
 		]);
 
 		$result = $this->behavior->verifySelection('TechCategory');
-		$this->assertSame('tech_category', $result);
+		$this->assertSame('techCategory', $result);
 	}
 
 
@@ -1026,14 +1026,14 @@ class CategoriesBehaviorTest extends TestCase {
 	 */
 	public function testVerifySelectionUnassignedKey(): void {
 		$this->behavior->setConfig('useDatasource', false);
-		$this->behavior->setConfig('unassignedKey', 'no_category');
+		$this->behavior->setConfig('unassignedKey', 'noCategory');
 		$this->behavior->setConfig('categories', [
 			'tech' => 'Technology',
 			'finance' => 'Finance',
 		]);
 
-		$result = $this->behavior->verifySelection('no_category');
-		$this->assertSame('no_category', $result);
+		$result = $this->behavior->verifySelection('noCategory');
+		$this->assertSame('noCategory', $result);
 	}
 
 

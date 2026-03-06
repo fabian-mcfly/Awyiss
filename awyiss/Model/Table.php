@@ -12,6 +12,18 @@ use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Table\AttributesTable;
+use Awyiss\Model\Table\AuditTable;
+use Awyiss\Model\Table\ContentsTable;
+use Awyiss\Model\Table\DesignsTable;
+use Awyiss\Model\Table\GlobalContentsTable;
+use Awyiss\Model\Table\I18nTable;
+use Awyiss\Model\Table\LocksTable;
+use Awyiss\Model\Table\MediaTable;
+use Awyiss\Model\Table\MenuEntriesTable;
+use Awyiss\Model\Table\MenusTable;
+use Awyiss\Model\Table\PagesTable;
+use Awyiss\Model\Table\PublicationDataTable;
 use Awyiss\Model\Trait\BehaviorProxy\AttributesBehaviorProxyTrait;
 use Awyiss\Model\Trait\BehaviorProxy\AuditBehaviorProxyTrait;
 use Awyiss\Model\Trait\BehaviorProxy\CategoriesBehaviorProxyTrait;
@@ -99,11 +111,11 @@ class Table extends BaseTable {
 	 * @var array<string>
 	 */
 	public static array $tablesWithCustomerGroupAccess = [
-		'contents',
-		'global_contents',
-		'menu_entries',
-		'menus',
-		'pages',
+		ContentsTable::TABLE,
+		GlobalContentsTable::TABLE,
+		MenuEntriesTable::TABLE,
+		MenusTable::TABLE,
+		PagesTable::TABLE,
 	];
 
 
@@ -279,7 +291,7 @@ class Table extends BaseTable {
 
 			$this->addBehavior('EventTrigger', $this->eventTrigger);
 
-			if ($schema->getColumn('system_order')) {
+			if ($schema->getColumn('systemOrder')) {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
@@ -292,13 +304,13 @@ class Table extends BaseTable {
 				!str_starts_with($this->getTable(), 'customer_group_') &&
 				!str_starts_with($this->getTable(), 'customer_groups_') &&
 				!in_array($this->getTable(), [
-					'attributes',
-					'audit',
-					'designs',
-					'i18n',
-					'locks',
-					'media',
-					'publication_data',
+					AttributesTable::TABLE,
+					AuditTable::TABLE,
+					DesignsTable::TABLE,
+					I18nTable::TABLE,
+					LocksTable::TABLE,
+					MediaTable::TABLE,
+					PublicationDataTable::TABLE,
 				])
 			) {
 				$this->addBehavior('MediaAssignment');
@@ -324,6 +336,19 @@ class Table extends BaseTable {
 		}
 
 		$this->initializeSchema($schema);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function findThreaded(
+		SelectQuery $query,
+		Closure|array|string|null $keyField = null,
+		Closure|array|string $parentField = 'parentId',
+		string $nestingKey = 'children',
+	): SelectQuery {
+		return parent::findThreaded($query, $keyField, $parentField, $nestingKey);
 	}
 
 
@@ -400,15 +425,15 @@ class Table extends BaseTable {
 		if ($includeGlobal && $languageShortcode) {
 			return $query->where([
 				'OR' => [
-					'language_shortcode' => $languageShortcode,
-					'language_shortcode IS' => null,
+					'languageShortcode' => $languageShortcode,
+					'languageShortcode IS' => null,
 				],
 			]);
 		}
 
 
 		return $query->where([
-			'language_shortcode' . ($languageShortcode ? '' : ' IS') => $languageShortcode,
+			'languageShortcode' . ($languageShortcode ? '' : ' IS') => $languageShortcode,
 		]);
 	}
 
@@ -639,13 +664,8 @@ class Table extends BaseTable {
 	 * @return bool
 	 */
 	public function fieldIsAttribute(string $field): bool {
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $this->getEntityClass();
-
-		$column = $entityClass::unmapField($field);
-
 		//If the column isn't part of the table, just assume it's part of the attributes table.
-		if (!$this->getSchema()->getColumn($column) && $this->hasAttributes()) {
+		if (!$this->getSchema()->getColumn($field) && $this->hasAttributes()) {
 			return true;
 		}
 
@@ -668,7 +688,7 @@ class Table extends BaseTable {
 		}
 
 
-		return $this->i18nDomain = Inflector::underscore($alias);
+		return $this->i18nDomain = Inflector::camelize($alias);
 	}
 
 
@@ -680,7 +700,7 @@ class Table extends BaseTable {
 		if ($sourceTable) {
 			$options = ['isAttributesTable' => false] + $this->attributes + [
 				'sourceTable' => $sourceTable,
-				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
+				'foreignKey' => Inflector::variable(Inflector::singularize($this->getTable()) . '_id'),
 			];
 		}
 		else {
@@ -723,7 +743,7 @@ class Table extends BaseTable {
 		$fieldName = $categoriesOptions['field'] ?? $categoriesOptions['identifier'] ?? 'category';
 
 		//Disable the rule check for the NestBehavior if the category field is same as the parent foreign key
-		if (Inflector::underscore($fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
+		if (Inflector::underscore($fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parentId')) {
 			$this->nest['buildRules'] = false;
 		}
 
@@ -735,7 +755,7 @@ class Table extends BaseTable {
 		//Add field to the nested related columns
 		if (
 			!in_array($fieldName, $this->nest['relatedColumns'] ?? []) &&
-			Inflector::underscore($fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')
+			Inflector::underscore($fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parentId')
 		) {
 			$this->nest['relatedColumns'][] = $fieldName;
 		}
@@ -772,6 +792,7 @@ class Table extends BaseTable {
 				'allowEmptyTranslations' => false,
 				'defaultLocale' => '',
 				'locale' => $translateLanguage->shortcode ?? null,
+				'referenceName' => Inflector::camelize(static::TABLE),
 				'strategyClass' => EavStrategy::class,
 			]
 		);

@@ -83,18 +83,18 @@ class FormsListenerTest extends TestCase {
 
 		$form->id = 369;
 
-		$this->assertCount(19, $formElementsTable->find()->where(['form_id' => 1])->all());
-		$this->assertCount(0, $formElementsTable->find()->where(['form_id' => 369])->all());
+		$this->assertCount(19, $formElementsTable->find()->where(['formId' => 1])->all());
+		$this->assertCount(0, $formElementsTable->find()->where(['formId' => 369])->all());
 
 		$options = new ArrayObject(['_primary' => true]);
 		$event = new Event('Model.Forms.afterCopy', $formsTable);
 
 		$this->listener->afterCopy($event, $form, $options);
 
-		$this->assertCount(19, $formElementsTable->find()->where(['form_id' => 1])->all());
-		$this->assertCount(19, $formElementsTable->find()->where(['form_id' => 369])->all());
+		$this->assertCount(19, $formElementsTable->find()->where(['formId' => 1])->all());
+		$this->assertCount(19, $formElementsTable->find()->where(['formId' => 369])->all());
 
-		$formElementsTable->deleteAll(['form_id' => 369]);
+		$formElementsTable->deleteAll(['formId' => 369]);
 		$formsTable->deleteAll(['id' => 369]);
 	}
 
@@ -115,17 +115,17 @@ class FormsListenerTest extends TestCase {
 		$form = $formsTable->get(1);
 
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$this->assertCount(2, $mediaAssignmentsTable->find()->where(['scope' => 'form_elements'])->all());
+		$this->assertCount(2, $mediaAssignmentsTable->find()->where(['scope' => 'FormElements'])->all());
 
 		$form->identifier .= '-copy';
 		$form = $formsTable->save($form, ['asCopy' => true, 'audit' => ['skip' => true], 'systemOrder' => ['skip' => true]]);
 		$this->assertNotFalse($form);
 
-		$this->assertCount(3, $mediaAssignmentsTable->find()->where(['scope' => 'form_elements'])->all());
+		$this->assertCount(3, $mediaAssignmentsTable->find()->where(['scope' => 'FormElements'])->all());
 
 		$formsTable->deleteAll(['id' => $form->id]);
 		$mediaAssignmentsTable->deleteAll(['id >' => 37]);
-		$this->fetchTable('FormElements')->deleteAll(['form_id' => $form->id]);
+		$this->fetchTable('FormElements')->deleteAll(['formId' => $form->id]);
 	}
 
 
@@ -148,24 +148,24 @@ class FormsListenerTest extends TestCase {
 		$i18nTable = $this->fetchTable('i18n');
 		$i18n = $i18nTable->newDefaultEntity([
 			'locale' => 'it',
-			'model' => 'form_elements',
-			'foreign_key' => 4,
+			'model' => 'FormElements',
+			'foreignKey' => 4,
 			'field' => 'title',
 			'content' => 'Titolo in italiano',
 		]);
 		$this->assertNotFalse($i18nTable->save($i18n, ['audit' => ['skip' => true]]));
 
-		$this->assertCount(1, $i18nTable->find()->where(['model' => 'form_elements'])->all());
+		$this->assertCount(1, $i18nTable->find()->where(['model' => 'FormElements'])->all());
 
 		$form->identifier .= '-copy';
 		$form = $formsTable->save($form, ['asCopy' => true, 'audit' => ['skip' => true], 'systemOrder' => ['skip' => true]]);
 		$this->assertNotFalse($form);
 
-		$this->assertCount(2, $i18nTable->find()->where(['model' => 'form_elements'])->all());
+		$this->assertCount(2, $i18nTable->find()->where(['model' => 'FormElements'])->all());
 
 		$formsTable->deleteAll(['id' => $form->id]);
 		$i18nTable->deleteAll(['id >' => 3]);
-		$this->fetchTable('FormElements')->deleteAll(['form_id' => $form->id]);
+		$this->fetchTable('FormElements')->deleteAll(['formId' => $form->id]);
 	}
 
 

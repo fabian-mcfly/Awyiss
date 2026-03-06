@@ -53,7 +53,7 @@
 	{% block fieldsetAnswers %}
 		{% if
 			surveyQuestion.isNew() and
-			surveyQuestion.type.value in ['single_choice', 'multiple_choice'] and
+			surveyQuestion.type.value in ['singleChoice', 'multipleChoice'] and
 			AuthorizationHelper.scopeIsAccessible('SurveyAnswers', [], 'create')
 		%}
 			<fieldset class="Fieldset-Answers">
@@ -202,7 +202,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

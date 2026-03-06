@@ -30,15 +30,6 @@ class Design extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'in_use' => 'inUse',
-		'is_preview' => 'isPreview',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'identifier' => true,
 		'title' => true,

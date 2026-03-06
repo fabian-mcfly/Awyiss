@@ -67,19 +67,19 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('Surveys'));
 		$surveysAssociation = $this->surveySurveyQuestionsTable->getAssociation('Surveys');
 		$this->assertInstanceOf(BelongsTo::class, $surveysAssociation);
-		$this->assertSame('survey_id', $surveysAssociation->getForeignKey());
+		$this->assertSame('surveyId', $surveysAssociation->getForeignKey());
 		$this->assertSame('INNER', $surveysAssociation->getJoinType());
 
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('SurveyQuestions'));
 		$surveyQuestionsAssociation = $this->surveySurveyQuestionsTable->getAssociation('SurveyQuestions');
 		$this->assertInstanceOf(BelongsTo::class, $surveyQuestionsAssociation);
-		$this->assertSame('survey_question_id', $surveyQuestionsAssociation->getForeignKey());
+		$this->assertSame('surveyQuestionId', $surveyQuestionsAssociation->getForeignKey());
 		$this->assertSame('INNER', $surveyQuestionsAssociation->getJoinType());
 
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('SurveySurveyAnswers'));
 		$surveySurveyAnswersAssociation = $this->surveySurveyQuestionsTable->getAssociation('SurveySurveyAnswers');
 		$this->assertInstanceOf(HasMany::class, $surveySurveyAnswersAssociation);
-		$this->assertSame('survey_survey_question_id', $surveySurveyAnswersAssociation->getForeignKey());
+		$this->assertSame('surveySurveyQuestionId', $surveySurveyAnswersAssociation->getForeignKey());
 		$this->assertTrue($surveySurveyAnswersAssociation->getCascadeCallbacks());
 		$this->assertTrue($surveySurveyAnswersAssociation->getDependent());
 		$this->assertSame('replace', $surveySurveyAnswersAssociation->getSaveStrategy());
@@ -159,7 +159,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$result = $this->surveySurveyQuestionsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('survey_survey_questions', $result->getI18nDomain());
+		$this->assertSame('SurveySurveyQuestions', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -188,7 +188,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'identifier' => 'test_survey_question',
+			'identifier' => 'testSurveyQuestion',
 			'surveyId' => 1,
 			'surveyQuestionId' => 1,
 			'title' => 'Test Survey Question',
@@ -316,7 +316,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationEmptyRequiredFields(): void {
 		$data = [
-			'identifier' => 'test_question',
+			'identifier' => 'testQuestion',
 			'surveyId' => '', // Empty required field
 			'surveyQuestionId' => '', // Empty required field
 			'title' => '', // Empty required field
@@ -338,7 +338,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationBlankFields(): void {
 		$data = [
-			'identifier' => 'test_question',
+			'identifier' => 'testQuestion',
 			'surveyId' => 1,
 			'surveyQuestionId' => 1,
 			'title' => '   ', // Only whitespace
@@ -369,7 +369,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationOptionalFields(): void {
 		$data = [
-			'identifier' => 'test_question',
+			'identifier' => 'testQuestion',
 			'surveyId' => 1,
 			'surveyQuestionId' => 1,
 			'title' => 'Test Question',
@@ -539,7 +539,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 			'surveyId' => 1,
 			'surveyQuestionId' => 1,
 			'title' => 'Test Question',
-			'nextAction' => 'show_form', // Patching entity will convert to enum
+			'nextAction' => NextAction::ShowForm, // Patching entity will convert to enum
 		];
 
 		$entity = $this->surveySurveyQuestionsTable->newDefaultEntity();
@@ -651,7 +651,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'identifier' => 'custom_question',
+			'identifier' => 'customQuestion',
 			'surveyId' => 2,
 			'surveyQuestionId' => 3,
 			'title' => 'Custom Question Title',
@@ -671,7 +671,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$this->assertInstanceOf(SurveySurveyQuestion::class, $entity);
 		$this->assertTrue($entity->isNew());
 
-		$this->assertSame('custom_question', $entity->identifier);
+		$this->assertSame('customQuestion', $entity->identifier);
 		$this->assertSame(2, $entity->surveyId);
 		$this->assertSame(3, $entity->surveyQuestionId);
 		$this->assertSame('Custom Question Title', $entity->title);
@@ -694,8 +694,8 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	public function testInitializeSchemaNextActionColumn(): void {
 		$schema = $this->surveySurveyQuestionsTable->getSchema();
 
-		// Test that next_action column is configured as an enum type
-		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('next_action'));
+		// Test that nextAction column is configured as an enum type
+		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('nextAction'));
 	}
 
 

@@ -22,7 +22,7 @@ class AbstractPermissionOptionTest extends TestCase {
 	 */
 	public function testConstructorInitializesCorrectly(): void {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
-		$config = ['identifier' => 'test_identifier'];
+		$config = ['identifier' => 'testIdentifier'];
 
 		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
 		->setConstructorArgs([$config, $permissionOptionCollection])
@@ -30,7 +30,7 @@ class AbstractPermissionOptionTest extends TestCase {
 		->getMock();
 
 		$this->assertSame($permissionOptionCollection, $abstractPermissionOption->getPermissionOptionCollection());
-		$this->assertSame('test_identifier', $abstractPermissionOption->getConfig('identifier'));
+		$this->assertSame('testIdentifier', $abstractPermissionOption->getConfig('identifier'));
 	}
 
 
@@ -39,7 +39,7 @@ class AbstractPermissionOptionTest extends TestCase {
 	 */
 	public function testGetTypeReturnsCorrectType(): void {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
-		$config = ['identifier' => 'test_identifier'];
+		$config = ['identifier' => 'testIdentifier'];
 
 		$abstractPermissionOption = new class ($config, $permissionOptionCollection) extends AbstractPermissionOption {
 			/**
@@ -75,7 +75,7 @@ class AbstractPermissionOptionTest extends TestCase {
 	 */
 	public function testGetOptionsReturnsOptions(): void {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
-		$config = ['identifier' => 'test_identifier'];
+		$config = ['identifier' => 'testIdentifier'];
 
 		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
 		->setConstructorArgs([$config, $permissionOptionCollection])
@@ -92,7 +92,7 @@ class AbstractPermissionOptionTest extends TestCase {
 	 */
 	public function testSetOptionsThrowsException(): void {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
-		$config = ['identifier' => 'test_identifier'];
+		$config = ['identifier' => 'testIdentifier'];
 
 		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
 		->setConstructorArgs([$config, $permissionOptionCollection])
@@ -100,6 +100,6 @@ class AbstractPermissionOptionTest extends TestCase {
 		->getMock();
 
 		$this->expectException(RuntimeException::class);
-		$abstractPermissionOption->setOptions(['test_option' => 'test_value']);
+		$abstractPermissionOption->setOptions(['testOption' => 'test_value']);
 	}
 }

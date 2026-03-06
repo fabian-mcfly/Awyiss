@@ -42,7 +42,7 @@ class FormElementsListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\FormElement $childFormElement */
 		foreach ($children as $childFormElement) {
-			if (in_array($childFormElement->type, ['free_text', 'submit'])) {
+			if (in_array($childFormElement->type, ['freeText', 'submit'])) {
 				continue;
 			}
 
@@ -54,7 +54,7 @@ class FormElementsListener implements EventListenerInterface {
 				$childFormElement->identifier = substr($childFormElement->identifier, 0, 36);
 			}
 
-			$childFormElement->identifier .= '_copy_' . Security::randomString(8);
+			$childFormElement->identifier .= 'Copy' . Security::randomString(8);
 		}
 	}
 }

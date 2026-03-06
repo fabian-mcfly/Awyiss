@@ -433,7 +433,7 @@ class ImageHandler {
 
 		// Remember the media ids
 		$inlineAssignments = array_filter($mediaAssignments, function (MediaAssignment $assignment): bool {
-			return $assignment->mediaElementSelectorIdentifier === 'inline_img_tag';
+			return $assignment->mediaElementSelectorIdentifier === 'inlineImgTag';
 		});
 		$mediaIdsFound = array_column($inlineAssignments, 'mediaId');
 		foreach ($media as $mediaItem) {
@@ -447,8 +447,8 @@ class ImageHandler {
 			$assignment = $mediaAssignmentsTable->newDefaultEntity();
 
 			$assignment->patch([
-				'mediaElementId' => 5, // 5 for `inline_img_tag`
-				'mediaElementSelectorIdentifier' => 'inline_img_tag',
+				'mediaElementId' => 5, // 5 for `inlineImgTag`
+				'mediaElementSelectorIdentifier' => 'inlineImgTag',
 				'mediaId' => $mediaItem->id,
 				'scope' => Inflector::underscore($entity->getSource()),
 			]);
@@ -549,6 +549,7 @@ class ImageHandler {
 	protected static function getDefaultFields(EntityInterface $entity): array {
 		/** @var \Awyiss\Model\Table $table */
 		$table = FactoryLocator::get('Table')->get($entity->getSource());
+
 
 		if (!$table->hasBehavior('Attributes') || !$table->hasAttributes()) {
 			return static::$defaultFields;

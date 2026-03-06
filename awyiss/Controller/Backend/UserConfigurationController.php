@@ -47,7 +47,7 @@ class UserConfigurationController extends Controller {
 		parent::initialize();
 
 		if (!$this->Categories->getSelectedCategory()) {
-			$this->Categories->setConfig('selectedCategory', 'system');
+			$this->Categories->setConfig('selectedCategory', 'System');
 		}
 	}
 
@@ -85,7 +85,7 @@ class UserConfigurationController extends Controller {
 			$this->Flash->error(__('scope_not_accessible'));
 
 
-			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
+			return $this->redirect(['action' => 'overview', 'scope' => 'System']);
 		}
 
 		$configOptions = ConfigOptionsProvider::loadConfigOptions($selectedScope);
@@ -173,7 +173,7 @@ class UserConfigurationController extends Controller {
 		])->ensure('create');
 
 		$configuration = $this->UserConfiguration->newDefaultEntity([
-			'scope' => $this->Categories->getSelectedCategory(),
+			'scope' => Inflector::camelize($this->Categories->getSelectedCategory()),
 		]);
 
 		if ($this->request->is('post')) {
@@ -220,7 +220,12 @@ class UserConfigurationController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$configuration = $this->UserConfiguration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
+		$configuration = $this->UserConfiguration->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->where(['userId' => $this->getIdentity()->getIdentifier()])
+			->first();
 		if (!$configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -325,7 +330,7 @@ class UserConfigurationController extends Controller {
 
 		$this->UserConfiguration->patchEntity($configuration, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		if (!$this->Authorization->withAdditionalData(['scope' => $configuration->scope])->isAccessible('read')) {
@@ -334,15 +339,15 @@ class UserConfigurationController extends Controller {
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->UserConfiguration->save($configuration, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $configuration->scope], true), 302);
 				}
 
@@ -365,7 +370,7 @@ class UserConfigurationController extends Controller {
 	 * @inheritDoc
 	 */
 	protected function initializeOverviewWhere(): void {
-		$this->overviewWhere['user_id'] = $this->getIdentity()->getIdentifier();
+		$this->overviewWhere['userId'] = $this->getIdentity()->getIdentifier();
 	}
 
 
@@ -379,7 +384,7 @@ class UserConfigurationController extends Controller {
 		$configTable = $this->fetchTable('Configuration');
 		$query = $configTable->find()->orderBy([
 			'identifier' => 'ASC',
-			'language_shortcode' => 'ASC',
+			'languageShortcode' => 'ASC',
 		]);
 
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
@@ -446,12 +451,12 @@ class UserConfigurationController extends Controller {
 			$i18nKeyA .= '_' . Inflector::underscore($a);
 			$i18nKeyB .= '_' . Inflector::underscore($b);
 
-			$titleA = __df($selectedScope, 'configuration', $i18nKeyA);
-			$titleB = __df($selectedScope, 'configuration', $i18nKeyB);
+			$titleA = __df($selectedScope, 'Configuration', $i18nKeyA);
+			$titleB = __df($selectedScope, 'Configuration', $i18nKeyB);
 
 			if (str_contains($titleA, '::')) {
 				if ($this->isPageRole($selectedScope)) {
-					$titleA = __d('generic_pages', $i18nKeyA);
+					$titleA = __d('GenericPages', $i18nKeyA);
 				}
 				else {
 					$titleA = $a;
@@ -460,7 +465,7 @@ class UserConfigurationController extends Controller {
 
 			if (str_contains($titleB, '::')) {
 				if ($this->isPageRole($selectedScope)) {
-					$titleB = __d('generic_pages', $i18nKeyB);
+					$titleB = __d('GenericPages', $i18nKeyB);
 				}
 				else {
 					$titleB = $b;

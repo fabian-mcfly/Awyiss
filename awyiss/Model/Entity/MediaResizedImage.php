@@ -29,16 +29,6 @@ class MediaResizedImage extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'media_id' => 'mediaId',
-		'real_width' => 'realWidth',
-		'real_height' => 'realHeight',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'mediaId' => true,
 		'name' => true,

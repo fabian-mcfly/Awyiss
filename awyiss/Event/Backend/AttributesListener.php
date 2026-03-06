@@ -36,12 +36,12 @@ class AttributesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
-		if (empty($data['input_type'])) {
+		if (empty($data['inputType'])) {
 			return;
 		}
 
-		if (in_array($data['input_type'], ['input_list', 'input_key_value_list'])) {
-			// Force the database type of input_list and input_key_value_list to be json
+		if (in_array($data['inputType'], ['inputList', 'inputKeyValueList'], true)) {
+			// Force the database type of inputList and inputKeyValueList to be json
 			$data['type'] = 'json';
 			$data['required'] = false;
 		}
@@ -56,9 +56,9 @@ class AttributesListener implements EventListenerInterface {
 	public function beforeSave(Event $event, Attribute $entity): void {
 		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if ($queuedJobsTable->isQueued('attributes::table_changes')) {
+		if ($queuedJobsTable->isQueued('Attributes::tableChanges')) {
 			$event->stopPropagation();
-			$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+			$entity->setError('_general', __d('Attributes', 'table_changes_in_progress'));
 
 			return;
 		}
@@ -66,7 +66,7 @@ class AttributesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
 		$attributesTable = $event->getSubject();
 
-		if (in_array($entity->scope, ['contents', 'global_contents'])) {
+		if (in_array($entity->scope, ['Contents', 'GlobalContents'])) {
 			//For contents & global contents, the content template decides where an attribute will go
 			$entity->fieldset = '';
 			//For contents & global contents, the content template decides whether an attribute is required
@@ -78,7 +78,7 @@ class AttributesListener implements EventListenerInterface {
 		}));
 
 		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
-		if (in_array($entity->scope, array_merge($pageRoles, ['contents', 'menu_entries', 'pages']))) {
+		if (in_array($entity->scope, array_merge($pageRoles, ['Contents', 'MenuEntries', 'Pages']))) {
 			$entity->translatable = false;
 		}
 	}
@@ -97,8 +97,8 @@ class AttributesListener implements EventListenerInterface {
 	public function afterSaveCommit(Event $event, Attribute $entity): void {
 		$relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
-		$oldData = $entity->isNew() ? array_fill_keys($relevantColumns, null) : $entity->extractOriginal($relevantColumns, false);
-		$newData = $entity->extract($relevantColumns, false, false);
+		$oldData = $entity->isNew() ? array_fill_keys($relevantColumns, null) : $entity->extractOriginal($relevantColumns);
+		$newData = $entity->extract($relevantColumns);
 		$diff = Hash::diff($newData, $oldData);
 
 		//No changes found in columns, relevant to the migrations?
@@ -115,7 +115,7 @@ class AttributesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'attributes::table_changes',
+			'reference' => 'Attributes::tableChanges',
 		]);
 	}
 }

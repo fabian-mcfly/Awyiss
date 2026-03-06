@@ -68,7 +68,7 @@ export default class UsersController {
 
 		const form = event.target.closest('form');
 		const passwordField = form.querySelector(this.passwordFieldSelector).querySelector('input[name="password"]');
-		const passwordFieldConfirm = form.querySelector('input[name="password_confirm"]');
+		const passwordFieldConfirm = form.querySelector('input[name="passwordConfirm"]');
 
 		passwordField.type = 'text';
 		passwordField.value = password;

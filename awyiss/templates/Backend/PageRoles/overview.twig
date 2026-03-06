@@ -35,7 +35,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -79,7 +79,7 @@
 				{% from '@Backend/macro/nested_list.twig' import nestedList %}
 				{{ nestedList(pageRoles, _context|merge({
 					data: {
-						sortable: _filter['page_roles']['active'] == false,
+						sortable: _filter['pageRoles']['active'] == false,
 						nestable: 'false',
 					},
 					displayedFields: localConfig.overview.displayedFields,

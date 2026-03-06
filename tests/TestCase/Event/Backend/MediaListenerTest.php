@@ -1377,8 +1377,8 @@ class MediaListenerTest extends TestCase {
 		$mockQuery = $this->getMockBuilder(InsertQuery::class)->disableOriginalConstructor()->onlyMethods(['values', 'execute'])->getMock();
 		$mockQuery->expects($this->once())->method('values')->with($this->callback(function (array $data) {
 			return $data['url'] === 'media/test.jpg' &&
-			$data['scope'] === 'media' &&
-			$data['foreign_key'] === 123 &&
+			$data['scope'] === 'Media' &&
+			$data['foreignKey'] === 123 &&
 			$data['status'] === 308;
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
@@ -1430,8 +1430,8 @@ class MediaListenerTest extends TestCase {
 		$mockQuery = $this->getMockBuilder(InsertQuery::class)->disableOriginalConstructor()->onlyMethods(['values', 'execute'])->getMock();
 		$mockQuery->expects($this->once())->method('values')->with($this->callback(function (array $data) {
 			return $data['url'] === 'media/test.jpg' &&
-			$data['scope'] === 'media' &&
-			$data['foreign_key'] === 123 &&
+			$data['scope'] === 'Media' &&
+			$data['foreignKey'] === 123 &&
 			$data['status'] === 308;
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
@@ -1570,7 +1570,7 @@ class MediaListenerTest extends TestCase {
 		// Mock the Query object
 		$mockQuery = $this->getMockBuilder(InsertQuery::class)->disableOriginalConstructor()->onlyMethods(['values', 'execute'])->getMock();
 		$mockQuery->expects($this->once())->method('values')->with($this->callback(function (array $data) {
-			return $data['url'] === 'media/test.jpg' && $data['scope'] === 'media' && $data['foreign_key'] === 123 && $data['status'] === 308;
+			return $data['url'] === 'media/test.jpg' && $data['scope'] === 'Media' && $data['foreignKey'] === 123 && $data['status'] === 308;
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
 
@@ -1660,7 +1660,7 @@ class MediaListenerTest extends TestCase {
 		// Mock the Query object
 		$mockQuery = $this->getMockBuilder(InsertQuery::class)->disableOriginalConstructor()->onlyMethods(['values', 'execute'])->getMock();
 		$mockQuery->expects($this->once())->method('values')->with($this->callback(function (array $data) {
-			return $data['url'] === 'media/test.jpg' && $data['scope'] === 'media' && $data['foreign_key'] === 123 && $data['status'] === 308;
+			return $data['url'] === 'media/test.jpg' && $data['scope'] === 'Media' && $data['foreignKey'] === 123 && $data['status'] === 308;
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
 

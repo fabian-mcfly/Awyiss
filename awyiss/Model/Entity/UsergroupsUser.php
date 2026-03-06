@@ -20,15 +20,6 @@ class UsergroupsUser extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'usergroup_id' => 'usergroupId',
-		'user_id' => 'userId',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'usergroupId' => true,
 		'userId' => true,

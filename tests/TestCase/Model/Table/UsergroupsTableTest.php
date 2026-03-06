@@ -131,7 +131,7 @@ class UsergroupsTableTest extends TestCase {
 		$result = $this->usergroupsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('usergroups', $result->getI18nDomain());
+		$this->assertSame('Usergroups', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));

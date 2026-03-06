@@ -159,7 +159,7 @@ abstract class AbstractTranslationService implements TranslationServiceInterface
 			return static::$translationFieldsCache[ $pageRole ];
 		}
 
-		static::$translationFieldsCache[ $pageRole ] = ['title', 'meta_title', 'meta_description'];
+		static::$translationFieldsCache[ $pageRole ] = ['title', 'metaTitle', 'metaDescription'];
 
 		/** @var \Awyiss\Model\Table\PagesTable $table */
 		$table = FactoryLocator::get('Table')->get(Inflector::pluralize($pageRole));

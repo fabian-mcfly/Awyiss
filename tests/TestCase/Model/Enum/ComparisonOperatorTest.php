@@ -31,25 +31,25 @@ class ComparisonOperatorTest extends TestCase {
 		$this->assertEquals('=', ComparisonOperator::Equal->value);
 		$this->assertEquals('!=', ComparisonOperator::NotEqual->value);
 		$this->assertEquals('contains', ComparisonOperator::Contains->value);
-		$this->assertEquals('not_contains', ComparisonOperator::NotContains->value);
-		$this->assertEquals('starts_with', ComparisonOperator::StartsWith->value);
-		$this->assertEquals('not_starts_with', ComparisonOperator::NotStartsWith->value);
-		$this->assertEquals('ends_with', ComparisonOperator::EndsWith->value);
-		$this->assertEquals('not_ends_with', ComparisonOperator::NotEndsWith->value);
+		$this->assertEquals('notContains', ComparisonOperator::NotContains->value);
+		$this->assertEquals('startsWith', ComparisonOperator::StartsWith->value);
+		$this->assertEquals('notStartsWith', ComparisonOperator::NotStartsWith->value);
+		$this->assertEquals('endsWith', ComparisonOperator::EndsWith->value);
+		$this->assertEquals('notEndsWith', ComparisonOperator::NotEndsWith->value);
 		$this->assertEquals('in', ComparisonOperator::In->value);
-		$this->assertEquals('not_in', ComparisonOperator::NotIn->value);
+		$this->assertEquals('notIn', ComparisonOperator::NotIn->value);
 		$this->assertEquals('<', ComparisonOperator::LessThan->value);
 		$this->assertEquals('<=', ComparisonOperator::LessThanOrEqual->value);
 		$this->assertEquals('>', ComparisonOperator::GreaterThan->value);
 		$this->assertEquals('>=', ComparisonOperator::GreaterThanOrEqual->value);
 		$this->assertEquals('between', ComparisonOperator::Between->value);
-		$this->assertEquals('not_between', ComparisonOperator::NotBetween->value);
-		$this->assertEquals('length_equal', ComparisonOperator::LengthEqual->value);
-		$this->assertEquals('length_not_equal', ComparisonOperator::LengthNotEqual->value);
-		$this->assertEquals('shorter_than', ComparisonOperator::ShorterThan->value);
-		$this->assertEquals('shorter_than_or_equal', ComparisonOperator::ShorterThanOrEqual->value);
-		$this->assertEquals('longer_than', ComparisonOperator::LongerThan->value);
-		$this->assertEquals('longer_than_or_equal', ComparisonOperator::LongerThanOrEqual->value);
+		$this->assertEquals('notBetween', ComparisonOperator::NotBetween->value);
+		$this->assertEquals('lengthEqual', ComparisonOperator::LengthEqual->value);
+		$this->assertEquals('lengthNotEqual', ComparisonOperator::LengthNotEqual->value);
+		$this->assertEquals('shorterThan', ComparisonOperator::ShorterThan->value);
+		$this->assertEquals('shorterThanOrEqual', ComparisonOperator::ShorterThanOrEqual->value);
+		$this->assertEquals('longerThan', ComparisonOperator::LongerThan->value);
+		$this->assertEquals('longerThanOrEqual', ComparisonOperator::LongerThanOrEqual->value);
 		$this->assertEquals('regexp', ComparisonOperator::Regexp->value);
 	}
 

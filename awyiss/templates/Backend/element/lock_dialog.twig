@@ -25,29 +25,29 @@
 		data-reference-date="{{ (entity.changedOn ?? entity.createdOn).format('Y-m-d H:i:s') }}"
 		data-created-on="{{ _lock.lock.createdOn|date('Y-m-d H:i:s') }}"
 		data-controller="{{ (controller ?? _lock.controller)|slug }}"
-		data-minutes-singular="{{ __d('locks', 'lock_warning_minutes_singular')|escape }}"
-		data-minutes-plural="{{ __d('locks', 'lock_warning_minutes_plural')|escape }}"
+		data-minutes-singular="{{ __d('Locks', 'lock_warning_minutes_singular')|escape }}"
+		data-minutes-plural="{{ __d('Locks', 'lock_warning_minutes_plural')|escape }}"
 		>
 		<div class="LockWarningMessage">
-			<div class="Message">{{ __df(controller|underscore, 'locks', 'lock_warning', TimeHelper.nice(_lock.lockedUntil))|raw }}</div>
+			<div class="Message">{{ __df(controller, 'Locks', 'lock_warning', TimeHelper.nice(_lock.lockedUntil))|raw }}</div>
 
-			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_extension') }}</button></p>
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'Locks', 'button_request_extension') }}</button></p>
 		</div>
 
 		<div class="LockTimedOutMessage">
-			<div class="Message">{{ __df(controller|underscore, 'locks', 'lock_warning_timed_out')|raw }}</div>
+			<div class="Message">{{ __df(controller, 'Locks', 'lock_warning_timed_out')|raw }}</div>
 
-			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_renewal') }}</button></p>
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'Locks', 'button_request_renewal') }}</button></p>
 		</div>
 
 		<div class="LockedMessage">
-			{% set lockingUser = _lock.lock.createdByUser.username ?? __d('audit', 'user_system') %}
+			{% set lockingUser = _lock.lock.createdByUser.username ?? __d('Audit', 'user_system') %}
 			{% if _lock.lock.createdByUser is null and _lock.lock.uniqueId == 'autoTranslate' %}
-				{% set lockingUser = __d('system', 'auto_translate_system') %}
+				{% set lockingUser = __d('System', 'auto_translate_system') %}
 			{% endif %}
-			<div class="Message">{{ __df(controller|underscore, 'locks', 'locked_message', TimeHelper.nice(_lock.lockedUntil), lockingUser)|raw }}</div>
+			<div class="Message">{{ __df(controller, 'Locks', 'locked_message', TimeHelper.nice(_lock.lockedUntil), lockingUser)|raw }}</div>
 
-			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_lock') }}</button></p>
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'Locks', 'button_request_lock') }}</button></p>
 		</div>
 	</div>
 {% endif %}

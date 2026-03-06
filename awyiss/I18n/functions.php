@@ -111,7 +111,7 @@ if (!function_exists('__d')) {
 
 		// Fallback to system domain
 		if (
-			$domain !== 'system' &&
+			strtolower($domain) !== 'system' &&
 			!in_array($string, [
 				'meta_title_overview',
 				'menu_title',
@@ -164,7 +164,7 @@ if (!function_exists('__df')) {
 
 			// Fallback to system domain
 			if (
-				$fallbackDomain === 'generic_pages' &&
+				Inflector::camelize($fallbackDomain) === 'GenericPages' &&
 				!in_array($string, [
 					'meta_title_overview',
 					'menu_title',
@@ -359,7 +359,7 @@ if (!function_exists('__ld')) {
 
 		// Fallback to system domain
 		if (
-			$domain !== 'system' &&
+			strtolower($domain) !== 'system' &&
 			!in_array($string, [
 				'meta_title_overview',
 				'menu_title',
@@ -400,5 +400,5 @@ function __buildDomain(string $domain): string {
 		$value = Inflector::underscore($value);
 	});
 
-	return count($parts) > 1 ? implode('/', $parts) : $domain;
+	return count($parts) > 1 ? implode('/', $parts) : Inflector::underscore($domain);
 }

@@ -9,10 +9,10 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
-{% do _view.assign('metaTitle', __d('system', 'headline_error_500') ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ 'Awyiss') %}
+{% do _view.assign('metaTitle', __d('System', 'headline_error_500') ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ 'Awyiss') %}
 {% do _view.assign('controllerName', 'Error') %}
 
-<h1>{{ __d('system', 'headline_error_500') }}</h1>
-<p>{{ __d('system', 'subtitle_error_500') }}</p>
+<h1>{{ __d('System', 'headline_error_500') }}</h1>
+<p>{{ __d('System', 'subtitle_error_500') }}</p>
 
-<img src="{{ UrlHelper.build('/awyiss/assets/img/500.png') }}" alt="{{ __d('system', 'headline_error_400') }}">
+<img src="{{ UrlHelper.build('/awyiss/assets/img/500.png') }}" alt="{{ __d('System', 'headline_error_400') }}">

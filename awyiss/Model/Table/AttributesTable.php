@@ -139,9 +139,9 @@ class AttributesTable extends Table {
 		'checkbox',
 		'multicheckbox',
 		'select',
-		'select_multiple',
-		'input_list',
-		'input_key_value_list',
+		'selectMultiple',
+		'inputList',
+		'inputKeyValueList',
 		'textarea',
 		'texteditor',
 		'password',
@@ -189,7 +189,7 @@ class AttributesTable extends Table {
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
+			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
 		})->toArray();
 
 		$attributeScopes = [];
@@ -198,9 +198,7 @@ class AttributesTable extends Table {
 		}
 
 		foreach ($this->attributeScopes as $identifier => $className) {
-			$identifier = Inflector::underscore($identifier);
-
-			if (isset($pageRoles[ $identifier ]) && $identifier !== 'pages') {
+			if (isset($pageRoles[ $identifier ]) && $identifier !== 'Pages') {
 				$attributeScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
 				continue;
@@ -268,7 +266,7 @@ class AttributesTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-
+		$validator->notEmptyString('type');
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
@@ -377,7 +375,7 @@ class AttributesTable extends Table {
 			return !in_array($entity->identifier, $reservedWords);
 		}, 'validIdentifier', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_reserved_identifier'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_reserved_identifier'),
 		]);
 
 
@@ -386,7 +384,7 @@ class AttributesTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -396,10 +394,10 @@ class AttributesTable extends Table {
 
 
 			//Check if the provided fieldset is valid. For scope `contents` and `global_contents`, always return true
-			return in_array($entity->fieldset, $availableFieldsets) || in_array($entity->scope, ['contents', 'global_contents']);
+			return in_array($entity->fieldset, $availableFieldsets) || in_array($entity->scope, ['Contents', 'GlobalContents']);
 		}, 'validFieldset', [
 			'errorField' => 'fieldset',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_fieldset'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_fieldset'),
 		]);
 
 
@@ -411,7 +409,7 @@ class AttributesTable extends Table {
 			return in_array($entity->inputType, $availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'inputType',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_input_type'),
 		]);
 
 
@@ -471,8 +469,8 @@ class AttributesTable extends Table {
 				continue;
 			}
 
-			/** @noinspection PhpIllegalArrayKeyTypeInspection */
-			$this->attributeScopes[ $className::TABLE ] = $className;
+			/** @noinspection PhpParamsInspection, PhpStrictTypeCheckingInspection */
+			$this->attributeScopes[ Inflector::camelize($className::TABLE) ] = $className;
 		}
 		/**
 		 * Get all page roles because we want them to have attributes too
@@ -481,7 +479,7 @@ class AttributesTable extends Table {
 		 */
 		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		foreach ($pageRoleEnum::cases() as $pageRole) {
-			$identifier = Inflector::pluralize(Inflector::underscore($pageRole->name));
+			$identifier = Inflector::camelize(Inflector::pluralize($pageRole->name));
 
 			if ($identifier === 'Pages' || isset($this->attributeScopes[ $identifier ])) {
 				continue;

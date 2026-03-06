@@ -62,7 +62,7 @@
 		{% endblock %}
 
 		{% block nestedListActionsViewContents %}
-			{% if entity.hasContentTemplate() and entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
+			{% if entity.hasContentTemplate() and entity.duplicateOf is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
 				{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
 			{% endif %}
 		{% endblock %}

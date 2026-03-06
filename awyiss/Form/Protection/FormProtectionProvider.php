@@ -75,7 +75,7 @@ class FormProtectionProvider {
 	 * @return string
 	 */
 	public static function sanitizeIdentifier(string $identifier): string {
-		return Inflector::underscore(Text::slug($identifier, '_'));
+		return Inflector::variable(Text::slug($identifier, '_'));
 	}
 
 

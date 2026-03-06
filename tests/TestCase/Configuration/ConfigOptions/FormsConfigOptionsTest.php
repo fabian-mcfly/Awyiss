@@ -56,30 +56,30 @@ class FormsConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
 			'identifier' => 'forms::identifier',
-			'send_email' => 'forms::send_email',
-			'email_template_id' => 'forms::email_template_id',
-			'send_confirmation_email' => 'forms::send_confirmation_email',
-			'confirmation_email_template_id' => 'forms::confirmation_email_template_id',
-			'owner_email' => 'forms::owner_email',
-			'owner_name' => 'forms::owner_name',
-			'user_email' => 'forms::user_email',
-			'user_name' => 'forms::user_name',
+			'sendEmail' => 'forms::send_email',
+			'emailTemplateId' => 'forms::email_template_id',
+			'sendConfirmationEmail' => 'forms::send_confirmation_email',
+			'confirmationEmailTemplateId' => 'forms::confirmation_email_template_id',
+			'ownerEmail' => 'forms::owner_email',
+			'ownerName' => 'forms::owner_name',
+			'userEmail' => 'forms::user_email',
+			'userName' => 'forms::user_name',
 			'cc' => 'forms::cc',
 			'bcc' => 'forms::bcc',
 			'subject' => 'forms::subject',
-			'subject_confirmation' => 'forms::subject_confirmation',
+			'subjectConfirmation' => 'forms::subject_confirmation',
 			'salutation' => 'forms::salutation',
-			'salutation_confirmation' => 'forms::salutation_confirmation',
-			'summarize_errors' => 'forms::summarize_errors',
-			'success_message' => 'forms::success_message',
+			'salutationConfirmation' => 'forms::salutation_confirmation',
+			'summarizeErrors' => 'forms::summarize_errors',
+			'successMessage' => 'forms::success_message',
 			'multistep' => 'forms::multistep',
-			'conditional_recipients_strategy' => 'forms::conditional_recipients_strategy',
-			'transport_profile' => 'forms::transport_profile',
+			'conditionalRecipientsStrategy' => 'forms::conditional_recipients_strategy',
+			'transportProfile' => 'forms::transport_profile',
 			'active' => 'forms::active',
-			'created_by' => 'forms::created_by',
-			'created_on' => 'forms::created_on',
-			'changed_by' => 'forms::changed_by',
-			'changed_on' => 'forms::changed_on',
+			'createdBy' => 'forms::created_by',
+			'createdOn' => 'forms::created_on',
+			'changedBy' => 'forms::changed_by',
+			'changedOn' => 'forms::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.publicationData.enabled', $configOptions);
@@ -110,9 +110,9 @@ class FormsConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Frontend.protection.methods']->isPersonalizable());
 		$this->assertSame([
 			'altcha',
-			'duplicate_check',
-			'ip_check',
-			'hidden_input',
+			'duplicateCheck',
+			'ipCheck',
+			'hiddenInput',
 		], $configOptions['Frontend.protection.methods']->getDefaultValue());
 		$this->assertSame('forms::protection_method_altcha, forms::protection_method_duplicate_check, forms::protection_method_ip_check, forms::protection_method_hidden_input', $configOptions['Frontend.protection.methods']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Frontend.protection.methods']->getType());
@@ -122,10 +122,10 @@ class FormsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'altcha' => 'forms::protection_method_altcha',
 			'dummy' => 'forms::protection_method_dummy',
-			'dummy_stops_form_entry' => 'forms::protection_method_dummy_stops_form_entry',
-			'duplicate_check' => 'forms::protection_method_duplicate_check',
-			'hidden_input' => 'forms::protection_method_hidden_input',
-			'ip_check' => 'forms::protection_method_ip_check',
+			'dummyStopsFormEntry' => 'forms::protection_method_dummy_stops_form_entry',
+			'duplicateCheck' => 'forms::protection_method_duplicate_check',
+			'hiddenInput' => 'forms::protection_method_hidden_input',
+			'ipCheck' => 'forms::protection_method_ip_check',
 		], $configOptions['Frontend.protection.methods']->getValues(true));
 	}
 }

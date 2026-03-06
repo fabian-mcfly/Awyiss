@@ -2116,7 +2116,7 @@ class FormSenderTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testSaveFormEntryAllowsProtectionMethodsToCancelSaving(): void {
-		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['dummy_stops_form_entry']);
+		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['dummyStopsFormEntry']);
 
 		$form = $this->form;
 

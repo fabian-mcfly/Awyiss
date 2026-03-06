@@ -277,7 +277,7 @@ class GlobalContentsTableTest extends TestCase {
 		$result = $this->globalContentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('global_contents', $result->getI18nDomain());
+		$this->assertSame('GlobalContents', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -311,7 +311,7 @@ class GlobalContentsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'title' => 'Test GlobalContent',
 			'subtitle' => 'Test Subtitle',
@@ -438,7 +438,7 @@ class GlobalContentsTableTest extends TestCase {
 	public function testEntityValidationColumnWidthInList(): void {
 		// Test valid column width
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'columnWidth' => '3/5',
 		];
@@ -458,7 +458,7 @@ class GlobalContentsTableTest extends TestCase {
 	public function testEntityValidationColumnWidthNotInList(): void {
 		// Test invalid column width
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'columnWidth' => 'invalid_column_width',
 		];
@@ -478,7 +478,7 @@ class GlobalContentsTableTest extends TestCase {
 	public function testEntityValidationColumnIndentInList(): void {
 		// Test valid column indent
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'columnIndent' => '2/5',
 		];
@@ -498,7 +498,7 @@ class GlobalContentsTableTest extends TestCase {
 	public function testEntityValidationColumnIndentNotInList(): void {
 		// Test invalid column indent
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'columnIndent' => 'invalid_column_indent',
 		];
@@ -519,7 +519,7 @@ class GlobalContentsTableTest extends TestCase {
 		$largeData = array_fill(0, 10000, str_repeat('x', 100)); // Create very large array
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'data' => $largeData,
 		];
@@ -539,11 +539,11 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesValidGlobalContentTemplate(): void {
 		// Test with existing global content template
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -561,11 +561,11 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesInvalidGlobalContentTemplate(): void {
 		// Test with non-existing global content template
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 99999,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -589,11 +589,11 @@ class GlobalContentsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\GlobalContentsTable::validateAssignedElements()
 	 */
 	public function testBuildRulesValidAssignedElements(): void {
-		// Template 1 has required elements: global_content_template_id, identifier, system_order
-		// Template 1 has required attribute: attributes.free_text (from custom seed)
+		// Template 1 has required elements: globalContentTemplateId, identifier, systemOrder
+		// Template 1 has required attribute: attributes.freeText (from custom seed)
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			// Optional assigned elements can be provided
@@ -605,7 +605,7 @@ class GlobalContentsTableTest extends TestCase {
 			'text' => 'Some text content',
 			// Attributes - free_text is assigned to template 1 but not required
 			'attributes' => [
-				'free_text' => 'This is allowed',
+				'freeText' => 'This is allowed',
 			],
 		];
 
@@ -625,13 +625,13 @@ class GlobalContentsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\GlobalContentsTable::validateAssignedElements()
 	 */
 	public function testBuildRulesInvalidAssignedElements(): void {
-		// Template 1 has required elements: global_content_template_id, identifier, system_order
-		// Template 1 has required attribute: attributes.free_text (from custom seed)
+		// Template 1 has required elements: globalContentTemplateId, identifier, systemOrder
+		// Template 1 has required attribute: attributes.freeText (from custom seed)
 
 		$data = [
 			'globalContentTemplateId' => 1, // Required, otherwise the validation will not even run
 			// Missing required 'identifier'
-			// Missing required 'system_order'
+			// Missing required 'systemOrder'
 			'text' => 'Some content', // This is assigned but optional
 		];
 
@@ -663,11 +663,11 @@ class GlobalContentsTableTest extends TestCase {
 		// Special defaults: column_last=false, column_rtl=false, column_width=default first key
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 			// Unassigned elements should be empty/null/default
 			'title' => null,
@@ -701,11 +701,11 @@ class GlobalContentsTableTest extends TestCase {
 		// Special defaults: column_last=false, column_rtl=false, column_width=default first key
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 			// Unassigned elements should be empty/null/default
 			'title' => 'Title',
@@ -762,11 +762,11 @@ class GlobalContentsTableTest extends TestCase {
 		// Any other attributes should be empty if they are dirty
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 				'teaser' => null, // This is unassigned and should be empty
 			],
 		];
@@ -775,7 +775,7 @@ class GlobalContentsTableTest extends TestCase {
 		$this->globalContentsTable->patchEntity($entity, $data);
 
 		// Make the attribute dirty to trigger validation
-		$entity->attributes->setDirty('free_text');
+		$entity->attributes->setDirty('freeText');
 		$entity->attributes->setDirty('teaser');
 
 		$result = $this->globalContentsTable->checkRules($entity);
@@ -794,11 +794,11 @@ class GlobalContentsTableTest extends TestCase {
 		// Any other attributes with values should fail if they are dirty
 
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'attributes' => [
-				'free_text' => 'This is allowed',
+				'freeText' => 'This is allowed',
 				'teaser' => 'This is not allowed',
 			],
 		];
@@ -807,7 +807,7 @@ class GlobalContentsTableTest extends TestCase {
 		$this->globalContentsTable->patchEntity($entity, $data);
 
 		// Make the attributes dirty to trigger validation
-		$entity->attributes->setDirty('free_text');
+		$entity->attributes->setDirty('freeText');
 		$entity->attributes->setDirty('teaser');
 
 		$result = $this->globalContentsTable->checkRules($entity);
@@ -829,13 +829,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesValidFormId(): void {
 		// Test with existing form
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => 1,
 			'surveyId' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -854,13 +854,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesNullFormId(): void {
 		// Test with null form (should be allowed)
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => null,
 			'surveyId' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -878,13 +878,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesInvvalidFormId(): void {
 		// Test with non-existing form
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => 99999,
 			'surveyId' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -909,13 +909,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesValidSurveyId(): void {
 		// Test with existing survey
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => null,
 			'surveyId' => 1,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -934,13 +934,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesNullSurveyId(): void {
 		// Test with null survey (should be allowed)
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => null,
 			'surveyId' => null,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -959,13 +959,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesInvalidSurveyId(): void {
 		// Test with non-existing survey
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 2,
 			'systemOrder' => 1,
 			'formId' => null,
 			'surveyId' => 99999,
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -990,13 +990,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesValidWidthIndentCombination(): void {
 		// Test valid width/indent combination
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'columnWidth' => '3/5',
 			'columnIndent' => '2/5',
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -1015,13 +1015,13 @@ class GlobalContentsTableTest extends TestCase {
 	public function testBuildRulesInvalidWidthIndentCombination(): void {
 		// Test invalid width/indent combination
 		$data = [
-			'identifier' => 'test_global_content',
+			'identifier' => 'testGlobalContent',
 			'globalContentTemplateId' => 1,
 			'systemOrder' => 1,
 			'columnWidth' => '3/5',
 			'columnIndent' => '3/5', // Invalid combination (should not exceed 1)
 			'attributes' => [
-				'free_text' => 'This is a valid free text attribute',
+				'freeText' => 'This is a valid free text attribute',
 			],
 		];
 
@@ -1052,25 +1052,25 @@ class GlobalContentsTableTest extends TestCase {
 
 		$result = $result->toArray();
 		$this->assertSame([
-			'dummy_row_overflow',
-			'dummy_nested',
-			'dummy_multi_row',
-			'dummy_single_row',
-			'dummy_narrow',
-			'inline_img',
-			'custom_template',
-			'double_inline_img',
-			'with_survey',
+			'dummyRowOverflow',
+			'dummyNested',
+			'dummyMultiRow',
+			'dummySingleRow',
+			'dummyNarrow',
+			'inlineImg',
+			'customTemplate',
+			'doubleInlineImg',
+			'withSurvey',
 		], array_keys($result));
 
-		$this->assertCount(4, $result['dummy_row_overflow']);
-		$this->assertCount(4, $result['dummy_nested']);
-		$this->assertCount(5, $result['dummy_multi_row']);
-		$this->assertCount(2, $result['dummy_single_row']);
-		$this->assertCount(2, $result['dummy_narrow']);
-		$this->assertCount(1, $result['inline_img']);
-		$this->assertCount(3, $result['custom_template']);
-		$this->assertCount(1, $result['double_inline_img']);
+		$this->assertCount(4, $result['dummyRowOverflow']);
+		$this->assertCount(4, $result['dummyNested']);
+		$this->assertCount(5, $result['dummyMultiRow']);
+		$this->assertCount(2, $result['dummySingleRow']);
+		$this->assertCount(2, $result['dummyNarrow']);
+		$this->assertCount(1, $result['inlineImg']);
+		$this->assertCount(3, $result['customTemplate']);
+		$this->assertCount(1, $result['doubleInlineImg']);
 	}
 
 
@@ -1121,7 +1121,7 @@ class GlobalContentsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'active' => false,
-			'identifier' => 'custom_global_content',
+			'identifier' => 'customGlobalContent',
 			'globalContentTemplateId' => 1,
 			'title' => 'Custom GlobalContent',
 			'subtitle' => 'Custom Subtitle',
@@ -1129,10 +1129,10 @@ class GlobalContentsTableTest extends TestCase {
 			'link' => 'https://custom.com',
 			'systemOrder' => 5,
 			'attributes' => [
-				'free_text' => 'This is a custom free text attribute',
+				'freeText' => 'This is a custom free text attribute',
 			],
 			'data' => [
-				'custom_key' => 'custom_value',
+				'customKey' => 'custom_value',
 			],
 		];
 
@@ -1145,14 +1145,14 @@ class GlobalContentsTableTest extends TestCase {
 		$this->assertFalse($entity->deleted);
 
 		$this->assertSame(5, $entity->systemOrder);
-		$this->assertSame('custom_global_content', $entity->identifier);
+		$this->assertSame('customGlobalContent', $entity->identifier);
 		$this->assertSame(1, $entity->globalContentTemplateId);
 		$this->assertSame('Custom GlobalContent', $entity->title);
 		$this->assertSame('Custom Subtitle', $entity->subtitle);
 		$this->assertSame('Custom text', $entity->text);
 		$this->assertSame('https://custom.com', $entity->link);
 
-		$this->assertSame(['custom_key' => 'custom_value'], $entity->data);
+		$this->assertSame(['customKey' => 'custom_value'], $entity->data);
 
 		$this->assertInstanceOf(AttributesGlobalContent::class, $entity->attributes);
 
@@ -1221,7 +1221,7 @@ class GlobalContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
-		$result = $this->globalContentsTable->getPossibleFieldValues('form_id');
+		$result = $this->globalContentsTable->getPossibleFieldValues('formId');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1240,7 +1240,7 @@ class GlobalContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
-		$result = $this->globalContentsTable->getPossibleFieldValues('survey_id');
+		$result = $this->globalContentsTable->getPossibleFieldValues('surveyId');
 
 		$this->assertIsArray($result);
 
@@ -1259,7 +1259,7 @@ class GlobalContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesGlobalContentTemplateId(): void {
-		$result = $this->globalContentsTable->getPossibleFieldValues('global_content_template_id');
+		$result = $this->globalContentsTable->getPossibleFieldValues('globalContentTemplateId');
 
 		$this->assertIsArray($result);
 

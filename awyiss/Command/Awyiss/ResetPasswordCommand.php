@@ -60,7 +60,7 @@ class ResetPasswordCommand extends Command {
 		// Hash the password. Happens automatically in the entity class
 		$usersTable->patchEntity($user, [
 			'password' => $password,
-			'password_confirm' => $password,
+			'passwordConfirm' => $password,
 		]);
 
 		$io->out('Generating password hash... ', 0);

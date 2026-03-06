@@ -314,15 +314,15 @@ trait ContentElementTrait {
 			$entity instanceof GlobalContent => 'GlobalContent',
 		};
 		$entity->cssClass .= 'Element';
-		$entity->cssClass .= ($template ? ' Template-' . Inflector::ucparts($entity->$template->fileName, false) : '');
+		$entity->cssClass .= ($template ? ' Template-' . Inflector::camelize($entity->$template->fileName) : '');
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
 		if ($entity instanceof FormElement) {
-			$entity->cssClass .= ' FormElementType-' . Inflector::ucparts($entity->type, false);
-			$entity->cssClass .= ' FormElement-' . Inflector::ucparts($entity->identifier ?? (string)$entity->id, false);
+			$entity->cssClass .= ' FormElementType-' . Inflector::camelize($entity->type);
+			$entity->cssClass .= ' FormElement-' . Inflector::camelize($entity->identifier ?? (string)$entity->id);
 		}
 		elseif ($entity instanceof GlobalContent) {
-			$entity->cssClass .= ' GlobalContent-' . Inflector::ucparts($entity->identifier, false);
+			$entity->cssClass .= ' GlobalContent-' . Inflector::camelize($entity->identifier);
 		}
 
 		if ($entity->column['indent']) {

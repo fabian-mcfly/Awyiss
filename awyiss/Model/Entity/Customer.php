@@ -41,21 +41,6 @@ class Customer extends Entity implements IdentityGroupPermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'last_login' => 'lastLogin',
-		'failed_attempts' => 'failedAttempts',
-		'verified' => 'verified',
-		'verified_on' => 'verifiedOn',
-		'verification_code' => 'verificationCode',
-		'password_reset_code' => 'passwordResetCode',
-		'customer_groups' => 'customerGroups',
-		'password_reset_on' => 'passwordResetOn',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'email' => true,
 		'password' => true,
@@ -120,7 +105,7 @@ class Customer extends Entity implements IdentityGroupPermissionInterface {
 		$inactive = '';
 
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$inactive = __d('users', 'inactive') . ' ';
+			$inactive = __d('Users', 'inactive') . ' ';
 		}
 
 		if (!empty($this->firstname) && !empty($this->lastname)) {

@@ -42,43 +42,43 @@
 			{% block fieldsetGeneralInner %}
 	{% endverbatim %}
 	{% for field in fields %}
-	{%- if field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
+	{%- if field not in ['deleted', 'createdOn', 'createdBy', 'changedOn', 'changedBy', 'deletedOn', 'deletedBy']|merge(primaryKey) %}
 			{% verbatim %}{% block formControl{% endverbatim %}{{ field|camelize }}{% verbatim %} %}
 	{% endverbatim %}
 
 	{%- if keyFields[field] is defined %}
 	{%- set fieldData = Bake.columnData(field, schema) %}
 	{%- if fieldData.null %}
-				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
+				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field|variable }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
 	{{- "\n" }}
 	{%- else %}
-				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
+				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field|variable }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
 	{{- "\n" }}
 	{%- endif %}
-	{%- elseif field == 'parent_id' %}
+	{%- elseif field == 'parentId' %}
 				{% verbatim %}{% if (_categoriesIdentifier is defined) %}
 					{{ CategoriesHelper.control(_categoriesIdentifier) }}
 				{% endif %}
 
 				{% if (parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}
-					{{ FormHelper.control('parent_id', {options: hashPrinter(parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
+					{{ FormHelper.control('parentId', {options: hashPrinter(parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
 				{% endif %}{% endverbatim %}
 	{{- "\n" }}
-	{%- elseif field == 'system_order' %}
+	{%- elseif field == 'systemOrder' %}
 				{% verbatim %}{% if systemOrderField|variable == 'systemOrder' %}
-					{{ SystemOrderHelper.control('system_order') }}
+					{{ SystemOrderHelper.control('systemOrder') }}
 				{% endif %}{% endverbatim %}
 	{{- "\n" }}
-	{%- elseif field == 'languages_shortcode' %}
-				{% verbatim %}{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}{% endverbatim %}
+	{%- elseif field == 'languagesShortcode' %}
+				{% verbatim %}{{ LocaleHelper.control('languageShortcode', {languageRealm: languageRealm}) }}{% endverbatim %}
 	{{- "\n" }}
-	{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+	{%- elseif field not in ['deleted', 'createdOn', 'createdBy', 'changedOn', 'changedBy', 'deletedOn', 'deletedBy'] %}
 	{%- set fieldData = Bake.columnData(field, schema) %}
 	{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
-				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
+				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field|variable }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
 	{{- "\n" }}
 	{%- else %}
-				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+				{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field|variable }}{% verbatim %}') }}{% endverbatim %}
 	{{- "\n" }}
 	{%- endif %}
 	{%- endif %}
@@ -214,7 +214,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

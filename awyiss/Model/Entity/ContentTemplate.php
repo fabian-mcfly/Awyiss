@@ -32,19 +32,6 @@ class ContentTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'file_name' => 'fileName',
-		'content_template_elements' => 'contentTemplateElements',
-		'content_areas' => 'contentAreas',
-		'in_content_row' => 'inContentRow',
-		'system_order' => 'systemOrder',
-		'used_for_contents' => 'usedForContents',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'fileName' => true,

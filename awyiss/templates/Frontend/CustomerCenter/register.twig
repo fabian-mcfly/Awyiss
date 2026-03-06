@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block assignMetaTitle %}
-	{% do _view.assign('metaTitle', __d('customers', 'page_title_register') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+	{% do _view.assign('metaTitle', __d('Customers', 'page_title_register') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
 {% endblock %}
 
 {% block contentArea %}
@@ -24,7 +24,7 @@
 			<div class="ContentRow">
 				<div class="ContentElement Template-Standard Column-60 ColumnIndent-20">
 					{% block registerHeading %}
-						<h1>{{ __d('customers', 'page_title_register') }}</h1>
+						<h1>{{ __d('Customers', 'page_title_register') }}</h1>
 					{% endblock %}
 
 					{% block flashMessages %}
@@ -37,7 +37,7 @@
 						{% block registerFormFieldset %}
 							<fieldset>
 								{% block registerFormLegend %}
-									<legend>{{ __d('customers', 'page_title_register') }}</legend>
+									<legend>{{ __d('Customers', 'page_title_register') }}</legend>
 								{% endblock %}
 
 								{% block registerFormFields %}
@@ -45,7 +45,7 @@
 										<div class="FormRow">
 											<div class="FormElement Column-100{% if customer.error('email') %} FormElement-IsInvalid{% endif %}">
 												{% block emailLabel %}
-													{{ FormHelper.label('email', __d('customers', 'email'), { class: 'FormElement-Label' }) }}
+													{{ FormHelper.label('email', __d('Customers', 'email'), { class: 'FormElement-Label' }) }}
 												{% endblock %}
 												{% block emailInput %}
 													{{ FormHelper.email('email', {
@@ -57,7 +57,7 @@
 
 												{% block emailError %}
 													{% if customer.error('email') %}
-														<div class="FormElement-Error">{{ __d('customers', 'error_email') }}</div>
+														<div class="FormElement-Error">{{ __d('Customers', 'error_email') }}</div>
 													{% endif %}
 												{% endblock %}
 											</div>
@@ -69,7 +69,7 @@
 											{% block firstnameField %}
 												<div class="FormElement Column-50{% if customer.error('firstname') %} FormElement-IsInvalid{% endif %}">
 													{% block firstnameLabel %}
-														{{ FormHelper.label('firstname', __d('customers', 'firstname'), { class: 'FormElement-Label' }) }}
+														{{ FormHelper.label('firstname', __d('Customers', 'firstname'), { class: 'FormElement-Label' }) }}
 													{% endblock %}
 													{% block firstnameInput %}
 														{{ FormHelper.text('firstname', {
@@ -92,7 +92,7 @@
 											{% block lastnameField %}
 												<div class="FormElement Column-50{% if customer.error('lastname') %} FormElement-IsInvalid{% endif %}">
 													{% block lastnameLabel %}
-														{{ FormHelper.label('lastname', __d('customers', 'lastname'), { class: 'FormElement-Label' }) }}
+														{{ FormHelper.label('lastname', __d('Customers', 'lastname'), { class: 'FormElement-Label' }) }}
 													{% endblock %}
 													{% block lastnameInput %}
 														{{ FormHelper.text('lastname', {
@@ -119,7 +119,7 @@
 											{% block passwordField %}
 												<div class="FormElement Column-50{% if customer.error('password') %} FormElement-IsInvalid{% endif %}">
 													{% block passwordLabel %}
-														{{ FormHelper.label('password', __d('customers', 'password'), { class: 'FormElement-Label' }) }}
+														{{ FormHelper.label('password', __d('Customers', 'password'), { class: 'FormElement-Label' }) }}
 													{% endblock %}
 													{% block passwordInput %}
 														{{ FormHelper.password('password', {
@@ -143,18 +143,18 @@
 											{% block passwordConfirmField %}
 												<div class="FormElement Column-50">
 													{% block passwordConfirmLabel %}
-														{{ FormHelper.label('password_confirm', __d('customers', 'password_confirm'), { class: 'FormElement-Label' }) }}
+														{{ FormHelper.label('passwordConfirm', __d('Customers', 'password_confirm'), { class: 'FormElement-Label' }) }}
 													{% endblock %}
 													{% block passwordConfirmInput %}
-														{{ FormHelper.password('password_confirm', {
+														{{ FormHelper.password('passwordConfirm', {
 															class: 'FormInputType-Input',
 															required: true,
 														}) }}
 													{% endblock %}
 
 													{% block passwordConfirmError %}
-														{% if customer.error('password_confirm') %}
-															<div class="FormElement-Error">{{ __d('customers', 'error_password_confirm_invalid') }}</div>
+														{% if customer.error('passwordConfirm') %}
+															<div class="FormElement-Error">{{ __d('Customers', 'error_password_confirm_invalid') }}</div>
 														{% endif %}
 													{% endblock %}
 												</div>
@@ -166,7 +166,7 @@
 								{% block registerFormSubmit %}
 									<div class="FormRow">
 										<div class="FormElement Column-100 FormElementType-Submit">
-											{{ FormHelper.button(__d('customers', 'button_register'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
+											{{ FormHelper.button(__d('Customers', 'button_register'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
 										</div>
 									</div>
 								{% endblock %}
@@ -180,10 +180,10 @@
 						{% if loginEnabled %}
 							<div class="CustomerCenter-AlreadyRegistered">
 								{% block loginText %}
-									{{ __d('customers', 'text_already_registered') }}
+									{{ __d('Customers', 'text_already_registered') }}
 								{% endblock %}
 								{% block loginLink %}
-									{{ HtmlHelper.link(__d('customers', 'link_login'), { _name: 'FrontendCustomerCenterLogin' ~ languageShortcode|ucparts }) }}
+									{{ HtmlHelper.link(__d('Customers', 'link_login'), { _name: 'FrontendCustomerCenterLogin' ~ languageShortcode|ucparts }) }}
 								{% endblock %}
 							</div>
 						{% endif %}

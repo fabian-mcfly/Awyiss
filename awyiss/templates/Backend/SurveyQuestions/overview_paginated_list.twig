@@ -23,7 +23,7 @@
 	<td class="TableCell-Actions">
 		<div class="Actions">
 			{% if
-				entity.type.value in ['single_choice', 'multiple_choice'] and
+				entity.type.value in ['singleChoice', 'multipleChoice'] and
 				AuthorizationHelper.scopeIsAccessible('SurveyAnswers', [], 'read')
 			%}
 				{{ HtmlHelper.link(__('view_answers'), {controller: 'SurveyAnswers', action: 'overview', questionId: entity.id}, {

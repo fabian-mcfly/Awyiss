@@ -34,7 +34,7 @@
 					{% set knownIdentifiers = localConfig('knownIdentifiers') %}
 					{%
 						set helperFormControl = knownIdentifiers is not empty ? FormHelper.select(
-							'identifier_helper_options',
+							'identifierHelperOptions',
 							combine(knownIdentifiers|values, knownIdentifiers|values),
 							{
 								'data-options-for': 'Menu-Identifier',
@@ -46,7 +46,8 @@
 						templateVars: {
 							additionalContent: helperFormControl
 						},
-						'data-autofill-from': 'title'
+						'data-autofill-from': 'title',
+						'data-camelize': 'true',
 					}) }}
 				{% endblock %}
 
@@ -196,7 +197,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

@@ -29,16 +29,6 @@ class MediaElementSelector extends Entity {
 	 * @var array The column spans
 	 */
 	protected static array $columnSpans;
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'media_element_id' => 'mediaElementId',
-		'media_selector_id' => 'mediaSelectorId',
-		'column_span' => 'columnSpan',
-		'media_selector' => 'mediaSelector',
-		'system_order' => 'systemOrder',
-	];
 
 
 	/**

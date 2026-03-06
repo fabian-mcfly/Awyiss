@@ -30,7 +30,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 		$this->listener = new MediaElementSelectorsListener();
 
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$mediaAssignmentsTable->deleteAll(['foreign_key' => 124]);
+		$mediaAssignmentsTable->deleteAll(['foreignKey' => 124]);
 	}
 
 
@@ -61,7 +61,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 890,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 10,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 2,
 			]),
@@ -69,7 +69,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 890,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 11,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -77,7 +77,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 890,
 				'mediaElementSelectorIdentifier' => 'other-identifier',
 				'mediaId' => 10,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -85,7 +85,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 891,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 11,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -113,7 +113,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $mediaElementSelector);
 
-		$assignments = $mediaAssignmentsTable->find()->where(['foreign_key' => 124])->orderByAsc('id')->all();
+		$assignments = $mediaAssignmentsTable->find()->where(['foreignKey' => 124])->orderByAsc('id')->all();
 
 		$this->assertCount(4, $assignments);
 
@@ -126,7 +126,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 			'old-identifier',
 		], $assignmentIdentifiers);
 
-		$mediaAssignmentsTable->deleteAll(['foreign_key' => 124]);
+		$mediaAssignmentsTable->deleteAll(['foreignKey' => 124]);
 	}
 
 	/**
@@ -143,7 +143,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 890,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 10,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 2,
 			]),
@@ -151,7 +151,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 890,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 11,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -159,7 +159,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 				'mediaElementId' => 891,
 				'mediaElementSelectorIdentifier' => 'old-identifier',
 				'mediaId' => 11,
-				'scope' => 'contents',
+				'scope' => 'Contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),
@@ -190,7 +190,7 @@ class MediaElementSelectorsListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $mediaElementSelector);
 
-		$assignments = $mediaAssignmentsTable->find()->where(['foreign_key' => 124])->all();
+		$assignments = $mediaAssignmentsTable->find()->where(['foreignKey' => 124])->all();
 
 		$this->assertCount(3, $assignments);
 
@@ -199,6 +199,6 @@ class MediaElementSelectorsListenerTest extends TestCase {
 			$this->assertSame('old-identifier', $assignment->mediaElementSelectorIdentifier);
 		}
 
-		$mediaAssignmentsTable->deleteAll(['foreign_key' => 124]);
+		$mediaAssignmentsTable->deleteAll(['foreignKey' => 124]);
 	}
 }

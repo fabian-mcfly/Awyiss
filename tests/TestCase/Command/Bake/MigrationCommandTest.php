@@ -65,7 +65,7 @@ class MigrationCommandTest extends TestCase {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AddBackgroundColorToDummyMigration.php';
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'AddBackgroundColorToDummyMigration.txt';
 
-		$this->exec('bake migration add_background_color_to_dummy_migration background_color:string?[50] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$this->exec('bake migration add_backgroundColor_to_dummy_migration backgroundColor:string?[50] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 
@@ -82,7 +82,7 @@ class MigrationCommandTest extends TestCase {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'AlterBackgroundColorOnDummyMigration.txt';
 
-		$this->exec('bake migration alter_background_color_on_dummy_migration background_color:string[100] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$this->exec('bake migration alter_backgroundColor_on_dummy_migration backgroundColor:string[100] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 
@@ -99,7 +99,7 @@ class MigrationCommandTest extends TestCase {
 		$this->generatedFiles[0] = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'AlterBackgroundColorOnDummyMigration.txt';
 
-		$this->exec('bake migration alter_background_color_on_dummy_migration background_color:string[100] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$this->exec('bake migration alter_backgroundColor_on_dummy_migration backgroundColor:string[100] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 
@@ -109,7 +109,7 @@ class MigrationCommandTest extends TestCase {
 
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'AlterBackgroundColorOnDummyMigrationV2.txt';
 
-		$this->exec('bake migration alter_background_color_on_dummy_migration background_color:string[10]:index --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$this->exec('bake migration alter_backgroundColor_on_dummy_migration backgroundColor:string[10]:index --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 
@@ -132,7 +132,7 @@ class MigrationCommandTest extends TestCase {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'RenameBackgroundColorOnDummyMigration.txt';
 
-		$this->exec('bake migration alter_background_color_on_dummy_migration background_color_renamed:string?[50] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$this->exec('bake migration alter_backgroundColor_on_dummy_migration backgroundColorRenamed:string?[50] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 

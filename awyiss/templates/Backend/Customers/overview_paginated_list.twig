@@ -25,7 +25,7 @@
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDefaultFields %}
 	<th class="TableHeader-Email{% if PaginatorHelper.isCurrentSortKey('email') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('email', i18nDomain ? __df(i18nDomain, 'system', 'email') : __('email')) }}
+		{{ PaginatorHelper.sort('email', i18nDomain ? __df(i18nDomain, 'System', 'email') : __('email')) }}
 	</th>
 {% endblock %}
 
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
-	{% if field == 'last_login' %}
+	{% if field == 'lastLogin' %}
 		{{ entity.lastLogin ? TimeHelper.nice(entity.lastLogin) : '-' }}
 	{% else %}
 		{{ parent() }}

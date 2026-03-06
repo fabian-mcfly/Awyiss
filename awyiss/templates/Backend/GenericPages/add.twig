@@ -34,7 +34,7 @@
 			{% endif %}
 
 			{% block headlineAdd %}
-				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add', pageRole.title) }}</h1>
+				<h1>{{ __df(pageRoleName, 'GenericPages', 'headline_add', pageRole.title) }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -52,7 +52,7 @@
 
 				{% block formAddButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

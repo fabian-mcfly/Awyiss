@@ -77,21 +77,21 @@
 							{{ FormHelper.button(__('remove_question'), {
 								class: 'Button Button-Small Button-Delete',
 								type: 'button',
-								'data-confirm-title': __d('survey_questions', 'confirm_delete_title'),
-								'data-confirm-yes': __d('survey_questions', 'confirm_delete_yes'),
+								'data-confirm-title': __d('SurveyQuestions', 'confirm_delete_title'),
+								'data-confirm-yes': __d('SurveyQuestions', 'confirm_delete_yes'),
 								'data-confirm-yes-class': 'Button-Delete',
-								'data-confirm-no': __d('survey_questions', 'confirm_delete_no'),
-								'data-confirm': __d('survey_questions', 'confirm_delete', entity.id)
+								'data-confirm-no': __d('SurveyQuestions', 'confirm_delete_no'),
+								'data-confirm': __d('SurveyQuestions', 'confirm_delete', entity.id)
 							}) }}
 						{% endblock %}
 					</span>
 				{% endblock %}
 
 				{% block listItemInputs %}
-					{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][identifier]', {
+					{{ FormHelper.hidden('surveySurveyQuestions[' ~ index ~'][identifier]', {
 						disabled: true,
 					}) }}
-					{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_question_id]', {
+					{{ FormHelper.hidden('surveySurveyQuestions[' ~ index ~'][surveyQuestionId]', {
 						disabled: true,
 						val: entity.id,
 					}) }}
@@ -106,7 +106,7 @@
 								{% block listItemSettingsInner %}
 									<div class="NextAction">
 										{% block listItemNextAction %}
-											{{ FormHelper.control('survey_survey_questions[' ~ index ~'][next_action]', {
+											{{ FormHelper.control('surveySurveyQuestions[' ~ index ~'][nextAction]', {
 												disabled: true,
 												empty: false,
 												label: __('next_action'),

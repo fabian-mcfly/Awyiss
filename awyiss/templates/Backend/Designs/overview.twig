@@ -44,7 +44,7 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'DesignForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+	{{ FormHelper.checkbox('saveAsCopy', {form: 'DesignForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
@@ -66,7 +66,7 @@
 						{% endblock %}
 
 						{% block overviewButtonPreviewClose %}
-							{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', form: 'DesignForm', name: 'cancel_preview', value: design.identifier}) }}
+							{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', form: 'DesignForm', name: 'cancelPreview', value: design.identifier}) }}
 						{% endblock %}
 					{% else %}
 						{% block overviewButtonPreviewPreview %}
@@ -119,7 +119,7 @@
 	{% endblock %}
 
 	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 	{% endblock %}
 
 	{{ FormHelper.end() }}

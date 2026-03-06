@@ -64,14 +64,14 @@ class UrlHistoryTableTest extends TestCase {
 		$this->assertTrue($this->urlHistoryTable->hasAssociation('Pages'));
 		$pagesAssociation = $this->urlHistoryTable->getAssociation('Pages');
 		$this->assertInstanceOf(BelongsTo::class, $pagesAssociation);
-		$this->assertSame('foreign_key', $pagesAssociation->getForeignKey());
-		$this->assertSame(['UrlHistory.scope' => 'pages'], $pagesAssociation->getConditions());
+		$this->assertSame('foreignKey', $pagesAssociation->getForeignKey());
+		$this->assertSame(['UrlHistory.scope' => 'Pages'], $pagesAssociation->getConditions());
 
 		$this->assertTrue($this->urlHistoryTable->hasAssociation('Media'));
 		$mediaAssociation = $this->urlHistoryTable->getAssociation('Media');
 		$this->assertInstanceOf(BelongsTo::class, $mediaAssociation);
-		$this->assertSame('foreign_key', $mediaAssociation->getForeignKey());
-		$this->assertSame(['UrlHistory.scope' => 'media'], $mediaAssociation->getConditions());
+		$this->assertSame('foreignKey', $mediaAssociation->getForeignKey());
+		$this->assertSame(['UrlHistory.scope' => 'Media'], $mediaAssociation->getConditions());
 
 		// 'CreatedByUser' must also exist
 		$this->assertTrue($this->urlHistoryTable->hasAssociation('CreatedByUser'));
@@ -119,7 +119,7 @@ class UrlHistoryTableTest extends TestCase {
 		$result = $this->urlHistoryTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('url_history', $result->getI18nDomain());
+		$this->assertSame('UrlHistory', $result->getI18nDomain());
 
 		// Test that all fields have validation rules
 		$this->assertTrue($result->hasField('url'));
@@ -154,7 +154,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testEntityValidationSuccessWithScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			'status' => 301,
 		];
@@ -251,7 +251,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testEntityValidationTargetNotRequiredWhenScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			'status' => 301,
 			// No target but scope is provided - target should not be required
@@ -292,7 +292,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testEntityValidationForeignKeyRequiredWhenScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'status' => 301,
 			// No foreignKey but scope is provided - foreignKey should be required
 		];
@@ -332,7 +332,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testEntityValidationForeignKeyInvalidType(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 'not_an_integer',
 			'status' => 301,
 		];
@@ -353,7 +353,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testEntityValidationForeignKeyTooLong(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 123456789123, // exceeds 11 char limit
 			'status' => 301,
 		];
@@ -504,7 +504,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesValidPagesScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1, // Existing page
 			'status' => 301,
 		];
@@ -524,7 +524,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesInvalidPagesScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 99999, // Non-existing page
 			'status' => 301,
 		];
@@ -550,7 +550,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesValidMediaScope(): void {
 		$data = [
 			'url' => '/old-media',
-			'scope' => 'media',
+			'scope' => 'Media',
 			'foreignKey' => 1, // Existing media
 			'status' => 301,
 		];
@@ -570,7 +570,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesInvalidMediaScope(): void {
 		$data = [
 			'url' => '/old-media',
-			'scope' => 'media',
+			'scope' => 'Media',
 			'foreignKey' => 99999, // Non-existing media
 			'status' => 301,
 		];
@@ -642,7 +642,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesValidTargetWithScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			// No target but scope is provided - should fail validTarget rule
 			'status' => 301,
@@ -664,7 +664,7 @@ class UrlHistoryTableTest extends TestCase {
 	public function testBuildRulesInvalidTargetWithScope(): void {
 		$data = [
 			'url' => '/old-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			'target' => '/new-page',
 			'status' => 301,
@@ -712,7 +712,7 @@ class UrlHistoryTableTest extends TestCase {
 		$additionalData = [
 			'url' => '/custom-old-page',
 			'target' => '/custom-new-page',
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 2,
 			'status' => 302,
 		];
@@ -724,7 +724,7 @@ class UrlHistoryTableTest extends TestCase {
 
 		$this->assertSame('/custom-old-page', $entity->url);
 		$this->assertSame('/custom-new-page', $entity->target);
-		$this->assertSame('pages', $entity->scope);
+		$this->assertSame('Pages', $entity->scope);
 		$this->assertSame(2, $entity->foreignKey);
 		$this->assertSame(302, $entity->status);
 	}

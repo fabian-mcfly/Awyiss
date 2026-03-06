@@ -26,7 +26,7 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @var \Awyiss\Form\FormConditionalRecipients
 	 */
-	protected FormConditionalRecipients $formConditionalRecipients;
+	protected FormConditionalRecipients $conditionalRecipients;
 	/**
 	 * @var \Awyiss\Model\Entity\Form
 	 */
@@ -45,7 +45,7 @@ class FormConditionalRecipientsTest extends TestCase {
 
 		$this->form = new Form(['id' => 1]);
 		$this->page = new Page(['id' => 1, 'title' => 'Test Page']);
-		$this->formConditionalRecipients = new FormConditionalRecipients($this->form, $this->page);
+		$this->conditionalRecipients = new FormConditionalRecipients($this->form, $this->page);
 	}
 
 
@@ -82,14 +82,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::setProcessStrategy()
 	 */
 	public function testSetAndGetProcessStrategy(): void {
-		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST, $this->formConditionalRecipients->getProcessStrategy());
+		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST, $this->conditionalRecipients->getProcessStrategy());
 
-		$result = $this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
-		$this->assertSame($this->formConditionalRecipients, $result);
-		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL, $this->formConditionalRecipients->getProcessStrategy());
+		$result = $this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
+		$this->assertSame($this->conditionalRecipients, $result);
+		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL, $this->conditionalRecipients->getProcessStrategy());
 
-		$this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST);
-		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST, $this->formConditionalRecipients->getProcessStrategy());
+		$this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST);
+		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST, $this->conditionalRecipients->getProcessStrategy());
 	}
 
 
@@ -101,7 +101,7 @@ class FormConditionalRecipientsTest extends TestCase {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid process strategy');
 
-		$this->formConditionalRecipients->setProcessStrategy('invalid_strategy');
+		$this->conditionalRecipients->setProcessStrategy('invalid_strategy');
 	}
 
 
@@ -111,9 +111,9 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetMatchingRecipientWithMatchFirst(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient2@example.com'),
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient3@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient3@example.com'),
 		];
 		$requestData = ['field' => 'value'];
 
@@ -121,8 +121,8 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field'),
 		]);
 
-		$this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST);
-		$result = $this->formConditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
+		$this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST);
+		$result = $this->conditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient1@example.com', $result);
 	}
@@ -134,9 +134,9 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetMatchingRecipientWithMatchLast(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient2@example.com'),
-			$this->createConditionalRecipient('field', '=', 'value', 'recipient3@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field', ComparisonOperator::Equal, 'value', 'recipient3@example.com'),
 		];
 		$requestData = ['field' => 'value'];
 
@@ -144,8 +144,8 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field'),
 		]);
 
-		$this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST);
-		$result = $this->formConditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
+		$this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST);
+		$result = $this->conditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient3@example.com', $result);
 	}
@@ -157,8 +157,8 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetMatchingRecipientWithMatchAll(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field2', '=', 'value2', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field2', ComparisonOperator::Equal, 'value2', 'recipient2@example.com'),
 		];
 		$requestData = ['field1' => 'value1', 'field2' => 'value2'];
 
@@ -167,8 +167,8 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field2'),
 		]);
 
-		$this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
-		$result = $this->formConditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
+		$this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
+		$result = $this->conditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient2@example.com', $result);
 	}
@@ -180,8 +180,8 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetMatchingRecipientWithMatchAllFailure(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field2', '=', 'wrong_value', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field2', ComparisonOperator::Equal, 'wrong_value', 'recipient2@example.com'),
 		];
 		$requestData = ['field1' => 'value1', 'field2' => 'value2'];
 
@@ -190,8 +190,8 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field2'),
 		]);
 
-		$this->formConditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
-		$result = $this->formConditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
+		$this->conditionalRecipients->setProcessStrategy(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL);
+		$result = $this->conditionalRecipients->getMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertNull($result);
 	}
@@ -203,9 +203,9 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetFirstMatchingRecipient(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'wrong_value', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient2@example.com'),
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient3@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'wrong_value', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient3@example.com'),
 		];
 		$requestData = ['field1' => 'value1'];
 
@@ -213,7 +213,7 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field1'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient($conditionalRecipients, $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient2@example.com', $result);
 	}
@@ -225,7 +225,7 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetFirstMatchingRecipientNoMatch(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'wrong_value', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'wrong_value', 'recipient1@example.com'),
 		];
 		$requestData = ['field1' => 'value1'];
 
@@ -233,7 +233,7 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field1'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient($conditionalRecipients, $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertNull($result);
 	}
@@ -245,9 +245,9 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetLastMatchingRecipient(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient2@example.com'),
-			$this->createConditionalRecipient('field1', '=', 'wrong_value', 'recipient3@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'wrong_value', 'recipient3@example.com'),
 		];
 		$requestData = ['field1' => 'value1'];
 
@@ -255,7 +255,7 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field1'),
 		]);
 
-		$result = $this->formConditionalRecipients->getLastMatchingRecipient($conditionalRecipients, $requestData);
+		$result = $this->conditionalRecipients->getLastMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient2@example.com', $result);
 	}
@@ -267,8 +267,8 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testGetAllMatchingRecipient(): void {
 		$conditionalRecipients = [
-			$this->createConditionalRecipient('field1', '=', 'value1', 'recipient1@example.com'),
-			$this->createConditionalRecipient('field2', '=', 'value2', 'recipient2@example.com'),
+			$this->createConditionalRecipient('field1', ComparisonOperator::Equal, 'value1', 'recipient1@example.com'),
+			$this->createConditionalRecipient('field2', ComparisonOperator::Equal, 'value2', 'recipient2@example.com'),
 		];
 		$requestData = ['field1' => 'value1', 'field2' => 'value2'];
 
@@ -277,7 +277,7 @@ class FormConditionalRecipientsTest extends TestCase {
 			$this->createFormElement('text', 'field2'),
 		]);
 
-		$result = $this->formConditionalRecipients->getAllMatchingRecipient($conditionalRecipients, $requestData);
+		$result = $this->conditionalRecipients->getAllMatchingRecipient($conditionalRecipients, $requestData);
 
 		$this->assertSame('recipient2@example.com', $result);
 	}
@@ -288,14 +288,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithElementIdentifier(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value');
-		$requestData = ['test_field' => 'test_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['testField' => 'test_value'];
 
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		$this->assertSame('test@example.com', $result);
 	}
@@ -306,14 +306,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithMissingField(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
-		$requestData = ['other_field' => 'other_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('missingField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['otherField' => 'other_value'];
 
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		$this->assertNull($result);
 	}
@@ -324,10 +324,10 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithCurrentPageProperty(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('title', '=', 'Test Page', 'page@example.com', 'current_page');
+		$conditionalRecipient = $this->createConditionalRecipient('title', ComparisonOperator::Equal, 'Test Page', 'page@example.com', 'currentPage');
 		$this->page->title = 'Test Page';
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
 
 		$this->assertSame('page@example.com', $result);
 	}
@@ -338,10 +338,10 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithCurrentPageAttributes(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('custom_field', '=', 'custom_value', 'attr@example.com', 'current_page');
-		$this->page->attributes = new Entity(['custom_field' => 'custom_value']);
+		$conditionalRecipient = $this->createConditionalRecipient('customField', ComparisonOperator::Equal, 'custom_value', 'attr@example.com', 'currentPage');
+		$this->page->attributes = new Entity(['customField' => 'custom_value']);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
 
 		$this->assertSame('attr@example.com', $result);
 	}
@@ -352,10 +352,10 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithCurrentPageNullPage(): void {
-		$formConditionalRecipients = new FormConditionalRecipients($this->form, null);
-		$conditionalRecipient = $this->createConditionalRecipient('title', '=', 'Test Page', 'page@example.com', 'current_page');
+		$conditionalRecipients = new FormConditionalRecipients($this->form, null);
+		$conditionalRecipient = $this->createConditionalRecipient('title', ComparisonOperator::Equal, 'Test Page', 'page@example.com', 'currentPage');
 
-		$result = $formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
+		$result = $conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
 
 		$this->assertNull($result);
 	}
@@ -367,31 +367,31 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareEqualTo(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Test']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, 'test');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Test']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', '');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, '');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', null);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => null]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, null);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => null]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', '');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => null]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, '');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => null]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', null);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, null);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'other']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, 'test');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'other']);
 		$this->assertNull($result);
 	}
 
@@ -402,31 +402,31 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotEqualTo(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', 'test');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'test']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, 'test');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'test']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', '');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, '');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', null);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => null]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, null);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => null]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', '');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => null]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, '');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => null]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', null);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, null);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '!=', 'test');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'other']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEqual, 'test');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'other']);
 		$this->assertSame('test@example.com', $result);
 	}
 
@@ -437,39 +437,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareGreaterThan(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThan, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertNull($result);
 	}
 
@@ -480,55 +480,55 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareGreaterThanOrEqual(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '>=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::GreaterThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertNull($result);
 	}
 
@@ -539,39 +539,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareGreaterThanWithDates(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('date', 'date_field'),
+			$this->createFormElement('date', 'dateField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', '2025-01-06');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, '2025-01-06');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', '2025-01-06');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, '2025-01-06');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', new Date('2025-01-06'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, new Date('2025-01-06'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', new Date('2025-01-06'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, new Date('2025-01-06'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-06']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-06']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-06')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-06')]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-06']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-06']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-06')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThan, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-06')]);
 		$this->assertNull($result);
 	}
 
@@ -582,55 +582,55 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareGreaterThanOrEqualWithDates(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('date', 'date_field'),
+			$this->createFormElement('date', 'dateField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-06');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-06');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-06');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-06');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-06'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-06'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-06'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-06'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-07']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-07']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-07')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-07')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-06']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-06']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', '2025-01-07');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-06')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, '2025-01-07');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-06')]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => '2025-01-06']);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => '2025-01-06']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('date_field', '>=', new Date('2025-01-07'));
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['date_field' => new Date('2025-01-06')]);
+		$conditionalRecipient = $this->createConditionalRecipient('dateField', ComparisonOperator::GreaterThanOrEqual, new Date('2025-01-07'));
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['dateField' => new Date('2025-01-06')]);
 		$this->assertNull($result);
 	}
 
@@ -641,39 +641,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLessThan(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThan, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertNull($result);
 	}
 
@@ -684,55 +684,55 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLessThanOrEqual(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 10);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 5]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 10);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 5]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', '5');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, '5');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '<=', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LessThanOrEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertNull($result);
 	}
 
@@ -743,39 +743,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareBetween(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 1]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 1]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['1', '10']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['1', '10']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', '1, 10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, '1, 10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '15']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 15]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 15]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['1', '10']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['1', '10']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '15']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', '1, 10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 15]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, '1, 10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 15]);
 		$this->assertNull($result);
 	}
 
@@ -786,39 +786,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareBetweenWithDates(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2021-06-15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2021-06-15']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', new Date('2023-12-31')]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2021-06-15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', new Date('2023-12-31')]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2021-06-15']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2021-06-15')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2021-06-15')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', '2020-01-01,2023-12-31');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2021-06-15')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, '2020-01-01,2023-12-31');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2021-06-15')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2019-12-31']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2019-12-31']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', new Date('2023-12-31')]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2019-12-31']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', new Date('2023-12-31')]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2019-12-31']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2019-12-31')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2019-12-31')]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'between', '2020-01-01,2023-12-31');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2019-12-31')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Between, '2020-01-01,2023-12-31');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2019-12-31')]);
 		$this->assertNull($result);
 	}
 
@@ -829,39 +829,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotBetween(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '5']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '5']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 1]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 1]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['1', '10']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '10']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['1', '10']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '10']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', '1, 10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 10]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, '1, 10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 10]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '15']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', [1, 10]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 15]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, [1, 10]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 15]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['1', '10']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['1', '10']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '15']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', '1, 10');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 15]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, '1, 10');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 15]);
 		$this->assertSame('test@example.com', $result);
 	}
 
@@ -872,39 +872,39 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotBetweenWithDates(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2021-06-15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2021-06-15']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', new Date('2023-12-31')]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2021-06-15']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', new Date('2023-12-31')]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2021-06-15']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2021-06-15')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2021-06-15')]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', '2020-01-01,2023-12-31');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2021-06-15')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, '2020-01-01,2023-12-31');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2021-06-15')]);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2019-12-31']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2019-12-31']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', new Date('2023-12-31')]);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => '2019-12-31']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', new Date('2023-12-31')]);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => '2019-12-31']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', ['2020-01-01', '2023-12-31']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2019-12-31')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, ['2020-01-01', '2023-12-31']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2019-12-31')]);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_between', '2020-01-01,2023-12-31');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => new Date('2019-12-31')]);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotBetween, '2020-01-01,2023-12-31');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => new Date('2019-12-31')]);
 		$this->assertSame('test@example.com', $result);
 	}
 
@@ -915,15 +915,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLengthEqualTo(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'length_equal', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LengthEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'length_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LengthEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertNull($result);
 	}
 
@@ -934,15 +934,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLengthNotEqualTo(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'length_not_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LengthNotEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'length_not_equal', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LengthNotEqual, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertNull($result);
 	}
 
@@ -953,15 +953,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLongerThan(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'longer_than', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LongerThan, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'longer_than', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hey']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LongerThan, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hey']);
 		$this->assertNull($result);
 	}
 
@@ -972,19 +972,19 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareLongerThanOrEqual(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'longer_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LongerThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'longer_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hey']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LongerThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hey']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'longer_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hi']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::LongerThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hi']);
 		$this->assertNull($result);
 	}
 
@@ -994,15 +994,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareShorterThan(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'shorter_than', 5);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hey']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::ShorterThan, 5);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hey']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'shorter_than', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hey']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::ShorterThan, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hey']);
 		$this->assertNull($result);
 	}
 
@@ -1012,19 +1012,19 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareShorterThanOrEqual(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'shorter_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hey']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::ShorterThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hey']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'shorter_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hi']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::ShorterThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hi']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'shorter_than_or_equal', 3);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::ShorterThanOrEqual, 3);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertNull($result);
 	}
 
@@ -1035,15 +1035,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareIn(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'in', ['apple', 'banana', 'cherry']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Apple']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::In, ['apple', 'banana', 'cherry']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Apple']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'in', ['apple', 'banana', 'cherry']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'grape']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::In, ['apple', 'banana', 'cherry']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'grape']);
 		$this->assertNull($result);
 	}
 
@@ -1054,15 +1054,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotIn(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_in', ['apple', 'banana', 'cherry']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'grape']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotIn, ['apple', 'banana', 'cherry']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'grape']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_in', ['apple', 'banana', 'cherry']);
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'banana']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotIn, ['apple', 'banana', 'cherry']);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'banana']);
 		$this->assertNull($result);
 	}
 
@@ -1073,15 +1073,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareContains(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'contains', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Contains, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'contains', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Contains, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertNull($result);
 	}
 
@@ -1092,15 +1092,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotContains(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_contains', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotContains, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_contains', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotContains, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertNull($result);
 	}
 
@@ -1111,15 +1111,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareStartsWith(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'starts_with', 'hello');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::StartsWith, 'hello');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'starts_with', 'hello');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'world hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::StartsWith, 'hello');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'world hello']);
 		$this->assertNull($result);
 	}
 
@@ -1130,15 +1130,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotStartsWith(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_starts_with', 'hello');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'world hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotStartsWith, 'hello');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'world hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_starts_with', 'hello');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotStartsWith, 'hello');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertNull($result);
 	}
 
@@ -1149,15 +1149,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareEndsWith(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'ends_with', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::EndsWith, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'ends_with', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'world hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::EndsWith, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'world hello']);
 		$this->assertNull($result);
 	}
 
@@ -1168,15 +1168,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareNotEndsWith(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_ends_with', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'world hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEndsWith, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'world hello']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'not_ends_with', 'world');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'Hello World']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::NotEndsWith, 'world');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'Hello World']);
 		$this->assertNull($result);
 	}
 
@@ -1187,19 +1187,19 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	public function testCompareRegexp(): void {
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'test_field'),
+			$this->createFormElement('text', 'testField'),
 		]);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'regexp', '/\d+/');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello123']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Regexp, '/\d+/');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello123']);
 		$this->assertSame('test@example.com', $result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'regexp', '/\d+/');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'hello']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Regexp, '/\d+/');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'hello']);
 		$this->assertNull($result);
 
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', 'regexp', '/^[^@]+@[^@]+\.[^@]+$/');
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['test_field' => 'test@example.com']);
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Regexp, '/^[^@]+@[^@]+\.[^@]+$/');
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], ['testField' => 'test@example.com']);
 		$this->assertSame('test@example.com', $result);
 	}
 
@@ -1209,13 +1209,13 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithMissingFormElements(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value');
-		$requestData = ['test_field' => 'test_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['testField' => 'test_value'];
 
 		// Form has no formElements property set
 		$this->form->formElements = null;
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		// Should return null because OutOfBoundsException is caught in ruleMatches()
 		$this->assertNull($result);
@@ -1227,14 +1227,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithMissingFormElement(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
-		$requestData = ['missing_field' => 'test_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('missingField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['missingField' => 'test_value'];
 
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'other_field'),
+			$this->createFormElement('text', 'otherField'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		// Should return null because OutOfBoundsException is caught in ruleMatches()
 		$this->assertNull($result);
@@ -1246,9 +1246,9 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithCurrentPageMissingField(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value', 'page@example.com', 'current_page');
+		$conditionalRecipient = $this->createConditionalRecipient('missingField', ComparisonOperator::Equal, 'test_value', 'page@example.com', 'currentPage');
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], []);
 
 		// Should return null because OutOfBoundsException is caught in ruleMatches()
 		$this->assertNull($result);
@@ -1260,13 +1260,13 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithInvalidFieldType(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value', 'test@example.com', 'invalid_type');
-		$requestData = ['test_field' => 'test_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('testField', ComparisonOperator::Equal, 'test_value', 'test@example.com', 'invalid_type');
+		$requestData = ['testField' => 'test_value'];
 
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Invalid field type');
 
-		$this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 	}
 
 
@@ -1275,14 +1275,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithOutOfBoundsExceptionHandling(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('nonexistent_field', '=', 'test_value');
-		$requestData = ['different_field' => 'test_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('nonexistentField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['differentField' => 'test_value'];
 
 		$this->form->formElements = new Collection([
 			$this->createFormElement('text', 'existing_field'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		// Should return null because rule doesn't match due to OutOfBoundsException
 		$this->assertNull($result);
@@ -1294,14 +1294,14 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
 	 */
 	public function testRuleMatchesWithMissingRequestDataField(): void {
-		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
-		$requestData = ['other_field' => 'other_value'];
+		$conditionalRecipient = $this->createConditionalRecipient('missingField', ComparisonOperator::Equal, 'test_value');
+		$requestData = ['otherField' => 'other_value'];
 
 		$this->form->formElements = new Collection([
-			$this->createFormElement('text', 'missing_field'),
+			$this->createFormElement('text', 'missingField'),
 		]);
 
-		$result = $this->formConditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
+		$result = $this->conditionalRecipients->getFirstMatchingRecipient([$conditionalRecipient], $requestData);
 
 		// Should return null because field is missing from request data (OutOfBoundsException caught)
 		$this->assertNull($result);
@@ -1310,7 +1310,7 @@ class FormConditionalRecipientsTest extends TestCase {
 
 	/**
 	 * @param string $field
-	 * @param string $operator
+	 * @param ComparisonOperator|string $operator
 	 * @param mixed $value
 	 * @param string $recipient
 	 * @param string $type
@@ -1318,15 +1318,15 @@ class FormConditionalRecipientsTest extends TestCase {
 	 */
 	protected function createConditionalRecipient(
 		string $field,
-		string $operator,
+		string|ComparisonOperator $operator,
 		mixed $value,
 		string $recipient = 'test@example.com',
-		string $type = 'element_identifier'
+		string $type = 'elementIdentifier'
 	): FormConditionalRecipient {
 		$conditionalRecipient = new FormConditionalRecipient();
 		$conditionalRecipient->type = $type;
 		$conditionalRecipient->field = $field;
-		$conditionalRecipient->operator = ComparisonOperator::from($operator);
+		$conditionalRecipient->operator = $operator instanceof ComparisonOperator ? $operator : ComparisonOperator::from($operator);
 		$conditionalRecipient->value = $value;
 		$conditionalRecipient->recipient = $recipient;
 

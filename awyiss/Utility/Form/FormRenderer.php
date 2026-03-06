@@ -117,7 +117,7 @@ class FormRenderer {
 			return $this;
 		}
 
-		if ($this->form->identifier === ($requestData['_form_identifier'] ?? null)) {
+		if ($this->form->identifier === ($requestData['_formIdentifier'] ?? null)) {
 			$this->form->submitted();
 
 			$this->form->setFormData($requestData);
@@ -336,7 +336,7 @@ class FormRenderer {
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
-		if ($entity->type === 'free_text') {
+		if ($entity->type === 'freeText') {
 			// Parse the Awyiss image tags
 			$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 

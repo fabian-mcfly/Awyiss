@@ -30,15 +30,6 @@ class PageRole extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'include_in_linklist' => 'includeInLinklist',
-		'system_order' => 'systemOrder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'identifier' => true,

@@ -5,6 +5,9 @@ namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
+use Awyiss\Model\Table\AuditTable;
+use Awyiss\Model\Table\UsergroupPermissionsTable;
+use Awyiss\Model\Table\UsergroupsUsersTable;
 use Awyiss\Utility\Inflector;
 use Bake\Command\BakeCommand;
 use Bake\Utility\TableScanner;
@@ -35,7 +38,13 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * @var array|array<string> Table names that must never have permissions
 	 */
-	private array $blocklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
+	private array $blocklistedNames = [
+		AuditTable::TABLE,
+		'queue_processes',
+		'queued_jobs',
+		UsergroupPermissionsTable::TABLE,
+		UsergroupsUsersTable::TABLE,
+	];
 
 
 	/**

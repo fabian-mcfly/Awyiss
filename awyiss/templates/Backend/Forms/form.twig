@@ -37,16 +37,16 @@
 				{% endblock %}
 
 				{% block formControlIdentifier %}
-					{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title'}) }}
+					{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title', 'data-camelize': 'true'}) }}
 				{% endblock %}
 
 				{% block formControlSuccessMessage %}
-					{{ FormHelper.control('success_message', {'data-editor': true}) }}
+					{{ FormHelper.control('successMessage', {'data-editor': true}) }}
 				{% endblock %}
 
 				{% block formControlFormTemplate %}
 					{% if formTemplates %}
-						{{ FormHelper.control('form_template', {
+						{{ FormHelper.control('formTemplate', {
 							options: formTemplates,
 						}) }}
 					{% endif %}
@@ -67,18 +67,18 @@
 
 			{% block fieldsetEmailInner %}
 				{% block formControlOwnerEmail %}
-					{{ FormHelper.control('owner_email', {columnSpan: 6}) }}
+					{{ FormHelper.control('ownerEmail', {columnSpan: 6}) }}
 				{% endblock %}
 
 				{% block formControlOwnerName %}
-					{{ FormHelper.control('owner_name', {
+					{{ FormHelper.control('ownerName', {
 						columnSpan: 6,
 						placeholder: config.Awyiss.System.Frontend.meta.titleAppendix,
 					}) }}
 				{% endblock %}
 
 				{% block formControlSendEmail %}
-					{{ FormHelper.control('send_email') }}
+					{{ FormHelper.control('sendEmail') }}
 				{% endblock %}
 
 				{% block formControlSubject %}
@@ -88,7 +88,7 @@
 				{% block formControlEmailTemplateId %}
 					{% set emailTemplateAddButton %}
 						{% if AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'create') %}
-							{{ HtmlHelper.link(__d('email_templates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+							{{ HtmlHelper.link(__d('EmailTemplates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
 						{% endif %}
 					{% endset %}
 
@@ -98,7 +98,7 @@
 						{% endif %}
 					{% endset %}
 
-					{{ FormHelper.control('email_template_id', {
+					{{ FormHelper.control('emailTemplateId', {
 						columnSpan: 6,
 						options: hashPrinter(emailTemplates.toArray(), 'label', 'id'),
 						templateVars: {
@@ -209,12 +209,12 @@
 										{% set counter = 0 %}
 										{% set formConditionalRecipientTypes = combine(
 											formConditionalRecipientTypes,
-											formConditionalRecipientTypes|map(formConditionalRecipientType => __d('form_conditional_recipients', 'type_' ~ formConditionalRecipientType))
+											formConditionalRecipientTypes|map(formConditionalRecipientType => __d('FormConditionalRecipients', 'type_' ~ formConditionalRecipientType))
 										) %}
 
 										{% set formConditionalRecipientOperators = combine(
 											formConditionalRecipientOperators|column('value'),
-											formConditionalRecipientOperators|map(formConditionalRecipientOperator => __d('form_conditional_recipients', 'operator_' ~ formConditionalRecipientOperator.name|underscore))
+											formConditionalRecipientOperators|map(formConditionalRecipientOperator => __d('FormConditionalRecipients', 'operator_' ~ formConditionalRecipientOperator.name|underscore))
 										) %}
 
 										{% set formElements = form.formElements ? combine(
@@ -222,42 +222,42 @@
 											form.formElements|map(formElement => formElement.label ~ ' (' ~ formElement.identifier ~ ')')
 										) : [] %}
 
-										{% for key, conditionalRecipient in form.formConditionalRecipients %}
+										{% for key, conditionalRecipient in form.conditionalRecipients %}
 											<div class="FormInputType-ListItem">
-												{{ FormHelper.hidden('form_conditional_recipients.' ~ counter ~ '.id', {
+												{{ FormHelper.hidden('conditionalRecipients.' ~ counter ~ '.id', {
 													val: conditionalRecipient.id,
 												}) }}
 
-												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
-													label: __d('form_conditional_recipients', 'type'),
+												{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.type', {
+													label: __d('FormConditionalRecipients', 'type'),
 													options: formConditionalRecipientTypes,
 													required: false,
 												}) }}
 
 												{% set fields = formElements %}
-												{% if conditionalRecipient.type == 'current_page' %}
+												{% if conditionalRecipient.type == 'currentPage' %}
 													{% set fields = pageProperties %}
 												{% endif %}
 
-												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
-													label: __d('form_conditional_recipients', 'field'),
+												{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.field', {
+													label: __d('FormConditionalRecipients', 'field'),
 													options: fields,
 													required: false,
 												}) }}
 
-												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {
-													label: __d('form_conditional_recipients', 'operator'),
+												{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.operator', {
+													label: __d('FormConditionalRecipients', 'operator'),
 													options: formConditionalRecipientOperators,
 													required: false,
 												}) }}
 
-												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.value', {
-													label: __d('form_conditional_recipients', 'value'),
+												{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.value', {
+													label: __d('FormConditionalRecipients', 'value'),
 													required: false,
 												}) }}
 
-												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.recipient', {
-													label: __d('form_conditional_recipients', 'recipient'),
+												{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.recipient', {
+													label: __d('FormConditionalRecipients', 'recipient'),
 													required: false,
 												}) }}
 
@@ -266,46 +266,46 @@
 										{% endfor %}
 
 										<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-											{{ FormHelper.hidden('form_conditional_recipients.' ~ counter ~ '.id', {
+											{{ FormHelper.hidden('conditionalRecipients.' ~ counter ~ '.id', {
 												val: '',
 											}) }}
 
-											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
-												label: __d('form_conditional_recipients', 'type'),
+											{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.type', {
+												label: __d('FormConditionalRecipients', 'type'),
 												options: formConditionalRecipientTypes,
 												required: false,
 											}) }}
 
-											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
+											{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.field', {
 												disabled: true,
-												label: __d('form_conditional_recipients', 'field'),
+												label: __d('FormConditionalRecipients', 'field'),
 												options: formElements,
 												required: false,
 											}) }}
 
-											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {
-												label: __d('form_conditional_recipients', 'operator'),
+											{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.operator', {
+												label: __d('FormConditionalRecipients', 'operator'),
 												options: formConditionalRecipientOperators,
 												required: false,
 											}) }}
 
-											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.value', {
-												label: __d('form_conditional_recipients', 'value'),
+											{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.value', {
+												label: __d('FormConditionalRecipients', 'value'),
 												required: false,
 											}) }}
 
-											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.recipient', {
-												label: __d('form_conditional_recipients', 'recipient'),
+											{{ FormHelper.control('conditionalRecipients.' ~ counter ~ '.recipient', {
+												label: __d('FormConditionalRecipients', 'recipient'),
 												required: false,
 											}) }}
 										</div>
 
 										<template id="FormElementOptions">
-											{{ FormHelper.select('_form_element_options', formElements) }}
+											{{ FormHelper.select('_formElementOptions', formElements) }}
 										</template>
 
 										<template id="CurrentPageOptions">
-											{{ FormHelper.select('_current_page_options', pageProperties) }}
+											{{ FormHelper.select('_currentPageOptions', pageProperties) }}
 										</template>
 									</div>
 								{% endblock %}
@@ -315,14 +315,14 @@
 										conditionalRecipientsStrategies,
 										conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy))
 									) %}
-									{{ FormHelper.control('conditional_recipients_strategy', {
+									{{ FormHelper.control('conditionalRecipientsStrategy', {
 										empty: false,
 										options: conditionalRecipientsStrategies,
 									}) }}
 								{% endblock %}
 
 								{% block formControlTransportProfile %}
-									{{ FormHelper.control('transport_profile', {
+									{{ FormHelper.control('transportProfile', {
 										empty: false,
 										options: transportProfiles,
 									}) }}
@@ -343,19 +343,19 @@
 
 			{% block fieldsetConfirmationEmailInner %}
 				{% block formControlUserEmail %}
-					{{ FormHelper.control('user_email', {columnSpan: 6, placeholder: __('user_email_placeholder')}) }}
+					{{ FormHelper.control('userEmail', {columnSpan: 6, placeholder: __('user_email_placeholder')}) }}
 				{% endblock %}
 
 				{% block formControlUserName %}
-					{{ FormHelper.control('user_name', {columnSpan: 6, placeholder: __('user_name_placeholder')}) }}
+					{{ FormHelper.control('userName', {columnSpan: 6, placeholder: __('user_name_placeholder')}) }}
 				{% endblock %}
 
 				{% block formControlSendConfirmationEmail %}
-					{{ FormHelper.control('send_confirmation_email') }}
+					{{ FormHelper.control('sendConfirmationEmail') }}
 				{% endblock %}
 
 				{% block formControlSubjectConfirmation %}
-					{{ FormHelper.control('subject_confirmation', {
+					{{ FormHelper.control('subjectConfirmation', {
 						columnSpan: 6,
 						placeholder: __('subject_confirmation_placeholder'),
 					}) }}
@@ -364,7 +364,7 @@
 				{% block formControlConfirmationEmailTemplateId %}
 					{% set confirmationEmailTemplateAddButton %}
 						{% if AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'create') %}
-							{{ HtmlHelper.link(__d('confirmationEmail_templates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+							{{ HtmlHelper.link(__d('ConfirmationEmailTemplates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
 						{% endif %}
 					{% endset %}
 
@@ -374,7 +374,7 @@
 						{% endif %}
 					{% endset %}
 
-					{{ FormHelper.control('confirmation_email_template_id', {
+					{{ FormHelper.control('confirmationEmailTemplateId', {
 						columnSpan: 6,
 						options: hashPrinter(emailTemplates.toArray(), 'label', 'id'),
 						templateVars: {
@@ -385,7 +385,7 @@
 				{% endblock %}
 
 				{% block formControlSalutationConfirmation %}
-					{{ FormHelper.control('salutation_confirmation', {
+					{{ FormHelper.control('salutationConfirmation', {
 						columnSpan: 6,
 						placeholder: __('salutation_confirmation_placeholder'),
 					}) }}
@@ -442,7 +442,7 @@
 				{% endblock %}
 
 				{% block formControlSummarizeErrors %}
-					{{ FormHelper.control('summarize_errors', {columnSpan: 8}) }}
+					{{ FormHelper.control('summarizeErrors', {columnSpan: 8}) }}
 				{% endblock %}
 
 				{# % block formControlMultistep %}
@@ -545,7 +545,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

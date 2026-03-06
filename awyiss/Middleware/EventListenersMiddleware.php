@@ -20,7 +20,7 @@ class EventListenersMiddleware implements MiddlewareInterface {
 	 * @inheritDoc
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		EventListenersProvider::loadListener('general_events', Awyiss::getRealm());
+		EventListenersProvider::loadListener('generalEvents', Awyiss::getRealm());
 
 		$request = $request->withAttribute('eventListeners', $this);
 

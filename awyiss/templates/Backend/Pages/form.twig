@@ -57,16 +57,16 @@
 					{% endblock %}
 
 					{% block formControlDuplicateOf %}
-						{{ FormHelper.control('duplicate_of', {columnSpan: 6, disabled: isDuplicated ? true : [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
+						{{ FormHelper.control('duplicateOf', {columnSpan: 6, disabled: isDuplicated ? true : [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
 					{% endblock %}
 
 					{% block formControlRedirectLink %}
-						{{ FormHelper.control('redirect_link', {columnSpan: 6}) }}
+						{{ FormHelper.control('redirectLink', {columnSpan: 6}) }}
 					{% endblock %}
 
 					{% block formControlFormId %}
 						{% if localConfig('forms.enabled') %}
-							{{ FormHelper.control('form_id', {
+							{{ FormHelper.control('formId', {
 								options: hashPrinter(forms, 'label', 'id', '- '),
 							}) }}
 						{% endif %}
@@ -74,7 +74,7 @@
 
 					{% block formControlSurveyId %}
 						{% if localConfig('surveys.enabled') %}
-							{{ FormHelper.control('survey_id', {
+							{{ FormHelper.control('surveyId', {
 								options: hashPrinter(surveys, 'label', 'id', '- '),
 							}) }}
 						{% endif %}
@@ -133,7 +133,7 @@
 	{% set fieldsetSeo %}
 		{% block fieldsetSeo %}
 			<fieldset class="Fieldset-Seo">
-				<legend>{{ __d('seo', 'fieldset_seo') }}</legend>
+				<legend>{{ __d('Seo', 'fieldset_seo') }}</legend>
 
 				{% block fieldsetSeoInner %}
 					{{ element('Pages/seo_snippet') }}
@@ -157,7 +157,7 @@
 					{% endblock %}
 
 					{% block formControlPageTemplateId %}
-						{{ FormHelper.control('page_template_id', {empty: false, options: pageTemplates.combine('id', 'label')}) }}
+						{{ FormHelper.control('pageTemplateId', {empty: false, options: pageTemplates.combine('id', 'label')}) }}
 					{% endblock %}
 
 					{% block fieldsetPresentationAttributes %}
@@ -175,7 +175,7 @@
 
 				{% block fieldsetConditionsInner %}
 					{% block formControlLanguageShortcode %}
-						{{ LocaleHelper.control('language_shortcode', {
+						{{ LocaleHelper.control('languageShortcode', {
 							empty: false,
 							languageRealm: languageRealm,
 							'data-form-updater': true,
@@ -188,13 +188,13 @@
 						{% endif %}
 
 						{% if nestable and possibleParentPages is not null %}
-							{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentPages, 'label', 'id', '- '), 'data-form-updater': true}) }}
+							{{ FormHelper.control('parentId', {options: hashPrinter(possibleParentPages, 'label', 'id', '- '), 'data-form-updater': true}) }}
 						{% endif %}
 					{% endblock %}
 
 					{% block formControlSystemOrder %}
 						{% if sortable %}
-							{{ SystemOrderHelper.control('system_order') }}
+							{{ SystemOrderHelper.control('systemOrder') }}
 						{% endif %}
 					{% endblock %}
 
@@ -227,7 +227,7 @@
 
 				{# @var menu \Awyiss\Model\Entity\Menu #}
 				{% for key, menu in menus %}
-					{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {columnSpan: 3, hiddenField: false, label: menu.label, type: 'checkbox', value: menu.id}) }}
+					{{ FormHelper.control('addMenuEntry[' ~ key ~ ']', {columnSpan: 3, hiddenField: false, label: menu.label, type: 'checkbox', value: menu.id}) }}
 				{% endfor %}
 			</fieldset>
 		{% endblock %}
@@ -248,7 +248,7 @@
 	{% block fieldsets %}
 		<div class="Fieldsets">
 			{% if hasDescendantsWithDifferentPageRole %}
-				{{ FormHelper.control('copy_descendants_with_different_page_role', {
+				{{ FormHelper.control('copyDescendantsWithDifferentPageRole', {
 					escape: false,
 					label: __('copy_descendants_with_different_page_role'),
 					options: {
@@ -302,7 +302,7 @@
 			{% endblock %}
 
 			{% block formInputReloadForm %}
-				{{ FormHelper.hidden('reload_form', {val: 0}) }}
+				{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 			{% endblock %}
 		</div>
 	{% endblock %}

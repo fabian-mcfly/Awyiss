@@ -60,11 +60,11 @@ class ThirdPartyConsentTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'consent_id' => 'consent-12345',
-			'accept_type' => 'all',
-			'accepted_categories' => ['analytics', 'marketing'],
-			'rejected_categories' => ['social'],
-			'created_on' => '2025-01-06 12:00:00',
+			'consentId' => 'consent-12345',
+			'acceptType' => 'all',
+			'acceptedCategories' => ['analytics', 'marketing'],
+			'rejectedCategories' => ['social'],
+			'createdOn' => '2025-01-06 12:00:00',
 		];
 
 		$entity = new ThirdPartyConsent($properties);
@@ -75,25 +75,5 @@ class ThirdPartyConsentTest extends TestCase {
 		$this->assertEquals(['analytics', 'marketing'], $entity->acceptedCategories);
 		$this->assertEquals(['social'], $entity->rejectedCategories);
 		$this->assertNotNull($entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\ThirdPartyConsent::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'consent_id' => 'test-consent',
-			'accept_type' => 'partial',
-			'accepted_categories' => ['essential'],
-			'rejected_categories' => [],
-		];
-		$entity = new ThirdPartyConsent($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

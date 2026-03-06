@@ -22,19 +22,6 @@ class AttributesCar extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'car_id' => 'carId',
-		'free_text' => 'freeText',
-		'dropdown_select' => 'dropdownSelect',
-		'input_list' => 'inputList',
-		'input_key_value_list' => 'inputKeyValueList',
-		'dummy_pw' => 'dummyPw',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'carId' => true,
 		'freeText' => true,

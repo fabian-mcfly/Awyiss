@@ -27,7 +27,7 @@ class FormEntriesController extends Controller {
 			'csvEncoding' => 'UTF-8',
 			'dataEncoding' => 'UTF-8',
 		],
-		'csv_excel' => [
+		'csvExcel' => [
 			'csvEncoding' => 'ISO-8859-1',
 			'dataEncoding' => 'UTF-8',
 		],
@@ -43,10 +43,10 @@ class FormEntriesController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $paginate = [
-		'defaultSortableFields' => ['form_id'],
+		'defaultSortableFields' => ['formId'],
 		'enabled' => true,
 		'order' => [
-			'created_on' => 'desc',
+			'createdOn' => 'desc',
 		],
 	];
 
@@ -96,9 +96,9 @@ class FormEntriesController extends Controller {
 	public function export(): ?Response {
 		$this->Authorization->ensure('read');
 
-		$formId = $this->request->getData('export_form_id');
-		$languages = $this->request->getData('export_languages') ?? [];
-		$format = $this->request->getData('export_format');
+		$formId = $this->request->getData('exportFormId');
+		$languages = $this->request->getData('exportLanguages') ?? [];
+		$format = $this->request->getData('exportFormat');
 
 		/** @var \Awyiss\Model\Entity\Form $form */
 		$form = $this->fetchTable('Forms')->findById($formId)->contain(['FormElements'])->first();
@@ -112,17 +112,17 @@ class FormEntriesController extends Controller {
 
 		$query = $this->FormEntries->find()->where([
 			'OR' => [
-				'language_shortcode IS' => null,
-				'language_shortcode IN' => $languages,
+				'languageShortcode IS' => null,
+				'languageShortcode IN' => $languages,
 			],
-			'form_id' => $formId,
+			'formId' => $formId,
 		]);
 
 		$headlines = [];
-		if (in_array($format, ['csv', 'csv_excel'])) {
+		if (in_array($format, ['csv', 'csvExcel'])) {
 			/** @var \Awyiss\Model\Entity\FormElement $formElement */
 			foreach ($form->formElements->listNested() as $formElement) {
-				if (in_array($formElement->type, ['fieldset', 'free_text', 'submit'])) {
+				if (in_array($formElement->type, ['fieldset', 'freeText', 'submit'])) {
 					continue;
 				}
 
@@ -147,9 +147,9 @@ class FormEntriesController extends Controller {
 			if ($format === 'xml') {
 				$this->cleanFieldNamesForXml($entry->data);
 			}
-			elseif (in_array($format, ['csv', 'csv_excel'])) {
+			elseif (in_array($format, ['csv', 'csvExcel'])) {
 				$this->cleanFieldsForCsv($entry->data, $headlines);
-				$headlines['_created_on'] = __('created_on');
+				$headlines['_created_on'] = __('createdOn');
 			}
 
 			$entries[ $entry->id ] = $entry->data;
@@ -184,8 +184,8 @@ class FormEntriesController extends Controller {
 				'header' => $headlines,
 				'csvEncoding' => $this->csvEncoding[ $format ]['csvEncoding'],
 				'dataEncoding' => $this->csvEncoding[ $format ]['dataEncoding'],
-				'bom' => $format === 'csv_excel',
-				'setSeparator' => $format === 'csv_excel' ? ',' : false,
+				'bom' => $format === 'csvExcel',
+				'setSeparator' => $format === 'csvExcel' ? ',' : false,
 			]);
 		$this->set('entries', $entries);
 

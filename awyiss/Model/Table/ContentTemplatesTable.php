@@ -41,26 +41,26 @@ class ContentTemplatesTable extends Table {
 	 */
 	protected array $availableContentElements = [
 		'active' => false,
-		'content_template_id' => false,
-		'language_shortcode' => false,
-		'page_id' => false,
-		'content_area_id' => false,
-		'parent_id' => true,
-		'system_order' => false,
-		'css_class' => true,
-		'column_width' => true,
-		'column_indent' => true,
-		'column_last' => true,
-		'column_rtl' => true,
+		'contentTemplateId' => false,
+		'languageShortcode' => false,
+		'pageId' => false,
+		'contentAreaId' => false,
+		'parentId' => true,
+		'systemOrder' => false,
+		'cssClass' => true,
+		'columnWidth' => true,
+		'columnIndent' => true,
+		'columnLast' => true,
+		'columnRtl' => true,
 		'title' => true,
-		'title_tag' => true,
+		'titleTag' => true,
 		'subtitle' => true,
-		'subtitle_tag' => true,
+		'subtitleTag' => true,
 		'text' => true,
 		'link' => true,
-		'duplicate_of' => true,
-		'form_id' => true,
-		'survey_id' => true,
+		'duplicateOf' => true,
+		'formId' => true,
+		'surveyId' => true,
 	];
 	/**
 	 * @var array<int, string>
@@ -98,19 +98,28 @@ class ContentTemplatesTable extends Table {
 		$this->hasMany('Contents', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'contentTemplateId',
 		]);
 
 		$this->belongsToMany('ContentAreas', [
+			'foreignKey' => 'contentTemplateId',
+			'propertyName' => 'contentAreas',
+			'targetForeignKey' => 'contentAreaId',
 			'through' => 'ContentTemplateContentAreas',
 		]);
 
 		$this->hasMany('ContentTemplateElements', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'contentTemplateId',
+			'propertyName' => 'contentTemplateElements',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsToMany('PageTemplates', [
+			'foreignKey' => 'contentTemplateId',
+			'targetForeignKey' => 'pageTemplateId',
+			'propertyName' => 'pageTemplates',
 			'through' => 'ContentTemplateContentAreas',
 		]);
 	}
@@ -122,7 +131,7 @@ class ContentTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
-			'used_for_contents' => $query->func()->count('Contents.id'),
+			'usedForContents' => $query->func()->count('Contents.id'),
 		])->leftJoinWith('Contents', function (SelectQuery $query) {
 			return $query->applyOptions([
 				'attributes' => [
@@ -174,7 +183,7 @@ class ContentTemplatesTable extends Table {
 		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$this->availableContentAttributes[ $includeInactiveKey ] = $attributesTable->find($includeInactive ? 'all' : 'active')
-			->where(['scope' => 'contents'])
+			->where(['scope' => 'Contents'])
 			->all()
 			->indexBy('id')
 			->map(
@@ -278,7 +287,7 @@ class ContentTemplatesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_file_name_unique'),
 		]);
 
 
@@ -309,7 +318,7 @@ class ContentTemplatesTable extends Table {
 		}, 'validContentElements', [
 			'errorField' => 'contentTemplateElements',
 			//No domain fallback, since this is a message, specific to content templates.
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_elements'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_content_elements'),
 		]);
 
 
@@ -318,7 +327,7 @@ class ContentTemplatesTable extends Table {
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_contents'),
 			]
 		);
 

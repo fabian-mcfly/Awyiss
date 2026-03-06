@@ -70,8 +70,8 @@ class SurveyCell extends Cell {
 			return;
 		}
 
-		if (($requestData['survey'][ $survey->identifier ]['action'] ?? null) === 'go_back') {
-			$survey->goToStep($requestData['survey'][ $survey->identifier ]['last_action']);
+		if (($requestData['survey'][ $survey->identifier ]['action'] ?? null) === 'goBack') {
+			$survey->goToStep($requestData['survey'][ $survey->identifier ]['lastAction']);
 		}
 
 		$surveyRenderer->process(

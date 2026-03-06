@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\Form\Protection;
 
 use Awyiss\Form\FormOptions;
 use Awyiss\Form\Protection\DuplicateCheckFormProtection;
+use Awyiss\Form\Protection\FormProtectionInterface;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\FormEntry;
@@ -105,13 +106,13 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 			$this->view
 		);
 
-		$result = $this->duplicateCheckFormProtection->getHtml('before');
+		$result = $this->duplicateCheckFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE);
 		$this->assertNull($result);
 
-		$result = $this->duplicateCheckFormProtection->getHtml('before_submit');
+		$result = $this->duplicateCheckFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertNull($result);
 
-		$result = $this->duplicateCheckFormProtection->getHtml('after');
+		$result = $this->duplicateCheckFormProtection->getHtml(FormProtectionInterface::POSITION_AFTER);
 		$this->assertNull($result);
 	}
 
@@ -153,10 +154,10 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 		// Create a recent form entry with the same data hash
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'post_hash' => $dataHash,
+			'formId' => $this->form->id,
+			'postHash' => $dataHash,
 			'data' => json_encode($data),
-			'ip_hash' => '',
+			'ipHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$result = $formEntriesTable->save($formEntry);
@@ -166,7 +167,7 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 		$result = $this->duplicateCheckFormProtection->validateData($data);
 
 		$this->assertIsString($result);
-		$this->assertEquals(__d('form', 'protection_method_duplicate_check_error_duplicate_found'), $result);
+		$this->assertEquals(__d('Form', 'protection_method_duplicate_check_error_duplicate_found'), $result);
 	}
 
 
@@ -188,10 +189,10 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 		// Create an old form entry with the same data hash (older than default 24h timeout)
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'post_hash' => $dataHash,
+			'formId' => $this->form->id,
+			'postHash' => $dataHash,
 			'data' => json_encode($data),
-			'ip_hash' => '',
+			'ipHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$formEntry->createdOn = new DateTime()->subSeconds(90000); // 25 hours
@@ -223,10 +224,10 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'post_hash' => $differentDataHash,
+			'formId' => $this->form->id,
+			'postHash' => $differentDataHash,
 			'data' => json_encode($differentData),
-			'ip_hash' => '',
+			'ipHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$result = $formEntriesTable->save($formEntry);
@@ -265,10 +266,10 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 		// Create a form entry that's 10 minutes old (older than custom timeout)
 		$formEntriesTable = $this->fetchTable('FormEntries');
 		$formEntry = $formEntriesTable->newDefaultEntity([
-			'form_id' => $this->form->id,
-			'post_hash' => $dataHash,
+			'formId' => $this->form->id,
+			'postHash' => $dataHash,
 			'data' => json_encode($data),
-			'ip_hash' => '',
+			'ipHash' => '',
 			'identifier' => '4b3123d582a34f028a8470c6443baddd1e79a239',
 		]);
 		$formEntry->createdOn = new DateTime()->subSeconds(600); // 10 minutes
@@ -314,7 +315,7 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 		);
 
 		$formEntry = new FormEntry([
-			'form_id' => $this->form->id,
+			'formId' => $this->form->id,
 			'data' => json_encode(['test' => 'data']),
 		]);
 

@@ -40,12 +40,12 @@
 						maxlength: 100,
 						type: 'password',
 						value: '',
-						'data-show-password-label': __d('customers', 'show_password'),
+						'data-show-password-label': __d('Customers', 'show_password'),
 					}) }}
 				{% endblock %}
 
 				{% block formControlPasswordConfirm %}
-					{{ FormHelper.control('password_confirm', {
+					{{ FormHelper.control('passwordConfirm', {
 						autocapitalize: 'off',
 						autocomplete: 'new-password',
 						columnSpan: 6,
@@ -53,7 +53,7 @@
 						maxlength: 100,
 						type: 'password',
 						value: '',
-						'data-show-password-label': __d('customers', 'show_password'),
+						'data-show-password-label': __d('Customers', 'show_password'),
 					}) }}
 				{% endblock %}
 
@@ -170,7 +170,7 @@
 			<legend>{{ __('fieldset_customer_groups') }}</legend>
 
 			{% block fieldsetCustomerGroupsInner %}
-				{{ FormHelper.hidden('customer_groups._ids', {value: ''}) }}
+				{{ FormHelper.hidden('customerGroups._ids', {value: ''}) }}
 
 				{% block customerCustomerGroups %}
 					{% include '@Backend/Customers/customer_groups_overview_paginated_list.twig' with _context|merge({
@@ -225,7 +225,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

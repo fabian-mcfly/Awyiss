@@ -53,7 +53,7 @@ class ThirdPartyConsentsTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 36),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 36),
 				'rule' => function (string $consentId): bool {
 					return strlen($consentId) == 36;
 				},
@@ -100,7 +100,7 @@ class ThirdPartyConsentsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('accepted_categories', 'json');
-		$schema->setColumnType('rejected_categories', 'json');
+		$schema->setColumnType('acceptedCategories', 'json');
+		$schema->setColumnType('rejectedCategories', 'json');
 	}
 }

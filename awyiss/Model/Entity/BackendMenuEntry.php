@@ -36,16 +36,6 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'insert_after_id' => 'insertAfterId',
-		'system_order' => 'systemOrder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'parentId' => true,
 		'insertAfterId' => true,

@@ -15,17 +15,17 @@ class CreateAttributesGlobalContents extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_global_contents')->addColumn('global_content_id', 'integer', [
+		$this->table('attributes_global_contents')->addColumn('globalContentId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => false,
 		])->addColumn('teaser', 'text', [
 			'default' => null,
 			'null' => true,
-		])->addColumn('free_text', 'text', [
+		])->addColumn('freeText', 'text', [
 			'default' => null,
 			'null' => true,
-		])->addColumn('free_text_inactive', 'text', [
+		])->addColumn('freeTextInactive', 'text', [
 			'default' => null,
 			'null' => true,
 		])->create();

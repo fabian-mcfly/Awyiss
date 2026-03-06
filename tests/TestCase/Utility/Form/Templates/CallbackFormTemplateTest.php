@@ -40,7 +40,7 @@ class CallbackFormTemplateTest extends TestCase {
 		]);
 
 		$this->assertCount(4, $elements);
-		$this->assertSame(['name', 'phone', 'privacy_accepted', null], array_column($elements, 'identifier'));
+		$this->assertSame(['name', 'phone', 'privacyAccepted', null], array_column($elements, 'identifier'));
 		$this->assertSame(['Name', 'Telefon', 'Datenschutz akzeptiert', 'Absenden'], array_column($elements, 'title'));
 	}
 

@@ -242,14 +242,14 @@ class NestBehaviorTest extends TestCase {
 		$childAssociation = $this->table->getAssociation('ChildEmployers');
 		$this->assertInstanceOf(HasMany::class, $childAssociation);
 		$this->assertSame(['id'], $childAssociation->getBindingKey());
-		$this->assertSame(['parent_id'], $childAssociation->getForeignKey());
+		$this->assertSame(['parentId'], $childAssociation->getForeignKey());
 		$this->assertTrue($childAssociation->getCascadeCallbacks());
 		$this->assertTrue($childAssociation->getDependent());
 
 		$parentAssociation = $this->table->getAssociation('ParentEmployers');
 		$this->assertInstanceOf(BelongsTo::class, $parentAssociation);
-		$this->assertSame(['id', 'language_shortcode'], $parentAssociation->getBindingKey());
-		$this->assertSame(['parent_id', 'language_shortcode'], $parentAssociation->getForeignKey());
+		$this->assertSame(['id', 'languageShortcode'], $parentAssociation->getBindingKey());
+		$this->assertSame(['parentId', 'languageShortcode'], $parentAssociation->getForeignKey());
 	}
 
 

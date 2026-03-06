@@ -25,7 +25,7 @@
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDefaultFields %}
 	<th class="TableHeader-Username{% if PaginatorHelper.isCurrentSortKey('username') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('username', i18nDomain ? __df(i18nDomain, 'system', 'username') : __('username')) }}
+		{{ PaginatorHelper.sort('username', i18nDomain ? __df(i18nDomain, 'System', 'username') : __('username')) }}
 	</th>
 {% endblock %}
 
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
-	{% if field == 'last_login' %}
+	{% if field == 'lastLogin' %}
 		{{ entity.lastLogin ? TimeHelper.nice(entity.lastLogin) : '-' }}
 	{% else %}
 		{{ parent() }}

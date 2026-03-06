@@ -37,20 +37,20 @@
 						{% block contentAreaInner %}
 							{% if form %}
 								{% if sent %}
-									<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+									<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|camelize }}">
 										{{ form.successMessage|raw }}
 									</div>
 								{% else %}
-									<div class="Form Form-{{ form.identifier|ucparts(false) }}">
+									<div class="Form Form-{{ form.identifier|camelize }}">
 										{% block formErrorMessage %}
 											{% if formErrors %}
-												<div class="Form-ErrorMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+												<div class="Form-ErrorMessage" id="Form-{{ form.identifier|camelize }}">
 													{% if formErrors._general %}
 														{% for message in formErrors._general %}
 															{{ message|raw }}
 														{% endfor %}
 													{% else %}
-														<p>{{ __d('validation', 'form_has_errors')|raw }}</p>
+														<p>{{ __d('Validation', 'form_has_errors')|raw }}</p>
 
 														{% if form.summarizeErrors and form.errors %}
 															<ul>
@@ -67,7 +67,7 @@
 										<form
 											{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 											method="post"
-											{% if form.errors is empty %}id="Form-{{ form.identifier|ucparts(false) }}"{% endif %}
+											{% if form.errors is empty %}id="Form-{{ form.identifier|camelize }}"{% endif %}
 										>
 
 											{% block formProtectionBefore %}
@@ -86,8 +86,8 @@
 												{{ FormHelper.renderFormProtection(form, 'after') }}
 											{% endblock %}
 
-											<input type="hidden" name="_form_identifier" value="{{ form.identifier }}">
-											<input type="hidden" name="_page_id" value="{{ page.id }}">
+											<input type="hidden" name="_formIdentifier" value="{{ form.identifier }}">
+											<input type="hidden" name="_pageId" value="{{ page.id }}">
 										</form>
 									</div>
 								{% endif %}

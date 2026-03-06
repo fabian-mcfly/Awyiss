@@ -9,6 +9,8 @@ use Awyiss\Awyiss;
 use Awyiss\Model\Entity\MediaElementAssignment;
 use Awyiss\Model\Table;
 use Awyiss\Model\Table\DatatablesTable;
+use Awyiss\Model\Table\MediaElementAssignmentsTable;
+use Awyiss\Model\Table\MediaElementsTable;
 use Awyiss\ORM\Behavior;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
@@ -77,7 +79,12 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 
 		$this->setTableLocator($this->getConfig('tableLocator'));
 
-		if (in_array($this->table()->getTable(), ['media_elements', 'media_element_assignments'])) {
+		if (
+			in_array($this->table()->getTable(), [
+				MediaElementsTable::TABLE,
+				MediaElementAssignmentsTable::TABLE,
+			])
+		) {
 			return;
 		}
 
@@ -127,7 +134,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 				],
 				'cascadeCallbacks' => true,
 				'dependent' => true,
-				'foreignKey' => 'foreign_key',
+				'foreignKey' => 'foreignKey',
 				'propertyName' => 'mediaElementAssignments',
 				'saveStrategy' => 'replace',
 				'strategy' => $this->getConfig('strategy'),
@@ -135,11 +142,6 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 		}
 
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaElementAssignments', ['allowFallbackClass' => false]);
-
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $this->table()->getEntityClass();
-
-		$entityClass::addFieldMapping('media_element_assignments', 'mediaElementAssignments');
 	}
 
 
@@ -177,7 +179,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 		}
 
 
-		return Inflector::underscore($name);
+		return Inflector::camelize($name);
 	}
 
 
@@ -189,13 +191,17 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 	 */
 	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
 		if (!$this->getConfig('enabled') || ($options['mediaElementAssignments'] ?? true) === false) {
-			return [];
+			return [
+				'mediaElementAssignments' => function (array $values): array {
+					return $values;
+				},
+			];
 		}
 
 		unset($options['associated']);
 
 		return [
-			'media_element_assignments' => function (array $values, EntityInterface $entity) use ($options): array {
+			'mediaElementAssignments' => function (array $values, EntityInterface $entity) use ($options): array {
 				$mediaElementAssignments = [];
 
 				$errors = [];

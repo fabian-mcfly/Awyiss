@@ -89,7 +89,7 @@ class AutoTranslateTask extends Task {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]);
 		}
 
@@ -126,7 +126,7 @@ class AutoTranslateTask extends Task {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]);
 		}
 
@@ -225,9 +225,9 @@ class AutoTranslateTask extends Task {
 		/** @var \Awyiss\Model\Table\LocksTable $locksTable */
 		$locksTable = $this->fetchTable('Locks');
 		$locksTable->deleteAll([
-			'scope' => Inflector::pluralize($type),
-			'foreign_key IN' => $ids,
-			'unique_id' => 'autoTranslate',
+			'scope' => Inflector::camelize(Inflector::pluralize($type)),
+			'foreignKey IN' => $ids,
+			'uniqueId' => 'autoTranslate',
 		]);
 	}
 }

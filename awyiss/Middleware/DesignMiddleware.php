@@ -149,7 +149,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		$designTable = FactoryLocator::get('Table')->get('Designs');
 		/** @var \Awyiss\Model\Entity\Design $design */
-		$design = $designTable->find()->where(['in_use' => true])->first();
+		$design = $designTable->find()->where(['inUse' => true])->first();
 
 		if (!$design) {
 			$this->designVariables[ $realm ] = [];

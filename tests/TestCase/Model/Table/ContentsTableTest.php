@@ -103,7 +103,7 @@ class ContentsTableTest extends TestCase {
 		$this->assertTrue($this->contentsTable->hasAssociation('DuplicatingContents'));
 		$duplicatingContentsAssociation = $this->contentsTable->getAssociation('DuplicatingContents');
 		$this->assertInstanceOf(HasMany::class, $duplicatingContentsAssociation);
-		$this->assertEquals('duplicate_of', $duplicatingContentsAssociation->getBindingKey());
+		$this->assertEquals('duplicateOf', $duplicatingContentsAssociation->getBindingKey());
 		$this->assertEquals('id', $duplicatingContentsAssociation->getForeignKey());
 		$this->assertEquals('Contents', $duplicatingContentsAssociation->getClassName());
 
@@ -112,7 +112,7 @@ class ContentsTableTest extends TestCase {
 		$duplicateOfContentsAssociation = $this->contentsTable->getAssociation('DuplicateOfContents');
 		$this->assertInstanceOf(BelongsTo::class, $duplicateOfContentsAssociation);
 		$this->assertEquals('id', $duplicateOfContentsAssociation->getBindingKey());
-		$this->assertEquals('duplicate_of', $duplicateOfContentsAssociation->getForeignKey());
+		$this->assertEquals('duplicateOf', $duplicateOfContentsAssociation->getForeignKey());
 		$this->assertEquals('Contents', $duplicateOfContentsAssociation->getClassName());
 
 		// Test Forms association (BelongsTo)
@@ -134,7 +134,7 @@ class ContentsTableTest extends TestCase {
 		$pagesAssociation = $this->contentsTable->getAssociation('Pages');
 		$this->assertInstanceOf(BelongsTo::class, $pagesAssociation);
 		$this->assertEquals('id', $pagesAssociation->getBindingKey());
-		$this->assertEquals('page_id', $pagesAssociation->getForeignKey());
+		$this->assertEquals('pageId', $pagesAssociation->getForeignKey());
 		$this->assertEquals('forCurrentLanguage', $pagesAssociation->getFinder());
 		$this->assertEquals('page', $pagesAssociation->getProperty());
 
@@ -279,12 +279,12 @@ class ContentsTableTest extends TestCase {
 		$this->assertInstanceOf(SelectQuery::class, $query);
 
 		// Verify the specific fields are selected
-		//$this->assertEquals(['page_id', 'id', 'changed_on', 'created_on'], $query->clause('select'));
+		//$this->assertEquals(['pageId', 'id', 'changedOn', 'createdOn'], $query->clause('select'));
 
 		// Verify ordering and grouping
 		$sql = $query->sql();
-		$this->assertStringContainsString('GROUP BY Contents.page_id', $sql);
-		$this->assertStringContainsString('ORDER BY Contents.changed_on DESC, Contents.created_on DESC', $sql);
+		$this->assertStringContainsString('GROUP BY Contents.pageId', $sql);
+		$this->assertStringContainsString('ORDER BY Contents.changedOn DESC, Contents.createdOn DESC', $sql);
 
 		$result = $query->all();
 
@@ -341,7 +341,7 @@ class ContentsTableTest extends TestCase {
 		$newsAssociation = $forNewsTable->getAssociation('News');
 		$this->assertInstanceOf(BelongsTo::class, $newsAssociation);
 		$this->assertEquals('id', $newsAssociation->getBindingKey());
-		$this->assertEquals('page_id', $newsAssociation->getForeignKey());
+		$this->assertEquals('pageId', $newsAssociation->getForeignKey());
 		$this->assertEquals('forCurrentLanguage', $newsAssociation->getFinder());
 		$this->assertEquals('page', $newsAssociation->getProperty());
 
@@ -406,7 +406,7 @@ class ContentsTableTest extends TestCase {
 		$result = $this->contentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('contents', $result->getI18nDomain());
+		$this->assertSame('Contents', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('pageId'));
@@ -1195,7 +1195,7 @@ class ContentsTableTest extends TestCase {
 			'link' => 'https://custom.com',
 			'systemOrder' => 5,
 			'data' => [
-				'custom_key' => 'custom_value',
+				'customKey' => 'custom_value',
 			],
 		];
 
@@ -1216,7 +1216,7 @@ class ContentsTableTest extends TestCase {
 		$this->assertSame('Custom text', $entity->text);
 		$this->assertSame('https://custom.com', $entity->link);
 
-		$this->assertSame(['custom_key' => 'custom_value'], $entity->data);
+		$this->assertSame(['customKey' => 'custom_value'], $entity->data);
 	}
 
 
@@ -1283,7 +1283,7 @@ class ContentsTableTest extends TestCase {
 		$behavior = $this->contentsTable->getBehavior('Search');
 		$config = $behavior->getConfig();
 
-		$this->assertSame(['page_id'], $config['blocklistedColumns']);
+		$this->assertSame(['pageId'], $config['blocklistedColumns']);
 	}
 
 
@@ -1318,7 +1318,7 @@ class ContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
-		$result = $this->contentsTable->getPossibleFieldValues('form_id');
+		$result = $this->contentsTable->getPossibleFieldValues('formId');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1337,7 +1337,7 @@ class ContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesDuplicateOf(): void {
-		$result = $this->contentsTable->getPossibleFieldValues('duplicate_of');
+		$result = $this->contentsTable->getPossibleFieldValues('duplicateOf');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1406,7 +1406,7 @@ class ContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesContentTemplateId(): void {
-		$result = $this->contentsTable->getPossibleFieldValues('content_template_id');
+		$result = $this->contentsTable->getPossibleFieldValues('contentTemplateId');
 
 		$this->assertIsArray($result);
 		$this->assertSame([
@@ -1422,7 +1422,7 @@ class ContentsTableTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
-		$result = $this->contentsTable->getPossibleFieldValues('survey_id');
+		$result = $this->contentsTable->getPossibleFieldValues('surveyId');
 
 		$this->assertIsArray($result);
 

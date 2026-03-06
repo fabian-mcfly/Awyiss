@@ -5,6 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
+use Cake\Utility\Text;
 
 
 /**
@@ -29,14 +31,6 @@ class DashboardElement extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'system_order' => 'systemOrder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'title' => true,
@@ -57,5 +51,21 @@ class DashboardElement extends Entity {
 		}
 
 		return is_string($value) ? json_decode($value) : $value;
+	}
+
+
+	/**
+	 * Make sure the scope is always CamelCase and free of special characters
+	 *
+	 * @param string|null $scope
+	 * @return string|null
+	 * @see \Awyiss\Model\Entity\Attribute::$scope
+	 */
+	protected function _setScope(?string $scope): ?string {
+		if ($scope === null) {
+			return null;
+		}
+
+		return Inflector::camelize(Text::slug($scope, ['replacement' => '_']));
 	}
 }

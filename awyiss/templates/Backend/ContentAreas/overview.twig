@@ -37,7 +37,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -48,7 +48,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'content_areas'}) }}
+					{{ element('search/filter_button', {scope: 'ContentAreas'}) }}
 				{% endblock %}
 			{% endblock %}
 		</div>
@@ -68,7 +68,7 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'content_areas'}) }}
+		{{ element('search/filter', {scope: 'ContentAreas'}) }}
 	{% endblock %}
 </div>
 

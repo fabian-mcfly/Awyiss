@@ -128,7 +128,7 @@ class AwyissWidget {
 		if (event.target.matches('.Button-Success.Button-Save')) {
 			event.preventDefault();
 
-			if (!this.dialog.querySelector('select[name="widget_identifier"]').value) {
+			if (!this.dialog.querySelector('select[name="widgetIdentifier"]').value) {
 				this.dialog.close();
 				return;
 			}
@@ -152,7 +152,7 @@ class AwyissWidget {
 	 * @returns {boolean}
 	 */
 	useWidgetSettings() {
-		const identifierSelect = this.dialog.querySelector('select[name="widget_identifier"]');
+		const identifierSelect = this.dialog.querySelector('select[name="widgetIdentifier"]');
 		const identifier = identifierSelect.value;
 
 		const form = this.dialog.querySelector('form');

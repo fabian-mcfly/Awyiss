@@ -61,7 +61,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -72,7 +72,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'form_elements'}) }}
+					{{ element('search/filter_button', {scope: 'FormElements'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListWithColumns %}
@@ -107,7 +107,7 @@
 				class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
 				data: {
 					'form-id': selectedFormId,
-					sortable: _filter['form_elements']['active'] == false,
+					sortable: _filter['formElements']['active'] == false,
 				},
 				displayedFields: localConfig.overview.displayedFields,
 				identifier: 'FormElement',
@@ -125,7 +125,7 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'form_elements'}) }}
+		{{ element('search/filter', {scope: 'FormElements'}) }}
 	{% endblock %}
 </div>
 

@@ -794,21 +794,21 @@ class MediaTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'media_folder_id' => 123,
-			'mime_type' => 'image/jpeg',
+			'mediaFolderId' => 123,
+			'mimeType' => 'image/jpeg',
 			'name' => 'test-image.jpg',
 			'path' => 'media/images/test-image.jpg',
 			'alt' => 'Test image alt text',
 			'width' => 1920,
 			'height' => 1080,
-			'meta_data' => ['key' => 'value'],
-			'average_color' => '#FF0000',
+			'metaData' => ['key' => 'value'],
+			'averageColor' => '#FF0000',
 			'preview' => 1,
 			'avif' => 1,
 			'webp' => 1,
 			'crop' => null,
-			'focus_point' => '50,50',
-			'system_order' => 10,
+			'focusPoint' => '50,50',
+			'systemOrder' => 10,
 		];
 
 		$entity = new Media($properties);
@@ -829,31 +829,6 @@ class MediaTest extends TestCase {
 		$this->assertNull($entity->crop);
 		$this->assertEquals('50,50', $entity->focusPoint);
 		$this->assertEquals(10, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Media::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'media_folder_id' => 456,
-			'mime_type' => 'video/mp4',
-			'meta_data' => ['duration' => 120],
-			'average_color' => '#00FF00',
-			'focus_point' => '25,75',
-			'system_order' => 5,
-			'media_resized_images' => [],
-			'media_assignments' => [],
-		];
-
-		$entity = new Media($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 
@@ -1431,13 +1406,13 @@ class MediaTest extends TestCase {
 
 		// Create temporary resized image records
 		$resizedImage1 = $resizedTable->newDefaultEntity([
-			'media_id' => $tempMedia->id,
+			'mediaId' => $tempMedia->id,
 			'name' => 'temp-delete-[100x100].jpg',
 			'path' => $tempDir . '_resized' . DS . 'temp-delete-[100x100].jpg',
 			'width' => 100,
 			'height' => 100,
-			'real_width' => 100,
-			'real_height' => 100,
+			'realWidth' => 100,
+			'realHeight' => 100,
 			'strategy' => 1,
 			'status' => 1,
 		]);
@@ -1449,13 +1424,13 @@ class MediaTest extends TestCase {
 		$this->tempResizedImageIds[] = $resizedImage1->id;
 
 		$resizedImage2 = $resizedTable->newDefaultEntity([
-			'media_id' => $tempMedia->id,
+			'mediaId' => $tempMedia->id,
 			'name' => 'temp-delete-[200x200].jpg',
 			'path' => $tempDir . '_resized' . DS . 'temp-delete-[200x200].jpg',
 			'width' => 200,
 			'height' => 200,
-			'real_width' => 200,
-			'real_height' => 200,
+			'realWidth' => 200,
+			'realHeight' => 200,
 			'strategy' => 1,
 			'status' => 1,
 		]);
@@ -1482,7 +1457,7 @@ class MediaTest extends TestCase {
 		$tempMedia->deleteResizedFiles();
 
 		// Verify database records were deleted
-		$this->assertEquals(0, $resizedTable->find()->where(['media_id' => $tempMedia->id])->count());
+		$this->assertEquals(0, $resizedTable->find()->where(['mediaId' => $tempMedia->id])->count());
 
 		// Verify physical files were deleted
 		$this->assertFileDoesNotExist(WWW_ROOT . $resizedImage1->path);

@@ -33,7 +33,7 @@
 				{% endblock %}
 
 				{% set helperFormControl %}
-					{{ FormHelper.select('link_helper_options', pages.printer('label', 'link', '- '), {
+					{{ FormHelper.select('linkHelperOptions', pages.printer('label', 'link', '- '), {
 						'data-options-for': 'MenuEntry-Link',
 					}) }}
 				{% endset %}
@@ -140,15 +140,15 @@
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+					{{ LocaleHelper.control('languageShortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlParentId %}
-					{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentMenuEntries, 'label', 'id', '- '), 'data-form-updater': true}) }}
+					{{ FormHelper.control('parentId', {options: hashPrinter(possibleParentMenuEntries, 'label', 'id', '- '), 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: menuEntry}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: menuEntry}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -215,7 +215,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

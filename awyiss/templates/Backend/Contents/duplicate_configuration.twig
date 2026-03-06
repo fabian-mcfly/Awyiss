@@ -38,7 +38,7 @@
 		{{ FlashHelper.render() }}
 	{% endblock %}
 	<fieldset class="Fieldsets">
-		{{ FormHelper.control('duplicate_of_page_id', {
+		{{ FormHelper.control('duplicateOfPageId', {
 			type: 'select',
 			options: CategoriesHelper.categories('page'),
 			disabled: [page.id],
@@ -89,8 +89,8 @@
 	{% endblock %}
 
 	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('content_template_id', {val: contentTemplateId}) }}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{{ FormHelper.hidden('contentTemplateId', {val: contentTemplateId}) }}
+		{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 	{% endblock %}
 
 	{{ FormHelper.end() }}

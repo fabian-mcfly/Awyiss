@@ -13,6 +13,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -319,8 +320,15 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
-		$languagesTable = $tableLocator->get('Languages');
+		try {
+			/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
+			$languagesTable = $tableLocator->get('Languages');
+		}
+		catch (Exception $e) {
+			// If the table cannot be loaded, we are likely in the middle of a migration where the languages table is not yet created
+			// In this case, we just return early and will try to load the languages again on the next request
+			return;
+		}
 		$result = $languagesTable->find('all');
 
 		/** @var Language $language */

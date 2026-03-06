@@ -1,5 +1,5 @@
 .Forms.Form {
-	&:has(input[type="checkbox"][name="send_email"]:not(:checked)) {
+	&:has(input[type="checkbox"][name="sendEmail"]:not(:checked)) {
 		:is(
 			.FormInputName-Subject,
 			.FormInputName-EmailTemplateId,
@@ -11,7 +11,7 @@
 		}
 	}
 
-	&:has(input[type="checkbox"][name="send_confirmation_email"]:not(:checked)) {
+	&:has(input[type="checkbox"][name="sendConfirmationEmail"]:not(:checked)) {
 		:is(
 			.FormInputName-SubjectConfirmation,
 			.FormInputName-ConfirmationEmailTemplateId,

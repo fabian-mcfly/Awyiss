@@ -35,6 +35,7 @@
 				{% block formControlIdentifier %}
 					{{ FormHelper.control('identifier', {
 						'data-autofill-from': 'title',
+						'data-camelize': 'true',
 					}) }}
 				{% endblock %}
 
@@ -142,7 +143,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

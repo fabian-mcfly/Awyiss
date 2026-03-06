@@ -15,15 +15,15 @@ class ContentTemplateContentAreasSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'content_template_id' => 1,
-				'content_area_id' => 1,
-				'page_template_id' => 1,
+				'contentTemplateId' => 1,
+				'contentAreaId' => 1,
+				'pageTemplateId' => 1,
 			],
 			[
 				'id' => 2,
-				'content_template_id' => 2,
-				'content_area_id' => 1,
-				'page_template_id' => 1,
+				'contentTemplateId' => 2,
+				'contentAreaId' => 1,
+				'pageTemplateId' => 1,
 			],
 		];
 

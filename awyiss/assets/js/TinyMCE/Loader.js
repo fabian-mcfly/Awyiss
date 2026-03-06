@@ -472,7 +472,7 @@ export default class Loader {
 			form = window.translatableTexts.dialog.currentElement.closest('form');
 		}
 
-		const hidden = form?.querySelector('input[type="hidden"][name="page.hiddenFolderId"], input[type="hidden"][name="media_assignments[1][hidden_folder][media_folder_id]"]');
+		const hidden = form?.querySelector('input[type="hidden"][name="page.hiddenFolderId"], input[type="hidden"][name="mediaAssignments[1][hiddenFolder][mediaFolderId]"]');
 		let mediaFolderId = null;
 		if (hidden) {
 			mediaFolderId = hidden.value;

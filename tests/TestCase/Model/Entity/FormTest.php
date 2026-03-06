@@ -67,7 +67,7 @@ class FormTest extends TestCase {
 			'conditionalRecipientsStrategy' => true,
 			'transportProfile' => true,
 			'active' => true,
-			'formConditionalRecipients' => true,
+			'conditionalRecipients' => true,
 			'_translations' => true,
 			'_publicationData' => true,
 			'customerGroupAccessSettings' => true,
@@ -100,25 +100,28 @@ class FormTest extends TestCase {
 		$entity = new Form();
 
 		$entity->identifier = 'TestForm';
-		$this->assertEquals('testform', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->identifier = 'Test Form';
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->identifier = 'Test-Form';
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->identifier = 'Test Form!@#$%';
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->identifier = 'UPPERCASE FORM';
-		$this->assertEquals('uppercase_form', $entity->identifier);
+		$this->assertEquals('uPPERCASEFORM', $entity->identifier);
 
 		$entity->identifier = 'testHTMLForm';
-		$this->assertEquals('testhtmlform', $entity->identifier);
+		$this->assertEquals('testHTMLForm', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
+
+		$entity->identifier = 'alreadyVariableLike';
+		$this->assertEquals('alreadyVariableLike', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -133,25 +136,28 @@ class FormTest extends TestCase {
 		$entity = new Form();
 
 		$entity->set('identifier', 'TestForm');
-		$this->assertEquals('testform', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->set('identifier', 'Test Form');
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->set('identifier', 'Test-Form');
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->set('identifier', 'Test Form!@#$%');
-		$this->assertEquals('test_form', $entity->identifier);
+		$this->assertEquals('testForm', $entity->identifier);
 
 		$entity->set('identifier', 'UPPERCASE FORM');
-		$this->assertEquals('uppercase_form', $entity->identifier);
+		$this->assertEquals('uPPERCASEFORM', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLForm');
-		$this->assertEquals('testhtmlform', $entity->identifier);
+		$this->assertEquals('testHTMLForm', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
+
+		$entity->set('identifier', 'alreadyVariableLike');
+		$this->assertEquals('alreadyVariableLike', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -168,25 +174,25 @@ class FormTest extends TestCase {
 			'id' => 1,
 			'title' => 'Contact Form',
 			'identifier' => 'TestForm',
-			'send_email' => true,
-			'email_template_id' => 123,
-			'send_confirmation_email' => false,
-			'confirmation_email_template_id' => 456,
-			'owner_email' => 'owner@example.com',
-			'owner_name' => 'Form Owner',
-			'user_email' => '$email',
-			'user_name' => '$vorname $nachname',
+			'sendEmail' => true,
+			'emailTemplateId' => 123,
+			'sendConfirmationEmail' => false,
+			'confirmationEmailTemplateId' => 456,
+			'ownerEmail' => 'owner@example.com',
+			'ownerName' => 'Form Owner',
+			'userEmail' => '$email',
+			'userName' => '$vorname $nachname',
 			'cc' => '[]',
 			'bcc' => '[]',
 			'subject' => 'Form Subject',
-			'subject_confirmation' => 'Confirmation Subject',
+			'subjectConfirmation' => 'Confirmation Subject',
 			'salutation' => 'Dear Sir/Madam',
-			'salutation_confirmation' => 'Thank you',
-			'summarize_errors' => false,
-			'success_message' => 'Form submitted successfully',
+			'salutationConfirmation' => 'Thank you',
+			'summarizeErrors' => false,
+			'successMessage' => 'Form submitted successfully',
 			'multistep' => false,
-			'conditional_recipients_strategy' => 'first_match',
-			'transport_profile' => 'smtp',
+			'conditionalRecipientsStrategy' => 'firstMatch',
+			'transportProfile' => 'smtp',
 			'active' => true,
 			'deleted' => false,
 		];
@@ -195,7 +201,7 @@ class FormTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Contact Form', $entity->title);
-		$this->assertEquals('testform', $entity->identifier); // Should be cleaned by setter
+		$this->assertEquals('testForm', $entity->identifier); // Should be cleaned by setter
 		$this->assertTrue($entity->sendEmail);
 		$this->assertEquals(123, $entity->emailTemplateId);
 		$this->assertFalse($entity->sendConfirmationEmail);
@@ -213,41 +219,10 @@ class FormTest extends TestCase {
 		$this->assertFalse($entity->summarizeErrors);
 		$this->assertEquals('Form submitted successfully', $entity->successMessage);
 		$this->assertFalse($entity->multistep);
-		$this->assertEquals('first_match', $entity->conditionalRecipientsStrategy);
+		$this->assertEquals('firstMatch', $entity->conditionalRecipientsStrategy);
 		$this->assertEquals('smtp', $entity->transportProfile);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Form::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'send_email' => true,
-			'email_template_id' => 123,
-			'send_confirmation_email' => false,
-			'confirmation_email_template_id' => 456,
-			'owner_email' => 'test@example.com',
-			'owner_name' => 'Test Owner',
-			'user_email' => '$email',
-			'user_name' => '$name',
-			'subject_confirmation' => 'Test Confirmation',
-			'salutation_confirmation' => 'Thank you',
-			'summarize_errors' => true,
-			'success_message' => 'Success!',
-			'conditional_recipients_strategy' => 'all',
-			'transport_profile' => 'debug',
-		];
-
-		$entity = new Form($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 
@@ -337,7 +312,7 @@ class FormTest extends TestCase {
 	 * @see \Awyiss\Model\Entity\Form::getFormOptions()
 	 */
 	public function testLoadFormOptionsWithDefaultFormOptions(): void {
-		$entity = new Form(['identifier' => 'nonexistent_form']);
+		$entity = new Form(['identifier' => 'nonexistentForm']);
 		$entity->loadFormOptions();
 
 		$formOptions = $entity->getFormOptions();
@@ -528,7 +503,7 @@ class FormTest extends TestCase {
 			'email' => 'max@example.com',
 			'telefon' => '+49 123 456789',
 			'nachricht' => 'Test message',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$entity->setFormData($formData);
@@ -557,7 +532,7 @@ class FormTest extends TestCase {
 				'email' => 'john@example.com',
 				'telefon' => '+49 123 456789',
 			],
-			'multi_checkbox' => ['a', 'b'],
+			'multiCheckbox' => ['a', 'b'],
 			'files' => ['upload1.pdf', 'upload2.jpg'],
 		];
 
@@ -566,7 +541,7 @@ class FormTest extends TestCase {
 		$this->assertEquals($complexFormData, $entity->getFormData());
 		$this->assertEquals(['vorname' => 'John', 'nachname' => 'Doe'], $entity->getFormData('personal'));
 		$this->assertEquals(['email' => 'john@example.com', 'telefon' => '+49 123 456789'], $entity->getFormData('contact'));
-		$this->assertEquals(['a', 'b'], $entity->getFormData('multi_checkbox'));
+		$this->assertEquals(['a', 'b'], $entity->getFormData('multiCheckbox'));
 		$this->assertNull($entity->getFormData('nonexistent'));
 	}
 
@@ -615,7 +590,7 @@ class FormTest extends TestCase {
 
 		$incompleteFormData = [
 			'vorname' => 'John',
-			// Missing required fields: nachname, email, nachricht, datenschutz_akzeptiert
+			// Missing required fields: nachname, email, nachricht, datenschutzAkzeptiert
 		];
 
 		$entity->setFormData($incompleteFormData);
@@ -638,9 +613,9 @@ class FormTest extends TestCase {
 		$this->assertArrayHasKey('_required', $errors['nachricht']);
 		$this->assertSame('form::error_required', $errors['nachricht']['_required']);
 
-		$this->assertArrayHasKey('datenschutz_akzeptiert', $errors);
-		$this->assertArrayHasKey('_required', $errors['datenschutz_akzeptiert']);
-		$this->assertSame('form::error_required', $errors['datenschutz_akzeptiert']['_required']);
+		$this->assertArrayHasKey('datenschutzAkzeptiert', $errors);
+		$this->assertArrayHasKey('_required', $errors['datenschutzAkzeptiert']);
+		$this->assertSame('form::error_required', $errors['datenschutzAkzeptiert']['_required']);
 	}
 
 
@@ -663,7 +638,7 @@ class FormTest extends TestCase {
 			'nachname' => 'Doe',
 			'email' => 'not-an-email',
 			'nachricht' => 'Test message',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$entity->setFormData($invalidFormData);
@@ -708,13 +683,13 @@ class FormTest extends TestCase {
 		// Create a form entity to test multistep functionality
 		$entity = new Form([
 			'title' => 'Multistep Form',
-			'identifier' => 'multistep_test',
+			'identifier' => 'multistepTest',
 			'multistep' => true,
 			'active' => true,
 		]);
 
 		$this->assertTrue($entity->multistep);
-		$this->assertEquals('multistep_test', $entity->identifier);
+		$this->assertEquals('multistepTest', $entity->identifier);
 	}
 
 
@@ -728,7 +703,7 @@ class FormTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Form $entity */
 		$entity = $table->get(1);
 
-		$this->assertSame('match_first', $entity->conditionalRecipientsStrategy);
+		$this->assertSame('matchFirst', $entity->conditionalRecipientsStrategy);
 	}
 
 
@@ -771,18 +746,18 @@ class FormTest extends TestCase {
 			'vorname' => 'John',
 			'nachname' => 'Doe',
 			'email' => 'john@example.com',
-			'multi_checkbox' => ['a', 'b'], // Multiple selections
-			'multi_select' => ['a'],
+			'multiCheckbox' => ['a', 'b'], // Multiple selections
+			'multiSelect' => ['a'],
 			'nachricht' => 'Test message',
-			'datenschutz_akzeptiert' => 'Ja',
+			'datenschutzAkzeptiert' => 'Ja',
 		];
 
 		$entity->setFormData($formData);
 		$entity->validate($formData);
 
 		$this->assertTrue($entity->isValid());
-		$this->assertEquals(['a', 'b'], $entity->getFormData('multi_checkbox'));
-		$this->assertEquals(['a'], $entity->getFormData('multi_select'));
+		$this->assertEquals(['a', 'b'], $entity->getFormData('multiCheckbox'));
+		$this->assertEquals(['a'], $entity->getFormData('multiSelect'));
 	}
 
 
@@ -792,7 +767,7 @@ class FormTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testValidateWithProtectionMethod(): void {
-		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hidden_input']);
+		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hiddenInput']);
 
 		/** @var \Awyiss\Model\Table\FormsTable $table */
 		$table = FactoryLocator::get('Table')->get('Forms');
@@ -808,8 +783,8 @@ class FormTest extends TestCase {
 			'nachname' => 'Doe',
 			'email' => 'john@example.com',
 			'nachricht' => 'Test message',
-			'datenschutz_akzeptiert' => 'Ja',
-			'email_confirmation' => '',
+			'datenschutzAkzeptiert' => 'Ja',
+			'emailConfirmation' => '',
 		];
 
 		$entity->setFormData($formData);
@@ -825,7 +800,7 @@ class FormTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testValidateWithProtectionMethodFailure(): void {
-		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hidden_input']);
+		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hiddenInput']);
 
 		/** @var \Awyiss\Model\Table\FormsTable $table */
 		$table = FactoryLocator::get('Table')->get('Forms');
@@ -841,8 +816,8 @@ class FormTest extends TestCase {
 			'nachname' => 'Doe',
 			'email' => 'john@example.com',
 			'nachricht' => 'Test message',
-			'datenschutz_akzeptiert' => 'Ja',
-			'email_confirmation' => 'this-should-be-empty-for-honeypot', // This will trigger HiddenInputFormProtection failure
+			'datenschutzAkzeptiert' => 'Ja',
+			'emailConfirmation' => 'this-should-be-empty-for-honeypot', // This will trigger HiddenInputFormProtection failure
 		];
 
 		$entity->setFormData($formData);
@@ -851,8 +826,8 @@ class FormTest extends TestCase {
 		$this->assertFalse($entity->isValid());
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertArrayHasKey('hidden_input', $errors['_general']);
-		$this->assertEquals('form::protection_method_hidden_input_error_field_empty', $errors['_general']['hidden_input']);
+		$this->assertArrayHasKey('hiddenInput', $errors['_general']);
+		$this->assertEquals('form::protection_method_hidden_input_error_field_empty', $errors['_general']['hiddenInput']);
 	}
 
 
@@ -909,7 +884,7 @@ class FormTest extends TestCase {
 		$entity->getFormOptions()->modifyForm();
 
 		// Check if Contact4FormOptions modified the form identifier
-		$this->assertEquals('new_contact4', $entity->identifier);
+		$this->assertEquals('newContact4', $entity->identifier);
 	}
 
 
@@ -943,12 +918,12 @@ class FormTest extends TestCase {
 		// Test various conditional recipients strategies
 		$formData = [
 			'title' => 'Test Form',
-			'identifier' => 'test_conditional',
-			'conditionalRecipientsStrategy' => 'first_match',
+			'identifier' => 'testConditional',
+			'conditionalRecipientsStrategy' => 'firstMatch',
 		];
 
 		$entity = new Form($formData);
-		$this->assertEquals('first_match', $entity->conditionalRecipientsStrategy);
+		$this->assertEquals('firstMatch', $entity->conditionalRecipientsStrategy);
 
 		$entity->conditionalRecipientsStrategy = 'all';
 		/** @noinspection PhpConditionAlreadyCheckedInspection */
@@ -967,10 +942,10 @@ class FormTest extends TestCase {
 	 */
 	public function testInitializeWithProtectionMethodsConfiguration(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', [
-			'hidden_input',
+			'hiddenInput',
 			'altcha',
-			'duplicate_check',
-			'ip_check',
+			'duplicateCheck',
+			'ipCheck',
 		]);
 
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -984,10 +959,10 @@ class FormTest extends TestCase {
 		$protectionMethods = $entity->getProtectionMethods();
 		$this->assertIsArray($protectionMethods);
 		$this->assertSame([
-			'hidden_input',
+			'hiddenInput',
 			'altcha',
-			'duplicate_check',
-			'ip_check',
+			'duplicateCheck',
+			'ipCheck',
 		], array_keys($protectionMethods));
 
 		foreach ($protectionMethods as $method) {
@@ -1030,7 +1005,7 @@ class FormTest extends TestCase {
 		$this->assertInstanceOf(Validator::class, $validator);
 
 		// Should have 'form' as I18n domain
-		$this->assertEquals('form', $validator->getI18nDomain());
+		$this->assertEquals('Form', $validator->getI18nDomain());
 
 		$this->assertFalse($validator->__debugInfo()['_stopOnFailure']);
 	}

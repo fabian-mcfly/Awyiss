@@ -104,7 +104,7 @@ class PageRolesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -133,7 +133,7 @@ class PageRolesListenerTest extends TestCase {
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -177,7 +177,7 @@ class PageRolesListenerTest extends TestCase {
 		$entries = $entries->combine('title', 'link')->toArray();
 
 		$this->assertSame([
-			'generic_datatables::menu_configure' => 'Configuration::overview::scope:test_roles',
+			'generic_datatables::menu_configure' => 'Configuration::overview::scope:TestRoles',
 			'generic_datatables::menu_add' => 'TestRoles::add',
 			'generic_datatables::menu_overview' => 'TestRoles::overview',
 			'' => 'TestRoles::overview',
@@ -295,7 +295,7 @@ class PageRolesListenerTest extends TestCase {
 				return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'page_roles::create_enum',
+						'reference' => 'PageRoles::createEnum',
 					];
 			})
 		);
@@ -348,7 +348,7 @@ class PageRolesListenerTest extends TestCase {
 				return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'page_roles::create_enum',
+						'reference' => 'PageRoles::createEnum',
 					];
 			})
 		);
@@ -447,9 +447,8 @@ class PageRolesListenerTest extends TestCase {
 					return true;
 				}
 
-				return isset($data['command']) &&
-					   $data['command'] ===
-					   '(bin/cake bake model TestRoles --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages --update && bin/cake bake seed --data PageRoles --folder tests/customer/config/Seeds --force --truncate)';
+				return isset($data['command']) && $data['command'] === '(bin/cake bake model TestRoles --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages --update &&'
+				   . ' bin/cake bake seed --data PageRoles --folder tests/customer/config/Seeds --force --truncate)';
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
@@ -457,10 +456,10 @@ class PageRolesListenerTest extends TestCase {
 				}
 
 				return $data === [
-						'group' => 'general',
-						'priority' => 1,
-						'reference' => 'system::create_page_role_model::test_role',
-					];
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'System::createPageRoleModel::test_role',
+				];
 			})
 		);
 
@@ -513,7 +512,7 @@ class PageRolesListenerTest extends TestCase {
 				return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'system::create_page_role_model::new_role',
+						'reference' => 'System::createPageRoleModel::new_role',
 					];
 			})
 		);
@@ -613,7 +612,7 @@ class PageRolesListenerTest extends TestCase {
 				return $data !== [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'system::create_page_role_model::test_role',
+						'reference' => 'System::createPageRoleModel::test_role',
 					];
 			})
 		);
@@ -678,18 +677,18 @@ class PageRolesListenerTest extends TestCase {
 
 		$configs = [
 			$configurationTable->newDefaultEntity([
-				'scope' => 'test_roles',
-				'identifier' => 'test_config_1',
+				'scope' => 'TestRoles',
+				'identifier' => 'testConfig1',
 				'value' => 'test_value_1',
 			]),
 			$configurationTable->newDefaultEntity([
-				'scope' => 'test_roles',
-				'identifier' => 'test_config_2',
+				'scope' => 'TestRoles',
+				'identifier' => 'testConfig2',
 				'value' => 'test_value_2',
 			]),
 			$configurationTable->newDefaultEntity([
-				'scope' => 'other_scope',
-				'identifier' => 'other_config',
+				'scope' => 'OtherScope',
+				'identifier' => 'otherConfig',
 				'value' => 'other_value',
 			]),
 		];
@@ -701,10 +700,10 @@ class PageRolesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $configurationTable->find()->where(['scope' => 'test_roles'])->count());
-		$this->assertSame(1, $configurationTable->find()->where(['scope' => 'other_scope'])->count());
+		$this->assertSame(0, $configurationTable->find()->where(['scope' => 'TestRoles'])->count());
+		$this->assertSame(1, $configurationTable->find()->where(['scope' => 'OtherScope'])->count());
 
-		$configurationTable->deleteAll(['scope' => 'other_scope']);
+		$configurationTable->deleteAll(['scope' => 'OtherScope']);
 	}
 
 
@@ -724,22 +723,22 @@ class PageRolesListenerTest extends TestCase {
 		$i18n = [
 			$i18nTable->newEntity([
 				'locale' => 'de',
-				'model' => 'test_roles',
-				'foreign_key' => 1,
+				'model' => 'TestRoles',
+				'foreignKey' => 1,
 				'field' => 'title',
 				'content' => 'Test German',
 			]),
 			$i18nTable->newEntity([
 				'locale' => 'en',
-				'model' => 'test_roles',
-				'foreign_key' => 2,
+				'model' => 'TestRoles',
+				'foreignKey' => 2,
 				'field' => 'description',
 				'content' => 'Test English',
 			]),
 			$i18nTable->newEntity([
 				'locale' => 'de',
-				'model' => 'other_model',
-				'foreign_key' => 1,
+				'model' => 'OtherModel',
+				'foreignKey' => 1,
 				'field' => 'title',
 				'content' => 'Other Content',
 			]),
@@ -752,10 +751,10 @@ class PageRolesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $i18nTable->find()->where(['model' => 'test_roles'])->count());
-		$this->assertSame(1, $i18nTable->find()->where(['model' => 'other_model'])->count());
+		$this->assertSame(0, $i18nTable->find()->where(['model' => 'TestRoles'])->count());
+		$this->assertSame(1, $i18nTable->find()->where(['model' => 'OtherModel'])->count());
 
-		$i18nTable->deleteAll(['model' => 'other_model']);
+		$i18nTable->deleteAll(['model' => 'OtherModel']);
 	}
 
 
@@ -774,19 +773,19 @@ class PageRolesListenerTest extends TestCase {
 
 		$permissions = [
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'test_roles',
+				'scope' => 'TestRoles',
 				'identifier' => 'index',
 				'usergroupId' => 1,
 				'access' => 1,
 			]),
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'test_roles',
+				'scope' => 'TestRoles',
 				'identifier' => 'edit',
 				'usergroupId' => 2,
 				'access' => 1,
 			]),
 			$usergroupPermissionsTable->newEntity([
-				'scope' => 'other_scope',
+				'scope' => 'OtherScope',
 				'identifier' => 'view',
 				'usergroupId' => 1,
 				'access' => 1,
@@ -800,9 +799,9 @@ class PageRolesListenerTest extends TestCase {
 
 		$this->listener->afterSoftDelete($event, $entity);
 
-		$this->assertSame(0, $usergroupPermissionsTable->find()->where(['scope' => 'test_roles'])->count());
-		$this->assertSame(1, $usergroupPermissionsTable->find()->where(['scope' => 'other_scope'])->count());
+		$this->assertSame(0, $usergroupPermissionsTable->find()->where(['scope' => 'TestRoles'])->count());
+		$this->assertSame(1, $usergroupPermissionsTable->find()->where(['scope' => 'OtherScope'])->count());
 
-		$usergroupPermissionsTable->deleteAll(['scope' => 'other_scope']);
+		$usergroupPermissionsTable->deleteAll(['scope' => 'OtherScope']);
 	}
 }

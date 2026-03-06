@@ -40,7 +40,7 @@
 	{% endblock %}
 
 	<fieldset class="Fieldsets">
-		{{ FormHelper.control('widget_identifier', {
+		{{ FormHelper.control('widgetIdentifier', {
 			type: 'select',
 			options: widgets,
 			value: widget_identifier,
@@ -63,7 +63,7 @@
 	{% endblock %}
 
 	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 	{% endblock %}
 
 	{{ FormHelper.end() }}

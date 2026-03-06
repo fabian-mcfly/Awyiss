@@ -31,15 +31,6 @@ class DummyUser extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'last_login' => 'lastLogin',
-		'failed_attempts' => 'failedAttempts',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [
 		'username' => true,
 		'password' => true,
@@ -49,7 +40,6 @@ class DummyUser extends Entity {
 		'lastLogin' => true,
 		'failedAttempts' => true,
 		'active' => true,
-		'mediaAssignments' => true,
 	];
 	/**
 	 * @inheritDoc

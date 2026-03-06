@@ -65,7 +65,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'third_party_consent' => [
+			'thirdPartyConsent' => [
 				'template' => '/_third-party-consent',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -88,7 +88,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'form_anti_spam_post' => [
+			'formAntiSpamPost' => [
 				'template' => '/{lang}/_form/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -120,7 +120,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'form_anti_spam_get' => [
+			'formAntiSpamGet' => [
 				'template' => '/{lang}/_form/{formEntry}',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -152,7 +152,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'route_with_params' => [
+			'routeWithParams' => [
 				'template' => '/{lang}/_route/start:{start}/end:{end}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -183,7 +183,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'find_coordinates' => [
+			'findCoordinates' => [
 				'template' => '/{lang}/_route/find-coordinates/{search}',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -214,7 +214,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'frontend_with_slug' => [
+			'frontendWithSlug' => [
 				'template' => '/{lang}/{slug}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -246,7 +246,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'frontend_language_root' => [
+			'frontendLanguageRoot' => [
 				'template' => '/{lang}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -278,7 +278,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'frontend_slug_only' => [
+			'frontendSlugOnly' => [
 				'template' => '/{slug}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -309,7 +309,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'frontend_root' => [
+			'frontendRoot' => [
 				'template' => '/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -341,7 +341,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'backend_with_id' => [
+			'backendWithId' => [
 				'template' => '/backend/{lang}/{controller}/{action}/id:{id}/*',
 				'defaults' => [
 					'prefix' => 'Backend',
@@ -371,7 +371,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'backend_with_action' => [
+			'backendWithAction' => [
 				'template' => '/backend/{lang}/{controller}/{action}/*',
 				'defaults' => [
 					'action' => 'overview',
@@ -402,7 +402,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'backend_controller_only' => [
+			'backendControllerOnly' => [
 				'template' => '/backend/{lang}/{controller}/*',
 				'defaults' => [
 					'action' => 'overview',
@@ -432,7 +432,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'backend_language_only' => [
+			'backendLanguageOnly' => [
 				'template' => '/backend/{lang}/*',
 				'defaults' => [
 					'controller' => 'dashboard',
@@ -463,7 +463,7 @@ class AwyissRouteTest extends TestCase {
 					],
 				],
 			],
-			'backend_root' => [
+			'backendRoot' => [
 				'template' => '/backend/*',
 				'defaults' => [
 					'controller' => 'dashboard',
@@ -545,7 +545,7 @@ class AwyissRouteTest extends TestCase {
 					'/sitemap/',
 				],
 			],
-			'third_party_consent' => [
+			'thirdPartyConsent' => [
 				'template' => '/_third-party-consent',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -566,7 +566,7 @@ class AwyissRouteTest extends TestCase {
 					'/_third-party-consent/', // Action is not used, so it matches regardless of the action.
 				],
 			],
-			'form_anti_spam_post' => [
+			'formAntiSpamPost' => [
 				'template' => '/{lang}/_form/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -615,7 +615,7 @@ class AwyissRouteTest extends TestCase {
 					'/de/_form/data:value/type:submit/',
 				],
 			],
-			'form_anti_spam_get' => [
+			'formAntiSpamGet' => [
 				'template' => '/{lang}/_form/{formEntry}',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -654,7 +654,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Invalid form entry, does not match the pattern.
 				],
 			],
-			'route_with_params' => [
+			'routeWithParams' => [
 				'template' => '/{lang}/_route/start:{start}/end:{end}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -696,7 +696,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Invalid language code, does not match the pattern.
 				],
 			],
-			'find_coordinates' => [
+			'findCoordinates' => [
 				'template' => '/{lang}/_route/find-coordinates/{search}',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -721,7 +721,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Invalid language code, does not match the pattern.
 				],
 			],
-			'frontend_with_slug' => [
+			'frontendWithSlug' => [
 				'template' => '/{lang}/{slug}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -774,7 +774,7 @@ class AwyissRouteTest extends TestCase {
 					'/de/product-listing/category:electronics/brand:apple/',
 				],
 			],
-			'frontend_language_root' => [
+			'frontendLanguageRoot' => [
 				'template' => '/{lang}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -813,7 +813,7 @@ class AwyissRouteTest extends TestCase {
 					'/de/section:news/category:tech/',
 				],
 			],
-			'frontend_slug_only' => [
+			'frontendSlugOnly' => [
 				'template' => '/{slug}/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -838,7 +838,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Slug cannot be false
 				],
 			],
-			'frontend_root' => [
+			'frontendRoot' => [
 				'template' => '/*',
 				'defaults' => [
 					'prefix' => 'Frontend',
@@ -860,7 +860,7 @@ class AwyissRouteTest extends TestCase {
 					'/feature:new/status:really-active/',
 				],
 			],
-			'backend_with_id' => [
+			'backendWithId' => [
 				'template' => '/backend/{lang}/{controller}/{action}/id:{id}/*',
 				'defaults' => [
 					'prefix' => 'Backend',
@@ -889,7 +889,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Language must be valid
 				],
 			],
-			'backend_with_action' => [
+			'backendWithAction' => [
 				'template' => '/backend/{lang}/{controller}/{action}/*',
 				'defaults' => [
 					'action' => 'overview',
@@ -916,7 +916,7 @@ class AwyissRouteTest extends TestCase {
 					'/backend/de/orders/export/format:csv/',
 				],
 			],
-			'backend_controller_only' => [
+			'backendControllerOnly' => [
 				'template' => '/backend/{lang}/{controller}/*',
 				'defaults' => [
 					'action' => 'overview',
@@ -941,7 +941,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Controller must be valid
 				],
 			],
-			'backend_language_only' => [
+			'backendLanguageOnly' => [
 				'template' => '/backend/{lang}/*',
 				'defaults' => [
 					'controller' => 'dashboard',
@@ -966,7 +966,7 @@ class AwyissRouteTest extends TestCase {
 					false, // Language must be valid
 				],
 			],
-			'backend_root' => [
+			'backendRoot' => [
 				'template' => '/backend/*',
 				'defaults' => [
 					'controller' => 'dashboard',

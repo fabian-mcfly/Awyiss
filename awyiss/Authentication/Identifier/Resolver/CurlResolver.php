@@ -74,7 +74,7 @@ class CurlResolver implements ResolverInterface {
 		}
 
 		if (empty($url)) {
-			throw new Exception(__d('authenticator', 'curl_resolver_missing_url'));
+			throw new Exception(__d('Authenticator', 'curl_resolver_missing_url'));
 		}
 
 		$curlHandle = curl_init();
@@ -92,7 +92,7 @@ class CurlResolver implements ResolverInterface {
 				curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
 				break;
 			default:
-				throw new Exception(__d('authenticator', 'curl_resolver_unknown_request_type'));
+				throw new Exception(__d('Authenticator', 'curl_resolver_unknown_request_type'));
 		}
 
 		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, ['Accept: ' . $this->_config['acceptType']]);

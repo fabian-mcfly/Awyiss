@@ -81,9 +81,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
 
 		$locksTable->expects($this->once())->method('deleteAll')->with([
-			'scope' => 'contents',
-			'foreign_key IN' => [1],
-			'unique_id' => 'autoTranslate',
+			'scope' => 'Contents',
+			'foreignKey IN' => [1],
+			'uniqueId' => 'autoTranslate',
 		]);
 
 		// Mock Contents table
@@ -135,9 +135,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
 
 		$locksTable->expects($this->once())->method('deleteAll')->with([
-			'scope' => 'pages',
-			'foreign_key IN' => [1],
-			'unique_id' => 'autoTranslate',
+			'scope' => 'Pages',
+			'foreignKey IN' => [1],
+			'uniqueId' => 'autoTranslate',
 		]);
 
 		// Mock Pages table
@@ -201,7 +201,7 @@ class AutoTranslateTaskTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]
 		);
 
@@ -262,7 +262,7 @@ class AutoTranslateTaskTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]
 		);
 
@@ -377,9 +377,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
 
 		$locksTable->expects($this->once())->method('deleteAll')->with([
-			'scope' => 'contents',
-			'foreign_key IN' => [1, 2],
-			'unique_id' => 'autoTranslate',
+			'scope' => 'Contents',
+			'foreignKey IN' => [1, 2],
+			'uniqueId' => 'autoTranslate',
 		]);
 
 		// Mock Contents table
@@ -773,7 +773,7 @@ class AutoTranslateTaskTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @seej \Awyiss\Queue\Task\AutoTranslateTask::translatePages()
+	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translatePages()
 	 * @throws \Exception
 	 */
 	public function testTranslatePagesUsesCorrectTableForNews(): void {
@@ -794,9 +794,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
 
 		$locksTable->expects($this->once())->method('deleteAll')->with([
-			'scope' => 'news',
-			'foreign_key IN' => [40],
-			'unique_id' => 'autoTranslate',
+			'scope' => 'News',
+			'foreignKey IN' => [40],
+			'uniqueId' => 'autoTranslate',
 		]);
 
 		$tableLocator = FactoryLocator::get('Table');

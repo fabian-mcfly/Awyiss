@@ -44,12 +44,12 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	final public const string  STRATEGY_FETCH_GRADUALLY = 'fetch_gradually';
+	final public const string  STRATEGY_FETCH_GRADUALLY = 'fetchGradually';
 	/**
 	 * Fetches all items inside the element's scope and builds a collection
 	 * by filtering out siblings and records that aren't children or parents
 	 */
-	final public const string  STRATEGY_FETCH_ALL = 'fetch_all';
+	final public const string  STRATEGY_FETCH_ALL = 'fetchAll';
 
 	/**
 	 * Default configuration
@@ -65,7 +65,7 @@ class NestBehavior extends Behavior {
 			'bindingKey' => 'id',
 			'blocklistedColumns' => [],
 			'finder' => null,
-			'foreignKey' => 'parent_id',
+			'foreignKey' => 'parentId',
 			'maxLevel' => null,
 		],
 		'enabled' => false,
@@ -87,7 +87,7 @@ class NestBehavior extends Behavior {
 			'associationName' => null,
 			'bindingKey' => 'id',
 			'finder' => null,
-			'foreignKey' => 'parent_id',
+			'foreignKey' => 'parentId',
 			'maxLevel' => null,
 		],
 		'relatedColumns' => [],
@@ -150,16 +150,12 @@ class NestBehavior extends Behavior {
 			)
 		) {
 			$associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($alias);
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $table->getEntityClass();
 
 			$bindingKeys = (array)$this->getConfig('children.bindingKey');
 			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$bindingKeys = $entityClass::unmapFields($bindingKeys);
 
 			$foreignKeys = (array)$this->getConfig('children.foreignKey');
 			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
 			$table->hasMany($associationName, [
 				'bindingKey' => $bindingKeys,
@@ -167,10 +163,8 @@ class NestBehavior extends Behavior {
 				'className' => $alias,
 				'dependent' => true,
 				'foreignKey' => $foreignKeys,
+				'propertyName' => Inflector::variable($associationName),
 			]);
-
-			$property = $table->$associationName->getProperty();
-			$entityClass::addFieldMapping($property, Inflector::variable($property));
 
 			$this->setConfig('children.associationName', $associationName);
 		}
@@ -183,25 +177,19 @@ class NestBehavior extends Behavior {
 			)
 		) {
 			$associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($alias);
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass ??= $table->getEntityClass();
 
 			$bindingKeys = array_merge((array)$this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
 			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$bindingKeys = $entityClass::unmapFields($bindingKeys);
 
 			$foreignKeys = array_merge((array)$this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
 			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
 			$table->belongsTo($associationName, [
 				'bindingKey' => $bindingKeys,
 				'className' => $alias,
 				'foreignKey' => $foreignKeys,
+				'propertyName' => Inflector::variable(Inflector::singularize($associationName)),
 			]);
-
-			$property = $table->$associationName->getProperty();
-			$entityClass::addFieldMapping($property, Inflector::variable($property));
 
 			$this->setConfig('parent.associationName', $associationName);
 		}
@@ -444,12 +432,7 @@ class NestBehavior extends Behavior {
 				return true;
 			}
 
-			$table = $this->table();
-			/** @var \Awyiss\Model\Entity $entityClass */
-			$entityClass = $table->getEntityClass();
-
 			$foreignKeys = array_merge((array)$foreignKey, $this->getConfig('relatedColumns'));
-			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
 			$attributeKeys = [];
 			foreach ($foreignKeys as $key => $keyName) {
@@ -493,7 +476,7 @@ class NestBehavior extends Behavior {
 			}
 
 			if (!$exists) {
-				return __df($this->table()->getI18nDomain(), 'validation', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
+				return __df($this->table()->getI18nDomain(), 'Validation', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
 			}
 
 			return true;
@@ -701,7 +684,6 @@ class NestBehavior extends Behavior {
 		$relatedBaseColumns = array_filter($relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.'));
 		if ($relatedBaseColumns) {
 			$data = $entity->extract($relatedBaseColumns);
-			$data = $entity::unmapFields($data, true);
 
 			$table->updateAll($data, ['id IN' => $ids]);
 		}
@@ -717,9 +699,6 @@ class NestBehavior extends Behavior {
 		if (!$data) {
 			return;
 		}
-
-		// Unmap the keys of the attributes data
-		$data = $entity->get('attributes')::unmapFields($data, true);
 
 		$association = $table->getAssociation($table->getAttributesTableName(true));
 
@@ -798,14 +777,9 @@ class NestBehavior extends Behavior {
 			$bindingKeys = (array)$association->getForeignKey();
 		}
 
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $association->getSource()->getEntityClass();
-
-		$skipFields = $entityClass::unmapFields($options['skipFields'] ?? []);
+		$skipFields = $options['skipFields'] ?? [];
 
 		foreach ($foreignKeys as $key => $foreignKey) {
-			$foreignKey = $entityClass::unmapField($foreignKey);
-
 			if (in_array($foreignKey, $skipFields)) {
 				continue;
 			}
@@ -1046,9 +1020,7 @@ class NestBehavior extends Behavior {
 			], SORT_ASC, $this->getConfig('alias'));
 
 			if ($table->hasBehavior('SystemOrder')) {
-				/** @var \Awyiss\Model\Entity $entityClass */
-				$entityClass = $table->getEntityClass();
-				$table->getBehavior('SystemOrder')->rebuildSystemOrder($entityClass::unmapField($field), $direction, $event);
+				$table->getBehavior('SystemOrder')->rebuildSystemOrder($field, $direction, $event);
 			}
 		}
 	}

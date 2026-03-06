@@ -70,9 +70,9 @@ class PageTemplateContentAreaTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'page_template_id' => 123,
-			'content_area_id' => 456,
-			'system_order' => 10,
+			'pageTemplateId' => 123,
+			'contentAreaId' => 456,
+			'systemOrder' => 10,
 		];
 
 		$entity = new PageTemplateContentArea($properties);
@@ -81,25 +81,5 @@ class PageTemplateContentAreaTest extends TestCase {
 		$this->assertEquals(123, $entity->pageTemplateId);
 		$this->assertEquals(456, $entity->contentAreaId);
 		$this->assertEquals(10, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\PageTemplateContentArea::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'page_template_id' => 789,
-			'content_area_id' => 101,
-			'system_order' => 5,
-		];
-
-		$entity = new PageTemplateContentArea($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

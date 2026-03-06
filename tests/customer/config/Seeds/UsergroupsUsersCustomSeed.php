@@ -15,28 +15,28 @@ class UsergroupsUsersCustomSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'usergroup_id' => 1,
-				'user_id' => 1,
+				'usergroupId' => 1,
+				'userId' => 1,
 			],
 			[
 				'id' => 2,
-				'usergroup_id' => 2,
-				'user_id' => 1,
+				'usergroupId' => 2,
+				'userId' => 1,
 			],
 			[
 				'id' => 3,
-				'usergroup_id' => 2,
-				'user_id' => 2,
+				'usergroupId' => 2,
+				'userId' => 2,
 			],
 			[
 				'id' => 4,
-				'usergroup_id' => 2,
-				'user_id' => 3,
+				'usergroupId' => 2,
+				'userId' => 3,
 			],
 			[
 				'id' => 5,
-				'usergroup_id' => 3,
-				'user_id' => 3,
+				'usergroupId' => 3,
+				'userId' => 3,
 			],
 		];
 

@@ -448,24 +448,24 @@ class PageTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'page_role_id' => '1',
-			'page_template_id' => 1,
-			'parent_id' => null,
-			'language_shortcode' => 'de',
+			'pageRoleId' => '1',
+			'pageTemplateId' => 1,
+			'parentId' => null,
+			'languageShortcode' => 'de',
 			'slug' => 'Test Page/Title',
 			'title' => 'Test Page',
-			'redirect_link' => '/redirect',
-			'meta_title' => 'Test Meta Title',
-			'meta_description' => 'Test Meta Description',
-			'robots_index' => true,
-			'robots_follow' => false,
-			'duplicate_of' => 2,
-			'form_id' => 3,
-			'survey_id' => 4,
-			'system_order' => 10,
+			'redirectLink' => '/redirect',
+			'metaTitle' => 'Test Meta Title',
+			'metaDescription' => 'Test Meta Description',
+			'robotsIndex' => true,
+			'robotsFollow' => false,
+			'duplicateOf' => 2,
+			'formId' => 3,
+			'surveyId' => 4,
+			'systemOrder' => 10,
 			'active' => true,
-			'parents_active' => true,
-			'add_menu_entry' => ['1', '2', '3'],
+			'parentsActive' => true,
+			'addMenuEntry' => ['1', '2', '3'],
 		];
 
 		$entity = new Page($properties);
@@ -489,38 +489,6 @@ class PageTest extends TestCase {
 		$this->assertTrue($entity->active);
 		$this->assertTrue($entity->parentsActive);
 		$this->assertEquals([1, 2, 3], $entity->addMenuEntry);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Page::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'parent_id' => 456,
-			'language_shortcode' => 'en',
-			'redirect_link' => '/test',
-			'meta_title' => 'Meta Title',
-			'meta_description' => 'Meta Description',
-			'robots_index' => true,
-			'robots_follow' => false,
-			'page_role_id' => 1,
-			'page_template_id' => 2,
-			'duplicate_of' => 3,
-			'form_id' => 4,
-			'survey_id' => 5,
-			'system_order' => 10,
-			'parents_active' => true,
-			'add_menu_entry' => [1, 2],
-		];
-
-		$entity = new Page($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 

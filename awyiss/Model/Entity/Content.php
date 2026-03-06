@@ -73,30 +73,6 @@ class Content extends Entity {
 	 * @var array The column widths
 	 */
 	protected static array $columnWidths;
-	/**
-	 * @inheritdoc
-	 */
-	protected static array $fieldMap = [
-		'page_id' => 'pageId',
-		'parent_id' => 'parentId',
-		'content_area_id' => 'contentAreaId',
-		'content_template_id' => 'contentTemplateId',
-		'title_tag' => 'titleTag',
-		'subtitle_tag' => 'subtitleTag',
-		'css_class' => 'cssClass',
-		'column_width' => 'columnWidth',
-		'column_indent' => 'columnIndent',
-		'column_last' => 'columnLast',
-		'column_rtl' => 'columnRtl',
-		'duplicate_of' => 'duplicateOf',
-		'form_id' => 'formId',
-		'survey_id' => 'surveyId',
-		'system_order' => 'systemOrder',
-		'content_area' => 'contentArea',
-		'content_template' => 'contentTemplate',
-		'duplicating_contents' => 'duplicatingContents',
-		'duplicate_of_content' => 'duplicateOfContent',
-	];
 
 
 	/**

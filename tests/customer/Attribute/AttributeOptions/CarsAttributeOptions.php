@@ -19,7 +19,7 @@ class CarsAttributeOptions extends AttributeOptionsCollection {
 	 */
 	public function initializeAttributeOptions(): void {
 		$this->add([
-			'dropdown_select' => [
+			'dropdownSelect' => [
 				/**
 				 * Disables the options 'dark' and 'light' for the background color attribute.
 				 */

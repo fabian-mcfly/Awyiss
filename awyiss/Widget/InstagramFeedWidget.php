@@ -44,7 +44,7 @@ class InstagramFeedWidget extends AbstractWidget {
 			// A dropdown to select the homepage (for the current language)
 			'settings.items' => [
 				'columnSpan' => 6,
-				'label' => __df('Frontend/instagram_feed', 'Frontend/widgets', 'number_of_items'),
+				'label' => __df('Frontend/InstagramFeed', 'Frontend/Widgets', 'number_of_items'),
 				'placeholder' => '6',
 				'type' => 'number',
 				'value' => $settings['items'] ?? null,
@@ -53,7 +53,7 @@ class InstagramFeedWidget extends AbstractWidget {
 			// A dropdown to select the homepage (for the current language)
 			'settings.profileName' => [
 				'columnSpan' => 6,
-				'label' => __df('Frontend/instagram_feed', 'Frontend/widgets', 'profile_name'),
+				'label' => __df('Frontend/InstagramFeed', 'Frontend/Widgets', 'profile_name'),
 				'placeholder' => Configure::read('Instagram.userName'),
 				'value' => $settings['profileName'] ?? null,
 			],
@@ -255,7 +255,7 @@ class InstagramFeedWidget extends AbstractWidget {
 
 			$mediaEntity = $mediaTable->findOrCreate([
 				'name' => $fileName,
-				'media_folder_id' => $mediaFolderId,
+				'mediaFolderId' => $mediaFolderId,
 			], function (Media $entity) use ($mediaItem, $fileName, $path, $mimeType, $mediaFolderId): void {
 				// Set the mime type
 				$entity->set('mimeType', $mimeType);

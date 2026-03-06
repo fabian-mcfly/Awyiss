@@ -209,7 +209,7 @@ class ContentsListener implements EventListenerInterface {
 				/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 				$pagesTable = FactoryLocator::get('Table')->get('Pages');
 				/** @var array<\Awyiss\Model\Entity\Page> $pages */
-				$pages = $pagesTable->find('all', skipPageRoleCheck: true)->select(['id', 'language_shortcode'])->where([
+				$pages = $pagesTable->find('all', skipPageRoleCheck: true)->select(['id', 'languageShortcode'])->where([
 					'id IN' => [$oldPageId, $newPageId],
 				])->all()->indexBy('id')->toArray();
 
@@ -256,7 +256,7 @@ class ContentsListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('AutoTranslate', $jobData, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'system::auto_translation',
+				'reference' => 'System::autoTranslation',
 			]);
 
 			/** @var \Awyiss\Model\Table\LocksTable $locksTable */
@@ -266,7 +266,7 @@ class ContentsListener implements EventListenerInterface {
 
 			foreach ($jobData['ids'] as $contentId) {
 				$locks[] = $locksTable->newDefaultEntity([
-					'scope' => 'contents',
+					'scope' => 'Contents',
 					'foreignKey' => $contentId,
 					'uniqueId' => 'autoTranslate',
 					'createdOn' => $dateTimeNow,

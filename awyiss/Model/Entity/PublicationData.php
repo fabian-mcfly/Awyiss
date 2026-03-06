@@ -20,15 +20,6 @@ class PublicationData extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'date_time' => 'dateTime',
-		'foreign_key' => 'foreignKey',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'foreignKey' => true,

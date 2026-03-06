@@ -55,7 +55,7 @@ class SeoController extends BackendController {
 
 		$this->initPageRoles();
 
-		$this->selectedPageRoleSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.page_role';
+		$this->selectedPageRoleSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::variable($this->getName()) . '.pageRole';
 
 		$session = $this->request->getSession();
 

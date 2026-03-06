@@ -44,11 +44,15 @@ class CustomerGroupsCustomersTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('CustomerGroups', [
+			'foreignKey' => 'customerGroupId',
 			'joinType' => 'INNER',
+			'propertyName' => 'customerGroup',
 		]);
 
 		$this->belongsTo('Customers', [
+			'foreignKey' => 'customerId',
 			'joinType' => 'INNER',
+			'propertyName' => 'customer',
 		]);
 	}
 
@@ -92,13 +96,13 @@ class CustomerGroupsCustomersTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('customerGroupId', 'CustomerGroups'), 'customerGroupExists', [
 			'errorField' => 'customerGroupId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_customer_group_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_customer_group_exists'),
 		]);
 
 
 		$rules->add($rules->existsIn('customerId', 'Customers'), 'customerExists', [
 			'errorField' => 'customerId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_customer_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_customer_exists'),
 		]);
 
 

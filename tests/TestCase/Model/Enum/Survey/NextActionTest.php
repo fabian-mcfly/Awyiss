@@ -28,12 +28,12 @@ class NextActionTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\NextAction
 	 */
 	public function testEnumCases(): void {
-		$this->assertEquals('next_question', NextAction::NextQuestion->value);
-		$this->assertEquals('specific_question', NextAction::SpecificQuestion->value);
-		$this->assertEquals('save_and_end', NextAction::SaveAndEnd->value);
-		$this->assertEquals('show_form', NextAction::ShowForm->value);
-		$this->assertEquals('save_and_show_form', NextAction::SaveAndShowForm->value);
-		$this->assertEquals('show_form_and_save', NextAction::ShowFormAndSave->value);
+		$this->assertEquals('nextQuestion', NextAction::NextQuestion->value);
+		$this->assertEquals('specificQuestion', NextAction::SpecificQuestion->value);
+		$this->assertEquals('saveAndEnd', NextAction::SaveAndEnd->value);
+		$this->assertEquals('showForm', NextAction::ShowForm->value);
+		$this->assertEquals('saveAndShowForm', NextAction::SaveAndShowForm->value);
+		$this->assertEquals('showFormAndSave', NextAction::ShowFormAndSave->value);
 		$this->assertEquals('abort', NextAction::Abort->value);
 	}
 
@@ -43,12 +43,12 @@ class NextActionTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\NextAction
 	 */
 	public function testEnumFromMethod(): void {
-		$this->assertEquals(NextAction::NextQuestion, NextAction::from('next_question'));
-		$this->assertEquals(NextAction::SpecificQuestion, NextAction::from('specific_question'));
-		$this->assertEquals(NextAction::SaveAndEnd, NextAction::from('save_and_end'));
-		$this->assertEquals(NextAction::ShowForm, NextAction::from('show_form'));
-		$this->assertEquals(NextAction::SaveAndShowForm, NextAction::from('save_and_show_form'));
-		$this->assertEquals(NextAction::ShowFormAndSave, NextAction::from('show_form_and_save'));
+		$this->assertEquals(NextAction::NextQuestion, NextAction::from('nextQuestion'));
+		$this->assertEquals(NextAction::SpecificQuestion, NextAction::from('specificQuestion'));
+		$this->assertEquals(NextAction::SaveAndEnd, NextAction::from('saveAndEnd'));
+		$this->assertEquals(NextAction::ShowForm, NextAction::from('showForm'));
+		$this->assertEquals(NextAction::SaveAndShowForm, NextAction::from('saveAndShowForm'));
+		$this->assertEquals(NextAction::ShowFormAndSave, NextAction::from('showFormAndSave'));
 		$this->assertEquals(NextAction::Abort, NextAction::from('abort'));
 	}
 
@@ -72,12 +72,12 @@ class NextActionTest extends TestCase {
 	 * @see \Awyiss\Model\Enum\Survey\NextAction
 	 */
 	public function testEnumTryFromMethodValid(): void {
-		$this->assertEquals(NextAction::NextQuestion, NextAction::tryFrom('next_question'));
-		$this->assertEquals(NextAction::SpecificQuestion, NextAction::tryFrom('specific_question'));
-		$this->assertEquals(NextAction::SaveAndEnd, NextAction::tryFrom('save_and_end'));
-		$this->assertEquals(NextAction::ShowForm, NextAction::tryFrom('show_form'));
-		$this->assertEquals(NextAction::SaveAndShowForm, NextAction::tryFrom('save_and_show_form'));
-		$this->assertEquals(NextAction::ShowFormAndSave, NextAction::tryFrom('show_form_and_save'));
+		$this->assertEquals(NextAction::NextQuestion, NextAction::tryFrom('nextQuestion'));
+		$this->assertEquals(NextAction::SpecificQuestion, NextAction::tryFrom('specificQuestion'));
+		$this->assertEquals(NextAction::SaveAndEnd, NextAction::tryFrom('saveAndEnd'));
+		$this->assertEquals(NextAction::ShowForm, NextAction::tryFrom('showForm'));
+		$this->assertEquals(NextAction::SaveAndShowForm, NextAction::tryFrom('saveAndShowForm'));
+		$this->assertEquals(NextAction::ShowFormAndSave, NextAction::tryFrom('showFormAndSave'));
 		$this->assertEquals(NextAction::Abort, NextAction::tryFrom('abort'));
 	}
 

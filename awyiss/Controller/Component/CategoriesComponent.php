@@ -168,7 +168,7 @@ class CategoriesComponent extends Component {
 		$identifierParts = ['categories'];
 
 		$schema = $this->table->getSchema();
-		if ($schema->hasColumn('language_shortcode') && $this->table->getAlias() !== 'Configuration') {
+		if ($schema->hasColumn('languageShortcode') && $this->table->getAlias() !== 'Configuration') {
 			$identifierParts[] = $request->getParam('lang') ?? 'global';
 		}
 
@@ -264,7 +264,7 @@ class CategoriesComponent extends Component {
 
 		$view = $this->getController()->viewBuilder();
 
-		$identifier = Inflector::underscore($this->getConfig('identifier'));
+		$identifier = Inflector::variable($this->getConfig('identifier'));
 
 		$config = $this->getConfig();
 		ksort($config);
@@ -285,7 +285,7 @@ class CategoriesComponent extends Component {
 			'simple' => $this->getCategories(),
 		];
 
-		$variableNamePlural = Inflector::variable(Inflector::pluralize($identifier));
+		$variableNamePlural = Inflector::pluralize($identifier);
 
 		$view->setVar('_categories', [$variableNamePlural => $categories]);
 		$view->setVar('_categoriesIdentifier', $config['identifier']);
@@ -323,7 +323,7 @@ class CategoriesComponent extends Component {
 		}
 
 		$request = $this->getController()->getRequest();
-		$fieldName = Inflector::underscore($fieldName);
+		$fieldName = Inflector::variable($fieldName);
 		//When the field is part of the request data, overwrite it since it might be outdated
 		if ($request->getData($fieldName) !== null) {
 			$request = $request->withData($fieldName, $entity->$fieldName);

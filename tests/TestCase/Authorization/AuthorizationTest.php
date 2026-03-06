@@ -29,8 +29,8 @@ class AuthorizationTest extends TestCase {
 		$policies = $service->getPolicies();
 		$this->assertNotEmpty($policies);
 
-		//Make sure the key `languages` is a string (`\Awyiss\Authorization\Policy\Backend\LanguagesPolicy`)
-		$this->assertArrayHasKey('languages', $policies);
-		$this->assertEquals('\Awyiss\Authorization\Policy\Backend\LanguagesPolicy', $policies['languages']);
+		//Make sure the key `Languages` is a string (`\Awyiss\Authorization\Policy\Backend\LanguagesPolicy`)
+		$this->assertArrayHasKey('Languages', $policies);
+		$this->assertEquals('\Awyiss\Authorization\Policy\Backend\LanguagesPolicy', $policies['Languages']);
 	}
 }

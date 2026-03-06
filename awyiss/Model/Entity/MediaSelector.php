@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 
 
@@ -24,13 +25,6 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class MediaSelector extends Entity {
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-	];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -56,6 +50,6 @@ class MediaSelector extends Entity {
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 }

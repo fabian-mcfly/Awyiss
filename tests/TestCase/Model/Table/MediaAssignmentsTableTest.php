@@ -66,7 +66,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $mediaElementsAssociation);
 		$this->assertFalse($mediaElementsAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaElementsAssociation->getDependent());
-		$this->assertSame('media_element_id', $mediaElementsAssociation->getForeignKey());
+		$this->assertSame('mediaElementId', $mediaElementsAssociation->getForeignKey());
 		$this->assertSame('INNER', $mediaElementsAssociation->getJoinType());
 
 		// Test MediaElementAssignments association (BelongsTo)
@@ -75,8 +75,8 @@ class MediaAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $mediaElementAssignmentsAssociation);
 		$this->assertFalse($mediaElementAssignmentsAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
-		$this->assertSame(['media_element_id'], $mediaElementAssignmentsAssociation->getBindingKey());
-		$this->assertSame(['media_element_id'], $mediaElementAssignmentsAssociation->getForeignKey());
+		$this->assertSame('mediaElementId', $mediaElementAssignmentsAssociation->getBindingKey());
+		$this->assertSame('mediaElementId', $mediaElementAssignmentsAssociation->getForeignKey());
 		$this->assertSame('INNER', $mediaElementAssignmentsAssociation->getJoinType());
 
 		// Test MediaElementSelectors association (BelongsTo)
@@ -85,8 +85,8 @@ class MediaAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $mediaElementSelectorsAssociation);
 		$this->assertFalse($mediaElementSelectorsAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaElementSelectorsAssociation->getDependent());
-		$this->assertSame(['media_element_id', 'identifier'], $mediaElementSelectorsAssociation->getBindingKey());
-		$this->assertSame(['media_element_id', 'media_element_selector_identifier'], $mediaElementSelectorsAssociation->getForeignKey());
+		$this->assertSame(['mediaElementId', 'identifier'], $mediaElementSelectorsAssociation->getBindingKey());
+		$this->assertSame(['mediaElementId', 'mediaElementSelectorIdentifier'], $mediaElementSelectorsAssociation->getForeignKey());
 		$this->assertSame('INNER', $mediaElementSelectorsAssociation->getJoinType());
 
 		// Test Media association (BelongsTo)
@@ -95,7 +95,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $mediaAssociation);
 		$this->assertFalse($mediaAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaAssociation->getDependent());
-		$this->assertSame('media_id', $mediaAssociation->getForeignKey());
+		$this->assertSame('mediaId', $mediaAssociation->getForeignKey());
 
 		// Test MediaFolders association (BelongsTo)
 		$this->assertTrue($this->mediaAssignmentsTable->hasAssociation('MediaFolders'));
@@ -103,7 +103,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $mediaFoldersAssociation);
 		$this->assertFalse($mediaFoldersAssociation->getCascadeCallbacks());
 		$this->assertFalse($mediaFoldersAssociation->getDependent());
-		$this->assertSame('media_folder_id', $mediaFoldersAssociation->getForeignKey());
+		$this->assertSame('mediaFolderId', $mediaFoldersAssociation->getForeignKey());
 
 		// Test user tracking associations
 		$this->assertTrue($this->mediaAssignmentsTable->hasAssociation('CreatedByUser'));
@@ -135,7 +135,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$result = $this->mediaAssignmentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_assignments', $result->getI18nDomain());
+		$this->assertSame('MediaAssignments', $result->getI18nDomain());
 
 		// Test fields exist
 		$this->assertTrue($result->hasField('id'));
@@ -158,7 +158,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 			'systemOrder' => 1,
 		];
@@ -179,7 +179,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 			'systemOrder' => 1,
 		];
@@ -223,7 +223,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 		];
 
 		$entity = $this->mediaAssignmentsTable->newEntity($data);
@@ -325,7 +325,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => null, // Should be allowed
 			'systemOrder' => 1,
 		];
@@ -347,7 +347,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -367,7 +367,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 99999,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -392,7 +392,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -412,7 +412,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 99999,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -438,7 +438,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => null,
 			'mediaFolderId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -458,7 +458,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 1,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -478,7 +478,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 99999,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -504,7 +504,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
 			'mediaFolderId' => null,
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 1,
 		];
 
@@ -543,9 +543,9 @@ class MediaAssignmentsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'mediaElementId' => 3,
-			'mediaElementSelectorIdentifier' => 'title_media',
+			'mediaElementSelectorIdentifier' => 'titleMedia',
 			'mediaId' => 2,
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 5,
 			'systemOrder' => 3,
 		];
@@ -558,10 +558,10 @@ class MediaAssignmentsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame(3, $entity->mediaElementId);
-		$this->assertSame('title_media', $entity->mediaElementSelectorIdentifier);
+		$this->assertSame('titleMedia', $entity->mediaElementSelectorIdentifier);
 		$this->assertSame(2, $entity->mediaId);
 		$this->assertNull($entity->mediaFolderId); // Should remain default
-		$this->assertSame('pages', $entity->scope);
+		$this->assertSame('Pages', $entity->scope);
 		$this->assertSame(5, $entity->foreignKey);
 		$this->assertSame(3, $entity->systemOrder);
 	}

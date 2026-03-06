@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Enum\Survey;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Database\Type\EnumLabelInterface;
 
 
@@ -11,16 +12,16 @@ use Cake\Database\Type\EnumLabelInterface;
  * Survey QuestionType Enum
  */
 enum QuestionType: string implements EnumLabelInterface {
-	case SingleChoice = 'single_choice';
-	case MultiChoice = 'multiple_choice';
-	case FreeText = 'free_text';
-	case InfoText = 'info_text';
+	case SingleChoice = 'singleChoice';
+	case MultiChoice = 'multipleChoice';
+	case FreeText = 'freeText';
+	case InfoText = 'infoText';
 
 
 	/**
 	 * @return string
 	 */
 	public function label(): string {
-		return __d('survey_questions', 'question_type_' . $this->value);
+		return __d('SurveyQuestions', 'question_type_' . Inflector::underscore($this->value));
 	}
 }

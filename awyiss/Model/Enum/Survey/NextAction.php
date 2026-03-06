@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Enum\Survey;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Database\Type\EnumLabelInterface;
 
 
@@ -11,12 +12,12 @@ use Cake\Database\Type\EnumLabelInterface;
  * Survey NextAction Enum
  */
 enum NextAction: string implements EnumLabelInterface {
-	case NextQuestion = 'next_question';
-	case SpecificQuestion = 'specific_question';
-	case SaveAndEnd = 'save_and_end';
-	case ShowForm = 'show_form';
-	case SaveAndShowForm = 'save_and_show_form';
-	case ShowFormAndSave = 'show_form_and_save';
+	case NextQuestion = 'nextQuestion';
+	case SpecificQuestion = 'specificQuestion';
+	case SaveAndEnd = 'saveAndEnd';
+	case ShowForm = 'showForm';
+	case SaveAndShowForm = 'saveAndShowForm';
+	case ShowFormAndSave = 'showFormAndSave';
 	case Abort = 'abort';
 
 
@@ -24,6 +25,6 @@ enum NextAction: string implements EnumLabelInterface {
 	 * @return string
 	 */
 	public function label(): string {
-		return __d('surveys', 'next_action_' . $this->value);
+		return __d('Surveys', 'next_action_' . Inflector::underscore($this->value));
 	}
 }

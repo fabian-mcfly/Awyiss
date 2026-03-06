@@ -38,7 +38,7 @@
 {% block formControlContentTemplateId %}
 	{% set contentTemplateAddButton %}
 		{% if AuthorizationHelper.scopeIsAccessible('ContentTemplates', [], 'create') %}
-			{{ HtmlHelper.link(__d('content_templates', 'create'), {controller: 'ContentTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+			{{ HtmlHelper.link(__d('ContentTemplates', 'create'), {controller: 'ContentTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
 		{% endif %}
 	{% endset %}
 
@@ -48,7 +48,7 @@
 		{% endif %}
 	{% endset %}
 
-	{{ FormHelper.control('content_template_id', {
+	{{ FormHelper.control('contentTemplateId', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
 		label: contentTemplateElement.title,
@@ -62,7 +62,7 @@
 
 
 {% block formControlLanguageShortcode %}
-	{{ LocaleHelper.control('language_shortcode', {
+	{{ LocaleHelper.control('languageShortcode', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		languageRealm: settings.languageRealm,
@@ -73,7 +73,7 @@
 
 
 {% block formControlSystemOrder %}
-	{{ SystemOrderHelper.control('system_order', {
+	{{ SystemOrderHelper.control('systemOrder', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		entity: settings.content,
 		label: contentTemplateElement.title,
@@ -91,7 +91,7 @@
 
 
 {% block formControlContentAreaId %}
-	{{ FormHelper.control('content_area_id', {
+	{{ FormHelper.control('contentAreaId', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		disabled: settings.contentAreas.unavailable|column('id'),
 		empty: false,
@@ -103,7 +103,7 @@
 
 
 {% block formControlColumnWidth %}
-	{{ FormHelper.control('column_width', {
+	{{ FormHelper.control('columnWidth', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
 		label: contentTemplateElement.title,
@@ -115,7 +115,7 @@
 
 
 {% block formControlColumnIndent %}
-	{{ FormHelper.control('column_indent', {
+	{{ FormHelper.control('columnIndent', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		options: settings.columnIndents,
@@ -125,7 +125,7 @@
 
 
 {% block formControlColumnLast %}
-	{{ FormHelper.control('column_last', {
+	{{ FormHelper.control('columnLast', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
@@ -134,7 +134,7 @@
 
 
 {% block formControlColumnRtl %}
-	{{ FormHelper.control('column_rtl', {
+	{{ FormHelper.control('columnRtl', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
@@ -143,7 +143,7 @@
 
 
 {% block formControlParentId %}
-	{{ FormHelper.control('parent_id', {
+	{{ FormHelper.control('parentId', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '),
@@ -157,7 +157,7 @@
 	{% set titleTag = '' %}
 	{% if assignedContentTemplateElements.titleTag is defined %}
 		{% set titleTag %}
-			{{ FormHelper.control('title_tag', {
+			{{ FormHelper.control('titleTag', {
 				options: {
 					'h1': 'h1',
 					'h2': 'h2',
@@ -189,7 +189,7 @@
 	{% set subtitleTag = '' %}
 	{% if assignedContentTemplateElements.subtitleTag is defined %}
 		{% set subtitleTag %}
-			{{ FormHelper.control('subtitle_tag', {
+			{{ FormHelper.control('subtitleTag', {
 				options: {
 					'h1': 'h1',
 					'h2': 'h2',
@@ -236,7 +236,7 @@
 			{% endif %}
 		{% endset %}
 
-		{{ FormHelper.control('duplicate_of', {
+		{{ FormHelper.control('duplicateOf', {
 			columnSpan: contentTemplateElement.column.span.numerator,
 			label: contentTemplateElement.title,
 			required: contentTemplateElement.required,
@@ -274,7 +274,7 @@
 		}) }}
 	{% endset %}
 
-	{{ FormHelper.control('css_class', {
+	{{ FormHelper.control('cssClass', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
@@ -286,7 +286,7 @@
 
 
 {% block formControlFormId %}
-	{{ FormHelper.control('form_id', {
+	{{ FormHelper.control('formId', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		options: hashPrinter(settings.forms, 'label', 'id', '- '),
@@ -296,7 +296,7 @@
 
 
 {% block formControlSurveyId %}
-	{{ FormHelper.control('survey_id', {
+	{{ FormHelper.control('surveyId', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		options: hashPrinter(settings.surveys, 'label', 'id', '- '),

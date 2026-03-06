@@ -60,7 +60,7 @@ class FormElementsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 			'required',
-			'column_width',
+			'columnWidth',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('form_elements::identifier, form_elements::required, form_elements::column_width', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -68,26 +68,26 @@ class FormElementsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'form_id' => 'form_elements::form_id',
-			'parent_id' => 'form_elements::parent_id',
+			'formId' => 'form_elements::form_id',
+			'parentId' => 'form_elements::parent_id',
 			'type' => 'form_elements::type',
 			'identifier' => 'form_elements::identifier',
-			'title_email' => 'form_elements::title_email',
+			'titleEmail' => 'form_elements::title_email',
 			'placeholder' => 'form_elements::placeholder',
 			'text' => 'form_elements::text',
 			'options' => 'form_elements::options',
-			'column_width' => 'form_elements::column_width',
-			'column_indent' => 'form_elements::column_indent',
-			'column_last' => 'form_elements::column_last',
-			'column_rtl' => 'form_elements::column_rtl',
-			'css_class' => 'form_elements::css_class',
+			'columnWidth' => 'form_elements::column_width',
+			'columnIndent' => 'form_elements::column_indent',
+			'columnLast' => 'form_elements::column_last',
+			'columnRtl' => 'form_elements::column_rtl',
+			'cssClass' => 'form_elements::css_class',
 			'required' => 'form_elements::required',
-			'system_order' => 'form_elements::system_order',
+			'systemOrder' => 'form_elements::system_order',
 			'active' => 'form_elements::active',
-			'created_by' => 'form_elements::created_by',
-			'created_on' => 'form_elements::created_on',
-			'changed_by' => 'form_elements::changed_by',
-			'changed_on' => 'form_elements::changed_on',
+			'createdBy' => 'form_elements::created_by',
+			'createdOn' => 'form_elements::created_on',
+			'changedBy' => 'form_elements::changed_by',
+			'changedOn' => 'form_elements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.publicationData.enabled', $configOptions);

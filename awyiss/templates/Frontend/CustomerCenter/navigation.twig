@@ -24,7 +24,7 @@
 							{% set classes = classes ~ ' Active' %}
 						{% endif %}
 						<li class="{{ classes }}">
-							{{ HtmlHelper.link(__d('customers', 'link_dashboard'), { _name: 'FrontendCustomerCenterDashboard' ~ languageShortcode|ucparts }, {
+							{{ HtmlHelper.link(__d('Customers', 'link_dashboard'), { _name: 'FrontendCustomerCenterDashboard' ~ languageShortcode|ucparts }, {
 								class: classes,
 							}) }}
 						</li>
@@ -36,7 +36,7 @@
 							{% set classes = classes ~ ' Active' %}
 						{% endif %}
 						<li class="{{ classes }}">
-							{{ HtmlHelper.link(__d('customers', 'link_edit_profile'), { _name: 'FrontendCustomerCenterEditProfile' ~ languageShortcode|ucparts }, {
+							{{ HtmlHelper.link(__d('Customers', 'link_edit_profile'), { _name: 'FrontendCustomerCenterEditProfile' ~ languageShortcode|ucparts }, {
 								class: classes,
 							}) }}
 						</li>
@@ -48,7 +48,7 @@
 							{% set classes = classes ~ ' Active' %}
 						{% endif %}
 						<li class="{{ classes }}">
-							{{ HtmlHelper.link(__d('customers', 'link_change_password'), { _name: 'FrontendCustomerCenterChangePassword' ~ languageShortcode|ucparts }, {
+							{{ HtmlHelper.link(__d('Customers', 'link_change_password'), { _name: 'FrontendCustomerCenterChangePassword' ~ languageShortcode|ucparts }, {
 								class: classes,
 							}) }}
 						</li>
@@ -56,7 +56,7 @@
 
 					{% block logoutOption %}
 						<li class="Level1 Logout">
-							{{ HtmlHelper.link(__d('customers', 'link_logout'), { _name: 'FrontendCustomerCenterLogout' ~ languageShortcode|ucparts }, {
+							{{ HtmlHelper.link(__d('Customers', 'link_logout'), { _name: 'FrontendCustomerCenterLogout' ~ languageShortcode|ucparts }, {
 								class: 'Level1 Logout',
 							}) }}
 						</li>

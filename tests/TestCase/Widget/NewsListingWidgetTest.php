@@ -434,7 +434,7 @@ class NewsListingWidgetTest extends TestCase {
 		$this->mockQuery->method('offset')->willReturn($this->mockQuery);
 
 		// This is the critical test - verify where is called with correct parameters
-		$this->mockQuery->expects($this->once())->method('where')->with(['parent_id IN' => [1, 2, 3]])->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->once())->method('where')->with(['parentId IN' => [1, 2, 3]])->willReturn($this->mockQuery);
 
 		$mockResultSet = $this->createMock(ResultSet::class);
 		$mockResultSet->method('toArray')->willReturn([]);
@@ -485,7 +485,7 @@ class NewsListingWidgetTest extends TestCase {
 		$this->mockQuery->method('offset')->willReturn($this->mockQuery);
 
 		// This is the critical test - verify where is called with correct entity ID
-		$this->mockQuery->expects($this->once())->method('where')->with(['parent_id' => 5])->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->once())->method('where')->with(['parentId' => 5])->willReturn($this->mockQuery);
 
 		$mockResultSet = $this->createMock(ResultSet::class);
 		$mockResultSet->method('toArray')->willReturn([]);

@@ -36,8 +36,8 @@
 				<h2>
 					<div class="Buttons">
 						{% block buttonSeoAnalysis %}
-							{% if AuthorizationHelper.scopeIsAccessible('seo', [], 'analyze') %}
-								{{ FormHelper.button(__d('pages', 'seo_analyze'), {class: 'Button Button-Subtle Button-Loading', id: 'SeoAnalyzeDialogButton', name: 'button', type: 'button', inert: true}) }}
+							{% if AuthorizationHelper.scopeIsAccessible('Seo', [], 'analyze') %}
+								{{ FormHelper.button(__d('Pages', 'seo_analyze'), {class: 'Button Button-Subtle Button-Loading', id: 'SeoAnalyzeDialogButton', name: 'button', type: 'button', inert: true}) }}
 							{% endif %}
 						{% endblock %}
 
@@ -71,7 +71,7 @@
 
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 				{% endblock %}
 
 				{% block overviewButtonAdd %}
@@ -155,8 +155,8 @@
 </div>
 
 {% block seoAnalyzeDialog %}
-	{% if AuthorizationHelper.scopeIsAccessible('seo', [], 'analyze') %}
-		<dialog id="SeoAnalyzeDialog" data-title="{{ __d('pages', 'seo_analyze') }}" data-page-id="{{ page.id }}">
+	{% if AuthorizationHelper.scopeIsAccessible('Seo', [], 'analyze') %}
+		<dialog id="SeoAnalyzeDialog" data-title="{{ __d('Pages', 'seo_analyze') }}" data-page-id="{{ page.id }}">
 			{% block seoAnalyzeDialogButtonArea %}
 				<div class="ButtonArea">
 					{% block seoAnalyzeDialogCancel %}
@@ -171,7 +171,7 @@
 						<span class="SeoInfo SeoInfo-TextLength">
 							<span class="Icon Loading"></span>
 
-							<span class="Title"><strong>{{ __d('seo', 'text_length') }}</strong></span>
+							<span class="Title"><strong>{{ __d('Seo', 'text_length') }}</strong></span>
 						</span>
 					{% endblock %}
 
@@ -179,7 +179,7 @@
 						<span class="SeoInfo SeoInfo-HeadlineStructure">
 							<span class="Icon Loading"></span>
 
-							<span class="Title"><strong>{{ __d('seo', 'headline_structure') }}</strong></span>
+							<span class="Title"><strong>{{ __d('Seo', 'headline_structure') }}</strong></span>
 						</span>
 					{% endblock %}
 
@@ -187,7 +187,7 @@
 						<span class="SeoInfo SeoInfo-MetaTitle">
 							<span class="Icon Loading"></span>
 
-							<span class="Title"><strong>{{ __d('seo', 'meta_title') }}</strong></span>
+							<span class="Title"><strong>{{ __d('Seo', 'meta_title') }}</strong></span>
 						</span>
 					{% endblock %}
 
@@ -195,7 +195,7 @@
 						<span class="SeoInfo SeoInfo-MetaDescription">
 							<span class="Icon Loading"></span>
 
-							<span class="Title"><strong>{{ __d('seo', 'meta_description') }}</strong></span>
+							<span class="Title"><strong>{{ __d('Seo', 'meta_description') }}</strong></span>
 						</span>
 					{% endblock %}
 
@@ -209,7 +209,7 @@
 								{% endif %}
 							</span>
 
-							<span class="Title">{{ __d('seo', page.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}</span>
+							<span class="Title">{{ __d('Seo', page.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}</span>
 						</span>
 					{% endblock %}
 
@@ -223,13 +223,13 @@
 								{% endif %}
 							</span>
 
-							<span class="Title">{{ __d('seo', page.robotsIndex ? 'robots_index' : 'robots_no_index') }}</span>
+							<span class="Title">{{ __d('Seo', page.robotsIndex ? 'robots_index' : 'robots_no_index') }}</span>
 						</span>
 					{% endblock %}
 
 					{% block seoAnalyzeDialogMostlyUsedWordsInfo %}
 						<span class="SeoInfo SeoInfo-MostlyUsedWords">
-							<span class="Title"><strong>{{ __d('seo', 'mostly_used_words') }}</strong></span>
+							<span class="Title"><strong>{{ __d('Seo', 'mostly_used_words') }}</strong></span>
 						</span>
 					{% endblock %}
 

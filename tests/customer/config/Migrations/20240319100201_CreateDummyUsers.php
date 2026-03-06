@@ -47,11 +47,11 @@ class CreateDummyUsers extends AbstractMigration {
 			'default' => null,
 			'limit' => 50,
 			'null' => true,
-		])->addColumn('last_login', 'datetime', [
+		])->addColumn('lastLogin', 'datetime', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->addColumn('failed_attempts', 'integer', [
+		])->addColumn('failedAttempts', 'integer', [
 			'default' => '0',
 			'limit' => null,
 			'null' => false,
@@ -64,30 +64,30 @@ class CreateDummyUsers extends AbstractMigration {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
-		])->addColumn('created_by', 'integer', [
+		])->addColumn('createdBy', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
 			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
+		])->addColumn('createdOn', 'datetime', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
+		])->addColumn('changedBy', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
 			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
+		])->addColumn('changedOn', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('deletedBy', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('deletedOn', 'datetime', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,

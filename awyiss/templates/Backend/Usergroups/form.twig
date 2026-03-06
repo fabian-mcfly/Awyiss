@@ -200,7 +200,7 @@
 												<div class="Permission">
 													{# @var permission \Awyiss\Authorization\Permission\PermissionInterface #}
 													{% block usergroupPermission %}
-														<span class="Label">{{ __df(policy.scope, 'usergroups', 'permission_' ~ identifier|underscore) }}</span>
+														<span class="Label">{{ __df(policy.scope, 'Usergroups', 'permission_' ~ identifier|underscore) }}</span>
 														{{ AuthorizationHelper.permissionOptions(permission, usergroup, null, 'Usergroups') }}
 													{% endblock %}
 												</div>
@@ -216,7 +216,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

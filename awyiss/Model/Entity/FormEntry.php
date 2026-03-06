@@ -32,20 +32,6 @@ class FormEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'form_id' => 'formId',
-		'page_id' => 'pageId',
-		'subject_confirmation' => 'subjectConfirmation',
-		'body_confirmation' => 'bodyConfirmation',
-		'ip_hash' => 'ipHash',
-		'post_hash' => 'postHash',
-		'language_shortcode' => 'languageShortcode',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'formId' => true,
 		'pageId' => true,

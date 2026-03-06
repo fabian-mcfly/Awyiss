@@ -44,11 +44,20 @@ class ContentTemplateContentAreasTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('ContentAreas');
+		$this->belongsTo('ContentAreas', [
+			'foreignKey' => 'contentAreaId',
+			'propertyName' => 'contentArea',
+		]);
 
-		$this->belongsTo('ContentTemplates');
+		$this->belongsTo('ContentTemplates', [
+			'foreignKey' => 'contentTemplateId',
+			'propertyName' => 'contentTemplate',
+		]);
 
-		$this->belongsTo('PageTemplates');
+		$this->belongsTo('PageTemplates', [
+			'foreignKey' => 'pageTemplateId',
+			'propertyName' => 'pageTemplate',
+		]);
 	}
 
 
@@ -63,14 +72,14 @@ class ContentTemplateContentAreasTable extends Table {
 		$validator->requirePresence([
 			'contentTemplateId',
 		], function (array $context): bool {
-			return empty($context['data']['page_template_id']) && $context['newRecord'];
+			return empty($context['data']['pageTemplateId']) && $context['newRecord'];
 		});
 
 
 		$validator->requirePresence([
 			'pageTemplateId',
 		], function (array $context): bool {
-			return empty($context['data']['content_template_id']) && $context['newRecord'];
+			return empty($context['data']['contentTemplateId']) && $context['newRecord'];
 		});
 
 
@@ -114,19 +123,19 @@ class ContentTemplateContentAreasTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('contentTemplateId', 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_template_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_content_template_exists'),
 		]);
 
 
 		$rules->add($rules->existsIn('contentAreaId', 'ContentAreas'), 'contentAreaExists', [
 			'errorField' => 'contentAreaId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_area_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_content_area_exists'),
 		]);
 
 
 		$rules->add($rules->existsIn('pageTemplateId', 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_page_template_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_page_template_exists'),
 		]);
 
 
@@ -136,12 +145,12 @@ class ContentTemplateContentAreasTable extends Table {
 
 
 			return (bool)$pageTemplateContentAreasTable->find()->where([
-				'page_template_id' => $entity->pageTemplateId,
-				'content_area_id' => $entity->contentAreaId,
+				'pageTemplateId' => $entity->pageTemplateId,
+				'contentAreaId' => $entity->contentAreaId,
 			])->first();
 		}, 'contentTemplateContentAreas', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_page_template_content_area_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_page_template_content_area_exists'),
 		]);
 
 

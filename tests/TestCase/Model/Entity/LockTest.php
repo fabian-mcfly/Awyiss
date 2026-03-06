@@ -94,25 +94,25 @@ class LockTest extends TestCase {
 		$entity = new Lock();
 
 		$entity->scope = 'TestScope';
-		$this->assertEquals('testscope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'Test Scope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'Test-Scope';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'Test Scope!@#$%';
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->scope = 'UPPERCASE SCOPE';
-		$this->assertEquals('uppercase_scope', $entity->scope);
+		$this->assertEquals('UPPERCASESCOPE', $entity->scope);
 
 		$entity->scope = 'testHTMLScope';
-		$this->assertEquals('testhtmlscope', $entity->scope);
+		$this->assertEquals('TestHTMLScope', $entity->scope);
 
-		$entity->scope = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->scope);
+		$entity->scope = 'is_underscored';
+		$this->assertEquals('IsUnderscored', $entity->scope);
 
 		$entity->scope = null;
 		$this->assertNull($entity->scope);
@@ -127,25 +127,25 @@ class LockTest extends TestCase {
 		$entity = new Lock();
 
 		$entity->set('scope', 'TestScope');
-		$this->assertEquals('testscope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'Test Scope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'Test-Scope');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'Test Scope!@#$%');
-		$this->assertEquals('test_scope', $entity->scope);
+		$this->assertEquals('TestScope', $entity->scope);
 
 		$entity->set('scope', 'UPPERCASE SCOPE');
-		$this->assertEquals('uppercase_scope', $entity->scope);
+		$this->assertEquals('UPPERCASESCOPE', $entity->scope);
 
 		$entity->set('scope', 'testHTMLScope');
-		$this->assertEquals('testhtmlscope', $entity->scope);
+		$this->assertEquals('TestHTMLScope', $entity->scope);
 
-		$entity->set('scope', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->scope);
+		$entity->set('scope', 'is_underscored');
+		$this->assertEquals('IsUnderscored', $entity->scope);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('scope', null);
@@ -161,39 +161,20 @@ class LockTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'scope' => 'TestScope',
-			'foreign_key' => 123,
-			'unique_id' => 'test-unique-id',
-			'created_by' => 456,
-			'created_on' => '2025-01-06 12:00:00',
+			'foreignKey' => 123,
+			'uniqueId' => 'test-unique-id',
+			'createdBy' => 456,
+			'createdOn' => '2025-01-06 12:00:00',
 		];
 
 		$entity = new Lock($properties);
 
 		$this->assertEquals(1, $entity->id);
-		$this->assertEquals('testscope', $entity->scope); // Should be cleaned by setter
+		$this->assertEquals('TestScope', $entity->scope); // Should be cleaned by setter
 		$this->assertEquals(123, $entity->foreignKey);
 		$this->assertEquals('test-unique-id', $entity->uniqueId);
 		$this->assertEquals(456, $entity->createdBy);
 		$this->assertNotNull($entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Lock::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'foreign_key' => 789,
-			'unique_id' => 'mapped-unique-id',
-		];
-
-		$entity = new Lock($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 

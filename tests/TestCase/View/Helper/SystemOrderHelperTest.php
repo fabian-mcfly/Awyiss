@@ -77,7 +77,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity->setSource('News');
 
 		$result = $this->helper->control(null, ['entity' => $entity]);
-		$this->assertStringContainsString('<select name="system_order" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
 	}
 
 
@@ -90,8 +90,8 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 		$entity->setSource('News');
 
-		$result = $this->helper->control('custom_field', ['entity' => $entity]);
-		$this->assertStringContainsString('<select name="custom_field" id="CustomField" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$result = $this->helper->control('customField', ['entity' => $entity]);
+		$this->assertStringContainsString('<select name="customField" id="CustomField" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
 	}
 
 
@@ -246,7 +246,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = $table->findById(3)->find('withDeleted')->first();
 
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$query = $table->find('withDeleted')->where(['languageShortcode' => 'de']);
 		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
@@ -271,7 +271,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity->systemOrder = 3;
 
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$query = $table->find('withDeleted')->where(['languageShortcode' => 'de']);
 		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
@@ -295,7 +295,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = $table->newDefaultEntity(['languageShortcode' => 'de', 'systemOrder' => 3, 'title' => 'Testfolder New']);
 
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$query = $table->find('withDeleted')->where(['languageShortcode' => 'de']);
 		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
@@ -363,7 +363,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'disabled' => true]);
-		$this->assertStringContainsString('<select name="system_order" disabled="disabled" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" disabled="disabled" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
 	}
 
 
@@ -383,7 +383,7 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, $attributes);
 
-		$this->assertStringContainsString('<select name="system_order" class="custom-class" data-test="test-value" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" class="custom-class" data-test="test-value" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
 	}
 
 
@@ -396,7 +396,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => []]);
-		$this->assertStringContainsString('<select name="system_order" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label"><option value="1" title="-&gt; system_order_first" selected="selected">-&gt; system_order_first</option></select>', $result);
+		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label"><option value="1" title="-&gt; system_order_first" selected="selected">-&gt; system_order_first</option></select>', $result);
 	}
 
 

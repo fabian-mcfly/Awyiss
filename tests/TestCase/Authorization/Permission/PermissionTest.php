@@ -61,7 +61,7 @@ class PermissionTest extends TestCase {
 	 */
 	public function testGetScopeReturnsSanitizedScope(): void {
 		$permission = new Permission('Test Scope!', 'identifier');
-		$this->assertSame('test_scopes', $permission->getScope());
+		$this->assertSame('TestScopes', $permission->getScope());
 	}
 
 
@@ -180,7 +180,7 @@ class PermissionTest extends TestCase {
 		$data = ['scope' => 'FoobarScope', 'identifier' => 'unknown identifier', 'access' => 'access', 'settings' => ['setting1']];
 		$permission = Permission::createFromArray($data);
 
-		$this->assertSame('foobar_scopes', $permission->getScope());
+		$this->assertSame('FoobarScopes', $permission->getScope());
 		$this->assertSame('unknownIdentifier', $permission->getIdentifier());
 		$this->assertSame('access', $permission->getAccess());
 		$this->assertSame(['setting1'], $permission->getSettings());
@@ -200,7 +200,7 @@ class PermissionTest extends TestCase {
 
 		$permission = Permission::createFromObject($permissionInterface);
 
-		$this->assertSame('foobar_scopes', $permission->getScope());
+		$this->assertSame('FoobarScopes', $permission->getScope());
 		$this->assertSame('unknownIdentifier', $permission->getIdentifier());
 		$this->assertSame('access', $permission->getAccess());
 		$this->assertSame(['setting1'], $permission->getSettings());

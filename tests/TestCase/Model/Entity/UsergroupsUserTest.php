@@ -60,8 +60,8 @@ class UsergroupsUserTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'usergroup_id' => 123,
-			'user_id' => 456,
+			'usergroupId' => 123,
+			'userId' => 456,
 		];
 
 		$entity = new UsergroupsUser($properties);
@@ -69,24 +69,5 @@ class UsergroupsUserTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(123, $entity->usergroupId);
 		$this->assertEquals(456, $entity->userId);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\UsergroupsUser::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'usergroup_id' => 789,
-			'user_id' => 101,
-		];
-
-		$entity = new UsergroupsUser($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

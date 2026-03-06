@@ -72,7 +72,7 @@ class AttributesBehaviorTest extends TestCase {
 		parent::tearDown();
 
 		$this->fetchTable('News')->deleteAll(['id >=' => 2000]);
-		$this->fetchTable('AttributesNews')->deleteAll(['page_id >=' => 2000]);
+		$this->fetchTable('AttributesNews')->deleteAll(['pageId >=' => 2000]);
 
 		$this->fetchTable('Cars')->deleteAll([]);
 		$this->fetchTable('AttributesCars')->deleteAll([]);
@@ -88,7 +88,7 @@ class AttributesBehaviorTest extends TestCase {
 
 		$this->assertSame([
 			'attributeOptionsProviderClass' => 'Awyiss\Attribute\AttributeOptionsProvider',
-			'foreignKey' => 'page_id',
+			'foreignKey' => 'pageId',
 			'implementedFinders' => [
 				'withMatchingAttributes' => 'findWithMatchingAttributes',
 				'futureDate' => 'futureDate',
@@ -137,7 +137,7 @@ class AttributesBehaviorTest extends TestCase {
 
 		$this->assertSame([
 			'attributeOptionsProviderClass' => 'Awyiss\Attribute\AttributeOptionsProvider',
-			'foreignKey' => 'page_id',
+			'foreignKey' => 'pageId',
 			'implementedFinders' => [
 				'withMatchingAttributes' => 'findWithMatchingAttributes',
 			],
@@ -177,7 +177,7 @@ class AttributesBehaviorTest extends TestCase {
 		$this->assertSame('attributes_news', $association->getTarget()->getTable());
 		$this->assertTrue($association->getCascadeCallbacks());
 		$this->assertTrue($association->getDependent());
-		$this->assertSame('page_id', $association->getForeignKey());
+		$this->assertSame('pageId', $association->getForeignKey());
 	}
 
 
@@ -601,11 +601,11 @@ class AttributesBehaviorTest extends TestCase {
 		}
 
 		$this->assertEquals([
-			'free_text',
-			'input_list',
-			'dropdown_select',
-			'input_key_value_list',
-			'dummy_pw',
+			'freeText',
+			'inputList',
+			'dropdownSelect',
+			'inputKeyValueList',
+			'dummyPw',
 		], array_column($result, 'identifier'));
 	}
 
@@ -628,11 +628,11 @@ class AttributesBehaviorTest extends TestCase {
 		}
 
 		$this->assertEquals([
-			'free_text',
-			'input_list',
-			'dropdown_select',
-			'input_key_value_list',
-			'dummy_pw',
+			'freeText',
+			'inputList',
+			'dropdownSelect',
+			'inputKeyValueList',
+			'dummyPw',
 		], array_column($result, 'identifier'));
 	}
 

@@ -44,10 +44,12 @@ class UsergroupsUsersTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Usergroups', [
+			'foreignKey' => 'usergroupId',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('Users', [
+			'foreignKey' => 'userId',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -92,13 +94,13 @@ class UsergroupsUsersTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('usergroupId', 'Usergroups'), 'usergroupExists', [
 			'errorField' => 'usergroupId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_usergroup_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_usergroup_exists'),
 		]);
 
 
 		$rules->add($rules->existsIn('userId', 'Users'), 'userExists', [
 			'errorField' => 'userId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_user_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_user_exists'),
 		]);
 
 

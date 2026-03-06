@@ -19,7 +19,7 @@
 #}
 
 {% if auditDataCount %}
-	{{ HtmlHelper.link(__d('audit', 'show_history') ~ ('<span class="Count">' ~ auditDataCount ~ '</span>'), {
+	{{ HtmlHelper.link(__d('Audit', 'show_history') ~ ('<span class="Count">' ~ auditDataCount ~ '</span>'), {
 		controller: 'audit',
 		action: 'history',
 		scope: entity.source|underscore,
@@ -27,6 +27,6 @@
 	}, {
 		class: 'Button Button-History Button-AuditHistory',
 		escape: false,
-		title: __d('audit', 'show_history'),
+		title: __d('Audit', 'show_history'),
 	}) }}
 {% endif %}

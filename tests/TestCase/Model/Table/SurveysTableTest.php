@@ -132,15 +132,15 @@ class SurveysTableTest extends TestCase {
 		$this->assertFalse($titleTranslationAssociation->getDependent());
 
 		// 'Surveys_successMessage_translation' must also exist
-		$this->assertTrue($this->surveysTable->hasAssociation('Surveys_success_message_translation'));
-		$successMessageTranslationAssociation = $this->surveysTable->getAssociation('Surveys_success_message_translation');
+		$this->assertTrue($this->surveysTable->hasAssociation('Surveys_successMessage_translation'));
+		$successMessageTranslationAssociation = $this->surveysTable->getAssociation('Surveys_successMessage_translation');
 		$this->assertInstanceOf(HasOne::class, $successMessageTranslationAssociation);
 		$this->assertFalse($successMessageTranslationAssociation->getCascadeCallbacks());
 		$this->assertFalse($successMessageTranslationAssociation->getDependent());
 
-		// 'Surveys_failure_message_translation' must also exist
-		$this->assertTrue($this->surveysTable->hasAssociation('Surveys_failure_message_translation'));
-		$failureMessageTranslationAssociation = $this->surveysTable->getAssociation('Surveys_failure_message_translation');
+		// 'Surveys_failureMessage_translation' must also exist
+		$this->assertTrue($this->surveysTable->hasAssociation('Surveys_failureMessage_translation'));
+		$failureMessageTranslationAssociation = $this->surveysTable->getAssociation('Surveys_failureMessage_translation');
 		$this->assertInstanceOf(HasOne::class, $failureMessageTranslationAssociation);
 		$this->assertFalse($failureMessageTranslationAssociation->getCascadeCallbacks());
 		$this->assertFalse($failureMessageTranslationAssociation->getDependent());
@@ -164,7 +164,7 @@ class SurveysTableTest extends TestCase {
 		$result = $this->surveysTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('surveys', $result->getI18nDomain());
+		$this->assertSame('Surveys', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -191,10 +191,10 @@ class SurveysTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Survey',
-			'identifier' => 'test_survey',
+			'identifier' => 'testSurvey',
 			'successMessage' => 'Thank you for your response!',
 			'failureMessage' => 'Sorry, there was an error.',
-			'finalAction' => 'show_form',
+			'finalAction' => NextAction::ShowForm,
 			'formId' => 1,
 			'active' => true,
 			'deleted' => false,
@@ -331,8 +331,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesUniqueIdentifier(): void {
 		$data = [
 			'title' => 'Unique Survey',
-			'identifier' => 'unique_survey_identifier',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'uniqueSurveyIdentifier',
+			'finalAction' => 'saveAndEnd',
 		];
 
 		$entity = $this->surveysTable->newDefaultEntity();
@@ -350,8 +350,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesDuplicateIdentifier(): void {
 		$data = [
 			'title' => 'New Survey',
-			'identifier' => 'dummy_survey',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'dummySurvey',
+			'finalAction' => 'saveAndEnd',
 		];
 
 		// Try to create another with the same identifier
@@ -376,7 +376,7 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesValidType(): void {
 		$data = [
 			'title' => 'Survey with Invalid Final Action',
-			'identifier' => 'survey_invalid_action',
+			'identifier' => 'surveyInvalidAction',
 			'type' => 'configurator', // Patching entity will convert to enum
 		];
 
@@ -405,8 +405,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesInvalidType(): void {
 		$data = [
 			'title' => 'Survey with Invalid Type',
-			'identifier' => 'survey_invalid_type',
-			'type' => 'invalid_type', // Patching entity will convert to enum but fail here
+			'identifier' => 'surveyInvalidType',
+			'type' => 'invalidType', // Patching entity will convert to enum but fail here
 		];
 
 		$entity = $this->surveysTable->newDefaultEntity();
@@ -419,7 +419,7 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertTrue($result);
 
-		$entity->type = 'invalid_type'; // Setting a value directly will not convert to enum
+		$entity->type = 'invalidType'; // Setting a value directly will not convert to enum
 
 		$result = $this->surveysTable->checkRules($entity);
 
@@ -439,8 +439,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesValidFormId(): void {
 		$data = [
 			'title' => 'Survey with Form',
-			'identifier' => 'survey_with_form',
-			'finalAction' => 'show_form',
+			'identifier' => 'surveyWithForm',
+			'finalAction' => NextAction::ShowForm,
 			'formId' => 1, // Existing form
 		];
 
@@ -459,8 +459,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesNullFormIdWhenNotRequired(): void {
 		$data = [
 			'title' => 'Survey without Form',
-			'identifier' => 'survey_without_form',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'surveyWithoutForm',
+			'finalAction' => 'saveAndEnd',
 			'formId' => null,
 		];
 
@@ -473,9 +473,9 @@ class SurveysTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["show_form"]
-	 *           ["save_and_show_form"]
-	 *           ["show_form_and_save"]
+	 * @testWith ["showForm"]
+	 *           ["saveAndShowForm"]
+	 *           ["showFormAndSave"]
 	 * @param string $finalAction
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveysTable::buildRules()
@@ -483,7 +483,7 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesNullFormIdWhenRequired(string $finalAction): void {
 		$data = [
 			'title' => 'Survey without Form',
-			'identifier' => 'survey_without_form',
+			'identifier' => 'surveyWithoutForm',
 			'finalAction' => $finalAction,
 			'formId' => null,
 		];
@@ -509,8 +509,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesInvalidFormId(): void {
 		$data = [
 			'title' => 'Survey with Invalid Form',
-			'identifier' => 'survey_invalid_form',
-			'finalAction' => 'show_form',
+			'identifier' => 'surveyInvalidForm',
+			'finalAction' => NextAction::ShowForm,
 			'formId' => 99999, // Non-existing form
 		];
 
@@ -535,8 +535,8 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesValidFinalAction(): void {
 		$data = [
 			'title' => 'Survey with Invalid Final Action',
-			'identifier' => 'survey_invalid_action',
-			'finalAction' => 'save_and_show_form', // Patching entity will convert to enum
+			'identifier' => 'surveyInvalidAction',
+			'finalAction' => 'saveAndShowForm', // Patching entity will convert to enum
 			'formId' => 1,
 		];
 
@@ -565,7 +565,7 @@ class SurveysTableTest extends TestCase {
 	public function testBuildRulesInvalidFinalAction(): void {
 		$data = [
 			'title' => 'Survey with Invalid Final Action',
-			'identifier' => 'survey_invalid_action',
+			'identifier' => 'surveyInvalidAction',
 			'finalAction' => 'invalid_action', // Patching entity will convert to enum but fail here
 		];
 
@@ -600,7 +600,7 @@ class SurveysTableTest extends TestCase {
 		// Survey with form ID when final action requires form
 		$data = [
 			'title' => 'Survey with Required Form',
-			'identifier' => 'survey_form_required',
+			'identifier' => 'surveyFormRequired',
 			'finalAction' => NextAction::ShowForm,
 			'formId' => 1,
 		];
@@ -621,8 +621,8 @@ class SurveysTableTest extends TestCase {
 		// Survey without form ID when final action requires form
 		$data = [
 			'title' => 'Survey Missing Required Form',
-			'identifier' => 'survey_missing_form',
-			'finalAction' => 'show_form',
+			'identifier' => 'surveyMissingForm',
+			'finalAction' => NextAction::ShowForm,
 			'formId' => null,
 		];
 
@@ -648,8 +648,8 @@ class SurveysTableTest extends TestCase {
 		// Survey without circular references
 		$data = [
 			'title' => 'Linear Survey',
-			'identifier' => 'linear_survey',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearSurvey',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 		];
 
@@ -671,8 +671,8 @@ class SurveysTableTest extends TestCase {
 		// Survey without circular references
 		$data = [
 			'title' => 'Linear Survey',
-			'identifier' => 'linear_survey',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearSurvey',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 		];
 
@@ -694,8 +694,8 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with unique questions
 		$data = [
 			'title' => 'Linear Survey Unique Questions',
-			'identifier' => 'linear_unique',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearUnique',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 			'surveySurveyQuestions' => [
 				['surveyQuestionId' => 1, 'identifier' => '8524de5e'],
@@ -725,8 +725,8 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with repeated questions
 		$data = [
 			'title' => 'Linear Survey Repeated Questions',
-			'identifier' => 'linear_repeated',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearRepeated',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 			'surveySurveyQuestions' => [
 				['surveyQuestionId' => 1, 'identifier' => '8524de5e'],
@@ -762,13 +762,13 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with repeated questions
 		$data = [
 			'title' => 'Linear Survey Repeated Questions',
-			'identifier' => 'linear_repeated',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearRepeated',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'configurator',
 			'surveySurveyQuestions' => [
-				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
-				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
-				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'next_question'], // Repeated question
+				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
+				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
+				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'], // Repeated question
 			],
 		];
 
@@ -794,8 +794,8 @@ class SurveysTableTest extends TestCase {
 		// Linear survey without next actions (valid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 			'surveySurveyQuestions' => [
 				['surveyQuestionId' => 1, 'identifier' => '8524de5e'],
@@ -824,12 +824,12 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with next actions (invalid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 			'surveySurveyQuestions' => [
 				['surveyQuestionId' => 1, 'identifier' => '8524de5e'],
-				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
+				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
 			],
 		];
 
@@ -872,8 +872,8 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with next actions (invalid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'linear',
 			'surveySurveyQuestions' => [
 				['surveyQuestionId' => 1, 'identifier' => '8524de5e'],
@@ -895,7 +895,7 @@ class SurveysTableTest extends TestCase {
 			]),
 			new SurveySurveyAnswer()->patch([
 				'surveyAnswerId' => 2,
-				'nextAction' => 'next_question', // Invalid next action for linear survey
+				'nextAction' => 'nextQuestion', // Invalid next action for linear survey
 			]),
 		];
 
@@ -923,12 +923,12 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with next actions (invalid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'configurator',
 			'surveySurveyQuestions' => [
-				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
-				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
+				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
+				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
 			],
 		];
 
@@ -968,11 +968,11 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with next actions (invalid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'configurator',
 			'surveySurveyQuestions' => [
-				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
+				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
 				['surveyQuestionId' => 2, 'identifier' => '8524de5e'], // Missing next action
 			],
 		];
@@ -1018,12 +1018,12 @@ class SurveysTableTest extends TestCase {
 		// Linear survey with next actions (invalid)
 		$data = [
 			'title' => 'Linear Survey No Actions',
-			'identifier' => 'linear_no_actions',
-			'finalAction' => 'save_and_end',
+			'identifier' => 'linearNoActions',
+			'finalAction' => 'saveAndEnd',
 			'type' => 'configurator',
 			'surveySurveyQuestions' => [
-				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
-				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'next_question'],
+				['surveyQuestionId' => 1, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
+				['surveyQuestionId' => 2, 'identifier' => '8524de5e', 'nextAction' => 'nextQuestion'],
 			],
 		];
 
@@ -1186,10 +1186,10 @@ class SurveysTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Survey',
-			'identifier' => 'custom_survey',
+			'identifier' => 'customSurvey',
 			'successMessage' => 'Custom success message',
 			'failureMessage' => 'Custom failure message',
-			'finalAction' => 'show_form',
+			'finalAction' => NextAction::ShowForm,
 			'formId' => 2,
 			'active' => false,
 			'deleted' => true,
@@ -1201,7 +1201,7 @@ class SurveysTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		$this->assertSame('Custom Survey', $entity->title);
-		$this->assertSame('custom_survey', $entity->identifier);
+		$this->assertSame('customSurvey', $entity->identifier);
 		$this->assertSame('Custom success message', $entity->successMessage);
 		$this->assertSame('Custom failure message', $entity->failureMessage);
 		$this->assertSame(NextAction::ShowForm, $entity->finalAction);
@@ -1218,8 +1218,8 @@ class SurveysTableTest extends TestCase {
 	public function testInitializeSchemaFinalActionColumn(): void {
 		$schema = $this->surveysTable->getSchema();
 
-		// Test that final_action column is configured as an enum type
-		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('final_action'));
+		// Test that finalAction column is configured as an enum type
+		$this->assertSame('enum-awyiss-model-enum-survey-nextaction', $schema->getColumnType('finalAction'));
 	}
 
 
@@ -1247,7 +1247,7 @@ class SurveysTableTest extends TestCase {
 		$this->assertSame(Awyiss::REALM_FRONTEND, $config['realm']);
 
 		$this->assertIsArray($config['fields']);
-		$this->assertSame(['title', 'success_message', 'failure_message'], $config['fields']);
+		$this->assertSame(['title', 'successMessage', 'failureMessage'], $config['fields']);
 	}
 
 	/**
@@ -1260,7 +1260,7 @@ class SurveysTableTest extends TestCase {
 		$this->assertIsArray($finalActions);
 		$this->assertNotEmpty($finalActions);
 
-		$this->assertSame(['save_and_end', 'show_form', 'save_and_show_form', 'show_form_and_save'], array_keys($finalActions));
+		$this->assertSame(['saveAndEnd', 'showForm', 'saveAndShowForm', 'showFormAndSave'], array_keys($finalActions));
 	}
 
 
@@ -1275,12 +1275,12 @@ class SurveysTableTest extends TestCase {
 		$this->assertNotEmpty($nextActions);
 
 		$this->assertSame([
-			'next_question',
-			'specific_question',
-			'save_and_end',
-			'show_form',
-			'save_and_show_form',
-			'show_form_and_save',
+			'nextQuestion',
+			'specificQuestion',
+			'saveAndEnd',
+			'showForm',
+			'saveAndShowForm',
+			'showFormAndSave',
 			'abort',
 		], array_keys($nextActions));
 	}

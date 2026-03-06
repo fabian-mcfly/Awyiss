@@ -174,7 +174,7 @@ class UsersTableTest extends TestCase {
 		$result = $this->usersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('users', $result->getI18nDomain());
+		$this->assertSame('Users', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('username'));
@@ -203,7 +203,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'testuser',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'firstname' => 'Test',
 			'lastname' => 'User',
 			'email' => 'test@example.com',
@@ -315,7 +315,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'testuser',
 			'password' => str_repeat('a', 101), // exceeds 100 char limit
-			'password_confirm' => str_repeat('a', 101),
+			'passwordConfirm' => str_repeat('a', 101),
 		];
 
 		$entity = $this->usersTable->newDefaultEntity();
@@ -334,7 +334,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'testuser',
 			'password' => 'password123',
-			'password_confirm' => 'differentpassword',
+			'passwordConfirm' => 'differentpassword',
 		];
 
 		$entity = $this->usersTable->newDefaultEntity();
@@ -373,7 +373,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'testuser',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'email' => 'invalid-email',
 		];
 
@@ -393,7 +393,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'uniqueuser',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 		];
 
 		$entity = $this->usersTable->newDefaultEntity();
@@ -413,7 +413,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'awyiss-inactive',
 			'password' => 'password456',
-			'password_confirm' => 'password456',
+			'passwordConfirm' => 'password456',
 		];
 
 		$entity = $this->usersTable->newDefaultEntity();
@@ -439,7 +439,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'user1',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'email' => 'unique@example.com',
 		];
 
@@ -459,7 +459,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'user2',
 			'password' => 'password456',
-			'password_confirm' => 'password456',
+			'passwordConfirm' => 'password456',
 			'email' => 'hello@2f.media',
 		];
 
@@ -503,7 +503,7 @@ class UsersTableTest extends TestCase {
 		$data = [
 			'username' => 'user1',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'email' => null,
 		];
 

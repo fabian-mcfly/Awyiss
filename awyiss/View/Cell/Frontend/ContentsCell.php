@@ -208,7 +208,7 @@ class ContentsCell extends Cell {
 			]);
 
 			if ($children->count()) {
-				$children = $children->nest('id', 'parent_id');
+				$children = $children->nest('id', 'parentId');
 				foreach ($children as $child) {
 					$child->parentId = $entity->id;
 				}
@@ -253,7 +253,7 @@ class ContentsCell extends Cell {
 			return;
 		}
 
-		$data = $entity->duplicateOfContent->extract(null, false, false);
+		$data = $entity->duplicateOfContent->extract();
 		$data = array_diff_key($data, array_flip($blocklistedKeys));
 
 		$entity->patch($data);
@@ -272,7 +272,7 @@ class ContentsCell extends Cell {
 		$query = $this->getContentsQuery($isPreview)->find('accessible');
 
 		$query->where([
-			'Contents.page_id' => $page->duplicateOf ?? $page->id,
+			'Contents.pageId' => $page->duplicateOf ?? $page->id,
 			'ContentAreas.identifier' => $contentArea,
 		]);
 
@@ -285,7 +285,7 @@ class ContentsCell extends Cell {
 		$contents = $query->all();
 
 		/*
-		 * Filter out all first level contents with a parent_id
+		 * Filter out all first level contents with a parentId
 		 * This is done to prevent the display of nested contents whose parent isn't
 		 * part of the result set.
 		 *

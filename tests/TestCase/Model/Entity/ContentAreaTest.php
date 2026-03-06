@@ -75,25 +75,4 @@ class ContentAreaTest extends TestCase {
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
 	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\ContentArea::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'identifier' => 'test_area',
-			'title' => 'Test Area',
-			'page_templates' => [],
-			'content_templates' => [],
-		];
-
-		$entity = new ContentArea($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
-	}
 }

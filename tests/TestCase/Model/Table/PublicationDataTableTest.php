@@ -71,7 +71,7 @@ class PublicationDataTableTest extends TestCase {
 		$result = $this->publicationDataTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('publication_data', $result->getI18nDomain());
+		$this->assertSame('PublicationData', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('foreignKey'));
@@ -89,7 +89,7 @@ class PublicationDataTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 123,
 			'type' => 'start',
 			'dateTime' => '2024-01-15 10:30:00',
@@ -199,7 +199,7 @@ class PublicationDataTableTest extends TestCase {
 	 */
 	public function testEntityValidationValidDateTime(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 123,
 			'type' => 'start',
 			'dateTime' => '2024-12-25 15:30:45',
@@ -219,7 +219,7 @@ class PublicationDataTableTest extends TestCase {
 	 */
 	public function _testEntityValidationInvalidDateTime(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 123,
 			'type' => 'start',
 			'dateTime' => 'invalid-date-format',
@@ -240,7 +240,7 @@ class PublicationDataTableTest extends TestCase {
 	 */
 	public function testEntityValidationNullDateTime(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'foreignKey' => 123,
 			'type' => 'end',
 			'dateTime' => null, // Null should be allowed for dateTime
@@ -261,7 +261,7 @@ class PublicationDataTableTest extends TestCase {
 	public function testBuildRulesValidType(): void {
 		$data = [
 			'type' => 'start', // Patching entity will convert to enum
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 		];
 
 		$entity = $this->publicationDataTable->newDefaultEntity();
@@ -289,7 +289,7 @@ class PublicationDataTableTest extends TestCase {
 	public function testBuildRulesInvalidType(): void {
 		$data = [
 			'type' => 'invalid', // Patching entity will convert to enum but fail here
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 		];
 
 		$entity = $this->publicationDataTable->newDefaultEntity();
@@ -340,7 +340,7 @@ class PublicationDataTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'scope' => 'custom_scope',
+			'scope' => 'CustomScope',
 			'foreignKey' => 456,
 			'type' => 'end',
 			'dateTime' => '2024-06-15 14:20:30',
@@ -351,7 +351,7 @@ class PublicationDataTableTest extends TestCase {
 		$this->assertInstanceOf(PublicationData::class, $entity);
 		$this->assertTrue($entity->isNew());
 
-		$this->assertSame('custom_scope', $entity->scope);
+		$this->assertSame('CustomScope', $entity->scope);
 		$this->assertSame(456, $entity->foreignKey);
 		$this->assertSame(PublicationDataType::End, $entity->type);
 		$this->assertEquals('2024-06-15 14:20:30', $entity->dateTime->format('Y-m-d H:i:s'));

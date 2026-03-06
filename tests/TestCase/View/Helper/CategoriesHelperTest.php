@@ -155,7 +155,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlReturnsEmptyStringWithoutConfig(): void {
-		$result = $this->helper->control('media_folders');
+		$result = $this->helper->control('mediaFolders');
 
 		$this->assertSame('', $result);
 	}
@@ -172,7 +172,7 @@ class CategoriesHelperTest extends TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Cannot build categories control without field.');
 
-		$this->helper->control('media_folders');
+		$this->helper->control('mediaFolders');
 	}
 
 
@@ -182,12 +182,12 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithEnabledConfig(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder_id']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolderId']]]);
 
-		$result = $this->helper->control('media_folders');
+		$result = $this->helper->control('mediaFolders');
 
 		// Check if the select element is present and has the correct name
-		$this->assertMatchesRegularExpression('/<select[^>]*\sname="media_folder_id"/', $result);
+		$this->assertMatchesRegularExpression('/<select[^>]*\sname="mediaFolderId"/', $result);
 	}
 
 
@@ -199,7 +199,7 @@ class CategoriesHelperTest extends TestCase {
 	public function testControlWithDisabledConfig(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => false]]]);
 
-		$result = $this->helper->control('media_folders');
+		$result = $this->helper->control('mediaFolders');
 
 		$this->assertEquals('', $result);
 	}
@@ -211,9 +211,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithProvidedOptions(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2']]);
+		$result = $this->helper->control('mediaFolders', ['options' => ['val1' => 'option1', 'val2' => 'option2']]);
 
 		$this->assertStringContainsString('<option value="val1" title="option1">option1</option>', $result);
 		$this->assertStringContainsString('<option value="val2" title="option2">option2</option>', $result);
@@ -226,9 +226,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithEmptyOptions(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', ['options' => []]);
+		$result = $this->helper->control('mediaFolders', ['options' => []]);
 
 		$this->assertStringContainsString('<select', $result);
 		$this->assertStringNotContainsString('<option', $result);
@@ -245,7 +245,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
@@ -258,7 +258,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 10, 'title' => 'Child 10'],
 		]);
 
-		$result = $this->helper->control('media_folders', ['options' => $options]);
+		$result = $this->helper->control('mediaFolders', ['options' => $options]);
 
 		$this->assertStringContainsString('<option value="1" title="Child 1">Child 1</option>', $result);
 		$this->assertStringContainsString('<option value="10" title="Child 10">Child 10</option>', $result);
@@ -275,22 +275,22 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
 
 		$options = new Collection([
-			['id' => 1, 'external_id' => 'foobar1', 'title' => 'Child 1'],
-			['id' => 2, 'external_id' => 'foobar2', 'title' => 'Child 2'],
-			['id' => 3, 'external_id' => 'foobar3', 'title' => 'Child 3'],
-			['id' => 4, 'external_id' => 'foobar4', 'title' => 'Child 4'],
-			['id' => 10, 'external_id' => 'foobar10', 'title' => 'Child 10'],
+			['id' => 1, 'externalId' => 'foobar1', 'title' => 'Child 1'],
+			['id' => 2, 'externalId' => 'foobar2', 'title' => 'Child 2'],
+			['id' => 3, 'externalId' => 'foobar3', 'title' => 'Child 3'],
+			['id' => 4, 'externalId' => 'foobar4', 'title' => 'Child 4'],
+			['id' => 10, 'externalId' => 'foobar10', 'title' => 'Child 10'],
 		]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'combinator' => [
-				'external_id',
+				'externalId',
 				'title',
 			],
 			'options' => $options,
@@ -311,7 +311,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
@@ -326,7 +326,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 11, 'title' => 'Grandchild 2', '_group' => 9],
 		]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => $options,
 			'groupBy' => '_group',
 			'groupLabels' => [
@@ -359,7 +359,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 					'includeParentCategories' => true,
 				],
 			],
@@ -375,7 +375,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 11, 'title' => 'Grandchild 2', '_group' => 9],
 		]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => $options,
 			'groupBy' => false,
 		]);
@@ -394,7 +394,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
@@ -409,7 +409,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 11, 'title' => 'Grandchild 2', '_group' => 9],
 		]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => $options,
 			'groupBy' => '_group',
 		]);
@@ -426,7 +426,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArray(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder', 'includeParentCategories' => true]]]);
 
 		$options = new Collection([
 			['id' => 1, 'title' => 'Parent 1', '_group' => []],
@@ -442,7 +442,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 11, 'title' => 'Grandchild 2', '_group' => [8, 9]], // Multiple parents
 		]);
 
-		$result = $this->helper->control('media_folders', ['options' => $options, 'groupBy' => '_group']);
+		$result = $this->helper->control('mediaFolders', ['options' => $options, 'groupBy' => '_group']);
 
 		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
 		$this->assertStringContainsString('<optgroup label="1 - 2"', $result);
@@ -457,7 +457,7 @@ class CategoriesHelperTest extends TestCase {
 			new MediaFolder(['id' => 6, 'title' => 'Grandchild 1', '_parents' => [5, 3]]),
 		]);
 
-		$result = $this->helper->control('media_folders', ['options' => $options]);
+		$result = $this->helper->control('mediaFolders', ['options' => $options]);
 
 		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
 		$this->assertStringContainsString('<optgroup label="5 - 3"', $result);
@@ -470,7 +470,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArrayThrowsExceptionWhenGroupingValueNotScalarAndNotObject(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder', 'includeParentCategories' => true]]]);
 
 		$options = new Collection([
 			new MediaFolder(['id' => 1, 'title' => 'Parent 1', '_parents' => null]),
@@ -484,7 +484,7 @@ class CategoriesHelperTest extends TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Cannot group by non-scalars or non-entities.');
 
-		$this->helper->control('media_folders', ['options' => $options]);
+		$this->helper->control('mediaFolders', ['options' => $options]);
 	}
 
 
@@ -494,7 +494,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithGroupingDisabled(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
 		$options = new Collection([
 			['id' => 1, 'title' => 'Parent 1', '_group' => []],
@@ -510,7 +510,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 11, 'title' => 'Grandchild 2', '_group' => [8, 9]], // Multiple parents
 		]);
 
-		$result = $this->helper->control('media_folders', ['groupBy' => false, 'options' => $options]);
+		$result = $this->helper->control('mediaFolders', ['groupBy' => false, 'options' => $options]);
 
 		$this->assertStringNotContainsString('<optgroup', $result);
 	}
@@ -522,9 +522,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithValueSet(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => [
 				'value1' => 'Option 1',
 				'value2' => 'Option 2',
@@ -543,9 +543,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithValueSetInViewVars(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder'], 'selected' => 'value2']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder'], 'selected' => 'value2']]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => [
 				'value1' => 'Option 1',
 				'value2' => 'Option 2',
@@ -563,9 +563,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithValueNotSet(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => [
 				'value1' => 'Option 1',
 				'value2' => 'Option 2',
@@ -585,13 +585,13 @@ class CategoriesHelperTest extends TestCase {
 	public function testControlWithDifferentFieldName(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'different_field']]]);
 
-		$result = $this->helper->control('different_field');
+		$result = $this->helper->control('differentField');
 
 		$this->assertSame('', $result);
 
-		$result = $this->helper->control('media_folders');
+		$result = $this->helper->control('mediaFolders');
 
-		$this->assertStringContainsString('name="different_field"', $result);
+		$this->assertStringContainsString('name="differentField"', $result);
 	}
 
 
@@ -601,9 +601,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithEmptyOption(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', [
+		$result = $this->helper->control('mediaFolders', [
 			'options' => [
 				'value1' => 'Option 1',
 				'value2' => 'Option 2',
@@ -622,11 +622,11 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigTrue(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => true]);
+		$result = $this->helper->control('mediaFolders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => true]);
 
-		$this->assertStringContainsString('<select name="media_folder" disabled="disabled"', $result);
+		$this->assertStringContainsString('<select name="mediaFolder" disabled="disabled"', $result);
 	}
 
 
@@ -636,9 +636,9 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigArray(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'mediaFolder']]]);
 
-		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => ['val2']]);
+		$result = $this->helper->control('mediaFolders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => ['val2']]);
 
 		$this->assertStringContainsString('<option value="val1" title="option1">option1</option>', $result);
 		$this->assertStringContainsString('<option value="val2" title="option2" disabled="disabled">option2</option>', $result);
@@ -650,7 +650,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 */
 	public function testFilter(): void {
-		$this->view->set('_categories', ['mediaFolders' => ['config' => ['field' => 'media_folder']]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['field' => 'mediaFolder']]]);
 
 		$result = $this->helper->filter('media_folders');
 
@@ -743,7 +743,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
@@ -788,7 +788,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 					'includeParentCategories' => true,
 				],
 			],
@@ -817,7 +817,7 @@ class CategoriesHelperTest extends TestCase {
 			'mediaFolders' => [
 				'config' => [
 					'enabled' => true,
-					'field' => 'media_folder',
+					'field' => 'mediaFolder',
 				],
 			],
 		]);
@@ -830,7 +830,7 @@ class CategoriesHelperTest extends TestCase {
 			['id' => 7, 'title' => 'Grandchild 1', '_group' => 4],
 		]);
 
-		$result = $this->helper->filter('media_folders', $options, [
+		$result = $this->helper->filter('mediaFolders', $options, [
 			'groupBy' => '_group',
 		]);
 
@@ -1021,7 +1021,7 @@ class CategoriesHelperTest extends TestCase {
 	public function testGetConfiguration(): void {
 		$config = [
 			'enabled' => true,
-			'field' => 'media_folder',
+			'field' => 'mediaFolder',
 			'includeParentCategories' => true,
 			'groupBy' => 'group',
 		];

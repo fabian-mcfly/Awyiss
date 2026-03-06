@@ -198,7 +198,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		$scope = Inflector::pluralize($scope);
 
 
-		return Inflector::underscore($scope);
+		return Inflector::camelize($scope);
 	}
 
 

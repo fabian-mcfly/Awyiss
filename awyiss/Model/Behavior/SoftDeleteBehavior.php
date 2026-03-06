@@ -139,7 +139,7 @@ class SoftDeleteBehavior extends Behavior {
 			return true;
 		}, 'deletedNotModified', [
 			'errorField' => '_general',
-			'message' => __df($this->table()->getI18nDomain(), 'validation', 'error_deleted_not_modified'),
+			'message' => __df($this->table()->getI18nDomain(), 'Validation', 'error_deleted_not_modified'),
 		]);
 	}
 

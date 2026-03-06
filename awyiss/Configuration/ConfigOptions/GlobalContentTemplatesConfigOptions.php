@@ -26,7 +26,7 @@ class GlobalContentTemplatesConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'file_name',
+						'fileName',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

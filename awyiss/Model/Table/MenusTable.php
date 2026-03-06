@@ -45,7 +45,8 @@ class MenusTable extends Table {
 			'dependent' => true,
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			'finder' => 'forCurrentLanguage',
-			'foreignKey' => 'menu_id',
+			'foreignKey' => 'menuId',
+			'propertyName' => 'menuEntries',
 		]);
 	}
 
@@ -114,7 +115,7 @@ class MenusTable extends Table {
 			'identifierUnique',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 			]
 		);
 

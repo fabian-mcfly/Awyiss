@@ -122,7 +122,7 @@ class DatatablesTableTest extends TestCase {
 		$result = $this->datatablesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('datatables', $result->getI18nDomain());
+		$this->assertSame('Datatables', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -145,7 +145,7 @@ class DatatablesTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Datatable',
-			'identifier' => 'test_datatable',
+			'identifier' => 'testDatatable',
 			'active' => true,
 			'deleted' => false,
 		];
@@ -291,7 +291,7 @@ class DatatablesTableTest extends TestCase {
 	public function testBuildRulesIdentifierStartsWithAttributes(): void {
 		$data = [
 			'title' => 'Test Datatable',
-			'identifier' => 'attributes_test',
+			'identifier' => 'attributesTest',
 		];
 
 		$entity = $this->datatablesTable->newEntity($data);
@@ -388,7 +388,7 @@ class DatatablesTableTest extends TestCase {
 	public function testBuildRulesIdentifierUniqueValid(): void {
 		$data = [
 			'title' => 'Test Datatable 1',
-			'identifier' => 'unique_test_1',
+			'identifier' => 'uniqueTest1',
 		];
 
 		$entity = $this->datatablesTable->newEntity($data);
@@ -461,7 +461,7 @@ class DatatablesTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Datatable',
-			'identifier' => 'custom_datatable',
+			'identifier' => 'customDatatable',
 			'active' => false,
 		];
 
@@ -472,7 +472,7 @@ class DatatablesTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Datatable', $entity->title);
-		$this->assertSame('custom_datatable', $entity->identifier);
+		$this->assertSame('customDatatable', $entity->identifier);
 		$this->assertFalse($entity->active);
 
 		// Check that defaults are preserved

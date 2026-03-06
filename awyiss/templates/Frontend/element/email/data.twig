@@ -30,11 +30,11 @@
 									{# Don't show submit buttons in the confirmation mail. #}
 								{% elseif formElement.type == 'fieldset' %}
 									{% block formElementRowFieldset %}
-										<tr class="DataRowType-Fieldset DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
+										<tr class="DataRowType-Fieldset DataRowIdentifier-{{ formElement.identifier|camelize }}">
 											<td colspan="2" ><strong>{{ formElement.titleEmail ?: formElement.title }}</strong></td>
 										</tr>
 									{% endblock %}
-								{% elseif formElement.type == 'free_text' %}
+								{% elseif formElement.type == 'freeText' %}
 									{% block formElementRowFreeText %}
 										{% if formElement.showInEmail %}
 											<tr class="DataRowType-FreeText DataRowIdentifier-{{ formElement.id }}">
@@ -44,7 +44,7 @@
 									{% endblock %}
 								{% else %}
 									{% block formElementRow %}
-										<tr class="DataRowType-{{ formElement.type|ucparts(false) }} DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
+										<tr class="DataRowType-{{ formElement.type|camelize }} DataRowIdentifier-{{ formElement.identifier|camelize }}">
 											<td>
 												{% block formElementLabel %}
 													{{ formElement.titleEmail ?: formElement.title }}

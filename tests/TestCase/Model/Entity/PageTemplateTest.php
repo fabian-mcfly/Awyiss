@@ -177,10 +177,10 @@ class PageTemplateTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'page_role_id' => '123',
+			'pageRoleId' => '123',
 			'title' => 'Test Page Template',
-			'file_name' => 'TestTemplate',
-			'system_order' => 10,
+			'fileName' => 'TestTemplate',
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -194,27 +194,5 @@ class PageTemplateTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\PageTemplate::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'page_role_id' => 456,
-			'file_name' => 'test-file',
-			'system_order' => 5,
-			'content_areas' => [],
-			'content_template_content_areas' => [],
-		];
-
-		$entity = new PageTemplate($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

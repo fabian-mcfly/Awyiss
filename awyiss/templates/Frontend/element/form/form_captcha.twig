@@ -17,21 +17,21 @@
 	<fieldset class="FormRow FormCaptcha">
 		{% block formCaptchaInner %}
 			{% block formCaptchaLegend %}
-				<legend>{{ __d('form', 'captcha_legend') }}</legend>
+				<legend>{{ __d('Form', 'captcha_legend') }}</legend>
 			{% endblock %}
 			{% block formCaptchaFormRow %}
 				<div class="FormRow">
 					{% block formCaptchaWords %}
 						<div class="FormElement Column-60">
 							{% block formCaptchaWordsInfo %}
-								<p class="FormCaptcha-Info">{{ __d('form', 'captcha_info', word + 1)|raw }}</p>
+								<p class="FormCaptcha-Info">{{ __d('Form', 'captcha_info', word + 1)|raw }}</p>
 							{% endblock %}
 
 							{% block formCaptchaWordsList %}
 								<ul class="FormCaptcha-Words" data-active-word="{{ word + 1 }}">
 									{% for key, word in words %}
 										{% block formCaptchaWordsListWord %}
-										<li class="FormCaptcha-Word" aria-label="{{ __d('form', 'captcha_word_number', key + 1) }}">
+										<li class="FormCaptcha-Word" aria-label="{{ __d('Form', 'captcha_word_number', key + 1) }}">
 											{{ word|split('')|join('<span class="FormCaptcha-Word-Spacer" aria-hidden="true"> </span>')|raw }}
 										</li>
 										{% endblock %}
@@ -44,7 +44,7 @@
 					{% block formCaptchaFormElement %}
 						<div class="FormElement Column-40">
 							{% block formCaptchaFormElementLabel %}
-								<label class="FormElement-Label" for="AwyissCaptchaWord">{{ __d('form', 'captcha_label', word + 1) }}</label>
+								<label class="FormElement-Label" for="AwyissCaptchaWord">{{ __d('Form', 'captcha_label', word + 1) }}</label>
 							{% endblock %}
 							{% block formCaptchaFormElementInput %}
 								<input type="text" name="{{ fieldName }}" id="AwyissCaptchaWord" value="" class="FormInputType-Input">

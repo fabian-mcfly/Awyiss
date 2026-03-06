@@ -35,7 +35,7 @@
 		<div class="ButtonArea">
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 				{% endblock %}
 
 				{% block overviewButtonAdd %}
@@ -45,7 +45,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'global_contents'}) }}
+					{{ element('search/filter_button', {scope: 'GlobalContents'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListWithColumns %}
@@ -88,7 +88,7 @@
 								globalContentTemplates: globalContentTemplates,
 								data: {
 									identifier: identifier,
-									sortable: _filter['global_contents']['active'] == false,
+									sortable: _filter['globalContents']['active'] == false,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'GlobalContents',
@@ -114,7 +114,7 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'global_contents'}) }}
+		{{ element('search/filter', {scope: 'GlobalContents'}) }}
 	{% endblock %}
 </div>
 

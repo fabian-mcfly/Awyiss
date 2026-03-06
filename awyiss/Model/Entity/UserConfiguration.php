@@ -23,11 +23,6 @@ use Awyiss\Utility\Inflector;
  * @property mixed $printableValue
  */
 class UserConfiguration extends Entity {
-	protected static array $fieldMap = [
-		'user_id' => 'userId',
-	];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -41,7 +36,7 @@ class UserConfiguration extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $defaultValues = [
-		'scope' => 'system',
+		'scope' => 'System',
 	];
 	/**
 	 * @inheritDoc
@@ -64,7 +59,7 @@ class UserConfiguration extends Entity {
 		}
 
 
-		return Inflector::underscore($identifier);
+		return Inflector::variable($identifier);
 	}
 
 
@@ -128,7 +123,7 @@ class UserConfiguration extends Entity {
 		$scope = Inflector::pluralize($scope);
 
 
-		return Inflector::underscore($scope);
+		return Inflector::camelize($scope);
 	}
 
 

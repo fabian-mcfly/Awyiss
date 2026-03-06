@@ -320,7 +320,7 @@ class NumericPaginatorTest extends TestCase {
 		$result = $this->paginator->paginate($table->find()->where(['id >' => 4]), [
 			'limit' => 20,
 			'page' => 1,
-			'sort' => ['invalid_field', 'firstname'],
+			'sort' => ['invalidField', 'firstname'],
 			'direction' => 'asc',
 		], [
 			'sortableFields' => ['firstname', 'lastname', 'email'],

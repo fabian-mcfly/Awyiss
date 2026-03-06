@@ -40,11 +40,11 @@
 				{% endblock %}
 
 				{% block formControlSuccessMessage %}
-					{{ FormHelper.control('success_message', {'data-editor': true}) }}
+					{{ FormHelper.control('successMessage', {'data-editor': true}) }}
 				{% endblock %}
 
 				{% block formControlFailureMessage %}
-					{{ FormHelper.control('failure_message', {'data-editor': true}) }}
+					{{ FormHelper.control('failureMessage', {'data-editor': true}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -143,7 +143,7 @@
 			{% endblock %}
 
 			{% block formControlFinalAction %}
-				{{ FormHelper.control('final_action', {
+				{{ FormHelper.control('finalAction', {
 					empty: false,
 					options: finalActions,
 					'data-form-updater': true,
@@ -151,7 +151,7 @@
 			{% endblock %}
 
 			{% block formControlFormId %}
-				{{ FormHelper.control('form_id', {
+				{{ FormHelper.control('formId', {
 					options: availableForms,
 				}) }}
 			{% endblock %}
@@ -248,7 +248,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 
 		{% block questionsDiagram %}

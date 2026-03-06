@@ -44,7 +44,7 @@ class FormEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['form_id', 'page_id'],
+		'blocklistedColumns' => ['formId', 'pageId'],
 	];
 
 
@@ -52,12 +52,14 @@ class FormEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('Forms');
+		$this->belongsTo('Forms', [
+			'foreignKey' => 'formId',
+		]);
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
 		]);
 
 		$this->belongsTo('Pages', [
@@ -66,6 +68,7 @@ class FormEntriesTable extends Table {
 					'skipPageRoleCheck' => true,
 				],
 			],
+			'foreignKey' => 'pageId',
 		]);
 	}
 
@@ -184,7 +187,7 @@ class FormEntriesTable extends Table {
 			'formExists',
 			[
 				'errorField' => 'formId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_form_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_form_exists'),
 			]
 		);
 
@@ -193,7 +196,7 @@ class FormEntriesTable extends Table {
 			'pageExists',
 			[
 				'errorField' => 'pageId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_page_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_page_exists'),
 			]
 		);
 

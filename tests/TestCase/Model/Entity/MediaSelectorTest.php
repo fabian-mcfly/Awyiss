@@ -61,22 +61,22 @@ class MediaSelectorTest extends TestCase {
 		$entity = new MediaSelector();
 
 		$entity->identifier = 'Image Gallery';
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->identifier = 'ImageGallery';
-		$this->assertEquals('imagegallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->identifier = 'Image-Gallery';
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->identifier = 'Image Gallery!@#$%';
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->identifier = 'VIDEO SELECTOR';
-		$this->assertEquals('video_selector', $entity->identifier);
+		$this->assertEquals('vIDEOSELECTOR', $entity->identifier);
 
 		$entity->identifier = 'Product Image Selector';
-		$this->assertEquals('product_image_selector', $entity->identifier);
+		$this->assertEquals('productImageSelector', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -91,22 +91,22 @@ class MediaSelectorTest extends TestCase {
 		$entity = new MediaSelector();
 
 		$entity->set('identifier', 'Image Gallery');
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->set('identifier', 'ImageGallery');
-		$this->assertEquals('imagegallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->set('identifier', 'Image-Gallery');
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->set('identifier', 'Image Gallery!@#$%');
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('imageGallery', $entity->identifier);
 
 		$entity->set('identifier', 'VIDEO SELECTOR');
-		$this->assertEquals('video_selector', $entity->identifier);
+		$this->assertEquals('vIDEOSELECTOR', $entity->identifier);
 
 		$entity->set('identifier', 'Product Image Selector');
-		$this->assertEquals('product_image_selector', $entity->identifier);
+		$this->assertEquals('productImageSelector', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -131,28 +131,8 @@ class MediaSelectorTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Product Gallery', $entity->title);
-		$this->assertEquals('product_image_gallery', $entity->identifier);
+		$this->assertEquals('productImageGallery', $entity->identifier);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaSelector::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'title' => 'Test Media Selector',
-			'identifier' => 'test_selector',
-			'active' => true,
-		];
-
-		$entity = new MediaSelector($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

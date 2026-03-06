@@ -42,19 +42,19 @@
 						{% endblock %}
 
 						{% block buttonEdit %}
-							{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-								{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+							{% if page.duplicateOf is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+								{{ HtmlHelper.link(__df(pageRoleName, 'GenericPages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
 							{% endif %}
 						{% endblock %}
 					</div>
 
-					{{ __df(pageRoleName, 'generic_pages', 'headline_edit', pageRole.title) }}
+					{{ __df(pageRoleName, 'GenericPages', 'headline_edit', pageRole.title) }}
 				</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'GenericPageForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+	{{ FormHelper.checkbox('saveAsCopy', {form: 'GenericPageForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
@@ -73,7 +73,7 @@
 
 				{% block formEditButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

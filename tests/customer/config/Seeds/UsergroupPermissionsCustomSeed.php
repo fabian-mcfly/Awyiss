@@ -21,7 +21,7 @@ class UsergroupPermissionsCustomSeed extends AbstractSeed {
 		// Get all available policies from the AuthorizationService
 		$authorizationService = new AuthorizationService(Awyiss::REALM_BACKEND);
 		$policies = $authorizationService->getPolicies();
-		unset($policies['user_configuration']);
+		unset($policies['UserConfiguration']);
 
 		ksort($policies);
 
@@ -37,14 +37,14 @@ class UsergroupPermissionsCustomSeed extends AbstractSeed {
 				$identifier = Inflector::underscore($identifier);
 
 				$data[] = [
-					'usergroup_id' => 1,
+					'usergroupId' => 1,
 					'scope' => $policyScope,
 					'identifier' => $identifier,
 					'access' => 1,
 				];
 
 				$data[] = [
-					'usergroup_id' => 3,
+					'usergroupId' => 3,
 					'scope' => $policyScope,
 					'identifier' => $identifier,
 					'access' => 0,

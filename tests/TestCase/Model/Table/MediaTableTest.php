@@ -98,7 +98,7 @@ class MediaTableTest extends TestCase {
 		$this->assertTrue($urlHistoryAssociation->getCascadeCallbacks());
 		$this->assertTrue($urlHistoryAssociation->getDependent());
 
-		$this->assertSame(['scope' => 'media'], $urlHistoryAssociation->getConditions());
+		$this->assertSame(['scope' => 'Media'], $urlHistoryAssociation->getConditions());
 
 		// Test user tracking associations
 		$this->assertTrue($this->mediaTable->hasAssociation('CreatedByUser'));
@@ -144,7 +144,7 @@ class MediaTableTest extends TestCase {
 		$result = $this->mediaTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media', $result->getI18nDomain());
+		$this->assertSame('Media', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('mediaFolderId'));
@@ -1145,7 +1145,7 @@ class MediaTableTest extends TestCase {
 		$schema = $this->mediaTable->getSchema();
 
 		// Test that JSON columns are configured correctly
-		$this->assertSame('json', $schema->getColumnType('meta_data'));
+		$this->assertSame('json', $schema->getColumnType('metaData'));
 		$this->assertSame('json', $schema->getColumnType('crop'));
 	}
 }

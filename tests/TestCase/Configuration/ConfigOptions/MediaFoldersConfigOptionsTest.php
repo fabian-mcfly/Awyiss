@@ -55,17 +55,17 @@ class MediaFoldersConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'parent_id' => 'media_folders::parent_id',
-			'language_shortcode' => 'media_folders::language_shortcode',
+			'parentId' => 'media_folders::parent_id',
+			'languageShortcode' => 'media_folders::language_shortcode',
 			'path' => 'media_folders::path',
 			'hidden' => 'media_folders::hidden',
-			'system_order' => 'media_folders::system_order',
+			'systemOrder' => 'media_folders::system_order',
 			'active' => 'media_folders::active',
-			'parents_active' => 'media_folders::parents_active',
-			'created_by' => 'media_folders::created_by',
-			'created_on' => 'media_folders::created_on',
-			'changed_by' => 'media_folders::changed_by',
-			'changed_on' => 'media_folders::changed_on',
+			'parentsActive' => 'media_folders::parents_active',
+			'createdBy' => 'media_folders::created_by',
+			'createdOn' => 'media_folders::created_on',
+			'changedBy' => 'media_folders::changed_by',
+			'changedOn' => 'media_folders::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

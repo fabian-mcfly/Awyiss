@@ -64,7 +64,7 @@ class ModelCommandTest extends TestCase {
 		$this->generatedFiles[1] = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'DummyUsersTable.php';
 		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'DummyUsersTable.txt';
 
-		$this->exec('bake model dummy_users --namespace Customer --no-fixture --no-test');
+		$this->exec('bake model dummy_users --namespace Customer --no-fixture --no-test --force');
 
 		$this->assertExitSuccess();
 

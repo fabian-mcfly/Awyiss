@@ -6,6 +6,7 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Model\Entity;
 use Awyiss\Model\Trait\ForcedTitleTrait;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
@@ -62,20 +63,6 @@ class FormElement extends Entity {
 	 * @var array The column indents
 	 */
 	protected static array $columnIndents;
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'form_id' => 'formId',
-		'title_email' => 'titleEmail',
-		'column_width' => 'columnWidth',
-		'column_indent' => 'columnIndent',
-		'column_last' => 'columnLast',
-		'column_rtl' => 'columnRtl',
-		'css_class' => 'cssClass',
-		'system_order' => 'systemOrder',
-	];
 
 
 	/**
@@ -271,7 +258,7 @@ class FormElement extends Entity {
 
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 
 

@@ -101,7 +101,7 @@ class RulesChecker extends BaseRulesChecker {
 	 */
 	public function existsIn(array|string $field, BaseTable|Association|string $table, array|string|null $message = null): RuleInvoker {
 		$options = is_array($message) ? $message : ['message' => $message];
-		$message = !empty($options['message']) ? $options['message'] : __d('validation', 'error_exists_in');
+		$message = !empty($options['message']) ? $options['message'] : __d('Validation', 'error_exists_in');
 		unset($options['message']);
 
 		if (!empty($options['errorField'])) {
@@ -111,7 +111,7 @@ class RulesChecker extends BaseRulesChecker {
 			$errorField = is_string($field) ? $field : current($field);
 		}
 
-		$fields = $this->unmapFields((array)$field);
+		$fields = (array)$field;
 
 		return $this->_addError(new ExistsIn($fields, $table, $options), '_existsIn', ['errorField' => $errorField, 'message' => $message]);
 	}
@@ -122,7 +122,7 @@ class RulesChecker extends BaseRulesChecker {
 	 */
 	public function isUnique(array $fields, array|string|null $message = null): RuleInvoker {
 		$options = is_array($message) ? $message : ['message' => $message];
-		$message = !empty($options['message']) ? $options['message'] : __d('validation', 'error_unique');
+		$message = !empty($options['message']) ? $options['message'] : __d('Validation', 'error_unique');
 		unset($options['message']);
 
 		if (!empty($options['errorField'])) {
@@ -131,8 +131,6 @@ class RulesChecker extends BaseRulesChecker {
 		else {
 			$errorField = current($fields);
 		}
-
-		$fields = $this->unmapFields($fields);
 
 		return $this->_addError(new IsUnique($fields, $options), '_isUnique', ['errorField' => $errorField, 'message' => $message]);
 	}
@@ -147,10 +145,10 @@ class RulesChecker extends BaseRulesChecker {
 	 * @return \Cake\Datasource\RuleInvoker
 	 */
 	public function validCount(string $field, int $count = 0, string $operator = '>', ?string $message = null): RuleInvoker {
-		$message = $message ?: __d('validation', 'error_valid_count', [$operator, $count]);
+		$message = $message ?: __d('Validation', 'error_valid_count', [$operator, $count]);
 
 		return $this->_addError(
-			new ValidCount($this->unmapField($field)),
+			new ValidCount($field),
 			'_validCount',
 			[
 				'count' => $count,
@@ -181,7 +179,7 @@ class RulesChecker extends BaseRulesChecker {
 		string $ruleName
 	): RuleInvoker {
 		$associationAlias = $association instanceof Association ? $association->getName() : $association;
-		$message = $message ?: __d('validation', 'error_link_constraint_rule', $associationAlias);
+		$message = $message ?: __d('Validation', 'error_link_constraint_rule', $associationAlias);
 
 		return parent::_addLinkConstraintRule($association, $errorField, $message, $linkStatus, $ruleName);
 	}
@@ -218,43 +216,5 @@ class RulesChecker extends BaseRulesChecker {
 		}
 
 		return $options['name'];
-	}
-
-
-	/**
-	 * @param string $field
-	 * @return string
-	 */
-	protected function unmapField(string $field): string {
-		if (!($this->_options['repository'] ?? null)) {
-			return $field;
-		}
-
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $this->_options['repository']->getEntityClass() ?? null;
-		if ($entityClass) {
-			return $entityClass::unmapField($field);
-		}
-
-		return $field;
-	}
-
-
-	/**
-	 * @param array $fields
-	 * @return array
-	 */
-	protected function unmapFields(array $fields): array {
-		if (!($this->_options['repository'] ?? null)) {
-			return $fields;
-		}
-
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $this->_options['repository']->getEntityClass() ?? null;
-		if ($entityClass) {
-			return $entityClass::unmapFields($fields);
-		}
-
-		return $fields;
 	}
 }

@@ -61,8 +61,8 @@ class UrlsNotFoundTest extends TestCase {
 			'id' => 1,
 			'url' => 'https://example.com/missing-page',
 			'referrer' => 'https://example.com/home',
-			'is_robot' => true,
-			'created_on' => '2025-01-06 12:00:00',
+			'isRobot' => true,
+			'createdOn' => '2025-01-06 12:00:00',
 		];
 
 		$entity = new UrlsNotFound($properties);
@@ -72,20 +72,5 @@ class UrlsNotFoundTest extends TestCase {
 		$this->assertEquals('https://example.com/home', $entity->referrer);
 		$this->assertTrue($entity->isRobot);
 		$this->assertNotNull($entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\UrlsNotFound::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = ['is_robot' => false];
-		$entity = new UrlsNotFound($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

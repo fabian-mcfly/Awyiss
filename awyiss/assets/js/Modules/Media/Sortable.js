@@ -300,7 +300,7 @@ export default class Sortable {
 			},
 			body: JSON.stringify({
 				ids: deleteIds,
-				media_folder_id: this.mediaList.dataset.mediaFolderId,
+				mediaFolderId: this.mediaList.dataset.mediaFolderId,
 			}),
 		})
 		.then(response => response.json()) // Parse the response as JSON
@@ -350,7 +350,7 @@ export default class Sortable {
 			},
 			body: JSON.stringify({
 				order: order,
-				media_folder_id: list.dataset.mediaFolderId,
+				mediaFolderId: list.dataset.mediaFolderId,
 			}),
 		})
 		.then(response => response.json()) // Parse the response as JSON

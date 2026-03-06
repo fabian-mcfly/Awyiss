@@ -68,8 +68,8 @@ class DesignTest extends TestCase {
 			'description' => 'A test design for unit testing',
 			'settings' => ['color' => 'blue', 'font' => 'Arial'],
 			'css' => '.test { color: red; }',
-			'in_use' => true,
-			'is_preview' => false,
+			'inUse' => true,
+			'isPreview' => false,
 			'deleted' => false,
 		];
 
@@ -84,24 +84,5 @@ class DesignTest extends TestCase {
 		$this->assertTrue($entity->inUse);
 		$this->assertFalse($entity->isPreview);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Design::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'in_use' => true,
-			'is_preview' => false,
-		];
-
-		$entity = new Design($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

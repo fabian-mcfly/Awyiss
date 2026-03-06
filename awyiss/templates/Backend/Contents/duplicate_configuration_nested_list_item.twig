@@ -32,12 +32,12 @@
 	<li
 		{{ block('nestedListItemId') }}
 		{{ block('nestedListItemClass') }}
-		{%- if contentTemplate.contentTemplateElements.parent_id is not defined %}
+		{%- if contentTemplate.contentTemplateElements.parentId is not defined %}
 			data-nestable="false"
-		{%- elseif contentTemplate.contentTemplateElements.parent_id.required %}
+		{%- elseif contentTemplate.contentTemplateElements.parentId.required %}
 			data-disallow-top-level="true"
 		{%- endif %}
-		{%- if contentTemplate.contentTemplateElements.column_width is not defined %}
+		{%- if contentTemplate.contentTemplateElements.columnWidth is not defined %}
 			data-resizable="false"
 		{%- endif %}
 		data-content-area-ids="{{ contentTemplate.contentAreaIds|jsonEncode }}"
@@ -57,7 +57,7 @@
 
 				{% if entity.contentTemplateId == settings.contentTemplateId and entity.duplicateOf is empty %}
 					<label>
-						<input type="checkbox" name="duplicate_of" value="{{ entity.id }}"{% if entity.id == duplicateOf%} checked{% endif %}>
+						<input type="checkbox" name="duplicateOf" value="{{ entity.id }}"{% if entity.id == duplicateOf%} checked{% endif %}>
 					</label>
 				{% endif %}
 			</div>

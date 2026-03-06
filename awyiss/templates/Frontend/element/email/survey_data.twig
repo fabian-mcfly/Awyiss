@@ -21,7 +21,7 @@
 
 {% block additionalRowsAbove %}
 	{% block surveyTitle %}
-		<tr class="DataRowType-Survey SurveyIdentifier-{{ survey.identifier|ucparts(false) }}">
+		<tr class="DataRowType-Survey SurveyIdentifier-{{ survey.identifier|camelize }}">
 			<td colspan="2"><strong>{{ survey.title }}</strong></td>
 		</tr>
 	{% endblock %}

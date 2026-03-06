@@ -12,7 +12,7 @@
 
 if (!empty($data)) {
 	array_walk($data, function (&$value, $key) {
-		if (in_array($key, ['password', 'password_confirm', 'pass'])) {
+		if (in_array($key, ['password', 'passwordConfirm', 'pass'])) {
 			$value = '****** (value hidden)';
 		}
 	});

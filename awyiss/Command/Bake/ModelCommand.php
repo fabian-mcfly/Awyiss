@@ -14,6 +14,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 
 
@@ -53,8 +54,7 @@ class ModelCommand extends BaseModelCommand {
 			$pluginPath = $this->plugin . '.';
 		}
 		elseif ($args->getOption('namespace')) {
-			$namespace = Inflector::underscore($args->getOption('namespace'));
-			$namespace = Inflector::camelize($namespace);
+			$namespace = Inflector::camelize($args->getOption('namespace'));
 		}
 
 		$path = $this->getPath($args);
@@ -66,7 +66,6 @@ class ModelCommand extends BaseModelCommand {
 		}
 
 		$data += [
-			'fieldMap' => [],
 			'name' => $name,
 			'namespace' => $namespace,
 			'plugin' => $this->plugin,
@@ -78,30 +77,19 @@ class ModelCommand extends BaseModelCommand {
 		$data['fields'] = array_filter($data['fields'], function (string $field): bool {
 			return !in_array($field, [
 				'deleted',
-				'created_by',
-				'created_on',
-				'changed_by',
-				'changed_on',
-				'deleted_by',
-				'deleted_on',
-				'created_by_user',
-				'changed_by_user',
-				'deleted_by_user',
-				'media_assignments',
-				'media_element_assignments',
+				'createdBy',
+				'createdOn',
+				'changedBy',
+				'changedOn',
+				'deletedBy',
+				'deletedOn',
+				'createdByUser',
+				'changedByUser',
+				'deletedByUser',
+				'mediaAssignments',
+				'mediaElementAssignments',
 			]);
 		});
-
-		foreach ($data['fields'] as &$field) {
-			$variable = Inflector::variable($field);
-
-			if ($variable !== $field) {
-				$data['fieldMap'][ $field ] = $variable;
-			}
-
-			$field = $variable;
-		}
-		unset($data['fieldMap']['media_element_assignments'], $field);
 
 		foreach ($data['hidden'] as &$field) {
 			$field = Inflector::variable($field);
@@ -147,8 +135,7 @@ class ModelCommand extends BaseModelCommand {
 			$namespace = $this->_pluginNamespace($this->plugin);
 		}
 		elseif ($args->getOption('namespace')) {
-			$namespace = Inflector::underscore($args->getOption('namespace'));
-			$namespace = Inflector::camelize($namespace);
+			$namespace = Inflector::camelize($args->getOption('namespace'));
 		}
 
 		$path = $this->getPath($args);
@@ -315,8 +302,8 @@ class ModelCommand extends BaseModelCommand {
 	public function getRules(Table $model, array $associations, Arguments $args): array {
 		$rules = parent::getRules($model, $associations, $args);
 
-		if (str_starts_with($model->getTable(), 'attributes_') && isset($rules['page_id'])) {
-			$rules['page_id']['options']['skipPageRoleCheck'] = true;
+		if (str_starts_with($model->getTable(), 'attributes_') && isset($rules['pageId'])) {
+			$rules['pageId']['options']['skipPageRoleCheck'] = true;
 		}
 
 
@@ -400,5 +387,131 @@ class ModelCommand extends BaseModelCommand {
 
 
 		return parent::getEmptyMethod($fieldName, $metaData, $prefix);
+	}
+
+
+	/**
+	 * Re-implemented 1:1 but also checks for columns ending with `Id` instead of only `_id`
+	 *
+	 * @inheritDoc
+	 */
+	public function findBelongsTo(Table $model, array $associations, ?Arguments $args = null): array {
+		$schema = $model->getSchema();
+		foreach ($schema->columns() as $fieldName) {
+			if (!preg_match('/^.+(_id|Id)$/', $fieldName) || ($schema->getPrimaryKey() === [$fieldName])) {
+				continue;
+			}
+
+			if ($fieldName === 'parent_id' || $fieldName === 'parentId') {
+				$className = $this->plugin ? $this->plugin . '.' . $model->getAlias() : $model->getAlias();
+				$assoc = [
+					'alias' => 'Parent' . Inflector::singularize($model->getAlias()),
+					'className' => $className,
+					'foreignKey' => $fieldName,
+					'propertyName' => Inflector::variable('parent_' . Inflector::singularize($model->getAlias())),
+				];
+			}
+			else {
+				$tmpModelName = $this->_modelNameFromKey($fieldName);
+				if (!$this->getTableLocator()->exists($tmpModelName)) {
+					$this->getTableLocator()->get(
+						$tmpModelName,
+						['connection' => ConnectionManager::get($this->connection)]
+					);
+				}
+				$associationTable = $this->getTableLocator()->get($tmpModelName);
+				$this->getTableLocator()->remove($tmpModelName);
+				$tables = $this->listAll();
+				// Check if association model could not be instantiated as a subclass but a generic Table instance instead
+				if (
+					get_class($associationTable) === Table::class &&
+					!in_array(Inflector::tableize($tmpModelName), $tables, true)
+				) {
+					$allowAliasRelations = $args && $args->getOption('skip-relation-check');
+					$found = $this->findTableReferencedBy($schema, $fieldName);
+					if ($found) {
+						$tmpModelName = Inflector::camelize($found);
+					}
+					elseif (!$allowAliasRelations) {
+						continue;
+					}
+				}
+				$assoc = [
+					'alias' => $tmpModelName,
+					'foreignKey' => $fieldName,
+				];
+				if ($schema->getColumn($fieldName)['null'] === false) {
+					$assoc['joinType'] = 'INNER';
+				}
+			}
+
+			if ($this->plugin && empty($assoc['className'])) {
+				$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
+			}
+			$associations['belongsTo'][] = $assoc;
+		}
+
+		return $associations;
+	}
+
+
+	/**
+	 * Re-implemented 1:1 but also checks for columns ending with `Id` instead of only `_id`
+	 *
+	 * @inheritDoc
+	 */
+	public function findHasMany(Table $model, array $associations): array {
+		$schema = $model->getSchema();
+		$primaryKey = $schema->getPrimaryKey();
+		$tableName = $schema->name();
+		$foreignKey = $this->_modelKey($tableName);
+
+		$tables = $this->listAll();
+		foreach ($tables as $otherTableName) {
+			if ($this->isPossibleBelongsToManyRelation($tableName, $otherTableName)) {
+				continue;
+			}
+
+			$otherModel = $this->getTableObject($this->_camelize($otherTableName), $otherTableName);
+			$otherSchema = $otherModel->getSchema();
+
+			foreach ($otherSchema->columns() as $fieldName) {
+				$assoc = false;
+				if (
+					!in_array($fieldName, $primaryKey) && $fieldName === $foreignKey && !$this->hasUniqueConstraintFor($otherSchema, $fieldName)
+				) {
+					$assoc = [
+						'alias' => $otherModel->getAlias(),
+						'foreignKey' => $fieldName,
+					];
+				}
+				elseif ($otherTableName === $tableName && ($fieldName === 'parent_id' || $fieldName === 'parentId')) {
+					$className = $this->plugin ? $this->plugin . '.' . $model->getAlias() : $model->getAlias();
+					$assoc = [
+						'alias' => 'Child' . $model->getAlias(),
+						'className' => $className,
+						'foreignKey' => $fieldName,
+					];
+				}
+				if ($assoc && $this->plugin && empty($assoc['className'])) {
+					$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
+				}
+				if ($assoc) {
+					$associations['hasMany'][] = $assoc;
+				}
+			}
+		}
+
+		return $associations;
+	}
+
+
+	/**
+	 * Strip `_id` and `Id` from the end of the key and camelize and pluralize it to get the model name.
+	 */
+	protected function _modelNameFromKey(string $key): string {
+		$key = preg_replace('/(_id|Id)$/', '', $key);
+
+		return Inflector::camelize(Inflector::pluralize($key));
 	}
 }

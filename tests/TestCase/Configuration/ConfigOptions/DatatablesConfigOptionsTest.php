@@ -68,10 +68,10 @@ class DatatablesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier' => 'datatables::identifier',
 			'active' => 'datatables::active',
-			'created_by' => 'datatables::created_by',
-			'created_on' => 'datatables::created_on',
-			'changed_by' => 'datatables::changed_by',
-			'changed_on' => 'datatables::changed_on',
+			'createdBy' => 'datatables::created_by',
+			'createdOn' => 'datatables::created_on',
+			'changedBy' => 'datatables::changed_by',
+			'changedOn' => 'datatables::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

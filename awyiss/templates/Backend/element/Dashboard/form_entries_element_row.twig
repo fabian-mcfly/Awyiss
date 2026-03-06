@@ -23,7 +23,7 @@
 {% block tableOverviewBodyCellActions %}
 	<td class="TableCell-Actions">
 		<div class="Actions">
-			{{ HtmlHelper.link(__d('form_entries', 'view_email'), {controller: 'FormEntries', action: 'view', id: entity.id}, {class: 'Button Button-Small Button-Preview'}) }}
+			{{ HtmlHelper.link(__d('FormEntries', 'view_email'), {controller: 'FormEntries', action: 'view', id: entity.id}, {class: 'Button Button-Small Button-Preview'}) }}
 		</div>
 	</td>
 {% endblock %}

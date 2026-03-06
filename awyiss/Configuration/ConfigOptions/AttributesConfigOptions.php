@@ -27,8 +27,8 @@ class AttributesConfigOptions extends AbstractConfigOptions {
 				new ConfigOption(
 					defaultValue: [
 						'identifier',
-						'input_type',
-						'default_value',
+						'inputType',
+						'defaultValue',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

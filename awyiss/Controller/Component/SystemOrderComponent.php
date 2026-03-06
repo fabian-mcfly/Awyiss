@@ -138,8 +138,8 @@ class SystemOrderComponent extends Component {
 
 		$request = $controller->getRequest();
 		//When system_order is part of the request data, overwrite it since it might be outdated
-		if ($request->getData('system_order')) {
-			$request = $request->withData('system_order', $entity->systemOrder);
+		if ($request->getData('systemOrder')) {
+			$request = $request->withData('systemOrder', $entity->systemOrder);
 			$controller->setRequest($request);
 		}
 
@@ -212,18 +212,18 @@ class SystemOrderComponent extends Component {
 		$requestData = $this->getController()->getRequest()->getData();
 		$systemOrder = $entity->get('systemOrder');
 
-		if ($requestData['reload_form'] ?? false) {
+		if ($requestData['reloadForm'] ?? false) {
 			if ($table->hasDirtySystemOrderRelatedColumns($entity)) {
-				unset($requestData['system_order']);
+				unset($requestData['systemOrder']);
 				$entity->set('systemOrder');
 			}
 			else {
-				$requestData['system_order'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
+				$requestData['systemOrder'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
 			}
 		}
 
-		if (isset($requestData['system_order'])) {
-			$systemOrder = $requestData['system_order'];
+		if (isset($requestData['systemOrder'])) {
+			$systemOrder = $requestData['systemOrder'];
 		}
 		elseif (!$entity->systemOrder || $entity->isNew()) {
 			$systemOrder = $highestSystemOrder + 1;

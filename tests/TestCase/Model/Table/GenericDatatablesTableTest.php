@@ -121,7 +121,7 @@ class GenericDatatablesTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertSame('shortcode', $languagesAssociation->getBindingKey());
-		$this->assertSame('language_shortcode', $languagesAssociation->getForeignKey());
+		$this->assertSame('languageShortcode', $languagesAssociation->getForeignKey());
 		$this->assertSame(['realm' => Awyiss::REALM_FRONTEND], $languagesAssociation->getConditions());
 
 		// 'MediaAssignments' must also exist
@@ -218,7 +218,7 @@ class GenericDatatablesTableTest extends TestCase {
 		$result = $table->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('cars', $result->getI18nDomain());
+		$this->assertSame('Cars', $result->getI18nDomain());
 
 		// Test required fields when splitIntoLanguages is true
 		$this->assertTrue($result->hasField('languageShortcode')); // Should be required
@@ -250,7 +250,7 @@ class GenericDatatablesTableTest extends TestCase {
 		$result = $table->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('cars', $result->getI18nDomain());
+		$this->assertSame('Cars', $result->getI18nDomain());
 
 		// Test required fields when splitIntoLanguages is false
 		$this->assertFalse($result->hasField('languageShortcode')); // Should not be required

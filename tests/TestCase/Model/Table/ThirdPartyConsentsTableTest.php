@@ -72,7 +72,7 @@ class ThirdPartyConsentsTableTest extends TestCase {
 		$result = $this->thirdPartyConsentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('third_party_consents', $result->getI18nDomain());
+		$this->assertSame('ThirdPartyConsents', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('consentId'));
@@ -488,8 +488,8 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	public function testInitializeSchemaAcceptedCategoriesColumn(): void {
 		$schema = $this->thirdPartyConsentsTable->getSchema();
 
-		// Test that accepted_categories column is configured as JSON type
-		$this->assertSame('json', $schema->getColumnType('accepted_categories'));
+		// Test that acceptedCategories column is configured as JSON type
+		$this->assertSame('json', $schema->getColumnType('acceptedCategories'));
 	}
 
 
@@ -500,7 +500,7 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	public function testInitializeSchemaRejectedCategoriesColumn(): void {
 		$schema = $this->thirdPartyConsentsTable->getSchema();
 
-		// Test that rejected_categories column is configured as JSON type
-		$this->assertSame('json', $schema->getColumnType('rejected_categories'));
+		// Test that rejectedCategories column is configured as JSON type
+		$this->assertSame('json', $schema->getColumnType('rejectedCategories'));
 	}
 }

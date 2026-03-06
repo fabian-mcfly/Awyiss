@@ -71,7 +71,7 @@ class FormElementsTableTest extends TestCase {
 		$this->assertTrue($this->formElementsTable->hasAssociation('Forms'));
 		$formsAssociation = $this->formElementsTable->getAssociation('Forms');
 		$this->assertInstanceOf(BelongsTo::class, $formsAssociation);
-		$this->assertSame('form_id', $formsAssociation->getForeignKey());
+		$this->assertSame('formId', $formsAssociation->getForeignKey());
 		$this->assertSame('INNER', $formsAssociation->getJoinType());
 
 		// Test ParentFormElements association (BelongsTo from nest behavior)
@@ -171,11 +171,11 @@ class FormElementsTableTest extends TestCase {
 			'checkbox',
 			'radio',
 			'select',
-			'select_multiple',
+			'selectMultiple',
 			'file',
 			'hidden',
 			'fieldset',
-			'free_text',
+			'freeText',
 			'submit',
 		], $types);
 	}
@@ -202,11 +202,11 @@ class FormElementsTableTest extends TestCase {
 			'checkbox' => 'form_elements::type_checkbox',
 			'radio' => 'form_elements::type_radio',
 			'select' => 'form_elements::type_select',
-			'select_multiple' => 'form_elements::type_select_multiple',
+			'selectMultiple' => 'form_elements::type_select_multiple',
 			'file' => 'form_elements::type_file',
 			'hidden' => 'form_elements::type_hidden',
 			'fieldset' => 'form_elements::type_fieldset',
-			'free_text' => 'form_elements::type_free_text',
+			'freeText' => 'form_elements::type_free_text',
 			'submit' => 'form_elements::type_submit',
 		], $types);
 	}
@@ -302,7 +302,7 @@ class FormElementsTableTest extends TestCase {
 		$result = $this->formElementsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('form_elements', $result->getI18nDomain());
+		$this->assertSame('FormElements', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('formId'));
@@ -342,7 +342,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'titleEmail' => 'Email Title',
 			'placeholder' => 'Enter text',
@@ -388,11 +388,11 @@ class FormElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
 	 */
 	public function testEntityValidationConditionalRequiredTitle(): void {
-		// Title is required for all types except 'free_text'
+		// Title is required for all types except 'freeText'
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 		];
 
 		$entity = $this->formElementsTable->newEntity($data);
@@ -401,7 +401,7 @@ class FormElementsTableTest extends TestCase {
 		$this->assertArrayHasKey('title', $errors);
 
 		// Title not required for free_text
-		$data['type'] = 'free_text';
+		$data['type'] = 'freeText';
 		unset($data['identifier']); // identifier also not required for free_text
 
 		$entity = $this->formElementsTable->newEntity($data);
@@ -416,7 +416,7 @@ class FormElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
 	 */
 	public function testEntityValidationConditionalRequiredIdentifier(): void {
-		// Identifier is required for all types except 'free_text' and 'submit'
+		// Identifier is required for all types except 'freeText' and 'submit'
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
@@ -428,9 +428,9 @@ class FormElementsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('identifier', $errors);
 
-		// Identifier not required for free_text
-		$data['type'] = 'free_text';
-		unset($data['title']); // title also not required for free_text
+		// Identifier not required for freeText
+		$data['type'] = 'freeText';
+		unset($data['title']); // title also not required for freeText
 
 		$entity = $this->formElementsTable->newEntity($data);
 		$errors = $entity->getErrors();
@@ -563,7 +563,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'columnWidth' => '3/5',
 		];
@@ -584,7 +584,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'columnWidth' => 'invalid_column_width',
 		];
@@ -605,7 +605,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'columnIndent' => '2/5',
 		];
@@ -626,7 +626,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'columnIndent' => 'invalid_column_indent',
 		];
@@ -648,7 +648,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'select',
-			'identifier' => 'test_field',
+			'identifier' => 'testField',
 			'title' => 'Test Field',
 			'options' => $largeOptions,
 		];
@@ -693,7 +693,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'unique_field',
+			'identifier' => 'uniqueField',
 			'title' => 'Test Field',
 		];
 
@@ -713,7 +713,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'invalid_type',
-			'identifier' => 'unique_field',
+			'identifier' => 'uniqueField',
 			'title' => 'Test Field',
 		];
 
@@ -737,7 +737,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'unique_field',
+			'identifier' => 'uniqueField',
 			'title' => 'Test Field',
 			'columnWidth' => '3/5',
 			'columnIndent' => '2/5',
@@ -759,7 +759,7 @@ class FormElementsTableTest extends TestCase {
 		$data = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'unique_field',
+			'identifier' => 'uniqueField',
 			'title' => 'Test Field',
 			'columnWidth' => '3/5',
 			'columnIndent' => '3/5', // Invalid combination (should not exceed 1)
@@ -816,7 +816,7 @@ class FormElementsTableTest extends TestCase {
 		$additionalData = [
 			'formId' => 1,
 			'type' => 'text',
-			'identifier' => 'custom_field',
+			'identifier' => 'customField',
 			'title' => 'Custom Field',
 			'titleEmail' => 'Custom Email Title',
 			'placeholder' => 'Custom placeholder',
@@ -840,7 +840,7 @@ class FormElementsTableTest extends TestCase {
 		// Check custom values
 		$this->assertSame(1, $entity->formId);
 		$this->assertSame('text', $entity->type);
-		$this->assertSame('custom_field', $entity->identifier);
+		$this->assertSame('customField', $entity->identifier);
 		$this->assertSame('Custom Field', $entity->title);
 		$this->assertSame('Custom Email Title', $entity->titleEmail);
 		$this->assertSame('Custom placeholder', $entity->placeholder);
@@ -899,7 +899,7 @@ class FormElementsTableTest extends TestCase {
 
 		$config = $this->formElementsTable->getBehavior('Search')->getConfig();
 
-		$this->assertSame(['form_id'], $config['blocklistedColumns']);
+		$this->assertSame(['formId'], $config['blocklistedColumns']);
 	}
 
 

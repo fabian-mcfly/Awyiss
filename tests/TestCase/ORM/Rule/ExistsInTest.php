@@ -50,7 +50,7 @@ class ExistsInTest extends TestCase {
 
 		$this->mockEntity = $this->createMock(EntityInterface::class);
 
-		$this->existsInRule = new ExistsIn(['user_id'], $this->mockTable);
+		$this->existsInRule = new ExistsIn(['userId'], $this->mockTable);
 	}
 
 
@@ -86,7 +86,7 @@ class ExistsInTest extends TestCase {
 		$schema = $this->createMock(TableSchema::class);
 		$sourceTable = $this->createMock(Table::class);
 
-		$existsInRule = new ExistsIn(['user_id', 'role_id'], $this->mockTable, [
+		$existsInRule = new ExistsIn(['userId', 'roleId'], $this->mockTable, [
 			'allowNullableNulls' => true,
 		]);
 
@@ -95,28 +95,28 @@ class ExistsInTest extends TestCase {
 			'_sourceTable' => $this->createMock(Table::class),
 		];
 
-		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'role_id']);
+		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'roleId']);
 		$this->mockEntity->method('extract')->willReturnOnConsecutiveCalls(
-			['user_id' => 1, 'role_id' => null], // dirty check
-			['user_id' => 1] // final extraction after filtering
+			['userId' => 1, 'roleId' => null], // dirty check
+			['userId' => 1] // final extraction after filtering
 		);
 
 		$sourceTable->method('getSchema')->willReturn($schema);
 		$schema->method('hasColumn')->willReturnMap([
-			['user_id', true],
-			['role_id', true],
+			['userId', true],
+			['roleId', true],
 		]);
 		$schema->method('getColumn')->willReturnMap([
-			['user_id', ['type' => 'integer']],
-			['role_id', ['type' => 'integer', 'null' => true]],
+			['userId', ['type' => 'integer']],
+			['roleId', ['type' => 'integer', 'null' => true]],
 		]);
 		$schema->method('isNullable')->willReturnMap([
-			['user_id', false],
-			['role_id', true],
+			['userId', false],
+			['roleId', true],
 		]);
 		$this->mockEntity->method('get')->willReturnMap([
-			['user_id', 1],
-			['role_id', null],
+			['userId', 1],
+			['roleId', null],
 		]);
 
 		$this->mockTable->method('aliasField')->willReturnCallback(function ($field) {
@@ -141,7 +141,7 @@ class ExistsInTest extends TestCase {
 		$schema = $this->createMock(TableSchema::class);
 		$sourceTable = $this->createMock(Table::class);
 
-		$existsInRule = new ExistsIn(['user_id', 'role_id'], $this->mockTable, [
+		$existsInRule = new ExistsIn(['userId', 'roleId'], $this->mockTable, [
 			'allowNullableNulls' => false,
 		]);
 
@@ -150,31 +150,31 @@ class ExistsInTest extends TestCase {
 			'_sourceTable' => $this->createMock(Table::class),
 		];
 
-		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'role_id']);
+		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'roleId']);
 		$this->mockEntity->method('extract')->willReturnOnConsecutiveCalls(
-			['user_id' => 1, 'role_id' => null], // dirty check
-			['user_id' => 1, 'role_id' => null] // final extraction
+			['userId' => 1, 'roleId' => null], // dirty check
+			['userId' => 1, 'roleId' => null] // final extraction
 		);
 
 		$sourceTable->method('getSchema')->willReturn($schema);
 		$schema->method('getColumn')->willReturnMap([
-			['user_id', ['type' => 'integer']],
-			['role_id', ['type' => 'integer', 'null' => true]],
+			['userId', ['type' => 'integer']],
+			['roleId', ['type' => 'integer', 'null' => true]],
 		]);
 		$schema->method('isNullable')->willReturnMap([
-			['user_id', false],
-			['role_id', true],
+			['userId', false],
+			['roleId', true],
 		]);
 
 		$this->mockEntity->method('get')->willReturnMap([
-			['user_id', 1],
-			['role_id', null],
+			['userId', 1],
+			['roleId', null],
 		]);
 
 		$this->mockTable->method('aliasField')->willReturnCallback(function ($field) {
 			return 'Users.' . $field;
 		});
-		$this->mockTable->expects($this->once())->method('exists')->with(['Users.id IS' => 1, 'Users.role_id IS' => null], [])->willReturn(true);
+		$this->mockTable->expects($this->once())->method('exists')->with(['Users.id IS' => 1, 'Users.roleId IS' => null], [])->willReturn(true);
 
 		$result = $existsInRule->__invoke($this->mockEntity, $options);
 
@@ -191,7 +191,7 @@ class ExistsInTest extends TestCase {
 	 */
 	public function testInvokeCallsAttributeFieldsAreDirtyWhenEntityFieldsAreNotDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
-			setConstructorArgs([['user_id'], $this->mockAssociation])
+			setConstructorArgs([['userId'], $this->mockAssociation])
 			->onlyMethods(['attributeFieldsAreDirty'])
 			->getMock();
 
@@ -220,7 +220,7 @@ class ExistsInTest extends TestCase {
 	 */
 	public function testInvokeNotCallsAttributeFieldsAreDirtyWhenEntityFieldsAreDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
-			setConstructorArgs([['user_id'], $this->mockAssociation])
+			setConstructorArgs([['userId'], $this->mockAssociation])
 			->onlyMethods(['attributeFieldsAreDirty'])
 			->getMock();
 
@@ -228,7 +228,7 @@ class ExistsInTest extends TestCase {
 			'repository' => $this->mockTable,
 		];
 
-		$this->mockEntity->expects($this->exactly(2))->method('extract')->willReturn(['user_id']);
+		$this->mockEntity->expects($this->exactly(2))->method('extract')->willReturn(['userId']);
 
 		$this->mockTable->expects($this->never())->method('aliasField');
 
@@ -248,7 +248,7 @@ class ExistsInTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testInvokeSetsFinderFromAssociation(): void {
-		$existsInRule = new ExistsIn(['user_id'], $this->mockAssociation, ['something' => 'else']);
+		$existsInRule = new ExistsIn(['userId'], $this->mockAssociation, ['something' => 'else']);
 
 		$options = [
 			'repository' => $this->mockAssociation,
@@ -258,8 +258,8 @@ class ExistsInTest extends TestCase {
 		$this->mockAssociation->expects($this->once())->method('getTarget')->willReturn($this->mockTable);
 		$this->mockAssociation->expects($this->once())->method('getFinder')->willReturn('withUsers');
 		$this->mockEntity->method('extract')->willReturnOnConsecutiveCalls(
-			['user_id' => 1], // dirty check
-			['user_id' => 1]// final extraction
+			['userId' => 1], // dirty check
+			['userId' => 1]// final extraction
 		);
 
 		$this->mockTable->expects($this->once())->method('aliasField')->willReturnCallback(function ($field) {
@@ -386,12 +386,12 @@ class ExistsInTest extends TestCase {
 	 */
 	public function testSetRepositoryThrowsExceptionWhenAssociationDoesNotExist(): void {
 		$associationName = 'NonExistentAssociation';
-		$existsInRule = new ExistsIn(['user_id'], $associationName);
+		$existsInRule = new ExistsIn(['userId'], $associationName);
 
 		$this->mockTable->method('hasAssociation')->with($associationName)->willReturn(false);
 
 		$this->expectException(RuntimeException::class);
-		$this->expectExceptionMessage("ExistsIn rule for 'user_id' is invalid. 'NonExistentAssociation' is not associated with");
+		$this->expectExceptionMessage("ExistsIn rule for 'userId' is invalid. 'NonExistentAssociation' is not associated with");
 
 		$this->callProtectedMethod($existsInRule, 'setRepository', $this->mockTable);
 	}

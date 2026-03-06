@@ -16,6 +16,8 @@ use Cake\Core\Configure;
 
 /**
  * Class IntegrityCheckCommandTest
+ *
+ * @see \Awyiss\Command\IntegrityCheckCommand
  */
 class IntegrityCheckCommandTest extends TestCase {
 	use ConsoleIntegrationTestTrait;
@@ -165,7 +167,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @return void
 	 */
 	public function testIntegrityCheckCommandHelp(): void {
-		$this->exec('integrity_check --help');
+		$this->exec('integrityCheck --help');
 
 		$this->assertExitSuccess();
 

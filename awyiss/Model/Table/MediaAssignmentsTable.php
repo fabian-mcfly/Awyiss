@@ -43,38 +43,38 @@ class MediaAssignmentsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('MediaElements', [
-			'foreignKey' => 'media_element_id',
+			'foreignKey' => 'mediaElementId',
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaElement',
 		]);
 
 		$this->belongsTo('MediaElementAssignments', [
-			'bindingKey' => [
-				'media_element_id',
-			],
-			'foreignKey' => [
-				'media_element_id',
-			],
+			'bindingKey' => 'mediaElementId',
+			'foreignKey' => 'mediaElementId',
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaElementAssignment',
 		]);
 
 		$this->belongsTo('MediaElementSelectors', [
 			'bindingKey' => [
-				'media_element_id',
+				'mediaElementId',
 				'identifier',
 			],
 			'foreignKey' => [
-				'media_element_id',
-				'media_element_selector_identifier',
+				'mediaElementId',
+				'mediaElementSelectorIdentifier',
 			],
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaElementSelector',
 		]);
 
 		$this->belongsTo('Media', [
-			'foreignKey' => 'media_id',
+			'foreignKey' => 'mediaId',
 		]);
 
 		$this->belongsTo('MediaFolders', [
-			'foreignKey' => 'media_folder_id',
+			'foreignKey' => 'mediaFolderId',
+			'propertyName' => 'mediaFolder',
 		]);
 	}
 
@@ -95,13 +95,13 @@ class MediaAssignmentsTable extends Table {
 		$validator->requirePresence([
 			'mediaId',
 		], function (array $context): bool {
-			return empty($context['data']['media_folder_id']) && $context['newRecord'];
+			return empty($context['data']['mediaFolderId']) && $context['newRecord'];
 		});
 
 		$validator->requirePresence([
 			'mediaFolderId',
 		], function (array $context): bool {
-			return empty($context['data']['media_id']) && $context['newRecord'];
+			return empty($context['data']['mediaId']) && $context['newRecord'];
 		});
 
 		$validator->add('id', [
@@ -127,7 +127,7 @@ class MediaAssignmentsTable extends Table {
 
 
 		$validator->notEmptyString('mediaId', null, function ($context) {
-			return empty($context['data']['media_folder_id']);
+			return empty($context['data']['mediaFolderId']);
 		});
 		$validator->add('mediaId', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -136,7 +136,7 @@ class MediaAssignmentsTable extends Table {
 
 
 		$validator->notEmptyString('mediaFolderId', null, function ($context) {
-			return empty($context['data']['media_id']);
+			return empty($context['data']['mediaId']);
 		});
 		$validator->add('mediaFolderId', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -179,17 +179,17 @@ class MediaAssignmentsTable extends Table {
 		// TODO: rework to use media_element_assignments for the entity's table
 		$rules->add($rules->existsIn('mediaElementId', 'MediaElements'), 'mediaElementExists', [
 			'errorField' => 'mediaElementId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_element_exists'),
 		]);
 
 		$rules->add($rules->existsIn('mediaId', 'Media'), 'mediaExists', [
 			'errorField' => 'mediaId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_exists'),
 		]);
 
 		$rules->add($rules->existsIn('mediaFolderId', 'MediaFolders'), 'mediaFolderExists', [
 			'errorField' => 'mediaFolderId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_folder_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_folder_exists'),
 		]);
 
 		return $rules;

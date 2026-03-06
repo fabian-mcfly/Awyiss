@@ -148,7 +148,7 @@ class AttributesTableTest extends TestCase {
 		$result = $this->attributesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('attributes', $result->getI18nDomain());
+		$this->assertSame('Attributes', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('scope'));
@@ -182,9 +182,9 @@ class AttributesTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_attribute',
+			'identifier' => 'testAttribute',
 			'type' => 'varchar(255)',
 			'hasIndex' => false,
 			'fieldset' => 'general',
@@ -338,9 +338,9 @@ class AttributesTableTest extends TestCase {
 
 		foreach ($types as $type) {
 			$data = [
-				'scope' => 'pages',
+				'scope' => 'Pages',
 				'title' => 'Test Attribute',
-				'identifier' => 'test_attribute',
+				'identifier' => 'testAttribute',
 				'type' => $type,
 			];
 
@@ -359,9 +359,9 @@ class AttributesTableTest extends TestCase {
 	public function testEntityValidationTypeRegexInvalid(): void {
 		// Test invalid type format
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_attribute',
+			'identifier' => 'testAttribute',
 			'type' => 'invalid-type-format',
 		];
 
@@ -384,9 +384,9 @@ class AttributesTableTest extends TestCase {
 		// Test valid column span
 		$span = array_keys($columnSpans)[0];
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_attribute',
+			'identifier' => 'testAttribute',
 			'columnSpan' => $span,
 		];
 
@@ -404,9 +404,9 @@ class AttributesTableTest extends TestCase {
 	public function testEntityValidationColumnSpanInvalid(): void {
 		// Test invalid column span
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_attribute',
+			'identifier' => 'testAttribute',
 			'columnSpan' => 'invalid_column_span',
 		];
 
@@ -425,9 +425,9 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesValidIdentifier(): void {
 		// Test with valid identifier that doesn't conflict with table columns or reserved words
 		$data = [
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'title' => 'Test Attribute',
-			'identifier' => 'custom_field',
+			'identifier' => 'customField',
 			'fieldset' => 'general',
 			'inputType' => 'text',
 		];
@@ -445,7 +445,7 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesReservedIdentifier(): void {
 		// Test with MySQL reserved word
 		$data = [
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'title' => 'Test Attribute',
 			'identifier' => 'select', // MySQL reserved word
 			'fieldset' => 'general',
@@ -470,7 +470,7 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesExistingTableColumn(): void {
 		// Test with identifier that matches existing table column
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
 			'identifier' => 'title', // This column exists in pages table
 			'fieldset' => 'general',
@@ -490,9 +490,9 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesIdentifierUniqueForScopeValid(): void {
 		// Create first attribute
 		$data = [
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'title' => 'Test Attribute 1',
-			'identifier' => 'unique_identifier',
+			'identifier' => 'uniqueIdentifier',
 			'fieldset' => 'general',
 			'inputType' => 'text',
 		];
@@ -547,9 +547,9 @@ class AttributesTableTest extends TestCase {
 
 		// Test with valid fieldset
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_fieldset',
+			'identifier' => 'testFieldset',
 			'fieldset' => $availableFieldsets[0],
 			'inputType' => 'text',
 		];
@@ -560,12 +560,12 @@ class AttributesTableTest extends TestCase {
 		$this->assertTrue($result);
 
 		// Test with special scopes (contents, global_contents) - should always be valid
-		$specialScopes = ['contents', 'global_contents'];
+		$specialScopes = ['Contents', 'GlobalContents'];
 		foreach ($specialScopes as $scope) {
 			$data = [
 				'scope' => $scope,
 				'title' => 'Test Attribute',
-				'identifier' => 'test_special_' . $scope,
+				'identifier' => 'testSpecial' . $scope,
 				'fieldset' => 'any_fieldset', // Any fieldset should be valid for special scopes
 				'inputType' => 'text',
 			];
@@ -585,10 +585,10 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesInvalidFieldset(): void {
 		// Test with invalid fieldset for non-special scope
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_invalid_fieldset',
-			'fieldset' => 'invalid_fieldset',
+			'identifier' => 'testInvalidFieldset',
+			'fieldset' => 'invalidFieldset',
 			'inputType' => 'text',
 		];
 
@@ -612,9 +612,9 @@ class AttributesTableTest extends TestCase {
 
 		// Test with valid input type
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_input_type',
+			'identifier' => 'testInputType',
 			'fieldset' => 'general',
 			'inputType' => $availableInputTypes[0],
 		];
@@ -632,11 +632,11 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesInvalidInputType(): void {
 		// Test with invalid input type
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'title' => 'Test Attribute',
-			'identifier' => 'test_invalid_input_type',
+			'identifier' => 'testInvalidInputType',
 			'fieldset' => 'general',
-			'inputType' => 'invalid_input_type',
+			'inputType' => 'invalidInputType',
 		];
 
 		$entity = $this->attributesTable->newEntity($data);
@@ -659,33 +659,33 @@ class AttributesTableTest extends TestCase {
 
 		$this->assertIsArray($categories);
 		$this->assertSame([
-			'employers' => 'Arbeitgeber',
-			'cars' => 'Autos',
-			'content_templates' => 'content_templates::menu_title',
-			'contents' => 'contents::menu_title',
-			'customer_groups' => 'customer_groups::menu_title',
-			'customers' => 'customers::menu_title',
-			'dummy_users' => 'dummy_users::menu_title',
-			'global_content_templates' => 'global_content_templates::menu_title',
-			'global_contents' => 'global_contents::menu_title',
-			'languages' => 'languages::menu_title',
-			'media_folders' => 'media_folders::menu_title',
-			'media' => 'media::menu_title',
-			'menu_entries' => 'menu_entries::menu_title',
-			'employees' => 'Mitarbeiter',
-			'news' => 'News',
-			'newscategories' => 'Newskategorie',
-			'products' => 'page_roles::inactive Produkt',
-			'page_roles' => 'page_roles::menu_title',
-			'page_templates' => 'page_templates::menu_title',
-			'pages' => 'pages::menu_title',
-			'survey_answers' => 'survey_answers::menu_title',
-			'survey_questions' => 'survey_questions::menu_title',
-			'surveys' => 'surveys::menu_title',
-			'url_history' => 'url_history::menu_title',
-			'urls_not_found' => 'urls_not_found::menu_title',
-			'usergroups' => 'usergroups::menu_title',
-			'users' => 'users::menu_title',
+			'Employers' => 'Arbeitgeber',
+			'Cars' => 'Autos',
+			'ContentTemplates' => 'content_templates::menu_title',
+			'Contents' => 'contents::menu_title',
+			'CustomerGroups' => 'customer_groups::menu_title',
+			'Customers' => 'customers::menu_title',
+			'DummyUsers' => 'dummy_users::menu_title',
+			'GlobalContentTemplates' => 'global_content_templates::menu_title',
+			'GlobalContents' => 'global_contents::menu_title',
+			'Languages' => 'languages::menu_title',
+			'MediaFolders' => 'media_folders::menu_title',
+			'Media' => 'media::menu_title',
+			'MenuEntries' => 'menu_entries::menu_title',
+			'Employees' => 'Mitarbeiter',
+			'News' => 'News',
+			'Newscategories' => 'Newskategorie',
+			'Products' => 'page_roles::inactive Produkt',
+			'PageRoles' => 'page_roles::menu_title',
+			'PageTemplates' => 'page_templates::menu_title',
+			'Pages' => 'pages::menu_title',
+			'SurveyAnswers' => 'survey_answers::menu_title',
+			'SurveyQuestions' => 'survey_questions::menu_title',
+			'Surveys' => 'surveys::menu_title',
+			'UrlHistory' => 'url_history::menu_title',
+			'UrlsNotFound' => 'urls_not_found::menu_title',
+			'Usergroups' => 'usergroups::menu_title',
+			'Users' => 'users::menu_title',
 		], $categories);
 	}
 
@@ -730,9 +730,9 @@ class AttributesTableTest extends TestCase {
 			'checkbox',
 			'multicheckbox',
 			'select',
-			'select_multiple',
-			'input_list',
-			'input_key_value_list',
+			'selectMultiple',
+			'inputList',
+			'inputKeyValueList',
 			'textarea',
 			'texteditor',
 			'password',
@@ -750,33 +750,33 @@ class AttributesTableTest extends TestCase {
 
 		$this->assertIsArray($scopes);
 		$this->assertSame([
-			'cars',
-			'content_templates',
-			'contents',
-			'customer_groups',
-			'customers',
-			'dummy_users',
-			'employees',
-			'employers',
-			'global_content_templates',
-			'global_contents',
-			'languages',
-			'media',
-			'media_folders',
-			'menu_entries',
-			'news',
-			'newscategories',
-			'page_roles',
-			'page_templates',
-			'pages',
-			'products',
-			'survey_answers',
-			'survey_questions',
-			'surveys',
-			'url_history',
-			'urls_not_found',
-			'usergroups',
-			'users',
+			'Cars',
+			'ContentTemplates',
+			'Contents',
+			'CustomerGroups',
+			'Customers',
+			'DummyUsers',
+			'Employees',
+			'Employers',
+			'GlobalContentTemplates',
+			'GlobalContents',
+			'Languages',
+			'Media',
+			'MediaFolders',
+			'MenuEntries',
+			'News',
+			'Newscategories',
+			'PageRoles',
+			'PageTemplates',
+			'Pages',
+			'Products',
+			'SurveyAnswers',
+			'SurveyQuestions',
+			'Surveys',
+			'UrlHistory',
+			'UrlsNotFound',
+			'Usergroups',
+			'Users',
 		], array_keys($scopes));
 	}
 
@@ -848,9 +848,9 @@ class AttributesTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'scope' => 'custom_scope',
+			'scope' => 'CustomScope',
 			'title' => 'Custom Attribute',
-			'identifier' => 'custom_attribute',
+			'identifier' => 'customAttribute',
 			'type' => 'varchar(100)',
 			'hasIndex' => true,
 			'fieldset' => 'content',
@@ -870,9 +870,9 @@ class AttributesTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		// Check custom values
-		$this->assertSame('custom_scope', $entity->scope);
+		$this->assertSame('CustomScope', $entity->scope);
 		$this->assertSame('Custom Attribute', $entity->title);
-		$this->assertSame('custom_attribute', $entity->identifier);
+		$this->assertSame('customAttribute', $entity->identifier);
 		$this->assertSame('varchar(100)', $entity->type);
 		$this->assertTrue($entity->hasIndex);
 		$this->assertSame('content', $entity->fieldset);

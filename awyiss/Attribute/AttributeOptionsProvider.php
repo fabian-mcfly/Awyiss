@@ -125,7 +125,6 @@ class AttributeOptionsProvider {
 			return static::$loadedAttributeOptions[ $scope ] ?? null;
 		}
 
-
 		return static::$attributeOptions[ $scope ] ?? null;
 	}
 

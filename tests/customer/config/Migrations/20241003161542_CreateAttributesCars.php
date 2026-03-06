@@ -15,22 +15,22 @@ class CreateAttributesCars extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('attributes_cars')->addColumn('car_id', 'integer', [
+		$this->table('attributes_cars')->addColumn('carId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => false,
-		])->addColumn('free_text', 'text', [
+		])->addColumn('freeText', 'text', [
 			'default' => null,
 			'null' => true,
-		])->addColumn('input_list', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('input_key_value_list', 'text', [
+		])->addColumn('inputList', 'text', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->addColumn('dummy_pw', 'text', [
+		])->addColumn('inputKeyValueList', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('dummyPw', 'text', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,

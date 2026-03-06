@@ -76,16 +76,16 @@ class ConfigurationTest extends TestCase {
 		$entity = new Configuration();
 
 		$entity->scope = 'testScope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = 'TestScope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = 'testHTMLScope';
-		$this->assertEquals('test_h_t_m_l_scopes', $entity->scope);
+		$this->assertEquals('TestHTMLScopes', $entity->scope);
 
 		$entity->scope = 'test_scope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = null;
 		$this->assertNull($entity->scope);
@@ -100,16 +100,16 @@ class ConfigurationTest extends TestCase {
 		$entity = new Configuration();
 
 		$entity->set('scope', 'testScope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->set('scope', 'TestScope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->set('scope', 'testHTMLScope');
-		$this->assertEquals('test_h_t_m_l_scopes', $entity->scope);
+		$this->assertEquals('TestHTMLScopes', $entity->scope);
 
 		$entity->set('scope', 'test_scope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('scope', null);
@@ -126,16 +126,16 @@ class ConfigurationTest extends TestCase {
 		$entity = new Configuration();
 
 		$entity->identifier = 'testIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -150,16 +150,16 @@ class ConfigurationTest extends TestCase {
 		$entity = new Configuration();
 
 		$entity->set('identifier', 'testIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -231,8 +231,8 @@ class ConfigurationTest extends TestCase {
 	public function testPrintableValueVirtualPropertyWithBasicValues(): void {
 		$entity = new Configuration([
 			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => 'system',
-			'identifier' => 'test_setting',
+			'scope' => 'System',
+			'identifier' => 'testSetting',
 			'value' => 'test_value',
 		]);
 
@@ -249,15 +249,15 @@ class ConfigurationTest extends TestCase {
 	public function testPrintableValueVirtualPropertyWithBooleanValues(): void {
 		$entityTrue = new Configuration([
 			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => 'system',
-			'identifier' => 'test_setting',
+			'scope' => 'System',
+			'identifier' => 'testSetting',
 			'value' => true,
 		]);
 
 		$entityFalse = new Configuration([
 			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => 'system',
-			'identifier' => 'test_setting',
+			'scope' => 'System',
+			'identifier' => 'testSetting',
 			'value' => false,
 		]);
 
@@ -273,8 +273,8 @@ class ConfigurationTest extends TestCase {
 	public function testPrintableValueVirtualPropertyWithArrayValues(): void {
 		$entity = new Configuration([
 			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => 'system',
-			'identifier' => 'test_setting',
+			'scope' => 'System',
+			'identifier' => 'testSetting',
 			'value' => ['value1', 'value2', 'value3'],
 		]);
 
@@ -291,8 +291,8 @@ class ConfigurationTest extends TestCase {
 	public function testPrintableValueVirtualPropertyWithNullValue(): void {
 		$entity = new Configuration([
 			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => 'system',
-			'identifier' => 'test_setting',
+			'scope' => 'System',
+			'identifier' => 'testSetting',
 			'value' => null,
 		]);
 
@@ -327,7 +327,7 @@ class ConfigurationTest extends TestCase {
 		$entity = $table->newDefaultEntity();
 
 		$this->assertEquals(Awyiss::REALM_FRONTEND, $entity->realm);
-		$this->assertEquals('system', $entity->scope);
+		$this->assertEquals('System', $entity->scope);
 	}
 
 
@@ -342,7 +342,7 @@ class ConfigurationTest extends TestCase {
 			'scope' => 'TestScope',
 			'identifier' => 'TestIdentifier',
 			'value' => 'test_value',
-			'language_shortcode' => 'de',
+			'languageShortcode' => 'de',
 			'description' => 'Test Configuration',
 		];
 
@@ -351,28 +351,10 @@ class ConfigurationTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(Awyiss::REALM_BACKEND, $entity->realm);
 		// Scope will be pluralized
-		$this->assertEquals('test_scopes', $entity->scope);
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('TestScopes', $entity->scope);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 		$this->assertEquals('test_value', $entity->value);
 		$this->assertEquals('de', $entity->languageShortcode);
 		$this->assertEquals('Test Configuration', $entity->description);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Configuration::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'language_shortcode' => 'en',
-		];
-
-		$entity = new Configuration($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

@@ -67,8 +67,8 @@ class SurveyQuestionTest extends TestCase {
 			'subtitle' => 'Test Subtitle',
 			'text' => 'Question text',
 			'active' => true,
-			'survey_answers' => [],
-			'survey_survey_questions' => [],
+			'surveyAnswers' => [],
+			'surveySurveyQuestions' => [],
 		];
 
 		$entity = new SurveyQuestion($properties);
@@ -94,23 +94,5 @@ class SurveyQuestionTest extends TestCase {
 		$entity = $table->newDefaultEntity();
 
 		$this->assertEquals(QuestionType::SingleChoice, $entity->type);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\SurveyQuestion::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'survey_answers' => [],
-			'survey_survey_questions' => [],
-		];
-		$entity = new SurveyQuestion($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

@@ -21,13 +21,13 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{{ FormHelper.create(globalContentTemplate, {method: 'post', id: 'GlobalContentTemplateForm', idPrefix: 'global_content_template'}) }}
+{{ FormHelper.create(globalContentTemplate, {method: 'post', id: 'GlobalContentTemplateForm', idPrefix: 'GlobalContentTemplate'}) }}
 <input type="hidden" name="attributes" value="">
 
 {% set originalAvailableFieldsets = availableFieldsets %}
 {% set availableFieldsets = [] %}
 {% for fieldset in originalAvailableFieldsets %}
-	{% set availableFieldsets = availableFieldsets|merge({(fieldset): __d(fieldset == 'publication' ? 'publication_data' : 'global_contents', 'fieldset_' ~ fieldset)}) %}
+	{% set availableFieldsets = availableFieldsets|merge({(fieldset): __d(fieldset == 'publication' ? 'PublicationData' : 'GlobalContents', 'fieldset_' ~ fieldset)}) %}
 {% endfor %}
 
 {% set assignedGlobalContentElements = [] %}
@@ -44,7 +44,7 @@
 
 	{% if assignable == false and key == 'unused' %}
 		{% set key = 'conditions' %}
-		{% if availableElement in ['active', 'global_content_template_id'] %}
+		{% if availableElement in ['active', 'globalContentTemplateId'] %}
 			{% set key = 'presentation' %}
 		{% endif %}
 	{% endif %}
@@ -56,11 +56,11 @@
 				data-assignable="{{ assignable == false ? 'false' : 'true' }}">
 				<span class="Title Title-Default">
 					{% if assignable == false %}
-						{{ FormHelper.hidden('global_content_template_elements.' ~ loop.index0 ~ '.identifier', {
+						{{ FormHelper.hidden('globalContentTemplateElements.' ~ loop.index0 ~ '.identifier', {
 							value: availableElement,
 						}) }}
 					{% endif %}
-					{{ FormHelper.checkbox('global_content_template_elements.' ~ loop.index0 ~ '.identifier', {
+					{{ FormHelper.checkbox('globalContentTemplateElements.' ~ loop.index0 ~ '.identifier', {
 						checked: assignable == false or assignedGlobalContentElements[ availableElement ],
 						disabled: assignable == false,
 						hiddenField: false,
@@ -69,19 +69,19 @@
 						value: availableElement,
 					}) }}
 
-					{{ __d('global_contents', availableElement) }}
+					{{ __d('GlobalContents', availableElement|underscore) }}
 				</span>
 
 				<label for="GlobalContentTemplate-GlobalContentElements-{{ availableElement|camelize }}-Fieldset">
 					{% set value = globalContentTemplateElement ? globalContentTemplateElement.fieldset : null %}
 					{% if value is empty and assignable == false %}
 						{% set value = 'conditions' %}
-						{% if availableElement in ['active', 'global_content_template_id'] %}
+						{% if availableElement in ['active', 'globalContentTemplateId'] %}
 							{% set value = 'presentation' %}
 						{% endif %}
 					{% endif %}
 
-					{{ FormHelper.select('global_content_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
+					{{ FormHelper.select('globalContentTemplateElements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
 						id: 'GlobalContentTemplate-GlobalContentElements-' ~ availableElement|camelize ~ '-Fieldset',
 						required: false,
 						val: value,
@@ -89,30 +89,30 @@
 
 					{% if (globalContentTemplateElement) %}
 						{% block globalContentElementFieldsetError %}
-							{{ FormHelper.error('global_content_template_elements.' ~ elementCounter ~ '.fieldset') }}
+							{{ FormHelper.error('globalContentTemplateElements.' ~ elementCounter ~ '.fieldset') }}
 						{% endblock %}
 					{% endif %}
 				</label>
 
 				{% if (globalContentTemplateElement) %}
-					{{ FormHelper.hidden('global_content_template_elements.' ~ loop.index0 ~ '.id', {
+					{{ FormHelper.hidden('globalContentTemplateElements.' ~ loop.index0 ~ '.id', {
 						val: globalContentTemplateElement.id,
 					}) }}
 				{% endif %}
 
-				{% if availableElement != 'duplicate_of' %}
+				{% if availableElement != 'duplicateOf' %}
 					{% set hidden %}
-						{% if availableElement == 'global_content_template_id' %}
-							{{ FormHelper.hidden('global_content_template_elements.' ~ loop.index0 ~ '.required', {
+						{% if availableElement == 'globalContentTemplateId' %}
+							{{ FormHelper.hidden('globalContentTemplateElements.' ~ loop.index0 ~ '.required', {
 								value: true,
 							}) }}
 						{% endif %}
 					{% endset %}
-					{{ FormHelper.control('global_content_template_elements.' ~ loop.index0 ~ '.required', {
-						checked: availableElement == 'global_content_template_id' ? true : (globalContentTemplateElement ? globalContentTemplateElement.required : false),
-						disabled: availableElement == 'global_content_template_id',
+					{{ FormHelper.control('globalContentTemplateElements.' ~ loop.index0 ~ '.required', {
+						checked: availableElement == 'globalContentTemplateId' ? true : (globalContentTemplateElement ? globalContentTemplateElement.required : false),
+						disabled: availableElement == 'globalContentTemplateId',
 						label: __('required'),
-						hiddenField: availableElement != 'global_content_template_id',
+						hiddenField: availableElement != 'globalContentTemplateId',
 						id: 'GlobalContentTemplate-GlobalContentElements-' ~ availableElement|camelize ~ '-Required',
 						templateVars: {
 							additionalContent: hidden,
@@ -121,7 +121,7 @@
 					}) }}
 				{% endif %}
 
-				{{ FormHelper.control('global_content_template_elements.' ~ loop.index0 ~ '.column_span', {
+				{{ FormHelper.control('globalContentTemplateElements.' ~ loop.index0 ~ '.columnSpan', {
 					empty: false,
 					label: __('column_span'),
 					options: columnSpans,
@@ -130,12 +130,12 @@
 					val: globalContentTemplateElement ? globalContentTemplateElement.columnSpan : false,
 				}) }}
 
-				{{ FormHelper.control('global_content_template_elements.' ~ loop.index0 ~ '.title', {
+				{{ FormHelper.control('globalContentTemplateElements.' ~ loop.index0 ~ '.title', {
 					label: __('title'),
 					id: 'GlobalContentTemplate-GlobalContentElements-' ~ availableElement|camelize ~ '-Title',
 					type: 'translatableText',
 					templateVars: {
-						dialogTitle: __d('system', 'translations_dialog_title', __('title')),
+						dialogTitle: __d('System', 'translations_dialog_title', __('title')),
 					},
 					values: globalContentTemplateElement['_translations'] ?? [],
 				}) }}
@@ -161,7 +161,7 @@
 		{% block formControlGlobalContentAttribute %}
 			<li class="Item GlobalContentElement GlobalContentElement-Attribute">
 				<span class="Title Title-Attribute">
-					{{ FormHelper.checkbox('global_content_template_elements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.identifier', {
+					{{ FormHelper.checkbox('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.identifier', {
 						checked: assignedGlobalContentElements[ 'attributes.' ~ globalContentAttribute.identifier ] ? true : false,
 						hiddenField: false,
 						id: 'GlobalContentTemplate-GlobalContentAttribute-' ~ globalContentAttribute.identifier|camelize,
@@ -173,7 +173,7 @@
 				</span>
 
 				<label for="GlobalContentTemplate-GlobalContentAttribute-{{ globalContentAttribute.identifier|camelize }}-Fieldset">
-					{{ FormHelper.select('global_content_template_elements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.fieldset', availableFieldsets, {
+					{{ FormHelper.select('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.fieldset', availableFieldsets, {
 						id: 'GlobalContentTemplate-GlobalContentAttribute-' ~ globalContentAttribute.identifier|camelize ~ '-Fieldset',
 						required: false,
 						val: globalContentTemplateElement ? globalContentTemplateElement.fieldset : null,
@@ -181,25 +181,25 @@
 
 					{% if globalContentTemplateElement %}
 						{% block globalContentAttributeFieldsetError %}
-							{{ FormHelper.error('global_content_template_elements.' ~ elementCounter ~ '.fieldset') }}
+							{{ FormHelper.error('globalContentTemplateElements.' ~ elementCounter ~ '.fieldset') }}
 						{% endblock %}
 					{% endif %}
 				</label>
 
-				{{ FormHelper.control('global_content_template_elements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.required', {
+				{{ FormHelper.control('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.required', {
 					checked: globalContentTemplateElement ? globalContentTemplateElement.required : false,
-					disabled: globalContentAttribute.inputType in ['input_list', 'input_key_value_list'],
+					disabled: globalContentAttribute.inputType in ['inputList', 'inputKeyValueList'],
 					label: __('required'),
 					hiddenField: true,
 					id: 'GlobalContentTemplate-GlobalContentAttribute-' ~ globalContentAttribute.identifier|camelize ~ '-Required',
 					value: true,
 					templateVars: {
-						additionalContent: globalContentAttribute.inputType not in ['input_list', 'input_key_value_list'] ? '' :
-							FormHelper.hidden('global_content_template_elements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.required'),
+						additionalContent: globalContentAttribute.inputType not in ['inputList', 'inputKeyValueList'] ? '' :
+							FormHelper.hidden('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.required'),
 					},
 				}) }}
 
-				{{ FormHelper.control('global_content_template_elements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.column_span', {
+				{{ FormHelper.control('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.columnSpan', {
 					empty: false,
 					label: __('column_span'),
 					options: columnSpans,
@@ -232,7 +232,7 @@
 				{% endblock %}
 
 				{% block formControlFileName %}
-					{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
+					{{ FormHelper.control('fileName', {'data-autofill-from': 'title'}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -326,7 +326,7 @@
 				{% endblock %}
 
 				{% block formControlInContentRow %}
-					{{ FormHelper.control('in_content_row', {columnSpan: 6}) }}
+					{{ FormHelper.control('inContentRow', {columnSpan: 6}) }}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}
@@ -344,7 +344,7 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: globalContentTemplate}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: globalContentTemplate}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -429,7 +429,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

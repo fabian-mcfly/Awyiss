@@ -171,7 +171,7 @@ class SearchComponent extends Component {
 		$table = $this->getController()->fetchTable($tableName);
 		$sessionIdentifier = $table->getBehavior('Search')->getConfig('sessionIdentifier');
 
-		if ($request->getData('submit_type') === 'reset') {
+		if ($request->getData('submitType') === 'reset') {
 			$request->getSession()->delete($sessionIdentifier);
 
 			// Redirect to the same page to prevent resubmission

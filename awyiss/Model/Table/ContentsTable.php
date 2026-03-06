@@ -103,7 +103,7 @@ class ContentsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['page_id'],
+		'blocklistedColumns' => ['pageId'],
 	];
 	/**
 	 * @inheritDoc
@@ -130,26 +130,37 @@ class ContentsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('ContentAreas', [
+			'foreignKey' => 'contentAreaId',
 			'joinType' => 'INNER',
+			'propertyName' => 'contentArea',
 		]);
 
-		$this->belongsTo('ContentTemplates');
+		$this->belongsTo('ContentTemplates', [
+			'foreignKey' => 'contentTemplateId',
+			'propertyName' => 'contentTemplate',
+		]);
 
 		$this->hasMany('DuplicatingContents', [
-			'bindingKey' => 'duplicate_of',
+			'bindingKey' => 'duplicateOf',
 			'className' => 'Contents',
 			'foreignKey' => 'id',
+			'propertyName' => 'duplicatingContents',
 		]);
 
 		$this->belongsTo('DuplicateOfContents', [
 			'bindingKey' => 'id',
 			'className' => 'Contents',
-			'foreignKey' => 'duplicate_of',
+			'foreignKey' => 'duplicateOf',
+			'propertyName' => 'duplicateOfContent',
 		]);
 
-		$this->belongsTo('Forms');
+		$this->belongsTo('Forms', [
+			'foreignKey' => 'formId',
+		]);
 
-		$this->belongsTo('Surveys');
+		$this->belongsTo('Surveys', [
+			'foreignKey' => 'surveyId',
+		]);
 	}
 
 
@@ -187,49 +198,49 @@ class ContentsTable extends Table {
 	 */
 	public function findLatestForPages(SelectQuery $query): SelectQuery {
 		/**
-		 * SELECT Contents.page_id AS Contents__page_id, Contents.id AS Contents__id, Contents.changed_on AS Contents__changed_on, Contents.created_on AS Contents__created_on
+		 * SELECT Contents.pageId AS Contents__pageId, Contents.id AS Contents__id, Contents.changedOn AS Contents__changedOn, Contents.createdOn AS Contents__createdOn
 		 * FROM contents Contents
-		 * INNER JOIN (SELECT latest.page_id AS latest_page_id, (MAX(COALESCE(latest.changed_on, latest.created_on))) AS latest_date FROM Contents as latest GROUP BY latest.page_id) latest
-		 * ON (Contents.page_id = latest.latest_page_id AND COALESCE(Contents.changed_on, Contents.created_on) = latest.latest_date)
+		 * INNER JOIN (SELECT latest.pageId AS latestPageId, (MAX(COALESCE(latest.changedOn, latest.createdOn))) AS latestDate FROM Contents as latest GROUP BY latest.pageId) latest
+		 * ON (Contents.pageId = latest.latestPageId AND COALESCE(Contents.changedOn, Contents.createdOn) = latest.latestDate)
 		 * WHERE (Contents.deleted = 0)
-		 * GROUP BY Contents.page_id
-		 * ORDER BY changed_on DESC, created_on DESC, system_order ASC;
+		 * GROUP BY Contents.pageId
+		 * ORDER BY changedOn DESC, createdOn DESC, systemOrder ASC;
 		 *
 		 * @noinspection GrazieInspection
 		 */
 		$subquery = $this->find()->select([
-			'latest_page_id' => 'page_id',
-			'latest_date' => $this->find()->func()->max(
+			'latestPageId' => 'pageId',
+			'latestDate' => $this->find()->func()->max(
 				new FunctionExpression('COALESCE', [
-					'Contents.changed_on' => 'literal',
-					'Contents.created_on' => 'literal',
+					'Contents.changedOn' => 'literal',
+					'Contents.createdOn' => 'literal',
 				])
 			),
-		])->groupBy('page_id')->applyOptions([
+		])->groupBy('pageId')->applyOptions([
 			'attributes' => [
 				'skip' => true,
 			],
 		]);
 
 		return $query->select([
-			'page_id',
+			'pageId',
 			'id',
-			'changed_on',
-			'created_on',
+			'changedOn',
+			'createdOn',
 		])->innerJoin(
 			['latest' => $subquery],
 			function (QueryExpression $exp/*, SelectQuery $q*/) {
-				return $exp->eq('Contents.page_id', new IdentifierExpression('latest_page_id'))->eq(
+				return $exp->eq('Contents.pageId', new IdentifierExpression('latestPageId'))->eq(
 					new FunctionExpression('COALESCE', [
-						'Contents.changed_on' => 'literal',
-						'Contents.created_on' => 'literal',
+						'Contents.changedOn' => 'literal',
+						'Contents.createdOn' => 'literal',
 					]),
-					new IdentifierExpression('latest_date')
+					new IdentifierExpression('latestDate')
 				);
 			}
-		)->where(['Contents.deleted' => 0])->groupBy('Contents.page_id')->orderBy([
-			'Contents.changed_on' => 'DESC',
-			'Contents.created_on' => 'DESC',
+		)->where(['Contents.deleted' => 0])->groupBy('Contents.pageId')->orderBy([
+			'Contents.changedOn' => 'DESC',
+			'Contents.createdOn' => 'DESC',
 		])->applyOptions([
 			'attributes' => [
 				'skip' => true,
@@ -465,7 +476,7 @@ class ContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				$entity->setError('pageId', [
-					'validPageId' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
+					'validPageId' => __df($this->getI18nDomain(), 'Validation', 'error_valid_page_id'),
 				]);
 
 				return false;
@@ -483,7 +494,7 @@ class ContentsTable extends Table {
 					contain: [
 						'ContentAreas' => [
 							'queryBuilder' => function (SelectQuery $query) use ($page) {
-								return $query->where(['ContentTemplateContentAreas.page_template_id' => $page->pageTemplateId]);
+								return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $page->pageTemplateId]);
 							},
 						],
 						'ContentTemplateElements',
@@ -492,8 +503,8 @@ class ContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				//Content Template not found
-				$entity->setError('content_template_id', [
-					'validContentTemplateId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'),
+				$entity->setError('contentTemplateId', [
+					'validContentTemplateId' => __df($this->getI18nDomain(), 'Validation', 'error_valid_content_template_id'),
 				]);
 
 				return false;
@@ -502,8 +513,8 @@ class ContentsTable extends Table {
 
 			//Content Area not found in the content template
 			if (!in_array($entity->contentAreaId, array_column($contentTemplate->contentAreas, 'id'))) {
-				$entity->setError('content_area_id', [
-					'validContentAreaId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'),
+				$entity->setError('contentAreaId', [
+					'validContentAreaId' => __df($this->getI18nDomain(), 'Validation', 'error_valid_content_area_id'),
 				]);
 
 				return false;
@@ -512,8 +523,8 @@ class ContentsTable extends Table {
 
 			// Make sure that all children of the current entity can be moved to the target content area as well
 			if (!$this->childrenCanBeMoved($entity, $page->pageTemplateId)) {
-				$entity->setError('content_area_id', [
-					'validContentAreaIdForChildren' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'),
+				$entity->setError('contentAreaId', [
+					'validContentAreaIdForChildren' => __df($this->getI18nDomain(), 'Validation', 'error_valid_content_area_id_for_children'),
 				]);
 
 				return false;
@@ -538,12 +549,7 @@ class ContentsTable extends Table {
 			//Validate the entity using the
 			$errors = $validator->validate($data, $entity->isNew());
 
-			/** @noinspection PhpUndefinedMethodInspection */
-			$errors = $this->getEntityClass()::mapFields($errors, true);
-
 			if ($this->hasAttributes() && !empty($errors['attributes'])) {
-				/** @noinspection PhpUndefinedMethodInspection */
-				$errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($errors['attributes'], true);
 				$entity->attributes->setErrors($errors['attributes']);
 			}
 
@@ -575,7 +581,7 @@ class ContentsTable extends Table {
 			return true;
 		}, 'validWidthIndentCombination', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_width_indent_combination'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_width_indent_combination'),
 		]);
 
 
@@ -657,7 +663,7 @@ class ContentsTable extends Table {
 				/** @var \Awyiss\Model\Table\ContentsTable $table */
 				$table = FactoryLocator::get('Table')->get('Contents');
 
-				if ($table->exists(['duplicate_of' => $entity->id])) {
+				if ($table->exists(['duplicateOf' => $entity->id])) {
 					return false;
 				}
 
@@ -666,10 +672,10 @@ class ContentsTable extends Table {
 				$childrenContentIds = array_column($nestedChildren, 'id');
 
 				if ($childrenContentIds) {
-					$duplicatingContents = $table->find()->where(['duplicate_of IN' => $childrenContentIds])->count();
+					$duplicatingContents = $table->find()->where(['duplicateOf IN' => $childrenContentIds])->count();
 
 					if ($duplicatingContents) {
-						return __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_children');
+						return __df($this->getI18nDomain(), 'Validation', 'error_no_duplicated_children');
 					}
 				}
 
@@ -678,7 +684,7 @@ class ContentsTable extends Table {
 			'noDuplicatingContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicating_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_duplicating_contents'),
 			],
 		);
 
@@ -706,8 +712,8 @@ class ContentsTable extends Table {
 					'ContentAreas' => [
 						'queryBuilder' => function (SelectQuery $query) use ($entity, $pageTemplateId) {
 							return $query->where([
-								'ContentTemplateContentAreas.content_area_id' => $entity->contentAreaId,
-								'ContentTemplateContentAreas.page_template_id' => $pageTemplateId,
+								'ContentTemplateContentAreas.contentAreaId' => $entity->contentAreaId,
+								'ContentTemplateContentAreas.pageTemplateId' => $pageTemplateId,
 							]);
 						},
 					],
@@ -772,11 +778,11 @@ class ContentsTable extends Table {
 			fields: [
 				'id',
 				'title',
-				'language_shortcode',
-				'page_role_id',
-				'page_template_id',
-				'robots_follow',
-				'robots_index',
+				'languageShortcode',
+				'pageRoleId',
+				'pageTemplateId',
+				'robotsFollow',
+				'robotsIndex',
 			],
 			skipPageRoleCheck: true,
 			translate: ['skip' => true],
@@ -808,7 +814,7 @@ class ContentsTable extends Table {
 					'bindingKey' => 'id',
 					/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 					'finder' => 'forCurrentLanguage',
-					'foreignKey' => 'page_id',
+					'foreignKey' => 'pageId',
 					'propertyName' => 'page',
 				]);
 			}
@@ -1042,7 +1048,7 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_width') {
+			if ($element === 'columnWidth') {
 				$columnWidths = $this->getColumnWidths();
 
 				$validator->add($element, [
@@ -1054,7 +1060,7 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_last') {
+			if ($element === 'columnLast') {
 				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
@@ -1064,7 +1070,7 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_rtl') {
+			if ($element === 'columnRtl') {
 				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
@@ -1101,13 +1107,13 @@ class ContentsTable extends Table {
 		if ($entity->duplicateOf) {
 			// Disallow self-duplicating contents
 			if (!$entity->isNew() && $entity->id === $entity->duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_self_duplicating');
 			}
 
 			// Prevent a content (current) from duplicating another one (target),
 			// if the (current) content is already duplicated by a content (third).
-			if ($entity->id && $this->exists(['duplicate_of' => $entity->id])) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
+			if ($entity->id && $this->exists(['duplicateOf' => $entity->id])) {
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_duplicating_duplicated');
 			}
 
 			/** @var \Awyiss\Model\Entity\Content $duplicateOf */
@@ -1115,18 +1121,18 @@ class ContentsTable extends Table {
 
 			// Disallow duplicating contents that do not exist
 			if (!$duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
+				return __df($this->getI18nDomain(), 'Validation', 'error_valid_duplicate_of');
 			}
 
 			// Prevents a content (current) from duplicating another content (target),
 			// if the (target) content is already duplicating another content (third).
 			if ($duplicateOf->duplicateOf) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_duplicating_duplicating');
 			}
 
 			// Disallow duplicating contents that are on the same page
 			if ($duplicateOf->pageId === $entity->pageId) {
-				return __df($this->getI18nDomain(), 'validation', 'error_duplicate_not_on_same_page');
+				return __df($this->getI18nDomain(), 'Validation', 'error_duplicate_not_on_same_page');
 			}
 		}
 
@@ -1150,7 +1156,7 @@ class ContentsTable extends Table {
 			 * being on the same page.
 			 */
 			if ($duplicatedContent->pageId === $entity->pageId) {
-				return __df($this->getI18nDomain(), 'validation', 'error_children_not_duplicating_contents_on_same_page');
+				return __df($this->getI18nDomain(), 'Validation', 'error_children_not_duplicating_contents_on_same_page');
 			}
 		}
 
@@ -1167,20 +1173,20 @@ class ContentsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
-		if ($column === 'content_template_id') {
+		if ($column === 'contentTemplateId') {
 			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'duplicate_of') {
+		if ($column === 'duplicateOf') {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return $this->find('threaded')->find('mediaAssignments', useMediaEntity: true)->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 
-		if ($column === 'form_id') {
+		if ($column === 'formId') {
 			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'survey_id') {
+		if ($column === 'surveyId') {
 			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
 		}
 

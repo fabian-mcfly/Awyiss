@@ -72,7 +72,7 @@ class FormOptions implements FormOptionsInterface {
 			}
 			elseif (
 				($formElement->type === 'checkbox' && $formElement->options && count($formElement->options) > 1) ||
-				$formElement->type === 'select_multiple'
+				$formElement->type === 'selectMultiple'
 			) {
 				$options = $formElement->options;
 				$validator->add($formElement->identifier, [
@@ -137,7 +137,7 @@ class FormOptions implements FormOptionsInterface {
 		$formsTable = FactoryLocator::get('Table')->get('Forms');
 		$formsTable->loadInto($this->form, ['FormConditionalRecipients']);
 
-		if (!$this->form->formConditionalRecipients) {
+		if (!$this->form->conditionalRecipients) {
 			return $this;
 		}
 
@@ -147,7 +147,7 @@ class FormOptions implements FormOptionsInterface {
 
 		$conditionalRecipients->setProcessStrategy($this->form->conditionalRecipientsStrategy);
 
-		$recipient = $conditionalRecipients->getMatchingRecipient($this->form->formConditionalRecipients, $this->form->getFormData());
+		$recipient = $conditionalRecipients->getMatchingRecipient($this->form->conditionalRecipients, $this->form->getFormData());
 		if ($recipient) {
 			$this->form->ownerEmail = $recipient;
 		}
@@ -196,7 +196,7 @@ class FormOptions implements FormOptionsInterface {
 				'notBlank' => ['rule' => 'notBlank'],
 			]);
 		}
-		elseif ($formElement->type === 'select_multiple') {
+		elseif ($formElement->type === 'selectMultiple') {
 			$validator->notEmptyArray($formElement->identifier);
 		}
 		elseif ($formElement->type === 'checkbox') {

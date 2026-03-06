@@ -57,20 +57,22 @@ class SurveySurveyQuestionsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Surveys', [
-			'foreignKey' => 'survey_id',
+			'foreignKey' => 'surveyId',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('SurveyQuestions', [
-			'foreignKey' => 'survey_question_id',
+			'foreignKey' => 'surveyQuestionId',
 			'joinType' => 'INNER',
+			'propertyName' => 'surveyQuestion',
 		]);
 
 		$this->hasMany('SurveySurveyAnswers', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_survey_question_id',
+			'foreignKey' => 'surveySurveyQuestionId',
 			'saveStrategy' => 'replace',
+			'propertyName' => 'surveySurveyAnswers',
 		]);
 	}
 
@@ -113,7 +115,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 8),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 8),
 				'rule' => function (string $identifier): bool {
 					return strlen($identifier) == 8;
 				},
@@ -204,7 +206,7 @@ class SurveySurveyQuestionsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier', 'surveyId']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df('surveys', 'validation', 'error_identifier_unique'),
+			'message' => __df('Surveys', 'Validation', 'error_identifier_unique'),
 		]);
 
 		$rules->add(
@@ -212,7 +214,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'validSurveyId',
 			[
 				'errorField' => 'surveyId',
-				'message' => __df('surveys', 'validation', 'error_valid_survey_id'),
+				'message' => __df('Surveys', 'Validation', 'error_valid_survey_id'),
 			]
 		);
 
@@ -221,7 +223,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'validSurveyQuestionId',
 			[
 				'errorField' => 'surveyQuestionId',
-				'message' => __df('surveys', 'validation', 'error_valid_survey_question_id'),
+				'message' => __df('Surveys', 'Validation', 'error_valid_survey_question_id'),
 			]
 		);
 
@@ -240,7 +242,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'validNextAction',
 			[
 				'errorField' => 'nextAction',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_next_action'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_next_action'),
 			]
 		);
 
@@ -257,6 +259,6 @@ class SurveySurveyQuestionsTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
 		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('next_action', EnumType::from($surveyNextActionEnum));
+		$schema->setColumnType('nextAction', EnumType::from($surveyNextActionEnum));
 	}
 }

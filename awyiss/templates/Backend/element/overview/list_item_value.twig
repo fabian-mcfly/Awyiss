@@ -19,9 +19,9 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% if field == 'language_shortcode' %}
+{% if field == 'languageShortcode' %}
 	{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
-{% elseif field == 'content_template_id' %}
+{% elseif field == 'contentTemplateId' %}
 	{% if entity.contentTemplate is defined %}
 		{{ entity.contentTemplate.label }}
 	{% elseif contentTemplates[ entity.get(field) ] is defined %}
@@ -29,7 +29,7 @@
 	{% else %}
 		-
 	{% endif %}
-{% elseif field == 'email_template_id' %}
+{% elseif field == 'emailTemplateId' %}
 	{% if entity.emailTemplate is defined %}
 		{{ entity.emailTemplate.label }}
 	{% elseif emailTemplates[ entity.get(field) ] is defined %}
@@ -37,7 +37,7 @@
 	{% else %}
 		-
 	{% endif %}
-{% elseif field == 'page_template_id' %}
+{% elseif field == 'pageTemplateId' %}
 	{% if entity.pageTemplate is defined %}
 		{{ entity.pageTemplate.label }}
 	{% elseif pageTemplates[ entity.get(field) ] is defined %}
@@ -45,7 +45,7 @@
 	{% else %}
 		-
 	{% endif %}
-{% elseif field == 'global_content_template_id' %}
+{% elseif field == 'globalContentTemplateId' %}
 	{% if entity.globalContentTemplate is defined %}
 		{{ entity.globalContentTemplate.label }}
 	{% elseif globalContentTemplates[ entity.get(field) ] is defined %}
@@ -53,9 +53,9 @@
 	{% else %}
 		-
 	{% endif %}
-{% elseif field in ['created_on', 'changed_on'] %}
+{% elseif field in ['createdOn', 'changedOn'] %}
 	{{ entity.has(field) ? TimeHelper.nice(entity.get(field)) : '-' }}
-{% elseif field in ['created_by', 'changed_by'] %}
+{% elseif field in ['createdBy', 'changedBy'] %}
 	{{ entity.has(field) ? AuditHelper.getUsername(entity.get(field)) : '' }}
 {% elseif _categoriesIdentifier is defined and _categoriesIdentifier|underscore == field %}
 	{{ entity.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}

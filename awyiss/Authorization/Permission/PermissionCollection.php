@@ -228,6 +228,7 @@ class PermissionCollection {
 			$accessible[] = $permission->isAccessible($additionalData, $this);
 		}
 
+
 		// If false is part of the result, access is denied.
 		if (in_array(false, $accessible, true)) {
 			return false;

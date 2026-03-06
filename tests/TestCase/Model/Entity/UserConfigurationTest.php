@@ -73,16 +73,16 @@ class UserConfigurationTest extends TestCase {
 		$entity = new UserConfiguration();
 
 		$entity->scope = 'testScope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = 'TestScope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = 'testHTMLScope';
-		$this->assertEquals('test_h_t_m_l_scopes', $entity->scope);
+		$this->assertEquals('TestHTMLScopes', $entity->scope);
 
 		$entity->scope = 'test_scope';
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->scope = null;
 		$this->assertNull($entity->scope);
@@ -97,16 +97,16 @@ class UserConfigurationTest extends TestCase {
 		$entity = new UserConfiguration();
 
 		$entity->set('scope', 'testScope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->set('scope', 'TestScope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		$entity->set('scope', 'testHTMLScope');
-		$this->assertEquals('test_h_t_m_l_scopes', $entity->scope);
+		$this->assertEquals('TestHTMLScopes', $entity->scope);
 
 		$entity->set('scope', 'test_scope');
-		$this->assertEquals('test_scopes', $entity->scope);
+		$this->assertEquals('TestScopes', $entity->scope);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('scope', null);
@@ -123,16 +123,16 @@ class UserConfigurationTest extends TestCase {
 		$entity = new UserConfiguration();
 
 		$entity->identifier = 'testIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -147,16 +147,16 @@ class UserConfigurationTest extends TestCase {
 		$entity = new UserConfiguration();
 
 		$entity->set('identifier', 'testIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -227,7 +227,7 @@ class UserConfigurationTest extends TestCase {
 	 */
 	public function testPrintableValueVirtualProperty(): void {
 		$entity = new UserConfiguration([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'identifier' => 'overview.displayedFields',
 			'value' => ['id', 'title', 'active'],
 		]);
@@ -248,7 +248,7 @@ class UserConfigurationTest extends TestCase {
 		$table = FactoryLocator::get('Table')->get('UserConfiguration');
 		$entity = $table->newDefaultEntity();
 
-		$this->assertEquals('system', $entity->scope);
+		$this->assertEquals('System', $entity->scope);
 	}
 
 
@@ -262,34 +262,16 @@ class UserConfigurationTest extends TestCase {
 			'scope' => 'TestScope',
 			'identifier' => 'TestIdentifier',
 			'value' => 'test_value',
-			'user_id' => 123,
+			'userId' => 123,
 		];
 
 		$entity = new UserConfiguration($properties);
 
 		$this->assertEquals(1, $entity->id);
 		// Scope will be pluralized
-		$this->assertEquals('test_scopes', $entity->scope);
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('TestScopes', $entity->scope);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 		$this->assertEquals('test_value', $entity->value);
 		$this->assertEquals(123, $entity->userId);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\UserConfiguration::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'user_id' => 456,
-		];
-
-		$entity = new UserConfiguration($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

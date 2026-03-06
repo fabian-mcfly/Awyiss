@@ -29,22 +29,6 @@ class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'transaction_id' => 'transactionId',
-		'foreign_key' => 'foreignKey',
-		'subject_left_table' => 'subjectLeftTable',
-		'subject_left_foreign_key' => 'subjectLeftForeignKey',
-		'subject_right_table' => 'subjectRightTable',
-		'subject_right_foreign_key' => 'subjectRightForeignKey',
-		'data_old' => 'dataOld',
-		'data_new' => 'dataNew',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-	];
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'foreignKey' => true,

@@ -27,15 +27,6 @@ class FormConditionalRecipient extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'form_id' => 'formId',
-		'system_order' => 'systemOrder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'formId' => true,
 		'type' => true,

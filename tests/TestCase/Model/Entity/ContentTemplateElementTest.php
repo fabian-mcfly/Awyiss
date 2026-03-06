@@ -77,17 +77,17 @@ class ContentTemplateElementTest extends TestCase {
 		$entity = new ContentTemplateElement();
 
 		$entity->identifier = 'testIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'TestIdentifier';
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->identifier = 'testHTMLElement';
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
 		// Test already underscored string remains unchanged
-		$entity->identifier = 'already_underscored';
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->identifier = 'is_underscored';
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		// Test null value
 		$entity->identifier = null;
@@ -103,17 +103,17 @@ class ContentTemplateElementTest extends TestCase {
 		$entity = new ContentTemplateElement();
 
 		$entity->set('identifier', 'testIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'TestIdentifier');
-		$this->assertEquals('test_identifier', $entity->identifier);
+		$this->assertEquals('testIdentifier', $entity->identifier);
 
 		$entity->set('identifier', 'testHTMLElement');
-		$this->assertEquals('test_h_t_m_l_element', $entity->identifier);
+		$this->assertEquals('testHTMLElement', $entity->identifier);
 
 		// Test already underscored string remains unchanged
-		$entity->set('identifier', 'already_underscored');
-		$this->assertEquals('already_underscored', $entity->identifier);
+		$entity->set('identifier', 'is_underscored');
+		$this->assertEquals('isUnderscored', $entity->identifier);
 
 		// Test null value
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -160,44 +160,24 @@ class ContentTemplateElementTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'content_template_id' => 456,
+			'contentTemplateId' => 456,
 			'identifier' => 'testElement',
 			'title' => 'Test Element',
 			'fieldset' => 'Test Fieldset',
-			'column_span' => '6/12',
+			'columnSpan' => '6/12',
 			'required' => true,
-			'system_order' => 15,
+			'systemOrder' => 15,
 		];
 
 		$entity = new ContentTemplateElement($properties);
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(456, $entity->contentTemplateId);
-		$this->assertEquals('test_element', $entity->identifier); // Should be cleaned by setter
+		$this->assertEquals('testElement', $entity->identifier); // Should be cleaned by setter
 		$this->assertEquals('Test Element', $entity->title);
 		$this->assertEquals('Test Fieldset', $entity->fieldset);
 		$this->assertEquals('6/12', $entity->columnSpan);
 		$this->assertTrue($entity->required);
 		$this->assertEquals(15, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\ContentTemplateElement::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'content_template_id' => 456,
-			'column_span' => 'col-8',
-			'system_order' => 15,
-		];
-
-		$entity = new ContentTemplateElement($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

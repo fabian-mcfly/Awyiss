@@ -37,12 +37,12 @@
 					{{ FormHelper.control('password', {
 						autocapitalize: 'off',
 						required: true,
-						'data-show-password-label': __d('users', 'show_password'),
+						'data-show-password-label': __d('Users', 'show_password'),
 					}) }}
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {empty: false, languageRealm: languageRealm}) }}
+					{{ LocaleHelper.control('languageShortcode', {empty: false, languageRealm: languageRealm}) }}
 				{% endblock %}
 
 				{{ FormHelper.button(__('login'), {class: 'Submit'}) }}

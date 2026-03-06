@@ -23,7 +23,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @var \Awyiss\Model\Table\FormConditionalRecipientsTable
 	 */
-	protected FormConditionalRecipientsTable $formConditionalRecipientsTable;
+	protected FormConditionalRecipientsTable $conditionalRecipientsTable;
 
 
 	/**
@@ -33,7 +33,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		parent::setUp();
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->formConditionalRecipientsTable = FactoryLocator::get('Table')->get('FormConditionalRecipients');
+		$this->conditionalRecipientsTable = FactoryLocator::get('Table')->get('FormConditionalRecipients');
 	}
 
 
@@ -42,7 +42,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::ATTRIBUTABLE
 	 */
 	public function testAttributableConstant(): void {
-		$this->assertFalse($this->formConditionalRecipientsTable::ATTRIBUTABLE);
+		$this->assertFalse($this->conditionalRecipientsTable::ATTRIBUTABLE);
 	}
 
 
@@ -51,7 +51,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::TABLE
 	 */
 	public function testTableConstant(): void {
-		$this->assertEquals('form_conditional_recipients', $this->formConditionalRecipientsTable::TABLE);
+		$this->assertEquals('form_conditional_recipients', $this->conditionalRecipientsTable::TABLE);
 	}
 
 
@@ -60,37 +60,37 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(5, $this->formConditionalRecipientsTable->associations()->keys());
+		$this->assertCount(5, $this->conditionalRecipientsTable->associations()->keys());
 
 		// Test Forms association (BelongsTo)
-		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('Forms'));
-		$formsAssociation = $this->formConditionalRecipientsTable->getAssociation('Forms');
+		$this->assertTrue($this->conditionalRecipientsTable->hasAssociation('Forms'));
+		$formsAssociation = $this->conditionalRecipientsTable->getAssociation('Forms');
 		$this->assertInstanceOf(BelongsTo::class, $formsAssociation);
-		$this->assertSame('form_id', $formsAssociation->getForeignKey());
+		$this->assertSame('formId', $formsAssociation->getForeignKey());
 		$this->assertSame('INNER', $formsAssociation->getJoinType());
 
 		// 'MediaAssignments' must also exist
-		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('MediaAssignments'));
-		$mediaAssignmentsAssociation = $this->formConditionalRecipientsTable->getAssociation('MediaAssignments');
+		$this->assertTrue($this->conditionalRecipientsTable->hasAssociation('MediaAssignments'));
+		$mediaAssignmentsAssociation = $this->conditionalRecipientsTable->getAssociation('MediaAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaAssignmentsAssociation);
 		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
 		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
 
 		// Test user tracking associations
-		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('CreatedByUser'));
-		$createdByUserAssociation = $this->formConditionalRecipientsTable->getAssociation('CreatedByUser');
+		$this->assertTrue($this->conditionalRecipientsTable->hasAssociation('CreatedByUser'));
+		$createdByUserAssociation = $this->conditionalRecipientsTable->getAssociation('CreatedByUser');
 		$this->assertInstanceOf(BelongsTo::class, $createdByUserAssociation);
 		$this->assertFalse($createdByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($createdByUserAssociation->getDependent());
 
-		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('ChangedByUser'));
-		$changedByUserAssociation = $this->formConditionalRecipientsTable->getAssociation('ChangedByUser');
+		$this->assertTrue($this->conditionalRecipientsTable->hasAssociation('ChangedByUser'));
+		$changedByUserAssociation = $this->conditionalRecipientsTable->getAssociation('ChangedByUser');
 		$this->assertInstanceOf(BelongsTo::class, $changedByUserAssociation);
 		$this->assertFalse($changedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($changedByUserAssociation->getDependent());
 
-		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('DeletedByUser'));
-		$deletedByUserAssociation = $this->formConditionalRecipientsTable->getAssociation('DeletedByUser');
+		$this->assertTrue($this->conditionalRecipientsTable->hasAssociation('DeletedByUser'));
+		$deletedByUserAssociation = $this->conditionalRecipientsTable->getAssociation('DeletedByUser');
 		$this->assertInstanceOf(BelongsTo::class, $deletedByUserAssociation);
 		$this->assertFalse($deletedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($deletedByUserAssociation->getDependent());
@@ -103,10 +103,10 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
-		$result = $this->formConditionalRecipientsTable->validationDefault($validator);
+		$result = $this->conditionalRecipientsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('form_conditional_recipients', $result->getI18nDomain());
+		$this->assertSame('FormConditionalRecipients', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('type'));
@@ -135,7 +135,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'formId' => 1,
-			'type' => 'element_identifier',
+			'type' => 'elementIdentifier',
 			'field' => 'email',
 			'operator' => ComparisonOperator::Equal,
 			'value' => 'test@example.com',
@@ -143,7 +143,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'systemOrder' => 1,
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertEmpty($errors, 'Valid data should not produce validation errors');
@@ -159,7 +159,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'formId' => 1,
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('type', $errors);
@@ -184,7 +184,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'systemOrder' => 'not_an_integer',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('formId', $errors);
@@ -209,7 +209,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'recipient' => str_repeat('c', 256), // exceeds 255 char limit
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data, ['guard' => false]);
+		$entity = $this->conditionalRecipientsTable->newEntity($data, ['guard' => false]);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('formId', $errors);
@@ -233,7 +233,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'recipient' => '   ', // only whitespace
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('type', $errors);
@@ -249,7 +249,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 */
 	public function testEntityValidationTypeInList(): void {
 		// Test valid types
-		$validTypes = ['current_page', 'element_identifier'];
+		$validTypes = ['currentPage', 'elementIdentifier'];
 
 		foreach ($validTypes as $type) {
 			$data = [
@@ -261,7 +261,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 				'recipient' => 'test@example.com',
 			];
 
-			$entity = $this->formConditionalRecipientsTable->newEntity($data);
+			$entity = $this->conditionalRecipientsTable->newEntity($data);
 			$errors = $entity->getErrors();
 
 			$this->assertArrayNotHasKey('type', $errors);
@@ -277,7 +277,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 			'recipient' => 'test@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('type', $errors);
@@ -320,14 +320,14 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		foreach ($validOperators as $operator) {
 			$data = [
 				'formId' => 1,
-				'type' => 'element_identifier',
+				'type' => 'elementIdentifier',
 				'field' => 'test_field',
 				'operator' => $operator,
 				'value' => 'test_value',
 				'recipient' => 'test@example.com',
 			];
 
-			$entity = $this->formConditionalRecipientsTable->newEntity($data);
+			$entity = $this->conditionalRecipientsTable->newEntity($data);
 			$errors = $entity->getErrors();
 
 			$this->assertArrayNotHasKey('operator', $errors);
@@ -343,21 +343,21 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		// Test that value field allows empty string
 		$data = [
 			'formId' => 1,
-			'type' => 'element_identifier',
+			'type' => 'elementIdentifier',
 			'field' => 'test_field',
 			'operator' => ComparisonOperator::Equal,
 			'value' => '', // empty string should be allowed
 			'recipient' => 'test@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayNotHasKey('value', $errors, 'Empty value should be allowed');
 
 		// Test with null value
 		$data['value'] = null;
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertArrayNotHasKey('value', $errors, 'Null value should be allowed');
@@ -372,15 +372,15 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		// Test with existing form
 		$data = [
 			'formId' => 1,
-			'type' => 'element_identifier',
+			'type' => 'elementIdentifier',
 			'field' => 'test_field',
 			'operator' => ComparisonOperator::Equal,
 			'value' => 'test_value',
 			'recipient' => 'test@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
-		$result = $this->formConditionalRecipientsTable->checkRules($entity);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
+		$result = $this->conditionalRecipientsTable->checkRules($entity);
 
 		$this->assertTrue($result);
 	}
@@ -394,15 +394,15 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		// Test with non-existing form
 		$data = [
 			'formId' => 99999,
-			'type' => 'element_identifier',
+			'type' => 'elementIdentifier',
 			'field' => 'test_field',
 			'operator' => ComparisonOperator::Equal,
 			'value' => 'test_value',
 			'recipient' => 'test@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
-		$result = $this->formConditionalRecipientsTable->checkRules($entity);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
+		$result = $this->conditionalRecipientsTable->checkRules($entity);
 
 		$this->assertFalse($result);
 
@@ -417,7 +417,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::newDefaultEntity()
 	 */
 	public function testNewDefaultEntity(): void {
-		$entity = $this->formConditionalRecipientsTable->newDefaultEntity();
+		$entity = $this->conditionalRecipientsTable->newDefaultEntity();
 
 		$this->assertInstanceOf(FormConditionalRecipient::class, $entity);
 		$this->assertTrue($entity->isNew());
@@ -440,23 +440,23 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'formId' => 1,
-			'type' => 'element_identifier',
-			'field' => 'custom_field',
+			'type' => 'elementIdentifier',
+			'field' => 'customField',
 			'operator' => ComparisonOperator::Contains,
 			'value' => 'custom_value',
 			'recipient' => 'custom@example.com',
 			'systemOrder' => 5,
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newDefaultEntity($additionalData);
+		$entity = $this->conditionalRecipientsTable->newDefaultEntity($additionalData);
 
 		$this->assertInstanceOf(FormConditionalRecipient::class, $entity);
 		$this->assertTrue($entity->isNew());
 
 		// Check custom values
 		$this->assertSame(1, $entity->formId);
-		$this->assertSame('element_identifier', $entity->type);
-		$this->assertSame('custom_field', $entity->field);
+		$this->assertSame('elementIdentifier', $entity->type);
+		$this->assertSame('customField', $entity->field);
 		$this->assertSame(ComparisonOperator::Contains, $entity->operator);
 		$this->assertSame('custom_value', $entity->value);
 		$this->assertSame('custom@example.com', $entity->recipient);
@@ -469,9 +469,9 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::$systemOrder
 	 */
 	public function testSystemOrderBehavior(): void {
-		$this->assertTrue($this->formConditionalRecipientsTable->hasBehavior('SystemOrder'));
+		$this->assertTrue($this->conditionalRecipientsTable->hasBehavior('SystemOrder'));
 
-		$config = $this->formConditionalRecipientsTable->getBehavior('SystemOrder')->getConfig();
+		$config = $this->conditionalRecipientsTable->getBehavior('SystemOrder')->getConfig();
 
 		$this->assertSame(['formId'], $config['relatedColumns']);
 	}
@@ -482,7 +482,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::initializeSchema()
 	 */
 	public function testInitializeSchemaEnumColumn(): void {
-		$schema = $this->formConditionalRecipientsTable->getSchema();
+		$schema = $this->conditionalRecipientsTable->getSchema();
 
 		// Test that operator column is configured as enum type
 		$this->assertSame('enum-awyiss-model-enum-comparisonoperator', $schema->getColumnType('operator'));
@@ -494,17 +494,17 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
 	 */
 	public function testEntityValidationCurrentPageType(): void {
-		// Test current_page type
+		// Test currentPage type
 		$data = [
 			'formId' => 1,
-			'type' => 'current_page',
+			'type' => 'currentPage',
 			'field' => 'page_id',
 			'operator' => ComparisonOperator::Equal,
 			'value' => '123',
 			'recipient' => 'page@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertEmpty($errors);
@@ -516,17 +516,17 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
 	 */
 	public function testEntityValidationElementIdentifierType(): void {
-		// Test element_identifier type
+		// Test elementIdentifier type
 		$data = [
 			'formId' => 1,
-			'type' => 'element_identifier',
+			'type' => 'elementIdentifier',
 			'field' => 'email_field',
 			'operator' => ComparisonOperator::NotEqual,
 			'value' => 'unwanted@example.com',
 			'recipient' => 'special@example.com',
 		];
 
-		$entity = $this->formConditionalRecipientsTable->newEntity($data);
+		$entity = $this->conditionalRecipientsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
 		$this->assertEmpty($errors);
@@ -565,14 +565,14 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		foreach ($testCases as $testCase) {
 			$data = [
 				'formId' => 1,
-				'type' => 'element_identifier',
+				'type' => 'elementIdentifier',
 				'field' => 'test_field',
 				'operator' => $testCase['operator'],
 				'value' => $testCase['value'],
 				'recipient' => 'test@example.com',
 			];
 
-			$entity = $this->formConditionalRecipientsTable->newEntity($data);
+			$entity = $this->conditionalRecipientsTable->newEntity($data);
 			$errors = $entity->getErrors();
 
 			$this->assertEmpty($errors);
@@ -596,14 +596,14 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		foreach ($validEmails as $email) {
 			$data = [
 				'formId' => 1,
-				'type' => 'element_identifier',
+				'type' => 'elementIdentifier',
 				'field' => 'test_field',
 				'operator' => ComparisonOperator::Equal,
 				'value' => 'test_value',
 				'recipient' => $email,
 			];
 
-			$entity = $this->formConditionalRecipientsTable->newEntity($data);
+			$entity = $this->conditionalRecipientsTable->newEntity($data);
 			$errors = $entity->getErrors();
 
 			$this->assertEmpty($errors);

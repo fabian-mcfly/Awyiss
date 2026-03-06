@@ -40,7 +40,7 @@ class JobApplicationFormTemplateTest extends TestCase {
 		]);
 
 		$this->assertCount(8, $elements);
-		$this->assertSame(['title', 'firstname', 'lastname', 'phone', 'email', null, 'privacy_accepted', null], array_column($elements, 'identifier'));
+		$this->assertSame(['title', 'firstname', 'lastname', 'phone', 'email', null, 'privacyAccepted', null], array_column($elements, 'identifier'));
 		$this->assertSame(['Titel', 'Vorname', 'Nachname', 'Telefon', 'E-Mail', 'Datenschutz akzeptiert', 'Absenden'], array_column($elements, 'title'));
 	}
 
@@ -61,7 +61,7 @@ class JobApplicationFormTemplateTest extends TestCase {
 			['de' => ['title' => 'Titel'], 'en' => ['title' => 'Title']],
 			['de' => ['title' => 'Vorname'], 'en' => ['title' => 'Firstname']],
 			['de' => ['title' => 'Nachname'], 'en' => ['title' => 'Lastname']],
-			['de' => ['title' => 'Telefon', 'optional_placeholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optional_placeholder' => '(optional)']],
+			['de' => ['title' => 'Telefon', 'optionalPlaceholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optionalPlaceholder' => '(optional)']],
 			['de' => ['title' => 'E-Mail'], 'en' => ['title' => 'Email']],
 			[
 				'de' => ['text' => '<strong>Bewerbungsunterlagen</strong><br>Platz für Lebenslauf, Zeugnisse und ein optionales Anschreiben'],

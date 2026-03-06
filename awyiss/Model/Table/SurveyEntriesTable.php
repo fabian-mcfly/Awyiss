@@ -41,7 +41,7 @@ class SurveyEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['survey_id', 'page_id'],
+		'blocklistedColumns' => ['surveyId', 'pageId'],
 	];
 
 
@@ -49,7 +49,9 @@ class SurveyEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('Surveys');
+		$this->belongsTo('Surveys', [
+			'foreignKey' => 'surveyId',
+		]);
 
 		$this->belongsTo('Pages', [
 			'finder' => [
@@ -57,6 +59,7 @@ class SurveyEntriesTable extends Table {
 					'skipPageRoleCheck' => true,
 				],
 			],
+			'foreignKey' => 'pageId',
 		]);
 	}
 
@@ -148,7 +151,7 @@ class SurveyEntriesTable extends Table {
 			'surveyExists',
 			[
 				'errorField' => 'surveyId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_survey_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_survey_exists'),
 			]
 		);
 
@@ -157,7 +160,7 @@ class SurveyEntriesTable extends Table {
 			'pageExists',
 			[
 				'errorField' => 'pageId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_page_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_page_exists'),
 			]
 		);
 

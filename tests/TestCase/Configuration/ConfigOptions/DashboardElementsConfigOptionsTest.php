@@ -56,12 +56,12 @@ class DashboardElementsConfigOptionsTest extends TestCase {
 			'scope' => 'dashboard_elements::scope',
 			'access' => 'dashboard_elements::access',
 			'settings' => 'dashboard_elements::settings',
-			'system_order' => 'dashboard_elements::system_order',
+			'systemOrder' => 'dashboard_elements::system_order',
 			'active' => 'dashboard_elements::active',
-			'created_by' => 'dashboard_elements::created_by',
-			'created_on' => 'dashboard_elements::created_on',
-			'changed_by' => 'dashboard_elements::changed_by',
-			'changed_on' => 'dashboard_elements::changed_on',
+			'createdBy' => 'dashboard_elements::created_by',
+			'createdOn' => 'dashboard_elements::created_on',
+			'changedBy' => 'dashboard_elements::changed_by',
+			'changedOn' => 'dashboard_elements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

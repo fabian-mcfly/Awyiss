@@ -41,7 +41,7 @@
 						{% endblock %}
 
 						{% block buttonViewContents %}
-							{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+							{% if page.duplicateOf is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
 								{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
 							{% endif %}
 						{% endblock %}
@@ -53,7 +53,7 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'PageForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+	{{ FormHelper.checkbox('saveAsCopy', {form: 'PageForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
@@ -72,7 +72,7 @@
 
 				{% block formEditButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'PageForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'PageForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

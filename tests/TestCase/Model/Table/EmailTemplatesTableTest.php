@@ -69,14 +69,14 @@ class EmailTemplatesTableTest extends TestCase {
 		$formEmailsAssociation = $this->emailTemplatesTable->getAssociation('FormEmails');
 		$this->assertInstanceOf(HasMany::class, $formEmailsAssociation);
 		$this->assertSame('Forms', $formEmailsAssociation->getClassName());
-		$this->assertSame('email_template_id', $formEmailsAssociation->getForeignKey());
+		$this->assertSame('emailTemplateId', $formEmailsAssociation->getForeignKey());
 
 		// Test FormConfirmationEmails association (HasMany to Forms)
 		$this->assertTrue($this->emailTemplatesTable->hasAssociation('FormConfirmationEmails'));
 		$formConfirmationEmailsAssociation = $this->emailTemplatesTable->getAssociation('FormConfirmationEmails');
 		$this->assertInstanceOf(HasMany::class, $formConfirmationEmailsAssociation);
 		$this->assertSame('Forms', $formConfirmationEmailsAssociation->getClassName());
-		$this->assertSame('confirmation_email_template_id', $formConfirmationEmailsAssociation->getForeignKey());
+		$this->assertSame('confirmationEmailTemplateId', $formConfirmationEmailsAssociation->getForeignKey());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->emailTemplatesTable->hasAssociation('MediaAssignments'));
@@ -186,7 +186,7 @@ class EmailTemplatesTableTest extends TestCase {
 		$result = $this->emailTemplatesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('email_templates', $result->getI18nDomain());
+		$this->assertSame('EmailTemplates', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));

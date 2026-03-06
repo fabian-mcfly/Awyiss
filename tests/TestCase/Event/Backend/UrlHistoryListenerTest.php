@@ -68,14 +68,14 @@ class UrlHistoryListenerTest extends TestCase {
 
 		// Case 2: scope is not empty
 		$data = new ArrayObject([
-			'scope' => 'some-scope',
+			'scope' => 'SomeScope',
 			'foreignKey' => 456,
 			'target' => 'some-target',
 		]);
 
 		$this->listener->beforeMarshal($event, $data, new ArrayObject());
 
-		$this->assertSame('some-scope', $data['scope']);
+		$this->assertSame('SomeScope', $data['scope']);
 		$this->assertSame(456, $data['foreignKey']);
 		$this->assertNull($data['target']);
 	}

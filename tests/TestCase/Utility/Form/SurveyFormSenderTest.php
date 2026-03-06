@@ -58,10 +58,10 @@ class SurveyFormSenderTest extends TestCase {
 		$renderer = new SurveyRenderer(new FrontendView());
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [8, 9],
 					'7d654446' => 'custom',
@@ -132,10 +132,10 @@ class SurveyFormSenderTest extends TestCase {
 		$renderer = new SurveyRenderer(new FrontendView());
 
 		// Prepare request data to submit the form with valid data
-		$renderer->initSurvey('dummy_survey', [
-			'_survey_identifier' => 'dummy_survey',
+		$renderer->initSurvey('dummySurvey', [
+			'_surveyIdentifier' => 'dummySurvey',
 			'survey' => [
-				'dummy_survey' => [
+				'dummySurvey' => [
 					'8524de5e' => 4,
 					'f69b1648' => [8, 9],
 					'7d654446' => 'custom',

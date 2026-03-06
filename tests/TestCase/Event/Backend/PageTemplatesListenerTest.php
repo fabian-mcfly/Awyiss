@@ -128,7 +128,7 @@ class PageTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('page_templates::file_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('PageTemplates::fileChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -160,7 +160,7 @@ class PageTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('page_templates::file_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('PageTemplates::fileChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -209,7 +209,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -297,7 +297,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -391,7 +391,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -445,7 +445,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -501,7 +501,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -561,7 +561,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -605,7 +605,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 
@@ -693,7 +693,7 @@ class PageTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]
 		);
 

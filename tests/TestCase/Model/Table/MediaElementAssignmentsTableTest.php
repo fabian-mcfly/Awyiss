@@ -68,8 +68,8 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
 		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
 		$this->assertEquals('replace', $mediaAssignmentsAssociation->getSaveStrategy());
-		$this->assertSame(['media_element_id', 'scope'], $mediaAssignmentsAssociation->getBindingKey());
-		$this->assertSame(['media_element_id', 'scope'], $mediaAssignmentsAssociation->getForeignKey());
+		$this->assertSame(['mediaElementId', 'scope'], $mediaAssignmentsAssociation->getBindingKey());
+		$this->assertSame(['mediaElementId', 'scope'], $mediaAssignmentsAssociation->getForeignKey());
 
 		// Test MediaElements association (BelongsTo)
 		$this->assertTrue($this->mediaElementAssignmentsTable->hasAssociation('MediaElements'));
@@ -90,7 +90,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		$result = $this->mediaElementAssignmentsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_element_assignments', $result->getI18nDomain());
+		$this->assertSame('MediaElementAssignments', $result->getI18nDomain());
 
 		// Test fields exist
 		$this->assertTrue($result->hasField('id'));
@@ -107,7 +107,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => 1,
 		];
 
@@ -125,7 +125,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testEntityValidationSuccessWithNullForeignKey(): void {
 		$data = [
 			'mediaElementId' => 3,
-			'scope' => 'cars',
+			'scope' => 'Cars',
 			'foreignKey' => null,
 		];
 
@@ -220,7 +220,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testEntityValidationForeignKeyAllowEmpty(): void {
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => null, // Should be allowed
 		];
 
@@ -239,7 +239,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with existing media element
 		$data = [
 			'mediaElementId' => 3,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => 1,
 		];
 
@@ -257,7 +257,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with non-existing media element
 		$data = [
 			'mediaElementId' => 99999,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => 1,
 		];
 
@@ -279,7 +279,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with valid assignable scope
 		$data = [
 			'mediaElementId' => 3,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => 1,
 		];
 
@@ -297,7 +297,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with invalid scope
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'invalid_scope',
+			'scope' => 'InvalidScope',
 			'foreignKey' => 1,
 		];
 
@@ -319,7 +319,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test entity level assignment on scope that doesn't allow entity level
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'cars',
+			'scope' => 'Cars',
 			'foreignKey' => 1,
 		];
 
@@ -341,7 +341,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test valid model level assignment (null foreign key)
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'cars',
+			'scope' => 'Cars',
 			'foreignKey' => null,
 		];
 
@@ -359,7 +359,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with non-existing entity
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'global_content_templates',
+			'scope' => 'GlobalContentTemplates',
 			'foreignKey' => 99999,
 		];
 
@@ -437,7 +437,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'mediaElementId' => 4,
-			'scope' => 'content_templates',
+			'scope' => 'ContentTemplates',
 			'foreignKey' => 2,
 		];
 
@@ -449,7 +449,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame(4, $entity->mediaElementId);
-		$this->assertSame('content_templates', $entity->scope);
+		$this->assertSame('ContentTemplates', $entity->scope);
 		$this->assertSame(2, $entity->foreignKey);
 	}
 }

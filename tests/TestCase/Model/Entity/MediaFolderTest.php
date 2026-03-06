@@ -244,14 +244,14 @@ class MediaFolderTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'parent_id' => 123,
+			'parentId' => 123,
 			'path' => 'Test Media/Folder',
-			'language_shortcode' => 'de',
+			'languageShortcode' => 'de',
 			'title' => 'Test Media Folder',
 			'hidden' => false,
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
-			'parents_active' => true,
+			'parentsActive' => true,
 			'deleted' => false,
 		];
 
@@ -267,26 +267,5 @@ class MediaFolderTest extends TestCase {
 		$this->assertTrue($entity->active);
 		$this->assertTrue($entity->parentsActive);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaFolder::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'parent_id' => 456,
-			'language_shortcode' => 'en',
-			'system_order' => 5,
-			'parents_active' => true,
-		];
-
-		$entity = new MediaFolder($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

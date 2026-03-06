@@ -20,16 +20,6 @@ class AttributesGlobalContent extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'global_content_id' => 'globalContentId',
-		'free_text' => 'freeText',
-		'free_text_inactive' => 'freeTextInactive',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'globalContentId' => true,
 		'teaser' => true,

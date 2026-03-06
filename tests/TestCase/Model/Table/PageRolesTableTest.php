@@ -168,7 +168,7 @@ class PageRolesTableTest extends TestCase {
 		$result = $this->pageRolesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('page_roles', $result->getI18nDomain());
+		$this->assertSame('PageRoles', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -342,10 +342,10 @@ class PageRolesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
 	 */
 	public function testBuildRulesInvalidIdentifierAttributesPrefix(): void {
-		// Test with attributes_ prefix (blocklisted)
+		// Test with attributes prefix (blocklisted)
 		$data = [
 			'title' => 'Test Page Role',
-			'identifier' => 'attributes_test', // starts with attributes_
+			'identifier' => 'attributesTest', // starts with attributes
 			'includeInLinklist' => true,
 			'systemOrder' => 10,
 			'active' => true,
@@ -398,7 +398,7 @@ class PageRolesTableTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
 		$pageRole = $this->pageRolesTable->get(1);
 
-		$pageRole->identifier = 'new_identifier';
+		$pageRole->identifier = 'newIdentifier';
 		$result = $this->pageRolesTable->checkRules($pageRole);
 		$this->assertFalse($result);
 
@@ -418,7 +418,7 @@ class PageRolesTableTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
 		$pageRole = $this->pageRolesTable->get(1);
 
-		$pageRole->identifier = 'new_identifier';
+		$pageRole->identifier = 'newIdentifier';
 		$result = $this->pageRolesTable->checkRules($pageRole, RulesChecker::UPDATE, ['isCopy' => true]);
 		$this->assertTrue($result);
 	}

@@ -85,7 +85,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'settings.includeHomepage' => [
 				'checked' => $settings['includeHomepage'] ?? true,
 				'columnSpan' => 6,
-				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_homepage'),
+				'label' => __df('Frontend/Breadcrumbs', 'Frontend/Widgets', 'include_homepage'),
 				'type' => 'checkbox',
 			],
 
@@ -93,7 +93,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'settings.includeCurrentPage' => [
 				'checked' => $settings['includeCurrentPage'] ?? true,
 				'columnSpan' => 6,
-				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_current_page'),
+				'label' => __df('Frontend/Breadcrumbs', 'Frontend/Widgets', 'include_current_page'),
 				'type' => 'checkbox',
 			],
 
@@ -101,7 +101,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'settings.showOnHomepage' => [
 				'checked' => $settings['showOnHomepage'] ?? false,
 				'columnSpan' => 6,
-				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'show_on_homepage'),
+				'label' => __df('Frontend/Breadcrumbs', 'Frontend/Widgets', 'show_on_homepage'),
 				'type' => 'checkbox',
 			],
 
@@ -109,7 +109,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'settings.includeInaccessiblePages' => [
 				'checked' => $settings['includeInaccessiblePages'] ?? false,
 				'columnSpan' => 6,
-				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_inaccessible_pages'),
+				'label' => __df('Frontend/Breadcrumbs', 'Frontend/Widgets', 'include_inaccessible_pages'),
 				'type' => 'checkbox',
 			],
 
@@ -117,7 +117,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'settings.homepageId' => [
 				'columnSpan' => 12,
 				'empty' => true,
-				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'homepage_id'),
+				'label' => __df('Frontend/Breadcrumbs', 'Frontend/Widgets', 'homepage_id'),
 				'options' => static::getHomepageOptions(),
 				'type' => 'select',
 				'value' => $settings['homepageId'] ?? null,
@@ -280,7 +280,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 				],
 			],
 			'PageTemplates' => [
-				'fields' => ['id', 'file_name'],
+				'fields' => ['id', 'fileName'],
 				'finder' => [
 					$languageShortcode ? 'withDeleted' : 'all' => [
 						'translate' => ['skip' => true],
@@ -290,29 +290,29 @@ class BreadcrumbsWidget extends AbstractWidget {
 		]);
 
 		if (static::$isPreview) {
-			// Order all by deleted, system_order
+			// Order all by deleted, systemOrder
 			$query->orderBy([
 				'Pages.deleted' => 'ASC',
 			]);
 		}
 		else {
-			// Order all by deleted, parents_active, active, system_order
+			// Order all by deleted, parentsActive, active, systemOrder
 			$query->orderBy([
 				'Pages.deleted' => 'ASC',
-				'Pages.parents_active' => 'DESC',
+				'Pages.parentsActive' => 'DESC',
 				'Pages.active' => 'DESC',
 			]);
 		}
 
 		$query->orderBy([
 			'PageRoles.active' => 'DESC',
-			'PageRoles.system_order' => 'ASC',
+			'PageRoles.systemOrder' => 'ASC',
 		]);
 
-		$query->where(['language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
+		$query->where(['languageShortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
 
-		// Order by parent_id first
-		$query->orderBy(['Pages.parent_id' => 'ASC']);
+		// Order by parentId first
+		$query->orderBy(['Pages.parentId' => 'ASC']);
 
 		$query->limit(1);
 

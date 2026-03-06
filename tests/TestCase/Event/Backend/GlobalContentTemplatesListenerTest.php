@@ -79,15 +79,15 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		$this->assertArrayNotHasKey('global_content_template_elements', $data);
+		$this->assertArrayNotHasKey('globalContentTemplateElements', $data);
 
-		$data = new ArrayObject(['global_content_template_elements' => null]);
+		$data = new ArrayObject(['globalContentTemplateElements' => null]);
 		$options = new ArrayObject();
 		$event = new Event('Model.GlobalContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		$this->assertNull($data['global_content_template_elements']);
+		$this->assertNull($data['globalContentTemplateElements']);
 	}
 
 
@@ -99,25 +99,25 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 		$elements = [
 			['identifier' => 'title'],
 			['identifier' => 'subtitle'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['global_content_template_elements' => $elements]);
+		$data = new ArrayObject(['globalContentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.GlobalContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
 		// All elements should remain since title and subtitle are present
-		$this->assertCount(5, $data['global_content_template_elements']);
-		$identifiers = array_column($data['global_content_template_elements'], 'identifier');
+		$this->assertCount(5, $data['globalContentTemplateElements']);
+		$identifiers = array_column($data['globalContentTemplateElements'], 'identifier');
 		$this->assertContains('title', $identifiers);
 		$this->assertContains('subtitle', $identifiers);
-		$this->assertContains('title_tag', $identifiers);
-		$this->assertContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('titleTag', $identifiers);
+		$this->assertContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -128,24 +128,24 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 	public function testBeforeMarshalWithTitleButNoSubtitle(): void {
 		$elements = [
 			['identifier' => 'title'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['global_content_template_elements' => $elements]);
+		$data = new ArrayObject(['globalContentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.GlobalContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		// subtitle_tag should be filtered out since subtitle is not present
-		$this->assertCount(3, $data['global_content_template_elements']);
-		$identifiers = array_column($data['global_content_template_elements'], 'identifier');
+		// subtitleTag should be filtered out since subtitle is not present
+		$this->assertCount(3, $data['globalContentTemplateElements']);
+		$identifiers = array_column($data['globalContentTemplateElements'], 'identifier');
 		$this->assertContains('title', $identifiers);
-		$this->assertContains('title_tag', $identifiers);
-		$this->assertNotContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('titleTag', $identifiers);
+		$this->assertNotContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -156,24 +156,24 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 	public function testBeforeMarshalWithSubtitleButNoTitle(): void {
 		$elements = [
 			['identifier' => 'subtitle'],
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['global_content_template_elements' => $elements]);
+		$data = new ArrayObject(['globalContentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.GlobalContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		// title_tag should be filtered out since title is not present
-		$this->assertCount(3, $data['global_content_template_elements']);
-		$identifiers = array_column($data['global_content_template_elements'], 'identifier');
+		// titleTag should be filtered out since title is not present
+		$this->assertCount(3, $data['globalContentTemplateElements']);
+		$identifiers = array_column($data['globalContentTemplateElements'], 'identifier');
 		$this->assertContains('subtitle', $identifiers);
-		$this->assertContains('subtitle_tag', $identifiers);
-		$this->assertNotContains('title_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		$this->assertContains('subtitleTag', $identifiers);
+		$this->assertNotContains('titleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -183,23 +183,23 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 	 */
 	public function testBeforeMarshalWithNeitherTitleNorSubtitle(): void {
 		$elements = [
-			['identifier' => 'title_tag'],
-			['identifier' => 'subtitle_tag'],
-			['identifier' => 'other_element'],
+			['identifier' => 'titleTag'],
+			['identifier' => 'subtitleTag'],
+			['identifier' => 'otherElement'],
 		];
 
-		$data = new ArrayObject(['global_content_template_elements' => $elements]);
+		$data = new ArrayObject(['globalContentTemplateElements' => $elements]);
 		$options = new ArrayObject();
 		$event = new Event('Model.GlobalContentTemplates.beforeMarshal');
 
 		$this->listener->beforeMarshal($event, $data, $options);
 
-		// Both title_tag and subtitle_tag should be filtered out
-		$this->assertCount(1, $data['global_content_template_elements']);
-		$identifiers = array_column($data['global_content_template_elements'], 'identifier');
-		$this->assertNotContains('title_tag', $identifiers);
-		$this->assertNotContains('subtitle_tag', $identifiers);
-		$this->assertContains('other_element', $identifiers);
+		// Both titleTag and subtitleTag should be filtered out
+		$this->assertCount(1, $data['globalContentTemplateElements']);
+		$identifiers = array_column($data['globalContentTemplateElements'], 'identifier');
+		$this->assertNotContains('titleTag', $identifiers);
+		$this->assertNotContains('subtitleTag', $identifiers);
+		$this->assertContains('otherElement', $identifiers);
 	}
 
 
@@ -264,7 +264,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('global_content_templates::file_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('GlobalContentTemplates::fileChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -296,7 +296,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 		// Mock the queue table to return false for isQueued
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('global_content_templates::file_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('GlobalContentTemplates::fileChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -345,7 +345,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -433,7 +433,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -527,7 +527,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -580,7 +580,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -636,7 +636,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -695,7 +695,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -739,7 +739,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 
@@ -824,7 +824,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]
 		);
 

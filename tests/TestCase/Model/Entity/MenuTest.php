@@ -61,22 +61,22 @@ class MenuTest extends TestCase {
 		$entity = new Menu();
 
 		$entity->identifier = 'Main Menu';
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->identifier = 'MainMenu';
-		$this->assertEquals('mainmenu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->identifier = 'Main-Menu';
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->identifier = 'Main Menu!@#$%';
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->identifier = 'FOOTER MENU';
-		$this->assertEquals('footer_menu', $entity->identifier);
+		$this->assertEquals('fOOTERMENU', $entity->identifier);
 
 		$entity->identifier = 'Social Media Menu';
-		$this->assertEquals('social_media_menu', $entity->identifier);
+		$this->assertEquals('socialMediaMenu', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -91,22 +91,22 @@ class MenuTest extends TestCase {
 		$entity = new Menu();
 
 		$entity->set('identifier', 'Main Menu');
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->set('identifier', 'MainMenu');
-		$this->assertEquals('mainmenu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->set('identifier', 'Main-Menu');
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->set('identifier', 'Main Menu!@#$%');
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 
 		$entity->set('identifier', 'FOOTER MENU');
-		$this->assertEquals('footer_menu', $entity->identifier);
+		$this->assertEquals('fOOTERMENU', $entity->identifier);
 
 		$entity->set('identifier', 'Social Media Menu');
-		$this->assertEquals('social_media_menu', $entity->identifier);
+		$this->assertEquals('socialMediaMenu', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -131,26 +131,8 @@ class MenuTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Hauptmenü', $entity->title);
-		$this->assertEquals('main_menu', $entity->identifier);
+		$this->assertEquals('mainMenu', $entity->identifier);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Menu::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'menu_entries' => [],
-		];
-
-		$entity = new Menu($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

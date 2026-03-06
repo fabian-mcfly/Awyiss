@@ -1,14 +1,14 @@
 {%- if customer.firstname and customer.lastname %}
-	{%- set greeting = __d('customers', 'account_verification_email_greeting_name', customer.firstname, customer.lastname) %}
+	{%- set greeting = __d('Customers', 'account_verification_email_greeting_name', customer.firstname, customer.lastname) %}
 {%- else %}
-	{%- set greeting = __d('customers', 'account_verification_email_greeting_generic') %}
+	{%- set greeting = __d('Customers', 'account_verification_email_greeting_generic') %}
 {%- endif %}
 
 {{- greeting }}
 
-{{ __d('customers', 'account_verification_email_text') }}
+{{ __d('Customers', 'account_verification_email_text') }}
 
-{{ __d('customers', 'account_verification_email_link_text') }}:  {{ verifyUrl }}
+{{ __d('Customers', 'account_verification_email_link_text') }}:  {{ verifyUrl }}
 
-{{ __d('customers', 'verification_code') }}:  {{ verificationCode }}
+{{ __d('Customers', 'verification_code') }}:  {{ verificationCode }}
 

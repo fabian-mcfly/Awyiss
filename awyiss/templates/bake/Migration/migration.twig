@@ -84,8 +84,8 @@ class {{ name }} extends AbstractMigration {
 		}
 {% else %}
 {% for column, config in columns['fields'] %}
-		if ($table->hasIndexByName('BY_{{ column|upper }}')) {
-			$table->removeIndexByName('BY_{{ column|upper }}');
+		if ($table->hasIndexByName('BY_{{ (config['originalName'] is not empty ? config['originalName'] : column)|upper }}')) {
+			$table->removeIndexByName('BY_{{ (config['originalName'] is not empty ? config['originalName'] : column)|upper }}');
 		}
 {% endfor %}
 {% endfor %}

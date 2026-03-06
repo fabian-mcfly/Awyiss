@@ -77,9 +77,9 @@ class ContentsController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedContentAreaIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.content_area_id';
-		$this->selectedPageIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.page_id';
-		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+		$this->selectedContentAreaIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.contentAreaId';
+		$this->selectedPageIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.pageId';
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
 	}
 
 
@@ -236,9 +236,8 @@ class ContentsController extends Controller {
 
 		$this->setViewVars($content);
 
-		/** @noinspection PhpUndefinedMethodInspection */
 		$this->set('auditDataCount', $this->Contents->countAuditData($content));
-		$this->set('isDuplicated', $this->Contents->exists(['duplicate_of' => $content->id]));
+		$this->set('isDuplicated', $this->Contents->exists(['duplicateOf' => $content->id]));
 	}
 
 
@@ -369,17 +368,17 @@ class ContentsController extends Controller {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 			$this->set('success', true);
-			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('message', $affectedRows > 0 ? __d('System', 'system_order_saved') : __d('System', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 		}
 		else {
 			if ($affectedRows) {
-				$this->Flash->success(__d('system', 'system_order_saved'));
+				$this->Flash->success(__d('System', 'system_order_saved'));
 			}
 			else {
-				$this->Flash->error(__d('system', 'system_order_not_saved'));
+				$this->Flash->error(__d('System', 'system_order_not_saved'));
 			}
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -404,10 +403,13 @@ class ContentsController extends Controller {
 
 		$duplicateOfPage = null;
 
-		if ($this->request->is('post') && $this->request->getData('duplicate_of_page_id')) {
-			$duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
+		if ($this->request->is('post') && $this->request->getData('duplicateOfPageId')) {
+			$duplicateOfPage = $this->getPage((int)$this->request->getData('duplicateOfPageId'));
 
-			$query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where(['page_id' => $duplicateOfPage->id])->contain(['ContentTemplates']);
+			$query = $this->Contents->find()
+				->find('mediaAssignments', useMediaEntity: true)
+				->where(['pageId' => $duplicateOfPage->id])
+				->contain(['ContentTemplates']);
 
 			$contents = $query->formatResults(function (Collection $result): Collection {
 				/** @var \Awyiss\Model\Entity\Content $content */
@@ -461,8 +463,8 @@ class ContentsController extends Controller {
 			'page' => $this->page,
 			'currentPageRole' => $this->Contents->getForScope(),
 			'duplicateOfPage' => $duplicateOfPage,
-			'duplicateOf' => $this->request->getData('duplicate_of'),
-			'contentTemplateId' => $this->request->getData('content_template_id'),
+			'duplicateOf' => $this->request->getData('duplicateOf'),
+			'contentTemplateId' => $this->request->getData('contentTemplateId'),
 		]);
 
 		$this->viewBuilder()->setLayout('overlay_configuration');
@@ -494,11 +496,11 @@ class ContentsController extends Controller {
 		$backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 
 		$this->set([
-			'widget_identifier' => $this->request->getData('widget_identifier'),
+			'widgetIdentifier' => $this->request->getData('widgetIdentifier'),
 			'frontendLanguage' => $frontendLanguage,
 			'userLanguage' => $backendLanguage,
 			'widgets' => $widgets,
-			'widgetClass' => $widgetFiles[ $this->request->getData('widget_identifier') ] ?? null,
+			'widgetClass' => $widgetFiles[ $this->request->getData('widgetIdentifier') ] ?? null,
 			'settings' => $this->request->getData('settings') ?? [],
 		]);
 
@@ -523,22 +525,22 @@ class ContentsController extends Controller {
 		$requestData = $this->formatDataAttributes($requestData);
 
 		$duplicateOf = null;
-		if (!empty($requestData['duplicate_of'])) {
+		if (!empty($requestData['duplicateOf'])) {
 			/** @var \Awyiss\Model\Entity\Content $duplicateOf */
-			$duplicateOf = $this->Contents->findById($requestData['duplicate_of'])->first();
-			$requestData['content_template_id'] = $duplicateOf ? $duplicateOf->contentTemplateId : $this->getContentTemplates()->first()->id;
+			$duplicateOf = $this->Contents->findById($requestData['duplicateOf'])->first();
+			$requestData['contentTemplateId'] = $duplicateOf ? $duplicateOf->contentTemplateId : $this->getContentTemplates()->first()->id;
 		}
 
 		$this->Contents->patchEntity($content, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		if ($duplicateOf && $duplicateOf->pageId === $content->pageId) {
 			$content->duplicateOf = null;
 		}
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 			if ($content->isDirty('pageId')) {
 				//Make sure the new page role of the new page id is accessible (could have changed)
 				$this->page = $this->forPage($content->pageId);
@@ -547,7 +549,7 @@ class ContentsController extends Controller {
 
 			$this->unsetUnassignedElements($content);
 
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Contents->save($content, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -560,7 +562,7 @@ class ContentsController extends Controller {
 				$session->write($this->selectedPageIdSessionIdentifier, $content->pageId);
 				$session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true), 302);
 				}
 
@@ -677,7 +679,7 @@ class ContentsController extends Controller {
 
 		// Now that we have the page id, we get all current contents
 		$contents = $table->find()->where([
-			'page_id' => $content->pageId,
+			'pageId' => $content->pageId,
 		])->all();
 
 		// And make sure that all contents in the request data are part of the current contents
@@ -703,9 +705,9 @@ class ContentsController extends Controller {
 			}
 
 			return [
-				'content_area_id' => $contentAreaCase,
-				'parent_id' => $parentCase,
-				'system_order' => $systemOrderCase,
+				'contentAreaId' => $contentAreaCase,
+				'parentId' => $parentCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),
@@ -746,7 +748,7 @@ class ContentsController extends Controller {
 				'title',
 				'active',
 			])->matching('ContentAreas', function (SelectQuery $query) use ($pageTemplateId) {
-				return $query->where(['ContentTemplateContentAreas.page_template_id' => $pageTemplateId]);
+				return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplateId]);
 			})->contain([
 				'ContentAreas',
 				'ContentTemplateElements',
@@ -774,8 +776,8 @@ class ContentsController extends Controller {
 			}
 
 			$query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where([
-				'page_id' => $content->pageId,
-				'content_area_id' => $content->contentAreaId,
+				'pageId' => $content->pageId,
+				'contentAreaId' => $content->contentAreaId,
 			]);
 
 			$this->threadedContents = $this->Contents->listNested($query);
@@ -823,13 +825,13 @@ class ContentsController extends Controller {
 				$pageTable = $this->fetchTable('Pages');
 				/** @var \Awyiss\Model\Entity\Page $page */
 				$page = $pageTable->find()->select('id')->where([
-					'page_role_id' => 1,
-					'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
+					'pageRoleId' => 1,
+					'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 				])->orderBy([
 					'Pages.deleted' => 'ASC',
-					'Pages.parents_active' => 'DESC',
+					'Pages.parentsActive' => 'DESC',
 					'Pages.active' => 'DESC',
-					'Pages.parent_id' => 'ASC',
+					'Pages.parentId' => 'ASC',
 				])->first();
 
 				$pageId = $page?->id;
@@ -837,7 +839,7 @@ class ContentsController extends Controller {
 		}
 
 		if (!$pageId) {
-			$this->Flash->error(__d('pages', 'record_not_found'));
+			$this->Flash->error(__d('Pages', 'record_not_found'));
 			throw new RedirectException(Router::url(['controller' => 'dashboard', 'action' => 'overview'], true), 404);
 		}
 
@@ -853,7 +855,7 @@ class ContentsController extends Controller {
 
 		$languageShortcode = null;
 		if ($this->request->is(['patch', 'post', 'put']) && in_array($this->request->getParam('action'), ['add', 'edit'])) {
-			$languageShortcode = $this->request->getData('language_shortcode');
+			$languageShortcode = $this->request->getData('languageShortcode');
 		}
 
 		$this->Categories->setConfig([
@@ -910,14 +912,14 @@ class ContentsController extends Controller {
 			$content->parentId &&
 			(
 				!in_array($content->parentId, $possibleParentIds) ||
-				!isset($assignedContentElements['parent_id'])
+				!isset($assignedContentElements['parentId'])
 			)
 		) {
 			// Remember the errors
 			$errors = $content->getError('parentId');
 
 			// If the parent_id is required and there are possible parent ids, set the parent_id to the first possible parent id
-			if (($assignedContentElements['parent_id'] ?? null)?->required === true && $possibleParentIds) {
+			if (($assignedContentElements['parentId'] ?? null)?->required === true && $possibleParentIds) {
 				$content->parentId = reset($possibleParentIds);
 			}
 			// Otherwise, set the parent_id to null
@@ -932,8 +934,8 @@ class ContentsController extends Controller {
 
 			$request = $this->getRequest();
 			//When parent_id is part of the request data, overwrite it since it might be outdated
-			if ($request->getData('parent_id') !== null) {
-				$request = $request->withData('parent_id', $content->parentId);
+			if ($request->getData('parentId') !== null) {
+				$request = $request->withData('parentId', $content->parentId);
 				$this->setRequest($request);
 			}
 		}
@@ -961,9 +963,9 @@ class ContentsController extends Controller {
 		}
 
 		$request = $this->getRequest();
-		//When content_template_id is part of the request data, overwrite it since it might be outdated
-		if ($request->getData('content_template_id') !== null) {
-			$request = $request->withData('content_template_id', $content->contentTemplateId);
+		//When contentTemplateId is part of the request data, overwrite it since it might be outdated
+		if ($request->getData('contentTemplateId') !== null) {
+			$request = $request->withData('contentTemplateId', $content->contentTemplateId);
 			$this->setRequest($request);
 		}
 	}
@@ -990,9 +992,9 @@ class ContentsController extends Controller {
 			}
 
 			$request = $this->getRequest();
-			//When content_area_id is part of the request data, overwrite it since it might be outdated
-			if ($request->getData('content_area_id') !== null) {
-				$request = $request->withData('content_area_id', $content->contentAreaId);
+			//When contentAreaId is part of the request data, overwrite it since it might be outdated
+			if ($request->getData('contentAreaId') !== null) {
+				$request = $request->withData('contentAreaId', $content->contentAreaId);
 				$this->setRequest($request);
 			}
 		}
@@ -1057,7 +1059,7 @@ class ContentsController extends Controller {
 				array_column($contentTemplate->contentTemplateElements ?? [], 'identifier')
 			) as $element
 		) {
-			if ($element === 'column_width') {
+			if ($element === 'columnWidth') {
 				$columnWidths = $this->Contents->getColumnWidths();
 
 				$content->set($element, key($columnWidths));
@@ -1102,7 +1104,7 @@ class ContentsController extends Controller {
 
 		$assignedAttributes = $this->getAssignedAttributes($content);
 
-		$languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
+		$languageShortcode = $this->request->getData('languageShortcode') ?: $this->page->languageShortcode;
 
 		$contentElementsByFieldset = [];
 		if (!empty($selectedContentTemplate->contentTemplateElements)) {

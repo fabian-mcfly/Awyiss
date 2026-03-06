@@ -69,7 +69,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeMarshalWithInputList(): void {
 		$data = new ArrayObject([
-			'input_type' => 'input_list',
+			'inputType' => 'inputList',
 			'type' => 'string',
 			'required' => true,
 		]);
@@ -90,7 +90,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeMarshalWithInputKeyValueList(): void {
 		$data = new ArrayObject([
-			'input_type' => 'input_key_value_list',
+			'inputType' => 'inputKeyValueList',
 			'type' => 'string',
 			'required' => true,
 		]);
@@ -111,7 +111,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeMarshalWithOtherInputType(): void {
 		$data = new ArrayObject([
-			'input_type' => 'text',
+			'inputType' => 'text',
 			'type' => 'string',
 			'required' => true,
 		]);
@@ -132,7 +132,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithContentsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,
@@ -153,7 +153,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithGlobalContentsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'global_contents',
+			'scope' => 'GlobalContents',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,
@@ -174,7 +174,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithPagesScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,
@@ -195,7 +195,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithMenuEntriesScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'menu_entries',
+			'scope' => 'MenuEntries',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,
@@ -216,7 +216,7 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithNewsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'news',
+			'scope' => 'News',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,
@@ -237,14 +237,14 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithQueuedJob(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'users',
-			'identifier' => 'test_field',
+			'scope' => 'Users',
+			'identifier' => 'testField',
 			'type' => 'string',
 		]);
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(true);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(true);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -266,14 +266,14 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testBeforeSaveWithoutQueuedJob(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'users',
-			'identifier' => 'test_field',
+			'scope' => 'Users',
+			'identifier' => 'testField',
 			'type' => 'string',
 		]);
 
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
 
-		$queueTable->expects($this->once())->method('isQueued')->with('attributes::table_changes')->willReturn(false);
+		$queueTable->expects($this->once())->method('isQueued')->with('Attributes::tableChanges')->willReturn(false);
 
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
@@ -294,8 +294,8 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitWithNewEntityAndRelevantChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'users',
-			'identifier' => 'test_field',
+			'scope' => 'Users',
+			'identifier' => 'testField',
 			'type' => 'string',
 			'hasIndex' => true,
 			'required' => false,
@@ -322,8 +322,8 @@ class AttributesListenerTest extends TestCase {
 							'deleted' => null,
 						],
 						'new' => [
-							'scope' => 'users',
-							'identifier' => 'test_field',
+							'scope' => 'Users',
+							'identifier' => 'testField',
 							'type' => 'string',
 							'hasIndex' => true,
 							'required' => false,
@@ -335,7 +335,7 @@ class AttributesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'attributes::table_changes',
+				'reference' => 'Attributes::tableChanges',
 			]
 		);
 
@@ -354,8 +354,8 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndNoChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'users',
-			'identifier' => 'test_field',
+			'scope' => 'Users',
+			'identifier' => 'testField',
 			'type' => 'string',
 			'hasIndex' => true,
 			'required' => false,
@@ -389,8 +389,8 @@ class AttributesListenerTest extends TestCase {
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndRelevantChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'users',
-			'identifier' => 'test_field',
+			'scope' => 'Users',
+			'identifier' => 'testField',
 			'type' => 'string',
 			'hasIndex' => true,
 			'required' => false,
@@ -413,8 +413,8 @@ class AttributesListenerTest extends TestCase {
 				return $data === [
 						'id' => 123,
 						'old' => [
-							'scope' => 'users',
-							'identifier' => 'test_field',
+							'scope' => 'Users',
+							'identifier' => 'testField',
 							'type' => 'string',
 							'hasIndex' => true,
 							'required' => false,
@@ -422,8 +422,8 @@ class AttributesListenerTest extends TestCase {
 							'deleted' => false,
 						],
 						'new' => [
-							'scope' => 'users',
-							'identifier' => 'test_field',
+							'scope' => 'Users',
+							'identifier' => 'testField',
 							'type' => 'text',
 							'hasIndex' => true,
 							'required' => true,
@@ -435,7 +435,7 @@ class AttributesListenerTest extends TestCase {
 			[
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'attributes::table_changes',
+				'reference' => 'Attributes::tableChanges',
 			]
 		);
 

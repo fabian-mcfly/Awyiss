@@ -124,7 +124,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 
-		return Inflector::underscore($name);
+		return Inflector::camelize($name);
 	}
 
 
@@ -150,11 +150,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			foreach ($this->types::cases() as $dataType) {
 				$identifier = $dataType->value;
 
-				$name = 'publication_' . $identifier;
+				$name = 'publication' . Inflector::camelize($identifier);
 
 				/** @var \Awyiss\Model\Entity\PublicationData $publicationData */
 				$publicationData = $row[ '_' . $name ];
-				$matchingAlias = Inflector::camelize($alias . '_' . 'publication_data_' . $identifier);
+				$matchingAlias = Inflector::camelize($alias . '_' . 'publicationData' . Inflector::camelize($identifier));
 				if (isset($row['_matchingData'][ $matchingAlias ])) {
 					$publicationData = $row['_matchingData'][ $matchingAlias ];
 					unset($row['_matchingData'][ $matchingAlias ]);
@@ -167,7 +167,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				$row['_publicationData'][] = $publicationData;
 
 				if (is_array($publicationData)) {
-					$row[ $name ] = $publicationData['date_time'];
+					$row[ $name ] = $publicationData['dateTime'];
 				}
 				else {
 					$row[ $name ] = $publicationData?->dateTime;
@@ -211,13 +211,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		$alias = $this->_table->getAlias();
 		$tableLocator = $this->getTableLocator();
 
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $this->_table->getEntityClass();
-
 		foreach ($this->types::cases() as $dataType) {
 			$identifier = $dataType->value;
 
-			$name = Inflector::camelize($alias . '_publication_data_' . $identifier);
+			$name = Inflector::camelize($alias) . 'PublicationData' . Inflector::camelize($identifier);
 
 			if (!$tableLocator->exists($name)) {
 				$fieldTable = $tableLocator->get($name, [
@@ -244,13 +241,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 			$this->_table->hasOne($name, [
 				'conditions' => $conditions,
-				'foreignKey' => 'foreign_key',
+				'foreignKey' => 'foreignKey',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
-				'propertyName' => '_publication_' . $identifier,
+				'propertyName' => '_publication' . Inflector::camelize($identifier),
 				'targetTable' => $fieldTable,
 			]);
-
-			$entityClass::addFieldMapping('publication_' . $identifier, Inflector::variable('publication_' . $identifier));
 		}
 
 		if ($forPages) {
@@ -269,13 +264,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			'conditions' => $conditions,
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'foreign_key',
-			'propertyName' => '_publication_data',
+			'foreignKey' => 'foreignKey',
+			'propertyName' => '_publicationData',
 			'saveStrategy' => 'replace',
 			'strategy' => 'subquery',
 		]);
-
-		$entityClass::addFieldMapping('_publication_data', '_publicationData');
 	}
 
 
@@ -322,7 +315,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		$alias = $this->_table->getAlias();
 		$date ??= new DateTime('now');
 		$operator = $when === 'before' ? '<=' : '>=';
-		$name = Inflector::camelize($alias . '_publication_data_' . $type->value);
+		$name = Inflector::camelize($alias . '_publicationData' . Inflector::camelize($type->value));
 
 		if ($query->isAutoFieldsEnabled() === null) {
 			$query->enableAutoFields();
@@ -346,14 +339,14 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		if ($includeUndefined) {
 			return $query->leftJoinWith($name)->where([
 				'OR' => [
-					$name . '.date_time ' . $operator => $date,
-					$name . '.date_time IS' => null,
+					$name . '.dateTime ' . $operator => $date,
+					$name . '.dateTime IS' => null,
 				],
 			]);
 		}
 
 		return $query->leftJoinWith($name)->where([
-			$name . '.date_time ' . $operator => $date,
+			$name . '.dateTime ' . $operator => $date,
 		]);
 	}
 
@@ -480,7 +473,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 					in_array($field, $select, true) ||
 					in_array($this->_table->aliasField($field), $select, true)
 				) {
-					$q->select(['id', 'scope', 'foreign_key', 'type', 'date_time']);
+					$q->select(['id', 'scope', 'foreignKey', 'type', 'dateTime']);
 				}
 
 				return $q;
@@ -491,7 +484,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		foreach ($this->types::cases() as $dataType) {
 			$identifier = $dataType->value;
 
-			$name = Inflector::camelize($alias . '_' . 'publication_data_' . $identifier);
+			$name = Inflector::camelize($alias . '_' . 'publicationData' . Inflector::camelize($identifier));
 
 			if (isset($matching[ $name ])) {
 				continue;
@@ -548,7 +541,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		return [
-			'_publication_data' => function (array $values, EntityInterface $entity) {
+			'_publicationData' => function (array $values, EntityInterface $entity) {
 				/**
 				 * @var array<string, \Awyiss\Model\Entity\PublicationData> $publicationData
 				 */
@@ -564,9 +557,9 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 					$data['type'] ??= $type;
 
-					$data['date_time'] ??= null;
-					if (is_string($data['date_time']) && $data['date_time'] !== '') {
-						$data['date_time'] = TypeFactory::build('datetime')->marshal($data['date_time']);
+					$data['dateTime'] ??= null;
+					if (is_string($data['dateTime']) && $data['dateTime'] !== '') {
+						$data['dateTime'] = TypeFactory::build('datetime')->marshal($data['dateTime']);
 					}
 
 					$data['scope'] = $this->getConfig('referenceName');

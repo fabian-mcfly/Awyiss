@@ -119,7 +119,7 @@
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: formElement}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: formElement}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -184,7 +184,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

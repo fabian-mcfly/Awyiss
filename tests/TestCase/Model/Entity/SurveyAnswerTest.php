@@ -62,11 +62,11 @@ class SurveyAnswerTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'survey_question_id' => 123,
+			'surveyQuestionId' => 123,
 			'title' => 'Answer Title',
 			'subtitle' => 'Answer Subtitle',
 			'text' => 'Answer text',
-			'system_order' => 1,
+			'systemOrder' => 1,
 			'active' => true,
 		];
 
@@ -79,25 +79,5 @@ class SurveyAnswerTest extends TestCase {
 		$this->assertEquals('Answer text', $entity->text);
 		$this->assertEquals(1, $entity->systemOrder);
 		$this->assertTrue($entity->active);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\SurveyAnswer::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'survey_question_id' => 456,
-			'system_order' => 2,
-			'survey_question' => null,
-			'survey_survey_answers' => [],
-		];
-		$entity = new SurveyAnswer($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

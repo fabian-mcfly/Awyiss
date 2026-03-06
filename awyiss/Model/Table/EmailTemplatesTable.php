@@ -52,12 +52,14 @@ class EmailTemplatesTable extends Table {
 	public function initializeAssociations(): void {
 		$this->hasMany('FormEmails', [
 			'className' => 'Forms',
-			'foreignKey' => 'email_template_id',
+			'foreignKey' => 'emailTemplateId',
+			'propertyName' => 'formEmails',
 		]);
 
 		$this->hasMany('FormConfirmationEmails', [
 			'className' => 'Forms',
-			'foreignKey' => 'confirmation_email_template_id',
+			'foreignKey' => 'confirmationEmailTemplateId',
+			'propertyName' => 'formConfirmationEmails',
 		]);
 	}
 
@@ -68,10 +70,10 @@ class EmailTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
-			'used_for_emails' => $query->func()->count('DISTINCT FormEmails.id'),
-			'used_for_confirmation_emails' => $query->func()->count('DISTINCT FormConfirmationEmails.id'),
+			'usedForEmails' => $query->func()->count('DISTINCT FormEmails.id'),
+			'usedForConfirmationEmails' => $query->func()->count('DISTINCT FormConfirmationEmails.id'),
 		])->leftJoinWith('FormEmails', function (SelectQuery $query) {
-			return $query->disableAutoFields()->select(['email_template_id'])->applyOptions([
+			return $query->disableAutoFields()->select(['emailTemplateId'])->applyOptions([
 				'attributes' => [
 					'skip' => true,
 				],
@@ -83,7 +85,7 @@ class EmailTemplatesTable extends Table {
 				],
 			]);
 		})->leftJoinWith('FormConfirmationEmails', function (SelectQuery $query) {
-			return $query->disableAutoFields()->select(['confirmation_email_template_id'])->applyOptions([
+			return $query->disableAutoFields()->select(['confirmationEmailTemplateId'])->applyOptions([
 				'attributes' => [
 					'skip' => true,
 				],
@@ -181,14 +183,14 @@ class EmailTemplatesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_file_name_unique'),
 		]);
 
 		$rules->add(function (EmailTemplate $entity): bool {
 			return in_array($entity->layout, $this->getAvailableLayouts(), true);
 		}, 'validLayout', [
 			'errorField' => 'layout',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_layout'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_layout'),
 		]);
 
 		$rules->addDelete(
@@ -196,7 +198,7 @@ class EmailTemplatesTable extends Table {
 			'noLinkedFormEmails',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_form_emails'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_form_emails'),
 			]
 		);
 
@@ -205,7 +207,7 @@ class EmailTemplatesTable extends Table {
 			'noLinkedFormConfirmationEmails',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_form_confirmation_emails'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_form_confirmation_emails'),
 			]
 		);
 

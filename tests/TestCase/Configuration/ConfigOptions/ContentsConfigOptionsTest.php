@@ -83,9 +83,9 @@ class ContentsConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
-			'content_template_id',
-			'column_width',
-			'column_indent',
+			'contentTemplateId',
+			'columnWidth',
+			'columnIndent',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('contents::content_template_id, contents::column_width, contents::column_indent', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -93,33 +93,33 @@ class ContentsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertEquals([
-			'page_id' => 'contents::page_id',
-			'content_area_id' => 'contents::content_area_id',
-			'content_template_id' => 'contents::content_template_id',
-			'parent_id' => 'contents::parent_id',
+			'pageId' => 'contents::page_id',
+			'contentAreaId' => 'contents::content_area_id',
+			'contentTemplateId' => 'contents::content_template_id',
+			'parentId' => 'contents::parent_id',
 			'title' => 'contents::title',
-			'title_tag' => 'contents::title_tag',
+			'titleTag' => 'contents::title_tag',
 			'subtitle' => 'contents::subtitle',
-			'subtitle_tag' => 'contents::subtitle_tag',
+			'subtitleTag' => 'contents::subtitle_tag',
 			'text' => 'contents::text',
 			'link' => 'contents::link',
-			'column_width' => 'contents::column_width',
-			'column_indent' => 'contents::column_indent',
-			'column_last' => 'contents::column_last',
-			'column_rtl' => 'contents::column_rtl',
-			'css_class' => 'contents::css_class',
+			'columnWidth' => 'contents::column_width',
+			'columnIndent' => 'contents::column_indent',
+			'columnLast' => 'contents::column_last',
+			'columnRtl' => 'contents::column_rtl',
+			'cssClass' => 'contents::css_class',
 			'css' => 'contents::css',
-			'duplicate_of' => 'contents::duplicate_of',
+			'duplicateOf' => 'contents::duplicate_of',
 			'data' => 'contents::data',
-			'form_id' => 'contents::form_id',
-			'survey_id' => 'contents::survey_id',
-			'system_order' => 'contents::system_order',
+			'formId' => 'contents::form_id',
+			'surveyId' => 'contents::survey_id',
+			'systemOrder' => 'contents::system_order',
 			'active' => 'contents::active',
-			'created_by' => 'contents::created_by',
-			'created_on' => 'contents::created_on',
-			'changed_by' => 'contents::changed_by',
-			'changed_on' => 'contents::changed_on',
-			'attributes.background_color' => 'Hintergrundfarbe',
+			'createdBy' => 'contents::created_by',
+			'createdOn' => 'contents::created_on',
+			'changedBy' => 'contents::changed_by',
+			'changedOn' => 'contents::changed_on',
+			'attributes.backgroundColor' => 'Hintergrundfarbe',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.publicationData.enabled', $configOptions);

@@ -63,7 +63,7 @@
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
 					{% if paginated == false %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 					{% endif %}
 				{% endblock %}
 
@@ -74,7 +74,7 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'menu_entries'}) }}
+					{{ element('search/filter_button', {scope: 'MenuEntries'}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
@@ -122,7 +122,7 @@
 					{{ nestedList(menuEntries, _context|merge({
 						data: {
 							'menu-id': selectedMenuId,
-							sortable: _filter['menu_entries']['active'] == false,
+							sortable: _filter['menuEntries']['active'] == false,
 						},
 						displayedFields: localConfig.overview.displayedFields,
 						identifier: 'MenuEntry',
@@ -141,6 +141,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'menu_entries'}) }}
+		{{ element('search/filter', {scope: 'MenuEntries'}) }}
 	{% endblock %}
 </div>

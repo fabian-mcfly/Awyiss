@@ -20,19 +20,19 @@ class FormProtectionProviderTest extends TestCase {
 	 */
 	public function testSanitizeIdentifier(): void {
 		$result = FormProtectionProvider::sanitizeIdentifier('ipCheck');
-		$this->assertSame('ip_check', $result);
+		$this->assertSame('ipCheck', $result);
 
 		$result = FormProtectionProvider::sanitizeIdentifier('IpCheck');
-		$this->assertSame('ip_check', $result);
+		$this->assertSame('ipCheck', $result);
 
 		$result = FormProtectionProvider::sanitizeIdentifier('ip-check');
-		$this->assertSame('ip_check', $result);
+		$this->assertSame('ipCheck', $result);
 
 		$result = FormProtectionProvider::sanitizeIdentifier('ip check');
-		$this->assertSame('ip_check', $result);
+		$this->assertSame('ipCheck', $result);
 
 		$result = FormProtectionProvider::sanitizeIdentifier('Hidden-Input_Form');
-		$this->assertSame('hidden_input_form', $result);
+		$this->assertSame('hiddenInputForm', $result);
 
 		$result = FormProtectionProvider::sanitizeIdentifier('captcha2');
 		$this->assertSame('captcha2', $result);
@@ -96,12 +96,12 @@ class FormProtectionProviderTest extends TestCase {
 		$result = FormProtectionProvider::getFormProtectionFiles();
 
 		$this->assertEquals([
-			'ip_check' => '\Awyiss\Form\Protection\IpCheckFormProtection',
+			'ipCheck' => '\Awyiss\Form\Protection\IpCheckFormProtection',
 			'dummy' => '\Customer\Form\Protection\DummyFormProtection',
-			'dummy_stops_form_entry' => '\Customer\Form\Protection\DummyStopsFormEntryFormProtection',
-			'hidden_input' => '\Customer\Form\Protection\HiddenInputFormProtection',
+			'dummyStopsFormEntry' => '\Customer\Form\Protection\DummyStopsFormEntryFormProtection',
+			'hiddenInput' => '\Customer\Form\Protection\HiddenInputFormProtection',
 			'altcha' => '\Awyiss\Form\Protection\AltchaFormProtection',
-			'duplicate_check' => '\Awyiss\Form\Protection\DuplicateCheckFormProtection',
+			'duplicateCheck' => '\Awyiss\Form\Protection\DuplicateCheckFormProtection',
 		], $result);
 	}
 }

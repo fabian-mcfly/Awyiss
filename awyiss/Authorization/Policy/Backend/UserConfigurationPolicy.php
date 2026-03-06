@@ -49,16 +49,16 @@ class UserConfigurationPolicy extends AbstractPolicy {
 			return $accessible;
 		}
 
-		$scope = Inflector::underscore($additionalData['scope']);
+		$scope = Inflector::camelize($additionalData['scope']);
 
-		if (!in_array($scope, ['contents', 'system'], true)) {
+		if (!in_array($scope, ['Contents', 'System'], true)) {
 			// Form elements are accessible if the user has access to the Forms scope
-			if ($scope === 'form_elements') {
-				$scope = 'forms';
+			if ($scope === 'FormElements') {
+				$scope = 'Forms';
 			}
 			// Menu entries are accessible if the user has access to the Menus scope
-			elseif ($scope === 'menu_entries') {
-				$scope = 'menus';
+			elseif ($scope === 'MenuEntries') {
+				$scope = 'Menus';
 			}
 
 			$accessible = $permissionCollection->scopeIsAccessible($scope, [], ['read', 'create', 'update', 'configure']);

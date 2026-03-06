@@ -63,7 +63,7 @@ class UrlsNotFoundTableTest extends TestCase {
 		$result = $this->urlsNotFoundTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('urls_not_found', $result->getI18nDomain());
+		$this->assertSame('UrlsNotFound', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('url'));

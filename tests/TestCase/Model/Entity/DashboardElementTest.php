@@ -116,11 +116,11 @@ class DashboardElementTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'scope' => 'backend_overview',
+			'scope' => 'BackendOverview',
 			'title' => 'Test Dashboard Element',
-			'access' => '["admin", "moderator"]',
+			'access' => '["Admin", "moderator"]',
 			'settings' => ['setting1' => 'value1', 'setting2' => 'value2'],
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -128,30 +128,12 @@ class DashboardElementTest extends TestCase {
 		$entity = new DashboardElement($properties);
 
 		$this->assertEquals(1, $entity->id);
-		$this->assertEquals('backend_overview', $entity->scope);
+		$this->assertEquals('BackendOverview', $entity->scope);
 		$this->assertEquals('Test Dashboard Element', $entity->title);
-		$this->assertEquals(['admin', 'moderator'], $entity->access);
+		$this->assertEquals(['Admin', 'moderator'], $entity->access);
 		$this->assertEquals(['setting1' => 'value1', 'setting2' => 'value2'], $entity->settings);
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\DashboardElement::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'system_order' => 5,
-		];
-
-		$entity = new DashboardElement($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

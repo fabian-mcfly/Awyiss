@@ -8,7 +8,6 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -43,13 +42,13 @@ class DatatablesTable extends Table {
 	 * or because they are template folder names
 	 */
 	protected array $blocklistedIdentifiers = [
-		'cells',
-		'content_areas',
-		'emails',
-		'elements',
-		'forms',
-		'generic_pages',
-		'layouts',
+		'Cells',
+		'ContentAreas',
+		'Emails',
+		'Elements',
+		'Forms',
+		'GenericPages',
+		'Layouts',
 	];
 	/**
 	 * @inheritDoc
@@ -125,7 +124,7 @@ class DatatablesTable extends Table {
 					$entity->hasOriginal('identifier') &&
 					$entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unchanged');
 				}
 
 				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
@@ -134,13 +133,13 @@ class DatatablesTable extends Table {
 				if (
 					$entity->isDirty('identifier') &&
 					(
-						str_starts_with($entity->identifier, 'attributes_') ||
+						str_starts_with($entity->identifier, 'Attributes') ||
 						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
-						App::className(Inflector::camelize($entity->identifier), 'Controller/Backend', 'Controller') ||
+						App::className($entity->identifier, 'Controller/Backend', 'Controller') ||
 						$pageRoleEnum::tryFromName($entity->identifier)
 					)
 				) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_allowed');
 				}
 
 				$isUnique = $rules->isUnique(['identifier'], [
@@ -149,7 +148,7 @@ class DatatablesTable extends Table {
 				$isUnique = $isUnique($entity, $options);
 
 				if (!$isUnique) {
-					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
+					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique');
 				}
 
 
@@ -176,7 +175,7 @@ class DatatablesTable extends Table {
 			 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 			 * @uses \Awyiss\Model\Table::findTranslations()
 			 */
-			static::$cachedDatatables = static::find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all();
+			static::$cachedDatatables = $this->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all();
 		}
 
 

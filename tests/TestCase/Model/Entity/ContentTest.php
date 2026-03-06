@@ -402,26 +402,26 @@ class ContentTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'page_id' => 123,
-			'content_area_id' => 456,
-			'content_template_id' => 789,
-			'parent_id' => 101,
+			'pageId' => 123,
+			'contentAreaId' => 456,
+			'contentTemplateId' => 789,
+			'parentId' => 101,
 			'title' => 'Test Content',
-			'title_tag' => 'h2',
+			'titleTag' => 'h2',
 			'subtitle' => 'Test Subtitle',
-			'subtitle_tag' => 'h3',
+			'subtitleTag' => 'h3',
 			'text' => 'Test content text',
 			'link' => '/test-link',
-			'column_width' => '6/12',
-			'column_indent' => '1/12',
-			'column_last' => true,
-			'column_rtl' => false,
-			'css_class' => 'test-class',
-			'duplicate_of' => 112,
+			'columnWidth' => '6/12',
+			'columnIndent' => '1/12',
+			'columnLast' => true,
+			'columnRtl' => false,
+			'cssClass' => 'test-class',
+			'duplicateOf' => 112,
 			'data' => ['key' => 'value'],
-			'form_id' => 113,
-			'survey_id' => 114,
-			'system_order' => 10,
+			'formId' => 113,
+			'surveyId' => 114,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -451,37 +451,5 @@ class ContentTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Content::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'page_id' => 123,
-			'parent_id' => 456,
-			'content_area_id' => 789,
-			'content_template_id' => 101,
-			'title_tag' => 'h2',
-			'subtitle_tag' => 'h3',
-			'css_class' => 'test-class',
-			'column_width' => '6/12',
-			'column_indent' => '1/12',
-			'column_last' => true,
-			'column_rtl' => false,
-			'duplicate_of' => 112,
-			'form_id' => 113,
-			'survey_id' => 114,
-			'system_order' => 10,
-		];
-
-		$entity = new Content($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

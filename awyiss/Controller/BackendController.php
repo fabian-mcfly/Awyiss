@@ -191,14 +191,14 @@ abstract class BackendController extends AppController {
 		if (!Configure::read('AvailableCommands')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
-			if (!$queuedJobsTable->isQueued('system::detect_available_commands')) {
+			if (!$queuedJobsTable->isQueued('System::detectAvailableCommands')) {
 				$queuedJobsTable->createJob('Queue.Execute', [
-					'command' => 'bin' . DS . 'cake media detect_available_commands',
+					'command' => 'bin' . DS . 'cake media detectAvailableCommands',
 					'log' => true,
 				], [
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::detect_available_commands',
+					'reference' => 'System::detectAvailableCommands',
 				]);
 			}
 		}
@@ -248,7 +248,7 @@ abstract class BackendController extends AppController {
 		}
 
 		if ($key) {
-			return $this->overviewWhere[ Inflector::underscore($key) ] ?? $default;
+			return $this->overviewWhere[ $key ] ?? $default;
 		}
 
 		return $this->overviewWhere;
@@ -313,10 +313,10 @@ abstract class BackendController extends AppController {
 			/** @var \Awyiss\Model\Entity $entity */
 			$entity = $this->fetchTable($this->defaultTable)->get($lock->foreignKey);
 
-			$lockingUser = $lock->createdByUser?->username ?? __d('audit', 'user_system');
+			$lockingUser = $lock->createdByUser?->username ?? __d('Audit', 'user_system');
 			/** @noinspection PhpUndefinedFieldInspection */
 			if (!$lock->createdByUser && $lock->uniqueId === 'autoTranslate') {
-				$lockingUser = __d('system', 'auto_translate_system');
+				$lockingUser = __d('System', 'auto_translate_system');
 			}
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -325,9 +325,9 @@ abstract class BackendController extends AppController {
 				'createdOn' => $lock->createdOn->format('Y-m-d H:i:s'),
 				'lockedUntil' => $lockedUntil,
 				'isOwnLock' => $this->Lock->isOwnLock($lock),
-				'lockWarningMessage' => __df($controller, 'locks', 'lock_warning', $lockedUntil->nice($timezone)),
-				'lockTimedOutMessage' => __df($controller, 'locks', 'lock_warning_timed_out'),
-				'lockedMessage' => __df($controller, 'locks', 'locked_message', $lockedUntil->nice($timezone), $lockingUser),
+				'lockWarningMessage' => __df($controller, 'Locks', 'lock_warning', $lockedUntil->nice($timezone)),
+				'lockTimedOutMessage' => __df($controller, 'Locks', 'lock_warning_timed_out'),
+				'lockedMessage' => __df($controller, 'Locks', 'locked_message', $lockedUntil->nice($timezone), $lockingUser),
 			];
 
 			$this->response = $this->response->withStatus(200);
@@ -354,7 +354,7 @@ abstract class BackendController extends AppController {
 
 		$lock = false;
 		if ($this->request->is('post')) {
-			$lock = $this->Lock->releaseLock((int)$this->request->getData('id'), $this->request->getData('created_on'));
+			$lock = $this->Lock->releaseLock((int)$this->request->getData('id'), $this->request->getData('createdOn'));
 		}
 
 		$this->viewBuilder()
@@ -388,7 +388,7 @@ abstract class BackendController extends AppController {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 				$this->set('success', false);
-				$this->set('message', __d('system', 'system_order_not_enabled'));
+				$this->set('message', __d('System', 'system_order_not_enabled'));
 
 				// Set the view class to JSON
 				$this->viewBuilder()->setClassName('Json');
@@ -399,7 +399,7 @@ abstract class BackendController extends AppController {
 				return;
 			}
 			else {
-				$this->Flash->error(__d('system', 'system_order_not_enabled'));
+				$this->Flash->error(__d('System', 'system_order_not_enabled'));
 				throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 			}
 		}
@@ -410,7 +410,7 @@ abstract class BackendController extends AppController {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 				$this->set('success', false);
-				$this->set('message', __d('system', 'system_order_manual_order_is_disabled'));
+				$this->set('message', __d('System', 'system_order_manual_order_is_disabled'));
 
 				// Set the view class to JSON
 				$this->viewBuilder()->setClassName('Json');
@@ -421,7 +421,7 @@ abstract class BackendController extends AppController {
 				return;
 			}
 			else {
-				$this->Flash->error(__d('system', 'system_order_manual_order_is_disabled'));
+				$this->Flash->error(__d('System', 'system_order_manual_order_is_disabled'));
 				throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 			}
 		}
@@ -432,17 +432,17 @@ abstract class BackendController extends AppController {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 			$this->set('success', true);
-			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('message', $affectedRows > 0 ? __d('System', 'system_order_saved') : __d('System', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 		}
 		else {
 			if ($affectedRows) {
-				$this->Flash->success(__d('system', 'system_order_saved'));
+				$this->Flash->success(__d('System', 'system_order_saved'));
 			}
 			else {
-				$this->Flash->error(__d('system', 'system_order_not_saved'));
+				$this->Flash->error(__d('System', 'system_order_not_saved'));
 			}
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -459,15 +459,14 @@ abstract class BackendController extends AppController {
 	public function userConfiguration(): void {
 		$request = Router::getRequest();
 
-		$scope = Inflector::underscore($this->getName());
+		$scope = Inflector::camelize($this->getName());
 
-		if ($scope === 'dashboard') {
-			$scope = 'system';
+		if ($scope === 'Dashboard') {
+			$scope = 'System';
 		}
 
 		$scope = Inflector::singularize($scope);
 		$scope = Inflector::pluralize($scope);
-		$scope = Inflector::underscore($scope);
 
 		$identifier = $request->getParam('identifier') ?: $request->getData('identifier');
 		$value = $request->getParam('value') ?: $request->getData('value');
@@ -476,9 +475,9 @@ abstract class BackendController extends AppController {
 		$identity = $this->getIdentity();
 
 		$configSettings = [
-			'user_id' => $identity->id,
+			'userId' => $identity->id,
 			'scope' => $scope,
-			'identifier' => Inflector::underscore($identifier),
+			'identifier' => Inflector::variable($identifier),
 		];
 
 		//Get the UserConfiguration table and fetch a matching config
@@ -505,7 +504,7 @@ abstract class BackendController extends AppController {
 		if ($this->request->is('ajax')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 			$this->set('success', !!$success);
-			$this->set('message', $success ? __d('system', 'user_configuration_saved') : __d('system', 'user_configuration_not_saved'));
+			$this->set('message', $success ? __d('System', 'user_configuration_saved') : __d('System', 'user_configuration_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
@@ -543,7 +542,7 @@ abstract class BackendController extends AppController {
 		// Disable the layout for ajax requests
 		if (
 			$this->request->is('ajax') &&
-			($this->request->getData('reload_form') || $this->request->getParam('ajaxForm'))
+			($this->request->getData('reloadForm') || $this->request->getParam('ajaxForm'))
 		) {
 			$viewBuilder->disableAutoLayout();
 
@@ -608,16 +607,16 @@ abstract class BackendController extends AppController {
 				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
 			}
 
-			if ($schema->hasColumn('parent_id')) {
+			if ($schema->hasColumn('parentId')) {
 				return [
-					'parent_id' => $parentCase,
-					'system_order' => $systemOrderCase,
+					'parentId' => $parentCase,
+					'systemOrder' => $systemOrderCase,
 				];
 			}
 
 
 			return [
-				'system_order' => $systemOrderCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),

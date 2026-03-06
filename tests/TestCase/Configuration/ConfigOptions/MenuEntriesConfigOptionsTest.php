@@ -55,17 +55,17 @@ class MenuEntriesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'menu_id' => 'menu_entries::menu_id',
-			'parent_id' => 'menu_entries::parent_id',
-			'language_shortcode' => 'menu_entries::language_shortcode',
+			'menuId' => 'menu_entries::menu_id',
+			'parentId' => 'menu_entries::parent_id',
+			'languageShortcode' => 'menu_entries::language_shortcode',
 			'link' => 'menu_entries::link',
 			'external' => 'menu_entries::external',
-			'system_order' => 'menu_entries::system_order',
+			'systemOrder' => 'menu_entries::system_order',
 			'active' => 'menu_entries::active',
-			'created_by' => 'menu_entries::created_by',
-			'created_on' => 'menu_entries::created_on',
-			'changed_by' => 'menu_entries::changed_by',
-			'changed_on' => 'menu_entries::changed_on',
+			'createdBy' => 'menu_entries::created_by',
+			'createdOn' => 'menu_entries::created_on',
+			'changedBy' => 'menu_entries::changed_by',
+			'changedOn' => 'menu_entries::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

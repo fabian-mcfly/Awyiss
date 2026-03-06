@@ -24,7 +24,7 @@ interface FormProtectionInterface {
 	/**
 	 * To place the protection before the submit button
 	 */
-	public const string POSITION_BEFORE_SUBMIT = 'before_submit';
+	public const string POSITION_BEFORE_SUBMIT = 'beforeSubmit';
 	/**
 	 * To place the protection after all form elements
 	 */

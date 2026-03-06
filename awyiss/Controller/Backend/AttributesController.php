@@ -40,8 +40,8 @@ class AttributesController extends Controller {
 
 		$inputTypes = $this->Attributes->getAvailableInputTypes();
 		$this->paginate['fieldTranslations'] = [
-			'input_type' => array_combine($inputTypes, array_map(function ($type) {
-				return Text::slug(__('input_type_' . $type));
+			'inputType' => array_combine($inputTypes, array_map(function ($type) {
+				return Text::slug(__('input_type_' . Inflector::underscore($type)));
 			}, $this->Attributes->getAvailableInputTypes())),
 		];
 
@@ -89,7 +89,7 @@ class AttributesController extends Controller {
 		$selectedScope = $this->Categories->getSelectedCategory();
 
 		$availableFieldsets = [''];
-		if (!in_array($selectedScope, ['contents', 'global_contents'])) {
+		if (!in_array($selectedScope, ['Contents', 'GlobalContents'])) {
 			$availableFieldsets = $this->Attributes->getAvailableFieldsets($selectedScope);
 		}
 
@@ -113,9 +113,7 @@ class AttributesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$attribute = $this->Attributes->newDefaultEntity([
-			'scope' => $this->request->getParam('scope') ?? $this->Categories->getSelectedCategory(),
-		]);
+		$attribute = $this->Attributes->newDefaultEntity();
 
 		if ($this->request->is('post')) {
 			$this->save($attribute);
@@ -140,11 +138,9 @@ class AttributesController extends Controller {
 
 		/**
 		 * @var \Awyiss\Model\Entity\Attribute $attribute
-		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$attribute = $this->Attributes->findById($id)->find('translations')->first();
 		if (!$attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -215,18 +211,18 @@ class AttributesController extends Controller {
 
 		$this->Attributes->patchEntity($attribute, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Attributes->save($attribute, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'scope' => $attribute->scope,
@@ -308,7 +304,7 @@ class AttributesController extends Controller {
 
 			return [
 				'fieldset' => $fieldsetCase,
-				'system_order' => $systemOrderCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),
@@ -327,7 +323,7 @@ class AttributesController extends Controller {
 		$availableFieldsets = $this->Attributes->getAvailableFieldsets($attribute->scope);
 		$this->ensurePossibleFieldset($attribute, $availableFieldsets);
 
-		if (in_array($attribute->scope, ['contents', 'global_contents'])) {
+		if (in_array($attribute->scope, ['Contents', 'GlobalContents'])) {
 			$attribute->fieldset = '';
 		}
 
@@ -335,10 +331,10 @@ class AttributesController extends Controller {
 			return !is_string($table);
 		}));
 
-		$isInputList = in_array($attribute->inputType, ['input_list', 'input_key_value_list']);
-		$translatableDisabled = in_array($attribute->scope, array_merge($pageRoles, ['contents', 'menu_entries', 'pages'])) || $isInputList;
-		$requiredDisabled = in_array($attribute->scope, ['contents', 'global_contents']) || $isInputList;
-		$columnSpanDisabled = in_array($attribute->scope, ['contents', 'global_contents']);
+		$isInputList = in_array($attribute->inputType, ['inputList', 'inputKeyValueList']);
+		$translatableDisabled = in_array($attribute->scope, array_merge($pageRoles, ['Contents', 'MenuEntries', 'Pages'])) || $isInputList;
+		$requiredDisabled = in_array($attribute->scope, ['Contents', 'GlobalContents']) || $isInputList;
+		$columnSpanDisabled = in_array($attribute->scope, ['Contents', 'GlobalContents']);
 
 		if (!$translatableDisabled) {
 			$table = $this->fetchTable(Inflector::camelize($attribute->scope));

@@ -91,7 +91,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 		$result = $this->customerGroupAccessSettingsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('customer_group_access_settings', $result->getI18nDomain());
+		$this->assertSame('CustomerGroupAccessSettings', $result->getI18nDomain());
 
 		// Test fields exist
 		$this->assertTrue($result->hasField('id'));
@@ -107,9 +107,9 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccessWithSpecificGroups(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
-			'accessType' => 'specific_groups',
+			'accessType' => 'specificGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
@@ -125,9 +125,9 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccessWithAllGroups(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 2,
-			'accessType' => 'all_groups',
+			'accessType' => 'allGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
@@ -143,15 +143,15 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccessWithHideOnLogin(): void {
 		$data = [
-			'scope' => 'surveys',
+			'scope' => 'Surveys',
 			'foreignKey' => 1,
-			'accessType' => 'hide_on_login',
+			'accessType' => 'hideOnLogin',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
 		$errors = $entity->getErrors();
 
-		$this->assertEmpty($errors, 'Valid data with hide_on_login should not produce validation errors');
+		$this->assertEmpty($errors, 'Valid data with hideOnLogin should not produce validation errors');
 	}
 
 
@@ -161,9 +161,9 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccessWithNullForeignKey(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => null,
-			'accessType' => 'all_groups',
+			'accessType' => 'allGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
@@ -221,7 +221,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 			'id' => 123456789123, // exceeds 11 char limit
 			'scope' => str_repeat('a', 51), // exceeds 50 char limit
 			'foreignKey' => 123456789123, // exceeds 11 char limit
-			'accessType' => 'specific_groups',
+			'accessType' => 'specificGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data, ['guard' => false]);
@@ -240,7 +240,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	public function testEntityValidationNotBlank(): void {
 		$data = [
 			'scope' => '   ', // only whitespace
-			'accessType' => 'specific_groups',
+			'accessType' => 'specificGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
@@ -256,9 +256,9 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationForeignKeyAllowEmpty(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => null, // Should be allowed
-			'accessType' => 'all_groups',
+			'accessType' => 'allGroups',
 		];
 
 		$entity = $this->customerGroupAccessSettingsTable->newEntity($data);
@@ -274,7 +274,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testEntityValidationInvalidAccessType(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			'accessType' => 'invalid_type',
 		];
@@ -292,7 +292,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidAccessType(): void {
 		$data = [
-			'scope' => 'pages',
+			'scope' => 'Pages',
 			'foreignKey' => 1,
 			'accessType' => CustomerGroupAccessType::SpecificGroups,
 		];
@@ -316,7 +316,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 
 		foreach ($validTypes as $type) {
 			$data = [
-				'scope' => 'pages',
+				'scope' => 'Pages',
 				'foreignKey' => 1,
 				'accessType' => $type,
 			];
@@ -352,9 +352,9 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'scope' => 'surveys',
+			'scope' => 'Surveys',
 			'foreignKey' => 2,
-			'accessType' => 'all_groups',
+			'accessType' => 'allGroups',
 		];
 
 		/** @var \Awyiss\Model\Entity\CustomerGroupAccessSetting $entity */
@@ -364,7 +364,7 @@ class CustomerGroupAccessSettingsTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		// Check custom values
-		$this->assertSame('surveys', $entity->scope);
+		$this->assertSame('Surveys', $entity->scope);
 		$this->assertSame(2, $entity->foreignKey);
 		$this->assertSame(CustomerGroupAccessType::AllGroups, $entity->accessType);
 	}

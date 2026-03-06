@@ -68,7 +68,7 @@ class MenusTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $menuEntriesAssociation);
 		$this->assertTrue($menuEntriesAssociation->getCascadeCallbacks());
 		$this->assertTrue($menuEntriesAssociation->getDependent());
-		$this->assertEquals('menu_id', $menuEntriesAssociation->getForeignKey());
+		$this->assertEquals('menuId', $menuEntriesAssociation->getForeignKey());
 		$this->assertEquals('forCurrentLanguage', $menuEntriesAssociation->getFinder());
 
 		// 'CustomerGroupAccessSettings' must also exist
@@ -139,7 +139,7 @@ class MenusTableTest extends TestCase {
 		$result = $this->menusTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('menus', $result->getI18nDomain());
+		$this->assertSame('Menus', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -162,7 +162,7 @@ class MenusTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Menu',
-			'identifier' => 'test_menu',
+			'identifier' => 'testMenu',
 			'active' => true,
 			'deleted' => false,
 		];
@@ -261,7 +261,7 @@ class MenusTableTest extends TestCase {
 		// Test with unique identifier (should pass)
 		$data = [
 			'title' => 'Test Menu',
-			'identifier' => 'unique_test_menu',
+			'identifier' => 'uniqueTestMenu',
 		];
 
 		$entity = $this->menusTable->newEntity($data);
@@ -317,7 +317,7 @@ class MenusTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Menu',
-			'identifier' => 'custom_menu',
+			'identifier' => 'customMenu',
 			'active' => false,
 		];
 
@@ -329,7 +329,7 @@ class MenusTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Menu', $entity->title);
-		$this->assertSame('custom_menu', $entity->identifier);
+		$this->assertSame('customMenu', $entity->identifier);
 		$this->assertFalse($entity->active);
 		$this->assertFalse($entity->deleted); // Should remain default
 	}
@@ -359,17 +359,17 @@ class MenusTableTest extends TestCase {
 
 		/** @var \Awyiss\Model\Entity\Menu $menu */
 		$menu = $menusTable->get(1);
-		$menu->identifier = 'main_copy';
+		$menu->identifier = 'mainCopy';
 		$result = $menusTable->save($menu, ['asCopy' => true, 'audit' => ['skip' => true]]);
 		$this->assertNotFalse($result);
 
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => $menu->id])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => $menu->id])->all());
 
 		$menusTable->delete($menu, ['audit' => ['skip' => true]]);
 
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(0, $menuEntriesTable->find()->where(['menu_id' => $menu->id])->all());
-		$this->assertCount(35, $menuEntriesTable->find('deleted')->where(['menu_id' => $menu->id])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(0, $menuEntriesTable->find()->where(['menuId' => $menu->id])->all());
+		$this->assertCount(35, $menuEntriesTable->find('deleted')->where(['menuId' => $menu->id])->all());
 	}
 }

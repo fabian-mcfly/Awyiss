@@ -202,7 +202,7 @@ class MenuRendererTest extends TestCase {
 				'title' => 'Item 2',
 				'link' => 'https://example.org',
 				'access' => [
-					'scope' => 'test',
+					'scope' => 'Test',
 					'identifier' => 'item2',
 				],
 			],

@@ -301,20 +301,20 @@ class RulesCheckerTest extends TestCase {
 				$fieldsProperty->setAccessible(true);
 
 				$fields = $fieldsProperty->getValue($existsIn);
-				$this->assertSame(['user_id'], $fields);
+				$this->assertSame(['userId'], $fields);
 
 				return true;
 			}),
 			$this->equalTo('_existsIn'),
 			$this->callback(function (array $options) {
-				$this->assertSame('user_id', $options['errorField']);
+				$this->assertSame('userId', $options['errorField']);
 				$this->assertSame('Custom error message', $options['message']);
 
 				return true;
 			})
 		);
 
-		$rulesChecker->existsIn('user_id', $mockTargetTable, 'Custom error message');
+		$rulesChecker->existsIn('userId', $mockTargetTable, 'Custom error message');
 	}
 
 
@@ -338,20 +338,20 @@ class RulesCheckerTest extends TestCase {
 				$fieldsProperty->setAccessible(true);
 
 				$fields = $fieldsProperty->getValue($existsIn);
-				$this->assertSame(['user_id', 'dummy_id'], $fields);
+				$this->assertSame(['userId', 'dummyId'], $fields);
 
 				return true;
 			}),
 			$this->equalTo('_existsIn'),
 			$this->callback(function (array $options): bool {
-				$this->assertSame('user_id', $options['errorField']);
+				$this->assertSame('userId', $options['errorField']);
 				$this->assertSame('Custom error message', $options['message']);
 
 				return true;
 			})
 		);
 
-		$rulesChecker->existsIn(['user_id', 'dummy_id'], $mockTargetTable, 'Custom error message');
+		$rulesChecker->existsIn(['userId', 'dummyId'], $mockTargetTable, 'Custom error message');
 	}
 
 
@@ -377,7 +377,7 @@ class RulesCheckerTest extends TestCase {
 				$fieldsProperty->setAccessible(true);
 
 				$fields = $fieldsProperty->getValue($existsIn);
-				$this->assertSame(['user_id'], $fields);
+				$this->assertSame(['userId'], $fields);
 
 				$repositoryProperty = $reflection->getProperty('_repository');
 				/** @noinspection PhpExpressionResultUnusedInspection */
@@ -390,14 +390,14 @@ class RulesCheckerTest extends TestCase {
 			}),
 			$this->equalTo('_existsIn'),
 			$this->callback(function (array $options): bool {
-				$this->assertSame('user_id', $options['errorField']);
+				$this->assertSame('userId', $options['errorField']);
 				$this->assertSame('Custom error message', $options['message']);
 
 				return true;
 			})
 		);
 
-		$rulesChecker->existsIn('user_id', $association, 'Custom error message');
+		$rulesChecker->existsIn('userId', $association, 'Custom error message');
 	}
 
 
@@ -454,14 +454,14 @@ class RulesCheckerTest extends TestCase {
 			$this->isInstanceOf(ExistsIn::class),
 			$this->equalTo('_existsIn'),
 			$this->callback(function (array $options): bool {
-				$this->assertSame('dummy_id', $options['errorField']);
+				$this->assertSame('dummyId', $options['errorField']);
 				$this->assertSame('Custom error message', $options['message']);
 
 				return true;
 			})
 		);
 
-		$rulesChecker->existsIn('user_id', $mockTargetTable, ['errorField' => 'dummy_id', 'message' => 'Custom error message']);
+		$rulesChecker->existsIn('user_id', $mockTargetTable, ['errorField' => 'dummyId', 'message' => 'Custom error message']);
 	}
 
 
@@ -514,7 +514,7 @@ class RulesCheckerTest extends TestCase {
 
 				$fields = $fieldsProperty->getValue($existsIn);
 				// Field must be unmapped to database field
-				$this->assertSame(['include_in_linklist', 'system_order'], $fields);
+				$this->assertSame(['includeInLinklist', 'systemOrder'], $fields);
 
 				return true;
 			}),
@@ -548,14 +548,14 @@ class RulesCheckerTest extends TestCase {
 			$this->isInstanceOf(IsUnique::class),
 			$this->equalTo('_isUnique'),
 			$this->callback(function (array $options): bool {
-				$this->assertSame('dummy_username', $options['errorField']);
+				$this->assertSame('dummyUsername', $options['errorField']);
 				$this->assertSame('Custom error message', $options['message']);
 
 				return true;
 			})
 		);
 
-		$rulesChecker->isUnique(['username'], ['errorField' => 'dummy_username', 'message' => 'Custom error message']);
+		$rulesChecker->isUnique(['username'], ['errorField' => 'dummyUsername', 'message' => 'Custom error message']);
 	}
 
 
@@ -608,7 +608,7 @@ class RulesCheckerTest extends TestCase {
 
 				$fields = $fieldsProperty->getValue($isUnique);
 				// Field must be unmapped to database field
-				$this->assertSame(['include_in_linklist', 'system_order'], $fields);
+				$this->assertSame(['includeInLinklist', 'systemOrder'], $fields);
 
 				return true;
 			}),
@@ -716,7 +716,7 @@ class RulesCheckerTest extends TestCase {
 				$field = $fieldProperty->getValue($validCount);
 
 				// Field must be unmapped to database field
-				$this->assertSame('include_in_linklist', $field);
+				$this->assertSame('includeInLinklist', $field);
 
 				return true;
 			}),

@@ -300,8 +300,8 @@ class AuthorizationHelperTest extends TestCase {
 
 		$identity->method('scopeIsAccessible')->willReturnOnConsecutiveCalls(true, false);
 
-		$this->assertTrue($this->helper->scopeIsAccessible('scope', [], 'identifier'));
-		$this->assertFalse($this->helper->scopeIsAccessible('scope2', [], 'identifier2'));
+		$this->assertTrue($this->helper->scopeIsAccessible('Scope', [], 'identifier'));
+		$this->assertFalse($this->helper->scopeIsAccessible('Scope2', [], 'identifier2'));
 	}
 
 
@@ -314,23 +314,23 @@ class AuthorizationHelperTest extends TestCase {
 	public function testScopeIsAccessiblePassesAdditionDataAsIs(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('scope', ['foo2' => 'bar2'], 'identifier')
+		->with('Scope', ['foo2' => 'bar2'], 'identifier')
 		->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 		$this->helper->setConfig('additionalData', ['foo' => 'bar']);
 
-		$this->assertTrue($this->helper->scopeIsAccessible('scope', ['foo2' => 'bar2'], 'identifier'));
+		$this->assertTrue($this->helper->scopeIsAccessible('Scope', ['foo2' => 'bar2'], 'identifier'));
 
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('scope', ['foo' => 'bar'], 'identifier')
+		->with('Scope', ['foo' => 'bar'], 'identifier')
 		->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 		$this->helper->setConfig('additionalData', ['foo' => 'bar']);
 
-		$this->assertTrue($this->helper->scopeIsAccessible('scope', [], 'identifier'));
+		$this->assertTrue($this->helper->scopeIsAccessible('Scope', [], 'identifier'));
 	}
 
 
@@ -343,12 +343,12 @@ class AuthorizationHelperTest extends TestCase {
 	public function testScopeIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
+		->with('Scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
 		->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 
-		$this->assertTrue($this->helper->scopeIsAccessible('scope', ['foo' => 'bar'], 'identifier1', 'identifier2'));
+		$this->assertTrue($this->helper->scopeIsAccessible('Scope', ['foo' => 'bar'], 'identifier1', 'identifier2'));
 	}
 
 
@@ -365,9 +365,9 @@ class AuthorizationHelperTest extends TestCase {
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->anyIsAccessible(
-			['scope' => 'foo', 'identifier' => 'bar1'],
-			['scope' => 'foo2', 'identifier' => 'bar2'],
-			['scope' => 'foo3', 'identifier' => 'bar3'],
+			['scope' => 'Foo', 'identifier' => 'bar1'],
+			['scope' => 'Foo2', 'identifier' => 'bar2'],
+			['scope' => 'Foo3', 'identifier' => 'bar3'],
 		));
 
 
@@ -377,9 +377,9 @@ class AuthorizationHelperTest extends TestCase {
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->anyIsAccessible(
-			['scope' => 'foo', 'identifier' => 'bar1'],
-			['scope' => 'foo2', 'identifier' => 'bar2'],
-			['scope' => 'foo3', 'identifier' => 'bar3'],
+			['scope' => 'Foo', 'identifier' => 'bar1'],
+			['scope' => 'Foo2', 'identifier' => 'bar2'],
+			['scope' => 'Foo3', 'identifier' => 'bar3'],
 		));
 
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -388,9 +388,9 @@ class AuthorizationHelperTest extends TestCase {
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->anyIsAccessible(
-			['scope' => 'foo', 'identifier' => 'bar1'],
-			['scope' => 'foo2', 'identifier' => 'bar2'],
-			['scope' => 'foo3', 'identifier' => 'bar3'],
+			['scope' => 'Foo', 'identifier' => 'bar1'],
+			['scope' => 'Foo2', 'identifier' => 'bar2'],
+			['scope' => 'Foo3', 'identifier' => 'bar3'],
 		));
 	}
 
@@ -408,9 +408,9 @@ class AuthorizationHelperTest extends TestCase {
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertFalse($this->helper->anyIsAccessible(
-			['scope' => 'foo', 'identifier' => 'bar1'],
-			['scope' => 'foo2', 'identifier' => 'bar2'],
-			['scope' => 'foo3', 'identifier' => 'bar3'],
+			['scope' => 'Foo', 'identifier' => 'bar1'],
+			['scope' => 'Foo2', 'identifier' => 'bar2'],
+			['scope' => 'Foo3', 'identifier' => 'bar3'],
 		));
 	}
 
@@ -424,14 +424,14 @@ class AuthorizationHelperTest extends TestCase {
 	public function testAnyIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-			->with('scope', [], 'identifier1', 'identifier2')
+			->with('Scope', [], 'identifier1', 'identifier2')
 			->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->anyIsAccessible(
-			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2']],
-			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2']],
+			['scope' => 'Scope', 'identifier' => ['identifier1', 'identifier2']],
+			['scope' => 'Scope', 'identifier' => ['identifier1', 'identifier2']],
 		));
 	}
 
@@ -445,14 +445,14 @@ class AuthorizationHelperTest extends TestCase {
 	public function testAnyIsAccessiblePassesSpreadIdentifiersWithAdditionalData(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-			->with('scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
+			->with('Scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
 			->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->anyIsAccessible(
-			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
-			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
+			['scope' => 'Scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
+			['scope' => 'Scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
 		));
 	}
 
@@ -465,7 +465,7 @@ class AuthorizationHelperTest extends TestCase {
 	 */
 	#[TestWith([['foo']])]
 	#[TestWith([['foo' => 'bar']])]
-	#[TestWith([['scope' => 'foo']])]
+	#[TestWith([['scope' => 'Foo']])]
 	#[TestWith([['identifier' => 'bar']])]
 	public function testAnyIsAccessibleThrowsExceptionIfInvalidArray(array $data): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -486,9 +486,9 @@ class AuthorizationHelperTest extends TestCase {
 
 		$result = $this->helper->permissionOptions($policy::getPermissionOption('read'), null, null, 'Usergroups');
 
-		$this->assertStringContainsString('<input type="radio" name="permissions[foobars][read]" value="1"', $result);
-		$this->assertStringContainsString('<input type="radio" name="permissions[foobars][read]" value=""', $result);
-		$this->assertStringContainsString('<input type="radio" name="permissions[foobars][read]" value="0"', $result);
+		$this->assertStringContainsString('<input type="radio" name="permissions[Foobars][read][access]" value="1"', $result);
+		$this->assertStringContainsString('<input type="radio" name="permissions[Foobars][read][access]" value=""', $result);
+		$this->assertStringContainsString('<input type="radio" name="permissions[Foobars][read][access]" value="0"', $result);
 	}
 
 
@@ -517,7 +517,7 @@ class AuthorizationHelperTest extends TestCase {
 
 			$this->assertInstanceOf(SimplePermissionOption::class, $data['permission']);
 			$this->assertSame($fakeEntity, $data['entity']);
-			$this->assertSame('foobars', $data['scope']);
+			$this->assertSame('Foobars', $data['scope']);
 			$this->assertSame('read', $data['identifier']);
 			$this->assertSame($helper, $data['AuthorizationHelper']);
 

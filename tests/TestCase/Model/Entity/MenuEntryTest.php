@@ -164,13 +164,13 @@ class MenuEntryTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'menu_id' => 123,
-			'language_shortcode' => 'de',
-			'parent_id' => 456,
+			'menuId' => 123,
+			'languageShortcode' => 'de',
+			'parentId' => 456,
 			'title' => 'Test Menu Entry',
 			'link' => '/test-link',
 			'external' => false,
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -187,26 +187,5 @@ class MenuEntryTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MenuEntry::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'menu_id' => 789,
-			'language_shortcode' => 'en',
-			'parent_id' => 101,
-			'system_order' => 5,
-		];
-
-		$entity = new MenuEntry($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

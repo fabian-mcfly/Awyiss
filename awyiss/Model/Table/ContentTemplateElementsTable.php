@@ -68,7 +68,9 @@ class ContentTemplateElementsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('ContentTemplates', [
+			'foreignKey' => 'contentTemplateId',
 			'joinType' => 'INNER',
+			'propertyName' => 'contentTemplate',
 		]);
 	}
 
@@ -156,7 +158,7 @@ class ContentTemplateElementsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('contentTemplateId', 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_template_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_content_template_exists'),
 		]);
 
 

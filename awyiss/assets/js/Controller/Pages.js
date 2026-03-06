@@ -58,7 +58,7 @@ export default class PagesController {
 	initMeta(form) {
 		// Find the title input field
 		const titleInput = form.querySelector('input[name="title"]');
-		const metaTitleInput = form.querySelector('input[name="meta_title"]');
+		const metaTitleInput = form.querySelector('input[name="metaTitle"]');
 
 		if (!titleInput || !metaTitleInput) {
 			return;

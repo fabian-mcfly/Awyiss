@@ -78,10 +78,10 @@ class CustomersListenerTest extends TestCase {
 		$oldCustomer = $customersTable->newDefaultEntity([
 			'email' => 'enabled-expired-old@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subDays(2),
+			'createdOn' => DateTime::now()->subDays(2),
 		]);
 		$customersTable->saveOrFail($oldCustomer, ['audit' => ['skip' => true]]);
 
@@ -89,10 +89,10 @@ class CustomersListenerTest extends TestCase {
 		$recentCustomer = $customersTable->newDefaultEntity([
 			'email' => 'enabled-expired-recent@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subHours(12),
+			'createdOn' => DateTime::now()->subHours(12),
 		]);
 		$customersTable->saveOrFail($recentCustomer, ['audit' => ['skip' => true]]);
 
@@ -100,10 +100,10 @@ class CustomersListenerTest extends TestCase {
 		$verifiedCustomer = $customersTable->newDefaultEntity([
 			'email' => 'enabled-expired-verified@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => true,
 			'active' => true,
-			'created_on' => DateTime::now()->subDays(2),
+			'createdOn' => DateTime::now()->subDays(2),
 		]);
 		$customersTable->saveOrFail($verifiedCustomer, ['audit' => ['skip' => true]]);
 
@@ -136,10 +136,10 @@ class CustomersListenerTest extends TestCase {
 		$oldCustomer = $customersTable->newDefaultEntity([
 			'email' => 'disabled-old@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subDays(2),
+			'createdOn' => DateTime::now()->subDays(2),
 		]);
 		$customersTable->saveOrFail($oldCustomer, ['audit' => ['skip' => true]]);
 
@@ -166,10 +166,10 @@ class CustomersListenerTest extends TestCase {
 		$oldCustomer = $customersTable->newDefaultEntity([
 			'email' => 'validity-zero-old@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subDays(2),
+			'createdOn' => DateTime::now()->subDays(2),
 		]);
 		$customersTable->saveOrFail($oldCustomer, ['audit' => ['skip' => true]]);
 
@@ -195,10 +195,10 @@ class CustomersListenerTest extends TestCase {
 		$oldCustomer = $customersTable->newDefaultEntity([
 			'email' => 'default-config-old@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subDays(2),
+			'createdOn' => DateTime::now()->subDays(2),
 		]);
 		$customersTable->saveOrFail($oldCustomer, ['audit' => ['skip' => true]]);
 
@@ -225,10 +225,10 @@ class CustomersListenerTest extends TestCase {
 		$twoHoursOld = $customersTable->newDefaultEntity([
 			'email' => 'custom-validity-twohours@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subHours(2),
+			'createdOn' => DateTime::now()->subHours(2),
 		]);
 		$customersTable->saveOrFail($twoHoursOld, ['audit' => ['skip' => true]]);
 
@@ -236,10 +236,10 @@ class CustomersListenerTest extends TestCase {
 		$thirtyMinutesOld = $customersTable->newDefaultEntity([
 			'email' => 'custom-validity-thirtymin@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subMinutes(30),
+			'createdOn' => DateTime::now()->subMinutes(30),
 		]);
 		$customersTable->saveOrFail($thirtyMinutesOld, ['audit' => ['skip' => true]]);
 
@@ -269,10 +269,10 @@ class CustomersListenerTest extends TestCase {
 		$customer = $customersTable->newDefaultEntity([
 			'email' => 'both-disabled-test@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subDays(30),
+			'createdOn' => DateTime::now()->subDays(30),
 		]);
 		$customersTable->saveOrFail($customer, ['audit' => ['skip' => true]]);
 
@@ -299,20 +299,20 @@ class CustomersListenerTest extends TestCase {
 		$customer1 = $customersTable->newDefaultEntity([
 			'email' => 'no-expired-recent1@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subHours(12),
+			'createdOn' => DateTime::now()->subHours(12),
 		]);
 		$customersTable->saveOrFail($customer1, ['audit' => ['skip' => true]]);
 
 		$customer2 = $customersTable->newDefaultEntity([
 			'email' => 'no-expired-recent2@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subHours(6),
+			'createdOn' => DateTime::now()->subHours(6),
 		]);
 		$customersTable->saveOrFail($customer2, ['audit' => ['skip' => true]]);
 
@@ -345,7 +345,7 @@ class CustomersListenerTest extends TestCase {
 			$customer = $customersTable->newDefaultEntity([
 				'email' => 'deletes-multiple-expired' . $i . '@example.com',
 				'password' => 'password123',
-				'password_confirm' => 'password123',
+				'passwordConfirm' => 'password123',
 				'verified' => false,
 				'active' => false,
 			]);
@@ -360,10 +360,10 @@ class CustomersListenerTest extends TestCase {
 		$recentCustomer = $customersTable->newDefaultEntity([
 			'email' => 'deletes-multiple-recent@example.com',
 			'password' => 'password123',
-			'password_confirm' => 'password123',
+			'passwordConfirm' => 'password123',
 			'verified' => false,
 			'active' => false,
-			'created_on' => DateTime::now()->subHours(12),
+			'createdOn' => DateTime::now()->subHours(12),
 		]);
 		$customersTable->saveOrFail($recentCustomer, ['audit' => ['skip' => true]]);
 

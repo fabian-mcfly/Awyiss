@@ -57,10 +57,10 @@ class MediaSelectorsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier' => 'media_selectors::identifier',
 			'active' => 'media_selectors::active',
-			'created_by' => 'media_selectors::created_by',
-			'created_on' => 'media_selectors::created_on',
-			'changed_by' => 'media_selectors::changed_by',
-			'changed_on' => 'media_selectors::changed_on',
+			'createdBy' => 'media_selectors::created_by',
+			'createdOn' => 'media_selectors::created_on',
+			'changedBy' => 'media_selectors::changed_by',
+			'changedOn' => 'media_selectors::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

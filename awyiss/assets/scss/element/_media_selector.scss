@@ -84,7 +84,7 @@
 		}
 
 		:is(
-			input[name^="media_assignments"],
+			input[name^="mediaAssignments"],
 			.MediaSelector-MediaId
 		) {
 			width:50px;

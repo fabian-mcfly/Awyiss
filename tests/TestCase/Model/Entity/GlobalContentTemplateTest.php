@@ -120,9 +120,9 @@ class GlobalContentTemplateTest extends TestCase {
 		$properties = [
 			'id' => 1,
 			'title' => 'Test GlobalContent Template',
-			'file_name' => 'TestTemplate',
-			'in_content_row' => true,
-			'system_order' => 10,
+			'fileName' => 'TestTemplate',
+			'inContentRow' => true,
+			'systemOrder' => 10,
 			'active' => false,
 			'deleted' => false,
 		];
@@ -136,25 +136,5 @@ class GlobalContentTemplateTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertFalse($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\GlobalContentTemplate::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'file_name' => 'test-file',
-			'in_content_row' => true,
-			'system_order' => 5,
-		];
-
-		$entity = new GlobalContentTemplate($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

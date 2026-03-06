@@ -59,42 +59,55 @@ class FormsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->hasMany('Contents');
+		$this->hasMany('Contents', [
+			'foreignKey' => 'formId',
+		]);
 
 		$this->belongsTo('EmailTemplates', [
-			'className' => 'EmailTemplates',
-			'foreignKey' => 'email_template_id',
+			'foreignKey' => 'emailTemplateId',
+			'propertyName' => 'emailTemplate',
 		]);
 
 		$this->belongsTo('ConfirmationEmailTemplates', [
 			'className' => 'EmailTemplates',
-			'foreignKey' => 'confirmation_email_template_id',
+			'foreignKey' => 'confirmationEmailTemplateId',
+			'propertyName' => 'confirmationEmailTemplate',
 		]);
 
 		$this->hasMany('FormConditionalRecipients', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'form_id',
+			'foreignKey' => 'formId',
+			'propertyName' => 'conditionalRecipients',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('FormElements', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'form_id',
+			'foreignKey' => 'formId',
+			'propertyName' => 'formElements',
 		]);
 
 		$this->hasMany('FormEntries', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'form_id',
+			'foreignKey' => 'formId',
+			'propertyName' => 'formEntries',
 		]);
 
-		$this->hasMany('Pages');
+		$this->hasMany('GlobalContents', [
+			'foreignKey' => 'formId',
+			'propertyName' => 'globalContents',
+		]);
 
-		$this->hasMany('Surveys');
+		$this->hasMany('Pages', [
+			'foreignKey' => 'formId',
+		]);
 
-		$this->hasMany('GlobalContents');
+		$this->hasMany('Surveys', [
+			'foreignKey' => 'formId',
+		]);
 	}
 
 
@@ -114,36 +127,36 @@ class FormsTable extends Table {
 
 		// Ensure that ownerEmail is required only if send_email or send_confirmation_email is true
 		$validator->requirePresence('ownerEmail', function (array $context): bool {
-			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendEmail']) || !empty($context['data']['sendConfirmationEmail']);
 		});
 
 
 		// Ensure that userEmail is required only if send_email or send_confirmation_email is true
 		$validator->requirePresence('userEmail', function (array $context): bool {
-			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendEmail']) || !empty($context['data']['sendConfirmationEmail']);
 		});
 
 		// Ensure that subject is required only if send_email is true
 		$validator->requirePresence(['subject'], function (array $context): bool {
-			return !empty($context['data']['send_email']);
+			return !empty($context['data']['sendEmail']);
 		});
 
 
 		// Ensure that subjectConfirmation is required only if send_confirmation_email is true
 		$validator->requirePresence(['subjectConfirmation'], function (array $context): bool {
-			return !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendConfirmationEmail']);
 		});
 
 
 		// Ensure that emailTemplateId is required only if send_email is true
 		$validator->requirePresence('emailTemplateId', function (array $context): bool {
-			return !empty($context['data']['send_email']);
+			return !empty($context['data']['sendEmail']);
 		});
 
 
 		// Ensure that confirmationEmailTemplateId is required only if send_confirmation_email is true
 		$validator->requirePresence('confirmationEmailTemplateId', function (array $context): bool {
-			return !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendConfirmationEmail']);
 		});
 
 
@@ -177,7 +190,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('emailTemplateId', null, function (array $context): bool {
-			return !empty($context['data']['send_email']);
+			return !empty($context['data']['sendEmail']);
 		});
 		$validator->add('emailTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -191,7 +204,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('confirmationEmailTemplateId', null, function (array $context): bool {
-			return !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendConfirmationEmail']);
 		});
 		$validator->add('confirmationEmailTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -200,7 +213,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('ownerEmail', null, function (array $context): bool {
-			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendEmail']) || !empty($context['data']['sendConfirmationEmail']);
 		});
 		$validator->add('ownerEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -218,7 +231,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('userEmail', null, function (array $context): bool {
-			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendEmail']) || !empty($context['data']['sendConfirmationEmail']);
 		});
 		$validator->add('userEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -291,7 +304,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('subject', null, function (array $context): bool {
-			return !empty($context['data']['send_email']);
+			return !empty($context['data']['sendEmail']);
 		});
 		$validator->add('subject', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -301,7 +314,7 @@ class FormsTable extends Table {
 
 
 		$validator->notEmptyString('subjectConfirmation', null, function (array $context): bool {
-			return !empty($context['data']['send_confirmation_email']);
+			return !empty($context['data']['sendConfirmationEmail']);
 		});
 		$validator->add('subjectConfirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -381,7 +394,7 @@ class FormsTable extends Table {
 			'emailTemplateExists',
 			[
 				'errorField' => 'emailTemplateId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_email_template_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_email_template_exists'),
 			]
 		);
 
@@ -390,13 +403,13 @@ class FormsTable extends Table {
 			'confirmationEmailTemplateExists',
 			[
 				'errorField' => 'confirmationEmailTemplateId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_confirmation_email_template_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_confirmation_email_template_exists'),
 			]
 		);
 
 		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 		]);
 
 		$rules->add(function (Form $entity): bool {
@@ -404,7 +417,7 @@ class FormsTable extends Table {
 		},
 		'transportProfileExists', [
 			'errorField' => 'transportProfile',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_transport_profile_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_transport_profile_exists'),
 		]);
 
 		$rules->addDelete(
@@ -412,7 +425,7 @@ class FormsTable extends Table {
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_contents'),
 			]
 		);
 
@@ -421,7 +434,7 @@ class FormsTable extends Table {
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_pages'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_pages'),
 			]
 		);
 
@@ -430,16 +443,16 @@ class FormsTable extends Table {
 			'noLinkedSurveys',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_surveys'),
 			]
 		);
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('GlobalContents', 'global_contents'),
+			$rules->isNotLinkedTo('GlobalContents', 'globalContents'),
 			'noLinkedGlobalContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_global_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_global_contents'),
 			]
 		);
 
@@ -474,7 +487,7 @@ class FormsTable extends Table {
 			$config = TransportFactory::get($profile)->getConfig();
 			unset($config['url'], $config['password']);
 
-			$label = __d('forms', 'transport_profile_' . $profile, $config);
+			$label = __d('Forms', 'transport_profile_' . $profile, $config);
 			$profiles[ $profile ] = str_contains($label, '::') ? $profile : $label;
 		}
 

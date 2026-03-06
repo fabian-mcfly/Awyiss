@@ -15,9 +15,9 @@ class PageTemplateContentAreasSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'page_template_id' => 1,
-				'content_area_id' => 1,
-				'system_order' => 1,
+				'pageTemplateId' => 1,
+				'contentAreaId' => 1,
+				'systemOrder' => 1,
 			],
 		];
 

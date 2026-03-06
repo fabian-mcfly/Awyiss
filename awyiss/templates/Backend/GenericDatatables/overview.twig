@@ -40,7 +40,7 @@
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
 				{% set identifier = localConfig('categories.identifier', 'category') %}
-				{% set label = __(identifier ~ '_filter_label') %}
+				{% set label = __(identifier|underscore ~ '_filter_label') %}
 				{% if '::' in label and attributes[ identifier ] is not empty %}
 					{% set label = attributes[ identifier ].title %}
 				{% endif %}
@@ -58,7 +58,7 @@
 
 				{% block overviewButtonAdd %}
 					{% if AuthorizationHelper.isAccessible('create') %}
-						{{ HtmlHelper.link(__df(datatable.identifier|pluralize, 'generic_datatables', 'create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+						{{ HtmlHelper.link(__df(datatable.identifier|pluralize, 'GenericDatatables', 'create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 					{% endif %}
 				{% endblock %}
 
@@ -67,14 +67,14 @@
 				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
-					{{ HtmlHelper.link(__d('generic_datatables', 'list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+					{{ HtmlHelper.link(__d('GenericDatatables', 'list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
 						disabled: localConfig.paginate.enabled == true
 					}) }}
 				{% endblock %}
 
 				{% block listControlOverviewListNested %}
-					{{ HtmlHelper.link(__d('generic_datatables', 'list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+					{{ HtmlHelper.link(__d('GenericDatatables', 'list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
 						disabled: localConfig.paginate.enabled == false
 					}) }}

@@ -28,18 +28,6 @@ class Employer extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'language_shortcode' => 'languageShortcode',
-		'system_order' => 'systemOrder',
-		'child_employers' => 'childEmployers',
-		'parent_employer' => 'parentEmployer',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [
 		'parentId' => true,
 		'languageShortcode' => true,
@@ -47,8 +35,6 @@ class Employer extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 		'language' => true,
-		'mediaAssignments' => true,
-		'mediaElementAssignments' => true,
 		'childEmployers' => true,
 		'parentEmployer' => true,
 	];

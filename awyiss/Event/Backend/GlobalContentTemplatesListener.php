@@ -40,23 +40,23 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
-		if (empty($data['global_content_template_elements'])) {
+		if (empty($data['globalContentTemplateElements'])) {
 			return;
 		}
 
-		$elements = $data['global_content_template_elements'];
+		$elements = $data['globalContentTemplateElements'];
 		$hasTitle = Hash::check($elements, '{n}[identifier=title]');
 		$hasSubtitle = Hash::check($elements, '{n}[identifier=subtitle]');
 
 		/**
-		 * Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
+		 * Filter out the titleTag and subtitleTag elements when the title and subtitle are not present
 		 */
-		$data['global_content_template_elements'] = array_filter($elements, function ($element) use ($hasTitle, $hasSubtitle) {
-			if ($element['identifier'] == 'title_tag' && !$hasTitle) {
+		$data['globalContentTemplateElements'] = array_filter($elements, function ($element) use ($hasTitle, $hasSubtitle) {
+			if ($element['identifier'] == 'titleTag' && !$hasTitle) {
 				return false;
 			}
 
-			if ($element['identifier'] == 'subtitle_tag' && !$hasSubtitle) {
+			if ($element['identifier'] == 'subtitleTag' && !$hasSubtitle) {
 				return false;
 			}
 
@@ -67,7 +67,7 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 
 	/**
 	 * If the filename of a content templates has changed,
-	 * check the QueuedJobs table for jobs with the identifier 'global_content_templates::file_changes'.
+	 * check the QueuedJobs table for jobs with the identifier 'GlobalContentTemplates::fileChanges'.
 	 * If such an active job exists, stop the save event and return an error.
 	 * This is necessary since a second file rename job could interfere with the first one.
 	 *
@@ -80,9 +80,9 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-			if ($queuedJobsTable->isQueued('global_content_templates::file_changes')) {
+			if ($queuedJobsTable->isQueued('GlobalContentTemplates::fileChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('global_content_templates', 'file_changes_in_progress'));
+				$entity->setError('_general', __d('GlobalContentTemplates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -145,7 +145,7 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]);
 		}
 	}
@@ -185,7 +185,7 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'global_content_templates::file_changes',
+				'reference' => 'GlobalContentTemplates::fileChanges',
 			]);
 		}
 	}

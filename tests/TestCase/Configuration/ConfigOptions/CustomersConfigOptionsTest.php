@@ -48,7 +48,7 @@ class CustomersConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
-			'last_login',
+			'lastLogin',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('customers::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -59,18 +59,18 @@ class CustomersConfigOptionsTest extends TestCase {
 			'email' => 'customers::email',
 			'firstname' => 'customers::firstname',
 			'lastname' => 'customers::lastname',
-			'last_login' => 'customers::last_login',
-			'failed_attempts' => 'customers::failed_attempts',
+			'lastLogin' => 'customers::last_login',
+			'failedAttempts' => 'customers::failed_attempts',
 			'verified' => 'customers::verified',
-			'verified_on' => 'customers::verified_on',
-			'verification_code' => 'customers::verification_code',
-			'password_reset_code' => 'customers::password_reset_code',
-			'password_reset_on' => 'customers::password_reset_on',
+			'verifiedOn' => 'customers::verified_on',
+			'verificationCode' => 'customers::verification_code',
+			'passwordResetCode' => 'customers::password_reset_code',
+			'passwordResetOn' => 'customers::password_reset_on',
 			'active' => 'customers::active',
-			'created_by' => 'customers::created_by',
-			'created_on' => 'customers::created_on',
-			'changed_by' => 'customers::changed_by',
-			'changed_on' => 'customers::changed_on',
+			'createdBy' => 'customers::created_by',
+			'createdOn' => 'customers::created_on',
+			'changedBy' => 'customers::changed_by',
+			'changedOn' => 'customers::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);
@@ -212,7 +212,7 @@ class CustomersConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'main' => 'Hauptmenü',
 			'legal' => 'Rechtliches',
-			'social_media' => 'Social Media',
+			'socialMedia' => 'Social Media',
 		], $configOptions['Frontend.navigation.menuIdentifier']->getValues(true));
 
 		$this->assertArrayHasKey('Frontend.profile.emailChangeAllowed', $configOptions);

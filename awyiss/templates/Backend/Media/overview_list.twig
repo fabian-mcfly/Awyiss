@@ -58,9 +58,9 @@
 						<span class="Actions">
 							{% block listOverviewMediaItemActionsUsageCount %}
 								{% if (mediaItem.usageCount ?? 0) > 0 %}
-									{{ HtmlHelper.link(mediaItem.usageCount, {action: 'usages', id: mediaItem.id}, {class: 'Button UsageCount', title: mediaItem.usageCount ~ ' ' ~ __d('media', 'usage_count')}) }}
+									{{ HtmlHelper.link(mediaItem.usageCount, {action: 'usages', id: mediaItem.id}, {class: 'Button UsageCount', title: mediaItem.usageCount ~ ' ' ~ __d('Media', 'usage_count')}) }}
 								{% else %}
-									<span class="Button UsageCount" title="{{ (mediaItem.usageCount ?? 0) ~ ' ' ~ __d('media', 'usage_count', mediaItem.usageCount ?? 0) }}">{{ mediaItem.usageCount ?? 0 }}</span>
+									<span class="Button UsageCount" title="{{ (mediaItem.usageCount ?? 0) ~ ' ' ~ __d('Media', 'usage_count', mediaItem.usageCount ?? 0) }}">{{ mediaItem.usageCount ?? 0 }}</span>
 								{% endif %}
 							{% endblock %}
 							{% block listOverviewMediaItemActionsUpdate %}

@@ -68,10 +68,10 @@ class MenusConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier' => 'menus::identifier',
 			'active' => 'menus::active',
-			'created_by' => 'menus::created_by',
-			'created_on' => 'menus::created_on',
-			'changed_by' => 'menus::changed_by',
-			'changed_on' => 'menus::changed_on',
+			'createdBy' => 'menus::created_by',
+			'createdOn' => 'menus::created_on',
+			'changedBy' => 'menus::changed_by',
+			'changedOn' => 'menus::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

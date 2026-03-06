@@ -38,7 +38,7 @@ class FormElementsConfigOptions extends AbstractConfigOptions {
 					defaultValue: [
 						'identifier',
 						'required',
-						'column_width',
+						'columnWidth',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

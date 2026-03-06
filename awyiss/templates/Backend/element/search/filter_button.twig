@@ -25,11 +25,11 @@
 	<button class="Button Button-Small Button-Filter Button-ShowFilter
 		{%- if _filter[ scope ]['active'] %} Button-Info{% endif %}"
 		{%- if target %} data-target="{{ target }}"{% endif %}>
-		{{ __d('search', 'filter_show') }}
+		{{ __d('Search', 'filter_show') }}
 
 		{% if _filter[ scope ]['active'] %}
 			<span class="Label">
-				{{ __d('search', 'filter_active') }}
+				{{ __d('Search', 'filter_active') }}
 
 
 			</span>
@@ -39,7 +39,7 @@
 	{% if _filter[ scope ]['active'] %}
 		<button class="Button Button-Small Button-Delete Button-ResetFilter"
 			{%- if target %} data-target="{{ target }}"{% endif %}>
-				{{ __d('search', 'filter_reset') }}
+				{{ __d('Search', 'filter_reset') }}
 		</button>
 	{% endif %}
 {% endif %}

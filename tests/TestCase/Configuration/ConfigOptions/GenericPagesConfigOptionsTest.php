@@ -4,7 +4,7 @@
 namespace Awyiss\Test\TestCase\Configuration\ConfigOptions;
 
 
-use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
+use Awyiss\config\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
 
@@ -12,14 +12,14 @@ use Awyiss\Test\TestSuite\TestCase;
 /**
  * GenericPagesConfigOptions Test Case
  *
- * @see \Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions
+ * @see \Awyiss\config\GenericPagesConfigOptions
  */
 class GenericPagesConfigOptionsTest extends TestCase {
 	use FlattenConfigOptionsTrait;
 
 
 	/**
-	 * @var \Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions
+	 * @var \Awyiss\config\GenericPagesConfigOptions
 	 */
 	protected GenericPagesConfigOptions $configOptions;
 
@@ -194,7 +194,7 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.overview.displayedFields']->isLocalizable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
-		$this->assertSame(['page_template_id'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
+		$this->assertSame(['pageTemplateId'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('system::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
@@ -284,27 +284,27 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.systemOrder.field']->getValues());
 		$this->assertSame([
 			'id' => 'system::id',
-			'page_role_id' => 'system::page_role_id',
-			'page_template_id' => 'system::page_template_id',
-			'parent_id' => 'system::parent_id',
-			'language_shortcode' => 'system::language_shortcode',
+			'pageRoleId' => 'system::page_role_id',
+			'pageTemplateId' => 'system::page_template_id',
+			'parentId' => 'system::parent_id',
+			'languageShortcode' => 'system::language_shortcode',
 			'slug' => 'system::slug',
 			'title' => 'system::title',
-			'redirect_link' => 'system::redirect_link',
-			'meta_title' => 'seo::meta_title',
-			'meta_description' => 'seo::meta_description',
-			'robots_index' => 'seo::robots_index',
-			'robots_follow' => 'seo::robots_follow',
-			'duplicate_of' => 'system::duplicate_of',
-			'form_id' => 'system::form_id',
-			'survey_id' => 'system::survey_id',
-			'system_order' => 'system::system_order',
+			'redirectLink' => 'system::redirect_link',
+			'metaTitle' => 'seo::meta_title',
+			'metaDescription' => 'seo::meta_description',
+			'robotsIndex' => 'seo::robots_index',
+			'robotsFollow' => 'seo::robots_follow',
+			'duplicateOf' => 'system::duplicate_of',
+			'formId' => 'system::form_id',
+			'surveyId' => 'system::survey_id',
+			'systemOrder' => 'system::system_order',
 			'active' => 'system::active',
-			'parents_active' => 'system::parents_active',
-			'created_by' => 'system::created_by',
-			'created_on' => 'system::created_on',
-			'changed_by' => 'system::changed_by',
-			'changed_on' => 'system::changed_on',
+			'parentsActive' => 'system::parents_active',
+			'createdBy' => 'system::created_by',
+			'createdOn' => 'system::created_on',
+			'changedBy' => 'system::changed_by',
+			'changedOn' => 'system::changed_on',
 			'attributes.date' => 'Datum',
 			'attributes.teaser' => 'Teaser',
 			'attributes.text' => 'Text',

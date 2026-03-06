@@ -50,14 +50,16 @@ class SurveyQuestionsTable extends Table {
 		$this->hasMany('SurveyAnswers', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_question_id',
+			'foreignKey' => 'surveyQuestionId',
+			'propertyName' => 'surveyAnswers',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('SurveySurveyQuestions', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_question_id',
+			'foreignKey' => 'surveyQuestionId',
+			'propertyName' => 'surveySurveyQuestions',
 			'saveStrategy' => 'replace',
 		]);
 	}
@@ -146,7 +148,7 @@ class SurveyQuestionsTable extends Table {
 			'validType',
 			[
 				'errorField' => 'type',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_type'),
 			]
 		);
 
@@ -156,7 +158,7 @@ class SurveyQuestionsTable extends Table {
 			'noLinkedSurveys',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_surveys'),
 			]
 		);
 

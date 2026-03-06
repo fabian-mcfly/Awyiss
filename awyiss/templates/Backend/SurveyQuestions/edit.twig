@@ -28,7 +28,7 @@
 				<h1>
 					{% block buttonOverview %}
 						{% if
-							surveyQuestion.type.value in ['single_choice', 'multiple_choice'] and
+							surveyQuestion.type.value in ['singleChoice', 'multipleChoice'] and
 							AuthorizationHelper.scopeIsAccessible('SurveyAnswers', [], 'read')
 						%}
 							<div class="Buttons">
@@ -43,7 +43,7 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'SurveyQuestionForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+	{{ FormHelper.checkbox('saveAsCopy', {form: 'SurveyQuestionForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
@@ -62,7 +62,7 @@
 
 				{% block formEditButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'SurveyQuestionForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'SurveyQuestionForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

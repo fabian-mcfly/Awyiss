@@ -437,24 +437,24 @@ class GlobalContentTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'identifier' => 'test_global_content',
-			'global_content_template_id' => 123,
-			'parent_id' => 456,
+			'identifier' => 'testGlobalContent',
+			'globalContentTemplateId' => 123,
+			'parentId' => 456,
 			'title' => 'Test GlobalContent',
-			'title_tag' => 'h2',
+			'titleTag' => 'h2',
 			'subtitle' => 'Test Subtitle',
-			'subtitle_tag' => 'h3',
+			'subtitleTag' => 'h3',
 			'text' => 'Test content',
 			'link' => '/test-link',
-			'column_width' => '6/12',
-			'column_indent' => '1/12',
-			'column_last' => true,
-			'column_rtl' => false,
-			'css_class' => 'test-class',
+			'columnWidth' => '6/12',
+			'columnIndent' => '1/12',
+			'columnLast' => true,
+			'columnRtl' => false,
+			'cssClass' => 'test-class',
 			'data' => ['key' => 'value'],
-			'form_id' => 789,
-			'survey_id' => 101,
-			'system_order' => 10,
+			'formId' => 789,
+			'surveyId' => 101,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -462,7 +462,7 @@ class GlobalContentTest extends TestCase {
 		$entity = new GlobalContent($properties);
 
 		$this->assertEquals(1, $entity->id);
-		$this->assertEquals('test_global_content', $entity->identifier);
+		$this->assertEquals('testGlobalContent', $entity->identifier);
 		$this->assertEquals(123, $entity->globalContentTemplateId);
 		$this->assertEquals(456, $entity->parentId);
 		$this->assertEquals('Test GlobalContent', $entity->title);
@@ -482,34 +482,5 @@ class GlobalContentTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\GlobalContent::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'parent_id' => 456,
-			'global_content_template_id' => 123,
-			'title_tag' => 'h2',
-			'subtitle_tag' => 'h3',
-			'css_class' => 'test-class',
-			'column_width' => '6/12',
-			'column_indent' => '1/12',
-			'column_last' => true,
-			'column_rtl' => false,
-			'form_id' => 789,
-			'survey_id' => 101,
-			'system_order' => 10,
-		];
-
-		$entity = new GlobalContent($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

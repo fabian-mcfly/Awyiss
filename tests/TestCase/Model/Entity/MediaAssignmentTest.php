@@ -63,13 +63,13 @@ class MediaAssignmentTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'media_element_id' => 123,
-			'media_element_selector_identifier' => 'gallery_selector',
-			'media_id' => 456,
-			'media_folder_id' => 789,
+			'mediaElementId' => 123,
+			'mediaElementSelectorIdentifier' => 'gallery_selector',
+			'mediaId' => 456,
+			'mediaFolderId' => 789,
 			'scope' => 'Pages',
-			'foreign_key' => 101,
-			'system_order' => 10,
+			'foreignKey' => 101,
+			'systemOrder' => 10,
 		];
 
 		$entity = new MediaAssignment($properties);
@@ -82,30 +82,5 @@ class MediaAssignmentTest extends TestCase {
 		$this->assertEquals('Pages', $entity->scope);
 		$this->assertEquals(101, $entity->foreignKey);
 		$this->assertEquals(10, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaAssignment::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'media_element_id' => 999,
-			'media_element_selector_identifier' => 'test_selector',
-			'media_id' => 888,
-			'media_folder_id' => 777,
-			'foreign_key' => 666,
-			'system_order' => 5,
-			'media_element' => ['id' => 999, 'title' => 'Test Element'],
-			'media_folder' => ['id' => 777, 'title' => 'Test Folder'],
-		];
-
-		$entity = new MediaAssignment($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

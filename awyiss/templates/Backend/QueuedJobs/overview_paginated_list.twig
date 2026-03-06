@@ -30,10 +30,10 @@
 		{{ __('reference') }}
 	</th>
 	<th class="TableHeader-Created{% if PaginatorHelper.isCurrentSortKey('created') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('created', i18nDomain ? __df(i18nDomain, 'system', 'created') : __('created')) }}
+		{{ PaginatorHelper.sort('created', i18nDomain ? __df(i18nDomain, 'System', 'created') : __('created')) }}
 	</th>
 	<th class="TableHeader-Completed{% if PaginatorHelper.isCurrentSortKey('completed') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('completed', i18nDomain ? __df(i18nDomain, 'system', 'completed') : __('completed')) }}
+		{{ PaginatorHelper.sort('completed', i18nDomain ? __df(i18nDomain, 'System', 'completed') : __('completed')) }}
 	</th>
 {% endblock %}
 

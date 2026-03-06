@@ -44,7 +44,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'page_template_id',
+						'pageTemplateId',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

@@ -206,7 +206,7 @@ class UsergroupsListenerTest extends TestCase {
 		$usersTable = $this->fetchTable('Users');
 
 		$result = $usersTable->updateAll([
-			'changed_on' => new DateTime('2000-01-01 00:00:00'),
+			'changedOn' => new DateTime('2000-01-01 00:00:00'),
 		], [
 			'id IN' => [1, 2, 3, 4],
 		]);

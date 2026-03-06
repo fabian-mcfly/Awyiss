@@ -115,7 +115,7 @@ class DesignsTableTest extends TestCase {
 		$result = $this->designsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('designs', $result->getI18nDomain());
+		$this->assertSame('Designs', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -138,7 +138,7 @@ class DesignsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
-			'identifier' => 'test_design',
+			'identifier' => 'testDesign',
 			'title' => 'Test Design',
 			'description' => 'A test design',
 			'settings' => ['color' => 'blue', 'font' => 'Arial'],
@@ -271,7 +271,7 @@ class DesignsTableTest extends TestCase {
 		}
 
 		$data = [
-			'identifier' => 'test_design',
+			'identifier' => 'testDesign',
 			'title' => 'Test Design',
 			'settings' => $largeSettings,
 		];
@@ -290,7 +290,7 @@ class DesignsTableTest extends TestCase {
 	 */
 	public function testEntityValidationAllowEmptyFields(): void {
 		$data = [
-			'identifier' => 'test_design',
+			'identifier' => 'testDesign',
 			'title' => 'Test Design',
 			'description' => null, // description allows empty
 			'settings' => null, // settings allows empty
@@ -352,7 +352,7 @@ class DesignsTableTest extends TestCase {
 	 */
 	public function testBuildDeleteRulesNotInUseValid(): void {
 		$data = [
-			'identifier' => 'test_design',
+			'identifier' => 'testDesign',
 			'title' => 'Test Design',
 			'inUse' => false,
 		];
@@ -417,7 +417,7 @@ class DesignsTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'identifier' => 'custom_design',
+			'identifier' => 'customDesign',
 			'title' => 'Custom Design',
 			'description' => 'Custom description',
 			'settings' => ['theme' => 'dark'],
@@ -431,7 +431,7 @@ class DesignsTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		// Check custom values
-		$this->assertSame('custom_design', $entity->identifier);
+		$this->assertSame('customDesign', $entity->identifier);
 		$this->assertSame('Custom Design', $entity->title);
 		$this->assertSame('Custom description', $entity->description);
 		$this->assertSame(['theme' => 'dark'], $entity->settings);

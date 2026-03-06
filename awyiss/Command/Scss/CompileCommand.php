@@ -87,7 +87,7 @@ class CompileCommand extends Command {
 		if ($args->getOption('realm') == 'Frontend') {
 			$designTable = FactoryLocator::get('Table')->get('Designs');
 			/** @var \Awyiss\Model\Entity\Design $design */
-			$design = $designTable->find()->where(['in_use' => true])->first();
+			$design = $designTable->find()->where(['inUse' => true])->first();
 			$designSettings = $design->settings ?? [];
 		}
 

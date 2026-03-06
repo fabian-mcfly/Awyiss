@@ -63,15 +63,23 @@ class PageTemplatesTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsToMany('ContentAreas', [
-			'sort' => ['system_order' => 'ASC'],
+			'foreignKey' => 'pageTemplateId',
+			'propertyName' => 'contentAreas',
+			'sort' => ['systemOrder' => 'ASC'],
+			'targetForeignKey' => 'contentAreaId',
 			'through' => 'PageTemplateContentAreas',
 		]);
 
 		$this->hasMany('ContentTemplateContentAreas', [
+			'propertyName' => 'contentTemplateContentAreas',
+			'foreignKey' => 'pageTemplateId',
 			'saveStrategy' => 'replace',
 		]);
 
-		$this->belongsTo('PageRoles');
+		$this->belongsTo('PageRoles', [
+			'foreignKey' => 'pageRoleId',
+			'propertyName' => 'pageRole',
+		]);
 
 		$this->hasMany('Pages', [
 			'finder' => [
@@ -79,6 +87,7 @@ class PageTemplatesTable extends Table {
 					'skipPageRoleCheck' => true,
 				],
 			],
+			'foreignKey' => 'pageTemplateId',
 		]);
 	}
 
@@ -89,7 +98,7 @@ class PageTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
-			'used_for_pages' => $query->func()->count('Pages.id'),
+			'usedForPages' => $query->func()->count('Pages.id'),
 		])->leftJoinWith('Pages', function (SelectQuery $query) {
 			return $query->applyOptions([
 				'attributes' => [
@@ -178,7 +187,7 @@ class PageTemplatesTable extends Table {
 			'fileNameUnique',
 			[
 				'errorField' => 'fileName',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_file_name_unique'),
 			]
 		);
 
@@ -195,7 +204,7 @@ class PageTemplatesTable extends Table {
 			$linkedTo = $rules->isNotLinkedTo(
 				'Pages',
 				'pageRoleId',
-				__df($this->getI18nDomain(), 'validation', 'error_no_linked_pages')
+				__df($this->getI18nDomain(), 'Validation', 'error_no_linked_pages')
 			);
 
 			return $linkedTo($entity, $options);
@@ -207,7 +216,7 @@ class PageTemplatesTable extends Table {
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_linked_pages'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_linked_pages'),
 			]
 		);
 
@@ -225,6 +234,6 @@ class PageTemplatesTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
 		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$schema->setColumnType('page_role_id', EnumType::from($pageRoleEnum));
+		$schema->setColumnType('pageRoleId', EnumType::from($pageRoleEnum));
 	}
 }

@@ -319,9 +319,9 @@ export class DuplicateOfConfiguration {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
 			body: JSON.stringify({
-				duplicate_of_page_id: this.duplicateOfInput.dataset.duplicateOfPageId,
-				duplicate_of: this.duplicateOfInput.value,
-				content_template_id: this.duplicateOfInput.dataset.contentTemplateId,
+				duplicateOfPageId: this.duplicateOfInput.dataset.duplicateOfPageId,
+				duplicateOf: this.duplicateOfInput.value,
+				contentTemplateId: this.duplicateOfInput.dataset.contentTemplateId,
 			}),
 		});
 
@@ -388,7 +388,7 @@ export class DuplicateOfConfiguration {
 		}
 
 		// If the click event was on an input, uncheck all other checkboxes
-		if (event.target.matches('input[name="duplicate_of"]')) {
+		if (event.target.matches('input[name="duplicateOf"]')) {
 			const checkbox = event.target;
 			const checked = this.dialog.querySelectorAll('input[type="checkbox"]:checked');
 

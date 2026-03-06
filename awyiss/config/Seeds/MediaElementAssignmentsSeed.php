@@ -13,9 +13,9 @@ class MediaElementAssignmentsSeed extends AbstractSeed {
 		$data = [
             [
                 'id' => 1,
-                'media_element_id' => 2,
-                'scope' => 'content_templates',
-                'foreign_key' => 1,
+                'mediaElementId' => 2,
+                'scope' => 'ContentTemplates',
+                'foreignKey' => 1,
             ],
         ];
 

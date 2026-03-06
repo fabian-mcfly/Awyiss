@@ -70,10 +70,10 @@ class LanguageTest extends TestCase {
 			'shortcode' => 'de',
 			'timezone' => 'Europe/Berlin',
 			'locale' => 'de_DE',
-			'date_format' => 'd.m.Y',
-			'time_format' => 'H:i',
+			'dateFormat' => 'd.m.Y',
+			'timeFormat' => 'H:i',
 			'title' => 'Deutsch',
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -91,26 +91,6 @@ class LanguageTest extends TestCase {
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Language::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'date_format' => 'Y-m-d',
-			'time_format' => 'H:i:s',
-			'system_order' => 5,
-		];
-
-		$entity = new Language($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 
 

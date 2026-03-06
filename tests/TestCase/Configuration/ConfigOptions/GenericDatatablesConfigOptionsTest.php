@@ -240,19 +240,19 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertEquals([
-			'parent_id' => 'cars::parent_id',
-			'language_shortcode' => 'cars::language_shortcode',
-			'system_order' => 'cars::system_order',
+			'parentId' => 'cars::parent_id',
+			'languageShortcode' => 'cars::language_shortcode',
+			'systemOrder' => 'cars::system_order',
 			'active' => 'cars::active',
-			'created_by' => 'cars::created_by',
-			'created_on' => 'cars::created_on',
-			'changed_by' => 'cars::changed_by',
-			'changed_on' => 'cars::changed_on',
-			'attributes.free_text' => 'Freitext',
-			'attributes.input_list' => 'Input List',
-			'attributes.dropdown_select' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
-			'attributes.input_key_value_list' => 'Input Key-Value List',
-			'attributes.dummy_pw' => 'Password',
+			'createdBy' => 'cars::created_by',
+			'createdOn' => 'cars::created_on',
+			'changedBy' => 'cars::changed_by',
+			'changedOn' => 'cars::changed_on',
+			'attributes.freeText' => 'Freitext',
+			'attributes.inputList' => 'Input List',
+			'attributes.dropdownSelect' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
+			'attributes.inputKeyValueList' => 'Input Key-Value List',
+			'attributes.dummyPw' => 'Password',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.nest.enabled', $configOptions);
@@ -315,20 +315,20 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.systemOrder.field']->getValues());
 		$this->assertSame([
 			'id' => 'cars::id',
-			'parent_id' => 'cars::parent_id',
-			'language_shortcode' => 'cars::language_shortcode',
+			'parentId' => 'cars::parent_id',
+			'languageShortcode' => 'cars::language_shortcode',
 			'title' => 'cars::title',
-			'system_order' => 'cars::system_order',
+			'systemOrder' => 'cars::system_order',
 			'active' => 'cars::active',
-			'created_by' => 'cars::created_by',
-			'created_on' => 'cars::created_on',
-			'changed_by' => 'cars::changed_by',
-			'changed_on' => 'cars::changed_on',
-			'attributes.free_text' => 'Freitext',
-			'attributes.input_list' => 'Input List',
-			'attributes.dropdown_select' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
-			'attributes.input_key_value_list' => 'Input Key-Value List',
-			'attributes.dummy_pw' => 'Password',
+			'createdBy' => 'cars::created_by',
+			'createdOn' => 'cars::created_on',
+			'changedBy' => 'cars::changed_by',
+			'changedOn' => 'cars::changed_on',
+			'attributes.freeText' => 'Freitext',
+			'attributes.inputList' => 'Input List',
+			'attributes.dropdownSelect' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
+			'attributes.inputKeyValueList' => 'Input Key-Value List',
+			'attributes.dummyPw' => 'Password',
 		], $configOptions['Backend.systemOrder.field']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.splitIntoLanguages', $configOptions);

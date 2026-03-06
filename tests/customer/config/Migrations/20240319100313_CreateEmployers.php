@@ -15,11 +15,11 @@ class CreateEmployers extends AbstractMigration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		$this->table('employers')->addColumn('parent_id', 'integer', [
+		$this->table('employers')->addColumn('parentId', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => true,
-		])->addColumn('language_shortcode', 'char', [
+		])->addColumn('languageShortcode', 'char', [
 			'default' => null,
 			'limit' => 2,
 			'null' => true,
@@ -27,7 +27,7 @@ class CreateEmployers extends AbstractMigration {
 			'default' => null,
 			'limit' => 255,
 			'null' => true,
-		])->addColumn('system_order', 'integer', [
+		])->addColumn('systemOrder', 'integer', [
 			'default' => '0',
 			'limit' => 11,
 			'null' => false,
@@ -39,25 +39,25 @@ class CreateEmployers extends AbstractMigration {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
-		])->addColumn('created_by', 'integer', [
+		])->addColumn('createdBy', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => true,
-		])->addColumn('created_on', 'datetime', [
+		])->addColumn('createdOn', 'datetime', [
 			'default' => null,
 			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => 11,
-			'null' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
+		])->addColumn('changedBy', 'integer', [
 			'default' => null,
 			'limit' => 11,
 			'null' => true,
-		])->addColumn('deleted_on', 'datetime', [
+		])->addColumn('changedOn', 'datetime', [
+			'default' => null,
+			'null' => true,
+		])->addColumn('deletedBy', 'integer', [
+			'default' => null,
+			'limit' => 11,
+			'null' => true,
+		])->addColumn('deletedOn', 'datetime', [
 			'default' => null,
 			'null' => true,
 		])->create();

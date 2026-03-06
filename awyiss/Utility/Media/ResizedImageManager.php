@@ -275,7 +275,7 @@ class ResizedImageManager {
 				static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 			}
 
-			$resizedRecords = static::$mediaResizedImagesTable->find()->where(['media_id IN' => $missingMediaIds])->all();
+			$resizedRecords = static::$mediaResizedImagesTable->find()->where(['mediaId IN' => $missingMediaIds])->all();
 
 			/**
 			 * Group the fetched records by media id

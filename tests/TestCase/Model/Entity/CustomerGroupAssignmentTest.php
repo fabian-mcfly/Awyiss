@@ -59,9 +59,9 @@ class CustomerGroupAssignmentTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'customer_group_id' => 123,
+			'customerGroupId' => 123,
 			'scope' => 'Pages',
-			'foreign_key' => 101,
+			'foreignKey' => 101,
 		];
 
 		$entity = new CustomerGroupAssignment($properties);
@@ -70,25 +70,5 @@ class CustomerGroupAssignmentTest extends TestCase {
 		$this->assertEquals(123, $entity->customerGroupId);
 		$this->assertEquals('Pages', $entity->scope);
 		$this->assertEquals(101, $entity->foreignKey);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\CustomerGroupAssignment::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'customer_group_id' => 456,
-			'scope' => 'Surveys',
-			'foreign_key' => 789,
-		];
-
-		$entity = new CustomerGroupAssignment($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

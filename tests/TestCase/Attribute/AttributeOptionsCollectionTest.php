@@ -50,7 +50,7 @@ class AttributeOptionsCollectionTest extends TestCase {
 
 		// Adding will sanitize the identifier
 		// Adding a new AttributeOptions instance by passing an instance is also possible
-		$attributeOptions->add(new AttributeOption('text_color', true, ['dark', 'light'], true, null, null, 'dark'));
+		$attributeOptions->add(new AttributeOption('textColor', true, ['dark', 'light'], true, null, null, 'dark'));
 		$this->assertNotNull($attributeOptions['textColor']);
 		$this->assertInstanceOf(AttributeOption::class, $attributeOptions['textColor']);
 

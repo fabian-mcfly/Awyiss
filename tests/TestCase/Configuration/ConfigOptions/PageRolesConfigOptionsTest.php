@@ -59,7 +59,7 @@ class PageRolesConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
 			'identifier',
-			'include_in_linklist',
+			'includeInLinklist',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('page_roles::identifier, page_roles::include_in_linklist', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -68,13 +68,13 @@ class PageRolesConfigOptionsTest extends TestCase {
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
 			'identifier' => 'page_roles::identifier',
-			'include_in_linklist' => 'page_roles::include_in_linklist',
-			'system_order' => 'page_roles::system_order',
+			'includeInLinklist' => 'page_roles::include_in_linklist',
+			'systemOrder' => 'page_roles::system_order',
 			'active' => 'page_roles::active',
-			'created_by' => 'page_roles::created_by',
-			'created_on' => 'page_roles::created_on',
-			'changed_by' => 'page_roles::changed_by',
-			'changed_on' => 'page_roles::changed_on',
+			'createdBy' => 'page_roles::created_by',
+			'createdOn' => 'page_roles::created_on',
+			'changedBy' => 'page_roles::changed_by',
+			'changedOn' => 'page_roles::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

@@ -255,7 +255,7 @@ class StringTypeTest extends TestCase {
 		$enum = ComparisonOperator::EndsWith;
 
 		$result = $this->type->toDatabase($enum, $this->driver);
-		$this->assertSame('ends_with', $result);
+		$this->assertSame('endsWith', $result);
 	}
 
 

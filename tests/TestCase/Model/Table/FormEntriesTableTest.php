@@ -72,7 +72,7 @@ class FormEntriesTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $pagesAssociation);
 
 		// Test Pages association has skipPageRoleCheck finder option
-		$this->assertSame('page_id', $pagesAssociation->getForeignKey());
+		$this->assertSame('pageId', $pagesAssociation->getForeignKey());
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
 		// Test Languages association (BelongsTo)
@@ -82,7 +82,7 @@ class FormEntriesTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertEquals('shortcode', $languagesAssociation->getBindingKey());
-		$this->assertEquals('language_shortcode', $languagesAssociation->getForeignKey());
+		$this->assertEquals('languageShortcode', $languagesAssociation->getForeignKey());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formEntriesTable->hasAssociation('MediaAssignments'));
@@ -108,7 +108,7 @@ class FormEntriesTableTest extends TestCase {
 		$result = $this->formEntriesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('form_entries', $result->getI18nDomain());
+		$this->assertSame('FormEntries', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('formId'));
@@ -481,6 +481,6 @@ class FormEntriesTableTest extends TestCase {
 		$config = $this->formEntriesTable->getBehavior('Search')->getConfig();
 
 		$this->assertArrayHasKey('blocklistedColumns', $config);
-		$this->assertSame(['form_id', 'page_id'], $config['blocklistedColumns']);
+		$this->assertSame(['formId', 'pageId'], $config['blocklistedColumns']);
 	}
 }

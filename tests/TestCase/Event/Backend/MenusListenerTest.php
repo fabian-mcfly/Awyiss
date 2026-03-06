@@ -81,18 +81,18 @@ class MenusListenerTest extends TestCase {
 
 		$menu->id = 369;
 
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(0, $menuEntriesTable->find()->where(['menu_id' => 369])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(0, $menuEntriesTable->find()->where(['menuId' => 369])->all());
 
 		$options = new ArrayObject(['_primary' => true]);
 		$event = new Event('Model.Menus.afterCopy', $menusTable);
 
 		$this->listener->afterCopy($event, $menu, $options);
 
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 1])->all());
-		$this->assertCount(35, $menuEntriesTable->find()->where(['menu_id' => 369])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 1])->all());
+		$this->assertCount(35, $menuEntriesTable->find()->where(['menuId' => 369])->all());
 
-		$menuEntriesTable->deleteAll(['menu_id' => 369]);
+		$menuEntriesTable->deleteAll(['menuId' => 369]);
 		$menusTable->deleteAll(['id' => 369]);
 	}
 

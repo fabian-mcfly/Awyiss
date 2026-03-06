@@ -25,7 +25,7 @@ class PageTemplatesController extends Controller {
 	 */
 	protected array $paginate = [
 		'enabled' => true,
-		'defaultSortableFields' => ['used_for_pages'],
+		'defaultSortableFields' => ['usedForPages'],
 	];
 
 
@@ -186,27 +186,27 @@ class PageTemplatesController extends Controller {
 
 		$requestData = $this->request->getData();
 
-		if (!empty($requestData['content_areas'])) {
-			$requestData['content_areas'] = array_values(array_filter($requestData['content_areas'], function (array $element) {
+		if (!empty($requestData['contentAreas'])) {
+			$requestData['contentAreas'] = array_values(array_filter($requestData['contentAreas'], function (array $element) {
 				return !empty($element['id']);
 			}));
 
 			$systemOrder = 1;
-			array_walk($requestData['content_areas'], function (array &$contentArea) use (&$systemOrder): void {
-				$contentArea['_joinData']['system_order'] = $systemOrder;
+			array_walk($requestData['contentAreas'], function (array &$contentArea) use (&$systemOrder): void {
+				$contentArea['_joinData']['systemOrder'] = $systemOrder;
 				$systemOrder++;
 			});
 		}
 
-		if (!empty($requestData['content_template_content_areas'])) {
-			if (empty($requestData['content_areas'])) {
-				unset($requestData['content_template_content_areas']);
+		if (!empty($requestData['contentTemplateContentAreas'])) {
+			if (empty($requestData['contentAreas'])) {
+				unset($requestData['contentTemplateContentAreas']);
 			}
 			else {
-				$contentAreaIds = array_column($requestData['content_areas'], 'id');
-				$requestData['content_template_content_areas'] = array_merge(...$requestData['content_template_content_areas']);
-				$requestData['content_template_content_areas'] = array_filter($requestData['content_template_content_areas'], function (array $element) use ($contentAreaIds) {
-					return !empty($element['content_template_id']) && in_array($element['content_area_id'], $contentAreaIds);
+				$contentAreaIds = array_column($requestData['contentAreas'], 'id');
+				$requestData['contentTemplateContentAreas'] = array_merge(...$requestData['contentTemplateContentAreas']);
+				$requestData['contentTemplateContentAreas'] = array_filter($requestData['contentTemplateContentAreas'], function (array $element) use ($contentAreaIds) {
+					return !empty($element['contentTemplateId']) && in_array($element['contentAreaId'], $contentAreaIds);
 				});
 			}
 		}
@@ -220,21 +220,21 @@ class PageTemplatesController extends Controller {
 					],
 				],
 				'ContentTemplateContentAreas' => [
-					'fields' => ['content_template_id', 'content_area_id'],
+					'fields' => ['contentTemplateId', 'contentAreaId'],
 				],
 			]),
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->PageTemplates->save($pageTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'pageRoleId' => $pageTemplate->pageRoleId,
@@ -276,7 +276,7 @@ class PageTemplatesController extends Controller {
 
 			$query->contain([
 				'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {
-					return $query->where(['ContentTemplateContentAreas.page_template_id' => $pageTemplate->id]);
+					return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplate->id]);
 				},
 			])->formatResults(function (CollectionInterface $collection): CollectionInterface {
 				return $collection->map(function ($row) {

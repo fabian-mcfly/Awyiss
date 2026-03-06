@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.0\n"
+"Project-Id-Version: 0.2.0\n"
 "POT-Creation-Date: 2025-03-23 16:07+0000\n"
 "PO-Revision-Date: 2025-03-23 16:07+0000\n"
 "MIME-Version: 1.0\n"
@@ -116,7 +116,7 @@ msgstr "Reset filter"
 msgid "date_operator_since_last_login"
 msgstr "Since last login"
 
-msgid "date_operator_last_24_hours"
+msgid "date_operator_last24_hours"
 msgstr "Last 24 hours"
 
 msgid "date_operator_today"

@@ -393,7 +393,7 @@ class ConvertFilesCommand extends Command {
 			}
 
 			return [
-				'average_color' => $averageColorCases,
+				'averageColor' => $averageColorCases,
 			];
 		}, [
 			'id IN' => $files->extract('id')->toArray(),
@@ -1072,7 +1072,7 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
-		if (!empty($file->crop['resize_width']) || !empty($file->crop['resize_height'])) {
+		if (!empty($file->crop['resizeWidth']) || !empty($file->crop['resizeHeight'])) {
 			// Delete all resized files. They will be recreated when needed.
 			// Previously set sizes might no longer be required OR even too large
 			$file->deleteResizedFiles();
@@ -1140,8 +1140,8 @@ class ConvertFilesCommand extends Command {
 				$image->crop(...$crop);
 			}
 
-			if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
-				$resize = [(int)$file->crop['resize_width'], (int)$file->crop['resize_height']];
+			if ((float)$file->crop['width'] !== (float)$file->crop['resizeWidth'] || (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']) {
+				$resize = [(int)$file->crop['resizeWidth'], (int)$file->crop['resizeHeight']];
 
 				$image->scaleDown(...$resize);
 			}
@@ -1259,8 +1259,8 @@ class ConvertFilesCommand extends Command {
 				}
 
 				return [
-					'real_width' => $realWidthCases,
-					'real_height' => $realHeightCases,
+					'realWidth' => $realWidthCases,
+					'realHeight' => $realHeightCases,
 					'status' => $statusCases,
 				];
 			}, [
@@ -1485,7 +1485,7 @@ class ConvertFilesCommand extends Command {
 		$mediaTable = $this->fetchTable('Media');
 
 		return $mediaTable->find()->where([
-			'average_color IS' => null,
+			'averageColor IS' => null,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
 		])->limit($limit)->all();
 	}
@@ -1727,8 +1727,8 @@ class ConvertFilesCommand extends Command {
 			]);
 		}
 
-		if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
-			$resize = [(int)$file->crop['resize_width'], (int)$file->crop['resize_height']];
+		if ((float)$file->crop['width'] !== (float)$file->crop['resizeWidth'] || (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']) {
+			$resize = [(int)$file->crop['resizeWidth'], (int)$file->crop['resizeHeight']];
 			$commandOriginal = array_merge($commandOriginal, [
 				'-resize',
 				sprintf('%dx%d', ...$resize),

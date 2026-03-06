@@ -155,19 +155,19 @@
 							class="FormInputType-Input">
 					{% endblock %}
 
-				{% elseif formElement.type == 'select' or formElement.type == 'select_multiple' %}
+				{% elseif formElement.type == 'select' or formElement.type == 'selectMultiple' %}
 
 					{% block formElementSelect %}
 						<label for="FormInput{{ formElement.id }}" class="FormElement-Label">{{ formElement.title }}</label>
 						{% if formElement.options|length == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="">{% endif %}
-						<select id="FormInput{{ formElement.id }}" name="{{ formElement.identifier }}{% if formElement.type == 'select_multiple' %}[]{% endif %}" class="FormInputType-Select"
+						<select id="FormInput{{ formElement.id }}" name="{{ formElement.identifier }}{% if formElement.type == 'selectMultiple' %}[]{% endif %}" class="FormInputType-Select"
 							{% if formElement.disabled and formElement.disabled is not iterable %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.required %} required{% endif %}
-							{% if formElement.type == 'select_multiple' %} multiple{% endif %}>
+							{% if formElement.type == 'selectMultiple' %} multiple{% endif %}>
 							{% for key, value in formElement.options %}
 								<option value="{{ key }}"
 									{% if formElement.disabled is iterable and key in formElement.disabled %} disabled aria-disabled="true" {% endif %}
-									{% if formElement.type == 'select_multiple' %}
+									{% if formElement.type == 'selectMultiple' %}
 										{% if formData[ formElement.identifier ] is iterable and key in formData[ formElement.identifier ] %}selected{% endif %}
 									{% else %}
 										{% if formData[ formElement.identifier ] == key %}selected{% endif %}
@@ -186,7 +186,7 @@
 							<span class="FormInputType-Checkbox-Item">
 								{% if loop.index0 == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="{% if formElement.options|length == 1 %}{% endif %}">{% endif %}
 								{# Multiple checkboxes will not be marked as required if #}
-								<input id="FormInput{{ formElement.id }}-{{ key|ucparts(false) }}" type="checkbox" name="{{ formElement.identifier }}{% if formElement.options|length > 1 %}[]{% endif %}"
+								<input id="FormInput{{ formElement.id }}-{{ key|camelize }}" type="checkbox" name="{{ formElement.identifier }}{% if formElement.options|length > 1 %}[]{% endif %}"
 									value="{{ key }}"
 									{% if (formElement.disabled and formElement.disabled is not iterable) or (formElement.disabled is iterable and key in formElement.disabled) %} disabled aria-disabled="true" {% endif %}
 									{% if formElement.options|length > 1 %}
@@ -196,7 +196,7 @@
 									{% endif %}
 									{% if formElement.options|length == 1 and formElement.required %} required{% endif %}
 									class="FormInputType-Checkbox">
-								<label for="FormInput{{ formElement.id }}-{{ key|ucparts(false) }}" class="FormInputType-Checkbox-Label">{{ value|raw }}</label>
+								<label for="FormInput{{ formElement.id }}-{{ key|camelize }}" class="FormInputType-Checkbox-Label">{{ value|raw }}</label>
 							</span>
 						{% endfor %}
 						{% if formElement.options|length > 1 %}</span>{% endif %}
@@ -211,13 +211,13 @@
 						{% for key, value in formElement.options %}
 							<span class="FormInputType-Radio-Item">
 								{% if loop.index0 == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="{% if formElement.options|length == 1 %}{% endif %}">{% endif %}
-								<input id="FormInput{{ formElement.id }}-{{ key|ucparts(false) }}" type="Radio" name="{{ formElement.identifier }}"
+								<input id="FormInput{{ formElement.id }}-{{ key|camelize }}" type="Radio" name="{{ formElement.identifier }}"
 									value="{{ key }}"
 									{% if (formElement.disabled and formElement.disabled is not iterable) or (formElement.disabled is iterable and key in formElement.disabled) %} disabled aria-disabled="true" {% endif %}
 									{% if formElement.required %} required{% endif %}
 									{% if formData[ formElement.identifier ] == key %}checked{% endif %}
 									class="FormInputType-Radio">
-								<label for="FormInput{{ formElement.id }}-{{ key|ucparts(false) }}" class="FormInputType-Radio-Label">{{ value }}</label>
+								<label for="FormInput{{ formElement.id }}-{{ key|camelize }}" class="FormInputType-Radio-Label">{{ value }}</label>
 							</span>
 						{% endfor %}
 						{% if formElement.options|length > 1 %}</span>{% endif %}
@@ -234,7 +234,7 @@
 							class="FormInputType-File">
 					{% endblock %}
 
-				{% elseif formElement.type == 'free_text' %}
+				{% elseif formElement.type == 'freeText' %}
 
 					{% block formElementFreeText %}
 						<div class="FormInputType-FreeText">{{ formElement.text|raw }}</div>
@@ -244,7 +244,7 @@
 
 					{% block formElementSubmit %}
 						{% block formProtectionBeforeSubmit %}
-							{{ FormHelper.renderFormProtection(form, 'before_submit') }}
+							{{ FormHelper.renderFormProtection(form, 'beforeSubmit') }}
 						{% endblock %}
 
 						<button type="submit" name="{{ formElement.identifier }}" class="FormInputType-Button Button">{{ formElement.title }}</button>

@@ -8,6 +8,8 @@ use ArrayObject;
 use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Table\I18nTable;
+use Awyiss\Model\Table\MediaAssignmentsTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
@@ -101,36 +103,21 @@ class AuditBehavior extends Behavior {
 		$table = $this->table();
 		$schema = $table->getSchema();
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $this->table()->getEntityClass();
-
 		// Check if the table has the required columns and add the corresponding associations
-		if ($schema->hasColumn('created_by')) {
-			$entityClass::addFieldMapping('created_by', 'createdBy');
+		if ($schema->hasColumn('createdBy')) {
 			$this->addAssociation('CreatedBy');
 		}
-		if ($schema->hasColumn('created_on')) {
-			$entityClass::addFieldMapping('created_on', 'createdOn');
-		}
 
-		if ($schema->hasColumn('changed_by')) {
-			$entityClass::addFieldMapping('changed_by', 'changedBy');
+		if ($schema->hasColumn('changedBy')) {
 			$this->addAssociation('ChangedBy');
 		}
-		if ($schema->hasColumn('changed_on')) {
-			$entityClass::addFieldMapping('changed_on', 'changedOn');
-		}
 
-		if ($schema->hasColumn('deleted_by')) {
-			$entityClass::addFieldMapping('deleted_by', 'deletedBy');
+		if ($schema->hasColumn('deletedBy')) {
 			$this->addAssociation('DeletedBy');
-		}
-		if ($schema->hasColumn('deleted_on')) {
-			$entityClass::addFieldMapping('deleted_on', 'deletedOn');
 		}
 
 		if ($this->getConfig('historyFields') === null) {
-			$fields = $entityClass::mapFields($schema->columns());
+			$fields = $schema->columns();
 
 			$fields = array_diff($fields, $this->getConfig('ignoredFields'), ['id']);
 
@@ -151,12 +138,9 @@ class AuditBehavior extends Behavior {
 		// Add a belongsTo association to the table
 		$table->belongsTo($alias . 'User', [
 			'className' => 'Users',
-			'foreignKey' => Inflector::underscore($alias),
+			'foreignKey' => Inflector::variable($alias),
+			'propertyName' => Inflector::variable($alias) . 'User',
 		]);
-
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-		$entityClass::addFieldMapping(Inflector::underscore($alias . 'User'), Inflector::variable($alias . 'User'));
 	}
 
 
@@ -255,19 +239,19 @@ class AuditBehavior extends Behavior {
 		return $auditModel->find('all')->where([
 			'OR' => [
 				[
-					'scope' => $this->table()->getTable(),
-					'foreign_key' => $entity->get('id'),
+					'scope' => Inflector::camelize($this->table()->getTable()),
+					'foreignKey' => $entity->get('id'),
 				],
 				[
-					'subject_left_table' => $this->table()->getTable(),
-					'subject_left_foreign_key' => $entity->get('id'),
+					'subjectLeftTable' => Inflector::camelize($this->table()->getTable()),
+					'subjectLeftForeignKey' => $entity->get('id'),
 				],
 				[
-					'subject_right_table' => $this->table()->getTable(),
-					'subject_right_foreign_key' => $entity->get('id'),
+					'subjectRightTable' => Inflector::camelize($this->table()->getTable()),
+					'subjectRightForeignKey' => $entity->get('id'),
 				],
 			],
-		])->contain(['Users'])->orderBy(['Audit.created_on' => 'DESC']);
+		])->contain(['Users'])->orderBy(['Audit.createdOn' => 'DESC']);
 	}
 
 
@@ -369,19 +353,19 @@ class AuditBehavior extends Behavior {
 		$schema = $this->table()->getSchema();
 
 		if (empty($entity->get('deleted'))) {
-			if ($isNew && $schema->getColumn('created_on') && $queryOtions['setTimeOnCreate']) {
+			if ($isNew && $schema->getColumn('createdOn') && $queryOtions['setTimeOnCreate']) {
 				// If the item is new, and if config wants it, set the create-info on this entity
 				$this->setCreateInfo($entity, $identityId, $schema);
 			}
 
-			if (!$isNew && $schema->getColumn('changed_on') && $queryOtions['setTimeOnUpdate']) {
+			if (!$isNew && $schema->getColumn('changedOn') && $queryOtions['setTimeOnUpdate']) {
 				// If the item is not new, and if config wants it, set the update-info on this entity
 				$this->setUpdateInfo($entity, $identityId, $schema);
 			}
 		}
 		elseif ($schema->getColumn('deleted') && (!$entity->hasOriginal('deleted') || $entity->get('deleted') != $entity->getOriginal('deleted'))) {
 			// A soft delete will set the `deleted`-property. If this happens, and the config wants it, set the delete-info on this entity
-			if ($schema->getColumn('deleted_on') && $queryOtions['setTimeOnDelete']) {
+			if ($schema->getColumn('deletedOn') && $queryOtions['setTimeOnDelete']) {
 				$this->setDeleteInfo($entity, $identityId, $schema);
 			}
 		}
@@ -455,7 +439,7 @@ class AuditBehavior extends Behavior {
 		$auditData = [
 			'transactionId' => $options['transactionId'],
 			'type' => $type,
-			'scope' => $event->getSubject()->getTable(),
+			'scope' => Inflector::camelize($event->getSubject()->getTable()),
 			'foreignKey' => $entity->get('id'),
 			'dataOld' => !empty($entityData['old']) ? base64_encode(gzcompress(json_encode($entityData['old']), 9)) : null,
 			'dataNew' => !empty($entityData['new']) ? base64_encode(gzcompress(json_encode($entityData['new']), 9)) : null,
@@ -481,10 +465,10 @@ class AuditBehavior extends Behavior {
 			$rightForeignKey = $rightAssociation->getForeignKey();
 
 			$audit->subjectLeftForeignKey = $entity->get($leftForeignKey);
-			$audit->subjectLeftTable = $leftAssociation->getTarget()->getTable();
+			$audit->subjectLeftTable = Inflector::camelize($leftAssociation->getTarget()->getTable());
 
 			$audit->subjectRightForeignKey = $entity->get($rightForeignKey);
-			$audit->subjectRightTable = $rightAssociation->getTarget()->getTable();
+			$audit->subjectRightTable = Inflector::camelize($rightAssociation->getTarget()->getTable());
 		}
 
 		//Save the audit entity and skip the access check
@@ -526,7 +510,7 @@ class AuditBehavior extends Behavior {
 		$auditData = [
 			'transactionId' => $options['transactionId'],
 			'type' => 'd',
-			'scope' => $event->getSubject()->getTable(),
+			'scope' => Inflector::camelize($event->getSubject()->getTable()),
 			'foreignKey' => $entity->get('id'),
 			'dataOld' => base64_encode(gzcompress(json_encode($entityData['old']), 9)),
 			'dataNew' => base64_encode(gzcompress(json_encode($entityData['new']), 9)),
@@ -552,10 +536,10 @@ class AuditBehavior extends Behavior {
 			$rightForeignKey = $rightAssociation->getForeignKey();
 
 			$audit->subjectLeftForeignKey = $entity->get($leftForeignKey);
-			$audit->subjectLeftTable = $leftAssociation->getTarget()->getTable();
+			$audit->subjectLeftTable = Inflector::camelize($leftAssociation->getTarget()->getTable());
 
 			$audit->subjectRightForeignKey = $entity->get($rightForeignKey);
-			$audit->subjectRightTable = $rightAssociation->getTarget()->getTable();
+			$audit->subjectRightTable = Inflector::camelize($rightAssociation->getTarget()->getTable());
 		}
 
 		//Save the audit entity and skip the access check
@@ -826,7 +810,7 @@ class AuditBehavior extends Behavior {
 		 * @noinspection PhpLoopCanBeConvertedToArrayMapInspection
 		 */
 		foreach (($entity->get('_translations') ?? []) as $languageShortcode => $translatedEntity) {
-			$newTranslations[ $languageShortcode ] = $translatedEntity?->extract($translateFields, false, false) ?? null;
+			$newTranslations[ $languageShortcode ] = $translatedEntity?->extract($translateFields) ?? null;
 		}
 
 		$hasOldTranslations = $entity->hasOriginal('_translations');
@@ -916,7 +900,7 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function setCreateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('createdOn', DateTime::now());
-		if ($identityId && $schema->getColumn('created_by')) {
+		if ($identityId && $schema->getColumn('createdBy')) {
 			$entity->set('createdBy', $identityId);
 		}
 
@@ -934,7 +918,7 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function setUpdateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('changedOn', DateTime::now());
-		if ($identityId && $schema->getColumn('changed_by')) {
+		if ($identityId && $schema->getColumn('changedBy')) {
 			$entity->set('changedBy', $identityId);
 		}
 	}
@@ -950,7 +934,7 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function setDeleteInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('deletedOn', DateTime::now());
-		if ($identityId && $schema->getColumn('deleted_by')) {
+		if ($identityId && $schema->getColumn('deletedBy')) {
 			$entity->set('deletedBy', $identityId);
 		}
 	}
@@ -965,7 +949,15 @@ class AuditBehavior extends Behavior {
 		foreach ($this->_table->associations() as $association) {
 			$property = Inflector::variable($association->getProperty());
 
-			if (in_array($association->getTarget()->getTable(), ['i18n', 'media_assignments'])) {
+			if (
+				in_array(
+					$association->getTarget()->getTable(),
+					[
+						I18nTable::TABLE,
+						MediaAssignmentsTable::TABLE,
+					]
+				)
+			) {
 				$association = false;
 			}
 
@@ -986,14 +978,8 @@ class AuditBehavior extends Behavior {
 	protected function cleanHasOneAssociationData(Entity $entity, string $field, Association|HasOne $association, array $entityData): array {
 		/** @noinspection DuplicatedCode */
 		$keys = (array)$association->getBindingKey();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $association->getSource()->getEntityClass();
-		$keys = $entityClass::mapFields($keys);
 
 		$foreignKeys = (array)$association->getForeignKey();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $association->getTarget()->getEntityClass();
-		$foreignKeys = $entityClass::mapFields($foreignKeys);
 
 		$keys = array_flip(array_merge($keys, $foreignKeys));
 		$keys['_locale'] = true;
@@ -1004,7 +990,7 @@ class AuditBehavior extends Behavior {
 		$newData = [];
 		$originalEntityData = $entityData;
 		if ($associatedEntity instanceof Entity) {
-			$newData = $associatedEntity->extract(null, false, false);
+			$newData = $associatedEntity->extract();
 			$newData = array_diff_key($newData, $keys);
 
 			if (!$associatedEntity->isDirty()) {
@@ -1017,7 +1003,7 @@ class AuditBehavior extends Behavior {
 			if (isset($newData['_translations'])) {
 				/** @var \Awyiss\Model\Entity $translation */
 				foreach ($newData['_translations'] as $languageShortcode => $translation) {
-					$newData['_translations'][ $languageShortcode ] = array_diff_key($translation->extract(null, false, false), $keys);
+					$newData['_translations'][ $languageShortcode ] = array_diff_key($translation->extract(), $keys);
 					unset($newData['_translations'][ $languageShortcode ]['locale']);
 				}
 			}
@@ -1046,7 +1032,7 @@ class AuditBehavior extends Behavior {
 			if (isset($oldData['_translations'])) {
 				/** @var \Awyiss\Model\Entity $translation */
 				foreach ($oldData['_translations'] as $languageShortcode => $translation) {
-					$oldData['_translations'][ $languageShortcode ] = array_diff_key($translation->extractOriginal(null, false), $keys);
+					$oldData['_translations'][ $languageShortcode ] = array_diff_key($translation->extractOriginal(null), $keys);
 					unset($oldData['_translations'][ $languageShortcode ]['locale']);
 				}
 			}
@@ -1084,9 +1070,6 @@ class AuditBehavior extends Behavior {
 		$keys = [];
 
 		$foreignKeys = (array)$association->getForeignKey();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $association->getTarget()->getEntityClass();
-		$foreignKeys = $entityClass::mapFields($foreignKeys);
 
 		$keys = array_flip(array_merge($keys, $foreignKeys));
 		$keys['_locale'] = true;
@@ -1188,7 +1171,7 @@ class AuditBehavior extends Behavior {
 		if ($newData) {
 			foreach ($newData as $key => $newEntity) {
 				if ($newEntity instanceof Entity) {
-					$newData[ $key ] = $newEntity->extract($keys, false, false);
+					$newData[ $key ] = $newEntity->extract($keys);
 
 					/** @var \Awyiss\Model\Entity $joinData */
 					$joinData = $newEntity->get($joinKey);
@@ -1270,7 +1253,7 @@ class AuditBehavior extends Behavior {
 	protected function buildEntityData(Entity $entity, bool $deleted = false): array {
 		$entityData = [
 			'old' => $entity->getOriginalValues(),
-			'new' => $entity->extract(null, false, false),
+			'new' => $entity->extract(),
 			'changes' => [
 				'old' => [],
 				'new' => [],
@@ -1362,7 +1345,7 @@ class AuditBehavior extends Behavior {
 	protected function buildMediaAssignment(array $data, string|int $elementIdentifier, array $elementAssignments, array $blocklistedFields): array {
 		foreach ($elementAssignments as $selectorIdentifier => $selectorAssignments) {
 			if ($selectorAssignments instanceof Entity) {
-				$values = $selectorAssignments->extract(null, false, false);
+				$values = $selectorAssignments->extract();
 
 				$values = array_diff_key($values, array_flip($blocklistedFields));
 
@@ -1374,7 +1357,7 @@ class AuditBehavior extends Behavior {
 			}
 
 			foreach ($selectorAssignments as $key => $mediaAssignment) {
-				$values = $mediaAssignment->extract(null, false, false);
+				$values = $mediaAssignment->extract();
 
 				$values = array_diff_key($values, array_flip($blocklistedFields));
 

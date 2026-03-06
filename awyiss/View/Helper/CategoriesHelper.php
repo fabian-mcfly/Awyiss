@@ -11,7 +11,6 @@ use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\View\Helper;
-use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
@@ -26,7 +25,6 @@ use RuntimeException;
  * @property \Awyiss\View\Helper\UrlHelper $Url
  */
 class CategoriesHelper extends Helper {
-	use IdGeneratorTrait;
 	use StringTemplateTrait;
 
 
@@ -161,7 +159,7 @@ class CategoriesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function control(string $identifier, array $attributes = []): string {
-		$identifier = Inflector::underscore($identifier);
+		$identifier = Inflector::variable($identifier);
 		$config = $this->getConfiguration($identifier);
 
 		if (empty($config) || !$config['enabled']) {
@@ -176,7 +174,7 @@ class CategoriesHelper extends Helper {
 			$config['identifier'] = $identifier;
 		}
 
-		$fieldName = Inflector::underscore($config['field']);
+		$fieldName = Inflector::variable($config['field']);
 
 		$config = ['field' => $fieldName] + $config;
 		$attributes += [
@@ -192,7 +190,7 @@ class CategoriesHelper extends Helper {
 
 		if (!isset($attributes['val'])) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$attributes['val'] = $this->Form->context()->entity()->get($fieldName) ?? $this->getSelectedCategory($identifier);
+			$attributes['val'] = $this->Form->context()->entity()->get($fieldName) ?? $this->getSelectedCategory($identifier, true);
 		}
 
 		if (empty($attributes['options'])) {
@@ -218,7 +216,7 @@ class CategoriesHelper extends Helper {
 				$attributes['options'] = [];
 				foreach ($groupedOptions as $key => $groupOptions) {
 					$groupLabel = $key ?: 'general';
-					$groupLabel = $attributes['groupLabels'][ $groupLabel ] ?? __($fieldName . '_grouplabel_' . $groupLabel);
+					$groupLabel = $attributes['groupLabels'][ $groupLabel ] ?? __(Inflector::underscore($fieldName) . '_grouplabel_' . $groupLabel);
 
 					$attributes['options'][ $groupLabel ] = $this->formatOptions($groupOptions, $attributes + ['buildNested' => true]);
 				}
@@ -245,7 +243,7 @@ class CategoriesHelper extends Helper {
 	 * - `allowAggregation` Boolean value whether to include the aggregation of all categories.
 	 * - `allowUnassigned` Boolean value whether to include an option to show items without any category.
 	 * - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
-	 * - `escape` Boolean value whether to escape html entities.
+	 * - `escape` Boolean value whether to escape HTML entities.
 	 * - `label` The label to display in the filter.
 	 * - `name` The name to be used as a parameter in the resulting filter urls.
 	 * - `templateVars` Additional template variables.
@@ -259,7 +257,7 @@ class CategoriesHelper extends Helper {
 	 * @return string
 	 */
 	public function filter(string $identifier, ?iterable $options = null, array $attributes = []): string {
-		$identifier = Inflector::underscore($identifier);
+		$identifier = Inflector::variable($identifier);
 		$config = $this->getConfiguration($identifier);
 
 		if (empty($config) || ($config['enabled'] ?? false) === false) {
@@ -268,7 +266,7 @@ class CategoriesHelper extends Helper {
 
 		$attributes += $config;
 		$attributes += [
-			'aggregationLabel' => __f($identifier . '_filter_all', __d('system', 'all')),
+			'aggregationLabel' => __f(Inflector::underscore($identifier) . '_filter_all', __d('System', 'all')),
 			'aggregationKey' => 'all',
 			'allowAggregation' => false,
 			'allowUnassigned' => false,
@@ -276,9 +274,9 @@ class CategoriesHelper extends Helper {
 			'escape' => true,
 			'id' => true,
 			'identifier' => $identifier,
-			'label' => __($identifier . '_filter_label'),
+			'label' => __(Inflector::underscore($identifier) . '_filter_label'),
 			'levelPrefix' => '- ',
-			'unassignedLabel' => __f($identifier . '_filter_unassigned', __('unassigned')),
+			'unassignedLabel' => __f(Inflector::underscore($identifier) . '_filter_unassigned', __('unassigned')),
 			'unassignedKey' => 'unassigned',
 			'uriParam' => $identifier,
 			'val' => $this->getSelectedCategory($identifier),
@@ -289,6 +287,7 @@ class CategoriesHelper extends Helper {
 		}
 
 		$attributes['options'] = $options;
+
 		if (!$attributes['options']) {
 			$attributes['options'] = $this->getCategories($identifier, true);
 		}
@@ -309,7 +308,7 @@ class CategoriesHelper extends Helper {
 	 *  - `allowAggregation` Boolean value whether to include the aggregation of all categories.
 	 *  - `allowUnassigned` Boolean value whether to include an option to show items without any category.
 	 *  - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
-	 *  - `escape` Boolean value whether to escape html entities.
+	 *  - `escape` Boolean value whether to escape HTML entities.
 	 *  - `label` The label to display in the filter.
 	 *  - `name` The name to be used as a parameter in the resulting filter urls.
 	 *  - `templateVars` Additional template variables.
@@ -323,10 +322,10 @@ class CategoriesHelper extends Helper {
 	 * @return string
 	 */
 	public function linkSelect(string $identifier, ?iterable $options = null, array $attributes = []): string {
-		$identifier = Inflector::underscore($identifier);
+		$identifier = Inflector::variable($identifier);
 
 		$attributes += [
-			'aggregationLabel' => __($identifier . '_filter_all'),
+			'aggregationLabel' => __(Inflector::underscore($identifier) . '_filter_all'),
 			'aggregationKey' => 'all',
 			'allowAggregation' => false,
 			'allowUnassigned' => false,
@@ -334,13 +333,14 @@ class CategoriesHelper extends Helper {
 			'escape' => true,
 			'id' => true,
 			'identifier' => $identifier,
-			'label' => __($identifier . '_filter_label'),
+			'label' => __(Inflector::underscore($identifier) . '_filter_label'),
 			'levelPrefix' => '- ',
-			'unassignedLabel' => __($identifier . '_filter_unassigned'),
+			'unassignedLabel' => __(Inflector::underscore($identifier) . '_filter_unassigned'),
 			'unassignedKey' => 'unassigned',
 			'uriParam' => $identifier,
 			'val' => null,
 		];
+
 
 		if (isset($attributes['id']) && $attributes['id'] === true) {
 			$attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($identifier), '-');
@@ -398,13 +398,22 @@ class CategoriesHelper extends Helper {
 	 * For a list of given names, return the first found `selectedCategory`-value in the `categories`-view va
 	 *
 	 * @param string $identifier
+	 * @param bool $useOriginalValue Whether to return the actual value of the selected category instead of the one converted into variableCase
 	 * @return mixed
 	 */
-	public function getSelectedCategory(string $identifier): mixed {
+	public function getSelectedCategory(string $identifier, bool $useOriginalValue = false): mixed {
 		$name = Inflector::variable(Inflector::pluralize($identifier));
 		$categories = $this->getView()->get('_categories', [])[ $name ] ?? [];
 
-		return $categories['selected'] ?? null;
+		if (!isset($categories['selected'])) {
+			return null;
+		}
+
+		if (!$useOriginalValue || !isset($categories['simple'])) {
+			return $categories['selected'];
+		}
+
+		return $categoryKeys[ $categories['selected'] ] ?? $categories['selected'];
 	}
 
 
@@ -555,7 +564,7 @@ class CategoriesHelper extends Helper {
 		$collectionOptions = [];
 		foreach ($options as $option) {
 			if ($option instanceof EntityInterface) {
-				$option = $option->extract([], false, false);
+				$option = $option->extract();
 			}
 
 			$title = $option[ $combinator[1] ] ?? $option['label'] ?? $option['title'] ?? $option['value'] ?? $option['id'];
@@ -667,5 +676,27 @@ class CategoriesHelper extends Helper {
 
 			return $element[ $groupBy ] ?? '';
 		})->toArray();
+	}
+
+
+	/**
+	 * Generate an ID suitable for use in an ID attribute.
+	 *
+	 * @param string $value The value to convert into an ID.
+	 * @return string The generated id.
+	 */
+	protected function _domId(string $value): string {
+		if (str_contains($value, '.')) {
+			$parts = explode('.', $value);
+			array_walk($parts, function (&$part): void {
+				$part = Inflector::camelize($part);
+			});
+			$domId = implode('-', $parts);
+		}
+		else {
+			$domId = Inflector::camelize($value);
+		}
+
+		return $domId;
 	}
 }

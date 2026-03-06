@@ -75,24 +75,32 @@ class MediaTable extends Table {
 		$this->hasMany('MediaAssignments', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaId',
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 		]);
 
-		$this->belongsTo('MediaFolders');
+		$this->belongsTo('MediaFolders', [
+			'foreignKey' => 'mediaFolderId',
+			'propertyName' => 'mediaFolder',
+		]);
 
 		$this->hasMany('MediaResizedImages', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaId',
+			'propertyName' => 'mediaResizedImages',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('UrlHistory', [
 			'cascadeCallbacks' => true,
 			'conditions' => [
-				'scope' => 'media',
+				'scope' => 'Media',
 			],
 			'dependent' => true,
-			'foreignKey' => 'foreign_key',
+			'propertyName' => 'urlHistory',
+			'foreignKey' => 'foreignKey',
 		]);
 	}
 
@@ -170,7 +178,7 @@ class MediaTable extends Table {
 
 		$validator->add('averageColor', [
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', '6/8'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', '6/8'),
 				'rule' => function (mixed $averageColor): bool {
 					if (!str_starts_with((string)$averageColor, '#')) {
 						return strlen((string)$averageColor) == 6 || strlen((string)$averageColor) == 8;
@@ -277,7 +285,7 @@ class MediaTable extends Table {
 				$extension = $entity->extension;
 
 				if (!$extension) {
-					return __df($this->getI18nDomain(), 'validation', 'error_media_has_file_extension');
+					return __df($this->getI18nDomain(), 'Validation', 'error_media_has_file_extension');
 				}
 
 				$stream = $entity->file->getStream();
@@ -328,7 +336,7 @@ class MediaTable extends Table {
 			'validPreview',
 			[
 				'errorField' => 'preview',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_preview'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_preview'),
 			]
 		);
 
@@ -351,7 +359,7 @@ class MediaTable extends Table {
 			'validWebp',
 			[
 				'errorField' => 'webp',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_webp'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_webp'),
 			]
 		);
 
@@ -374,7 +382,7 @@ class MediaTable extends Table {
 			'validAvif',
 			[
 				'errorField' => 'avif',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_avif'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_avif'),
 			]
 		);
 
@@ -386,7 +394,7 @@ class MediaTable extends Table {
 			'mimetypeNotModified',
 			[
 				'errorField' => 'file',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_mimetype_not_modified'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_mimetype_not_modified'),
 			]
 		);
 
@@ -460,7 +468,7 @@ class MediaTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('meta_data', 'json');
+		$schema->setColumnType('metaData', 'json');
 
 		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
 		$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');

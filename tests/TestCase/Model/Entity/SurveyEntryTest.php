@@ -62,14 +62,14 @@ class SurveyEntryTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'survey_id' => 123,
-			'page_id' => 456,
+			'surveyId' => 123,
+			'pageId' => 456,
 			'data' => '{"answer": "test"}',
-			'ip_hash' => 'abc123hash',
-			'post_hash' => 'def456hash',
-			'identifier' => 'entry_001',
+			'ipHash' => 'abc123hash',
+			'postHash' => 'def456hash',
+			'identifier' => 'entry001',
 			'deleted' => false,
-			'created_on' => '2025-01-06 12:00:00',
+			'createdOn' => '2025-01-06 12:00:00',
 		];
 
 		$entity = new SurveyEntry($properties);
@@ -80,28 +80,8 @@ class SurveyEntryTest extends TestCase {
 		$this->assertEquals('{"answer": "test"}', $entity->data);
 		$this->assertEquals('abc123hash', $entity->ipHash);
 		$this->assertEquals('def456hash', $entity->postHash);
-		$this->assertEquals('entry_001', $entity->identifier);
+		$this->assertEquals('entry001', $entity->identifier);
 		$this->assertFalse($entity->deleted);
 		$this->assertNotNull($entity->createdOn);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\SurveyEntry::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'survey_id' => 789,
-			'page_id' => 101,
-			'ip_hash' => 'xyz789hash',
-			'post_hash' => 'uvw012hash',
-		];
-		$entity = new SurveyEntry($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

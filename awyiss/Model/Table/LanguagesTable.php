@@ -58,21 +58,23 @@ class LanguagesTable extends Table {
 			'dependent' => true,
 			'foreignKey' => [
 				'realm',
-				'language_shortcode',
+				'languageShortcode',
 			],
 		]);
 
 		$this->hasMany('FormEntries', [
 			'bindingKey' => 'shortcode',
 			'cascadeCallbacks' => true,
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
+			'propertyName' => 'formEntries',
 		]);
 
 		$this->hasMany('MenuEntries', [
 			'bindingKey' => 'shortcode',
 			'cascadeCallbacks' => true,
 			//'dependent' => true,
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
+			'propertyName' => 'menuEntries',
 		]);
 
 		$this->hasMany('Pages', [
@@ -84,7 +86,7 @@ class LanguagesTable extends Table {
 					'skipPageRoleCheck' => true,
 				],
 			],
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
 		]);
 	}
 
@@ -126,7 +128,7 @@ class LanguagesTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 2),
 				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
@@ -209,7 +211,7 @@ class LanguagesTable extends Table {
 			'shortcodeUniqueForRealm',
 			[
 				'errorField' => 'shortcode',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_shortcode_unique_for_realm'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_shortcode_unique_for_realm'),
 			]
 		);
 
@@ -248,13 +250,13 @@ class LanguagesTable extends Table {
 				$entity->hasOriginal('realm') &&
 				$entity->getOriginal('realm') !== $entity->realm
 			) {
-				return __df($this->getI18nDomain(), 'validation', 'error_not_last_active_language_in_realm_on_realm_change');
+				return __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_realm_change');
 			}
 
 			return false;
 		}, 'notLastActiveLanguageInRealm', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_not_last_active_language_in_realm_on_deactivate'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_deactivate'),
 		]);
 
 
@@ -262,7 +264,7 @@ class LanguagesTable extends Table {
 			return in_array($entity->realm, Awyiss::getRealms());
 		}, 'validRealm', [
 			'errorField' => 'realm',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_realm'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_realm'),
 		]);
 
 
@@ -270,7 +272,7 @@ class LanguagesTable extends Table {
 			return in_array($entity->timezone, DateTimeZone::listIdentifiers());
 		}, 'validTimezone', [
 			'errorField' => 'timezone',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_timezone'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_timezone'),
 		]);
 
 
@@ -278,7 +280,7 @@ class LanguagesTable extends Table {
 			return in_array($entity->locale, ResourceBundle::getLocales(''));
 		}, 'validLocale', [
 			'errorField' => 'locale',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_locale'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_locale'),
 		]);
 
 
@@ -291,7 +293,7 @@ class LanguagesTable extends Table {
 			'notLastLanguageInRealm',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_last_language_in_realm'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_last_language_in_realm'),
 			]
 		);
 

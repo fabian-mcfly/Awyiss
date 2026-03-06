@@ -94,11 +94,11 @@ class DuplicateCheckFormProtection implements FormProtectionInterface {
 
 		if (
 			$formEntriesTable->exists([
-				'post_hash' => $dataHash,
-				'created_on >=' => $timeoutDate->subSeconds($timeout),
+				'postHash' => $dataHash,
+				'createdOn >=' => $timeoutDate->subSeconds($timeout),
 			])
 		) {
-			return __d('form', 'protection_method_duplicate_check_error_duplicate_found');
+			return __d('Form', 'protection_method_duplicate_check_error_duplicate_found');
 		}
 
 		return true;

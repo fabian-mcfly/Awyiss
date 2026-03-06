@@ -44,11 +44,11 @@ class MediaElementSelectorsListener implements EventListenerInterface {
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 		$mediaAssignmentsTable->updateAll(
 			[
-				'media_element_selector_identifier' => $entity->get('identifier'),
+				'mediaElementSelectorIdentifier' => $entity->get('identifier'),
 			],
 			[
-				'media_element_id' => $entity->get('mediaElementId'),
-				'media_element_selector_identifier' => $entity->getOriginal('identifier'),
+				'mediaElementId' => $entity->get('mediaElementId'),
+				'mediaElementSelectorIdentifier' => $entity->getOriginal('identifier'),
 			]
 		);
 	}

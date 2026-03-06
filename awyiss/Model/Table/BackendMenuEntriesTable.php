@@ -9,6 +9,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -172,7 +173,7 @@ class BackendMenuEntriesTable extends Table {
 			'validParentId',
 			[
 				'errorField' => 'parentId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_parent_id'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_parent_id'),
 			]
 		);
 
@@ -192,39 +193,39 @@ class BackendMenuEntriesTable extends Table {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$data = [
 			'title' => $entity->title,
-			'insert_after_id' => $insertAfterId,
-			'link' => $controller . '::overview',
+			'insertAfterId' => $insertAfterId,
+			'link' => Inflector::camelize($controller) . '::overview',
 			'access' => [
 				'scope' => $scope,
 				'identifier' => 'read',
 			],
-			'child_backend_menu_entries' => [
+			'childBackendMenuEntries' => [
 				[
 					'title' => 'generic_datatables::menu_overview',
-					'link' => $controller . '::overview',
+					'link' => Inflector::camelize($controller) . '::overview',
 					'access' => [
-						'scope' => $scope,
+						'scope' => Inflector::camelize($scope),
 						'identifier' => 'read',
 					],
-					'system_order' => 1,
+					'systemOrder' => 1,
 				],
 				[
 					'title' => 'generic_datatables::menu_add',
-					'link' => $controller . '::add',
+					'link' => Inflector::camelize($controller) . '::add',
 					'access' => [
-						'scope' => $scope,
+						'scope' => Inflector::camelize($scope),
 						'identifier' => 'create',
 					],
-					'system_order' => 2,
+					'systemOrder' => 2,
 				],
 				[
 					'title' => 'generic_datatables::menu_configure',
-					'link' => 'Configuration::overview::scope:' . $scope,
+					'link' => 'Configuration::overview::scope:' . Inflector::camelize($scope),
 					'access' => [
-						'scope' => $scope,
+						'scope' => Inflector::camelize($scope),
 						'identifier' => 'configure',
 					],
-					'system_order' => 3,
+					'systemOrder' => 3,
 				],
 			],
 		];
@@ -232,7 +233,7 @@ class BackendMenuEntriesTable extends Table {
 		if (isset($entity->_translations)) {
 			/** @var \Awyiss\Model\Entity $translation */
 			foreach ($entity->_translations as $shortcode => $translation) {
-				$data['_translations'][ $shortcode ] = $translation->extract([], false, false);
+				$data['_translations'][ $shortcode ] = $translation->extract();
 			}
 		}
 

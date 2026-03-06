@@ -386,9 +386,9 @@ class FormSender {
 		}, ARRAY_FILTER_USE_KEY);
 
 		// Remove hidden input protection field from form data
-		if (isset($this->form->getProtectionMethods()['hidden_input'])) {
+		if (isset($this->form->getProtectionMethods()['hiddenInput'])) {
 			/** @var \Awyiss\Form\Protection\HiddenInputFormProtection $hiddenInputProtection */
-			$hiddenInputProtection = $this->form->getProtectionMethods()['hidden_input'];
+			$hiddenInputProtection = $this->form->getProtectionMethods()['hiddenInput'];
 			if ($hiddenInputProtection->getFieldName()) {
 				unset($formData[ $hiddenInputProtection->getFieldName() ]);
 			}
@@ -614,12 +614,14 @@ class FormSender {
 		if (isset($this->page)) {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or under_scored format
 			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
-			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $string);
+			$pageVars = $this->underscoreKeys($this->page->extract());
+			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or under_scored format
 		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
-		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $string);
+		$formVars = $this->underscoreKeys($this->form->extract());
+		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
 
 		// Find all placeholders in the form of `$identifier`
 		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
@@ -685,12 +687,14 @@ class FormSender {
 		if (isset($this->page)) {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or underscored format
 			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
-			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $string);
+			$pageVars = $this->underscoreKeys($this->page->extract());
+			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or underscored format
 		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
-		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $string);
+		$formVars = $this->underscoreKeys($this->form->extract());
+		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
 
 		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
 		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
@@ -753,7 +757,7 @@ class FormSender {
 			$sendData = $mailer->deliver();
 		}
 		catch (Exception $ex) {
-			$message = __d('form', 'error_email_send', $ex->getMessage());
+			$message = __d('Form', 'error_email_send', $ex->getMessage());
 			$this->form->setError('_general', $message);
 			$this->errors[] = $message;
 
@@ -792,7 +796,7 @@ class FormSender {
 		DebugTimer::start('FormSender::unwrapDataString', sprintf('FormSender::unwrapDataString: Unwrapping {{$data}} in form "%s"', $this->form->identifier));
 
 		// Recursively unwrap {{$data}} from phrasingOnlyTags parents
-		$phrasingTagsPattern = implode('|', array_map('preg_quote', $this->phrasingOnlyTags));
+		$phrasingTagsPattern = implode('|', array_map(preg_quote(...), $this->phrasingOnlyTags));
 		$previous = '';
 		/** @noinspection RegExpRedundantEscape */
 		$pattern = '/<(' . $phrasingTagsPattern . ')([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/\1>/m';
@@ -976,5 +980,19 @@ class FormSender {
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * @param array $vars
+	 * @return array
+	 */
+	protected function underscoreKeys(array $vars): array {
+		$result = [];
+		foreach ($vars as $key => $value) {
+			$result[ Inflector::underscore($key) ] = $value;
+		}
+
+		return $result;
 	}
 }

@@ -31,7 +31,7 @@ class MenuEntriesController extends Controller {
 		'uriParam' => 'menu-id',
 	];
 	/**
-	 * @var string|null Session identifier for the selected parent_id
+	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
 	/**
@@ -48,7 +48,7 @@ class MenuEntriesController extends Controller {
 
 		$this->Authorization->setScope('menus');
 
-		$this->selectedParentIdSessionIdentifier = 'menu_entries.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+		$this->selectedParentIdSessionIdentifier = 'menuEntries.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
 	}
 
 
@@ -75,7 +75,7 @@ class MenuEntriesController extends Controller {
 
 		if ($this->request->getParam('menuIdentifier')) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$menu = $this->fetchTable('Menus')->findByIdentifier(Inflector::underscore($this->request->getParam('menuIdentifier')))->first();
+			$menu = $this->fetchTable('Menus')->findByIdentifier(Inflector::variable($this->request->getParam('menuIdentifier')))->first();
 			if ($menu) {
 				throw new RedirectException(Router::url([
 					'action' => 'overview',
@@ -117,7 +117,7 @@ class MenuEntriesController extends Controller {
 
 		$session = $this->request->getSession();
 		$menuEntry = $this->MenuEntries->newDefaultEntity([
-			'languageShortcode' => $this->getOverviewWhere('language_shortcode'),
+			'languageShortcode' => $this->getOverviewWhere('languageShortcode'),
 			'menuId' => $this->request->getParam('menuId') ?? $this->Categories->getSelectedCategory(),
 			'parentId' => $session->read($this->selectedParentIdSessionIdentifier),
 		]);
@@ -227,8 +227,8 @@ class MenuEntriesController extends Controller {
 	protected function getPossibleParentMenuEntries(MenuEntry $menuEntry): CollectionInterface {
 		if (!isset($this->threadedMenuEntries)) {
 			$query = $this->MenuEntries->find()->where([
-				'language_shortcode' => $menuEntry->languageShortcode,
-				'menu_id' => $menuEntry->menuId,
+				'languageShortcode' => $menuEntry->languageShortcode,
+				'menuId' => $menuEntry->menuId,
 			]);
 
 			$this->threadedMenuEntries = $this->MenuEntries->listNested($query);
@@ -254,11 +254,11 @@ class MenuEntriesController extends Controller {
 
 		$this->MenuEntries->patchEntity($menuEntry, $this->request->getData(), [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->MenuEntries->save($menuEntry, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -269,7 +269,7 @@ class MenuEntriesController extends Controller {
 				$session = $this->request->getSession();
 				$session->write($this->selectedParentIdSessionIdentifier, $menuEntry->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'lang' => $menuEntry->languageShortcode,
@@ -301,8 +301,8 @@ class MenuEntriesController extends Controller {
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		$newIds = [];
 
-		foreach (($requestData['new_entries'] ?? []) as $key => $data) {
-			$data = array_intersect_key($data, array_flip(['menu_id', 'title', 'link', 'active', 'language_shortcode']));
+		foreach (($requestData['newEntries'] ?? []) as $key => $data) {
+			$data = array_intersect_key($data, array_flip(['menuId', 'title', 'link', 'active', 'languageShortcode']));
 			$entity = $table->newDefaultEntity($data);
 
 			if ($table->save($entity)) {
@@ -332,7 +332,7 @@ class MenuEntriesController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
-			'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
+			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 		];
 
 		parent::initializeOverviewWhere();

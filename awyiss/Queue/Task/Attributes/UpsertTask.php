@@ -68,10 +68,10 @@ class UpsertTask extends Task {
 		//Force migrations for attributes to be stored in the custom directory, to not mess with the Awyiss migrations.
 		$migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
-		$attributesTableName = 'attributes_' . $data['new']['scope'];
+		$attributesTableName = 'attributes_' . Inflector::underscore($data['new']['scope']);
 		$bakeOldModel = false;
 		$commands = [];
-		$foreignKey = Inflector::singularize($data['new']['scope']);
+		$foreignKey = Inflector::variable(Inflector::singularize($data['new']['scope']));
 
 		$scopeIsPageRole = false;
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
@@ -81,7 +81,7 @@ class UpsertTask extends Task {
 			$scopeIsPageRole = true;
 		}
 
-		$foreignKey .= '_id';
+		$foreignKey .= 'Id';
 
 		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		$tableExists = in_array($attributesTableName, $tables);
@@ -168,7 +168,7 @@ class UpsertTask extends Task {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterOldTableCommands(array &$commands, array $data, string $migrationsPath): bool {
-		$oldAttributesTableName = 'attributes_' . $data['old']['scope'];
+		$oldAttributesTableName = 'attributes_' . Inflector::underscore($data['old']['scope']);
 
 		$schema = ConnectionManager::get('default')->getSchemaCollection()->describe($oldAttributesTableName);
 
@@ -181,7 +181,7 @@ class UpsertTask extends Task {
 		 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
 		 *
 		 * Why 3, you ask?
-		 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)_id`-column.
+		 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)Id`-column.
 		 */
 		if (count($schema->columns()) <= 3) {
 			//Bake a `drop`-migration
@@ -250,7 +250,7 @@ class UpsertTask extends Task {
 			return;
 		}
 
-		$attributesTableName = 'attributes_' . $data['new']['scope'];
+		$attributesTableName = 'attributes_' . Inflector::underscore($data['new']['scope']);
 
 		//Migrate all the newly baked migrations
 		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
@@ -275,7 +275,7 @@ class UpsertTask extends Task {
 				$forPageRole = ' --for-pagerole ' . $data['old']['scope'];
 			}
 
-			$oldAttributesTable = 'attributes_' . $data['old']['scope'];
+			$oldAttributesTable = 'attributes_' . Inflector::underscore($data['old']['scope']);
 
 			$commands[] = 'bin' . DS . 'cake bake model ' . $oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $forPageRole;
 		}
@@ -290,7 +290,7 @@ class UpsertTask extends Task {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'attributes::table_changes',
+			'reference' => 'Attributes::tableChanges',
 		]);
 	}
 
@@ -306,7 +306,7 @@ class UpsertTask extends Task {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterTableCommands(array &$commands, array $data, array $diff, bool $changedScope, string $column, string $migrationsPath): void {
-		$attributesTableName = 'attributes_' . $data['new']['scope'];
+		$attributesTableName = 'attributes_' . Inflector::underscore($data['new']['scope']);
 
 		$tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($attributesTableName) . 'Table.php';
 		$entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($attributesTableName) . '.php';

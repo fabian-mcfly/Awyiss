@@ -20,8 +20,8 @@ trait TableFieldsTrait {
 	 */
 	protected array $blocklistedTableFields = [
 		'deleted',
-		'deleted_by',
-		'deleted_on',
+		'deletedBy',
+		'deletedOn',
 	];
 
 
@@ -51,17 +51,17 @@ trait TableFieldsTrait {
 				continue;
 			}
 
-			if (in_array($column, ['meta_title', 'meta_description', 'robots_index', 'robots_follow'])) {
-				$columns[ $column ] = __d('seo', $column);
+			if (in_array($column, ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow'])) {
+				$columns[ $column ] = __d('Seo', Inflector::underscore($column));
 
 				continue;
 			}
 
 			if ($table instanceof PagesTable && $table->getAlias() !== 'Pages') {
-				$title = __df(Inflector::underscore($table->getAlias()), 'generic_pages', $column);
+				$title = __df(Inflector::underscore($table->getAlias()), 'GenericPages', Inflector::underscore($column));
 
 				if (str_contains($title, '::')) {
-					$title = __d('system', $column);
+					$title = __d('System', Inflector::underscore($column));
 				}
 
 				$columns[ $column ] = $title;
@@ -69,7 +69,7 @@ trait TableFieldsTrait {
 				continue;
 			}
 
-			$columns[ $column ] = __d(Inflector::underscore($scope), $column);
+			$columns[ $column ] = __d(Inflector::underscore($scope), Inflector::underscore($column));
 		}
 
 		if ($table->hasBehavior('Attributes')) {
@@ -86,9 +86,6 @@ trait TableFieldsTrait {
 			}
 		}
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $table->getEntityClass();
-
-		return $entityClass::mapFields($columns);
+		return $columns;
 	}
 }

@@ -69,7 +69,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$this->assertTrue($this->surveyAnswersTable->hasAssociation('SurveyQuestions'));
 		$surveyQuestionsAssociation = $this->surveyAnswersTable->getAssociation('SurveyQuestions');
 		$this->assertInstanceOf(BelongsTo::class, $surveyQuestionsAssociation);
-		$this->assertEquals('survey_question_id', $surveyQuestionsAssociation->getForeignKey());
+		$this->assertEquals('surveyQuestionId', $surveyQuestionsAssociation->getForeignKey());
 		$this->assertEquals('INNER', $surveyQuestionsAssociation->getJoinType());
 
 		// Test SurveySurveyAnswers association (HasMany)
@@ -78,7 +78,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $surveySurveyAnswersAssociation);
 		$this->assertTrue($surveySurveyAnswersAssociation->getCascadeCallbacks());
 		$this->assertTrue($surveySurveyAnswersAssociation->getDependent());
-		$this->assertEquals('survey_answer_id', $surveySurveyAnswersAssociation->getForeignKey());
+		$this->assertEquals('surveyAnswerId', $surveySurveyAnswersAssociation->getForeignKey());
 		$this->assertEquals('replace', $surveySurveyAnswersAssociation->getSaveStrategy());
 
 		// 'MediaAssignments' must also exist
@@ -92,7 +92,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$this->assertTrue($this->surveyAnswersTable->hasAssociation('SurveySurveyQuestions'));
 		$surveySurveyQuestionsAssociation = $this->surveyAnswersTable->getAssociation('SurveySurveyQuestions');
 		$this->assertInstanceOf(BelongsTo::class, $surveySurveyQuestionsAssociation);
-		$this->assertEquals('survey_survey_question_id', $surveySurveyQuestionsAssociation->getForeignKey());
+		$this->assertEquals('surveySurveyQuestionId', $surveySurveyQuestionsAssociation->getForeignKey());
 		$this->assertEquals('INNER', $surveySurveyQuestionsAssociation->getJoinType());
 
 		// Test inherited associations (from Table parent class)
@@ -151,7 +151,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$result = $this->surveyAnswersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('survey_answers', $result->getI18nDomain());
+		$this->assertSame('SurveyAnswers', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -455,7 +455,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$config = $this->surveyAnswersTable->getBehavior('Search')->getConfig();
 
 		$this->assertArrayHasKey('blocklistedColumns', $config);
-		$this->assertEquals(['survey_question_id'], $config['blocklistedColumns']);
+		$this->assertEquals(['surveyQuestionId'], $config['blocklistedColumns']);
 	}
 
 

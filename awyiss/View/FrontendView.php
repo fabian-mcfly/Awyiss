@@ -502,7 +502,7 @@ class FrontendView extends AppView {
 				/** @var \Awyiss\Model\Entity\Design $design */
 				$design = $designTable->find('all')->where([
 					'identifier' => $designPreviewIdentifier,
-					'in_use' => false,
+					'inUse' => false,
 				])->first();
 			}
 

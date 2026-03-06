@@ -35,23 +35,6 @@ class MediaAssignment extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'media_element_id' => 'mediaElementId',
-		'media_element_selector_identifier' => 'mediaElementSelectorIdentifier',
-		'media_id' => 'mediaId',
-		'media_folder_id' => 'mediaFolderId',
-		'foreign_key' => 'foreignKey',
-		'system_order' => 'systemOrder',
-		'media_element' => 'mediaElement',
-		'media_element_assignment' => 'mediaElementAssignment',
-		'media_element_selector' => 'mediaElementSelector',
-		'media_folder' => 'mediaFolder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'mediaElementId' => true,
 		'mediaElementSelectorIdentifier' => true,

@@ -55,12 +55,12 @@
 
 						{% block nestedListItemDataDisplayedFields %}
 							{% for field in displayedFields %}
-								{% if field == 'system_order' %}
+								{% if field == 'systemOrder' %}
 								{% else %}
 									{% block nestedListItemDataDisplayedField %}
 										<li class="DataItem DataItem-{{ field|camelize }}">
 											{% if field starts with 'attributes.' %}
-												{% set field = field|slice(11)|underscore %}
+												{% set field = field|slice(11) %}
 												{% block nestedListItemDataDisplayedFieldAttribute %}
 													{% block nestedListItemDataDisplayedFieldAttributeLabel %}
 														<span class="Label">{{ attributes[field].label }}:</span>
@@ -70,13 +70,12 @@
 													{% endblock %}
 												{% endblock %}
 											{% else %}
-												{% set field = field|underscore %}
 												{% block nestedListItemDataDisplayedFieldDefault %}
 													{% block nestedListItemDataDisplayedFieldDefaultLabel %}
 														<span class="Label">{{
-															field in ['meta_title', 'meta_description', 'robots_index', 'robots_follow']
-															? __d('seo', field)
-															: (i18nDomain ? __df(i18nDomain, 'system', field) : __(field))
+															field in ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow']
+															? __d('Seo', field)
+															: (i18nDomain ? __df(i18nDomain, 'System', field|underscore) : __(field|underscore))
 														}}:</span>
 													{% endblock %}
 													{% block nestedListItemDataDisplayedFieldDefaultValue %}
@@ -100,15 +99,17 @@
 							</ul>
 						{% endblock %}
 
-						{{ HtmlHelper.link(__d('audit', 'show_history'), {
-							controller: 'audit',
-							action: 'history',
-							scope: entity.source|underscore,
-							id: entity.id
-						}, {
-							escape: false,
-							title: __d('audit', 'show_history'),
-						}) }}
+						{% block nestedListItemAuditInfoHistoryLink %}
+							{{ HtmlHelper.link(__d('Audit', 'show_history'), {
+								controller: 'audit',
+								action: 'history',
+								scope: entity.source|underscore,
+								id: entity.id
+							}, {
+								escape: false,
+								title: __d('Audit', 'show_history'),
+							}) }}
+						{% endblock %}
 					</div>
 				{% endblock %}
 
@@ -131,13 +132,13 @@
 
 						{% block nestedListActionsDelete %}
 							{% if AuthorizationHelper.isAccessible('delete') %}
-								{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
+								{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
 									class: 'Button Button-Small Button-Delete',
-									'data-confirm-title': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_title') : __('confirm_delete_title'),
-									'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_yes') : __('confirm_delete_yes'),
+									'data-confirm-title': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_title') : __('confirm_delete_title'),
+									'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_yes') : __('confirm_delete_yes'),
 									'data-confirm-yes-class': 'Button-Delete',
-									'data-confirm-no': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_no') : __('confirm_delete_no'),
-									'data-confirm': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
+									'data-confirm-no': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_no') : __('confirm_delete_no'),
+									'data-confirm': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
 							{% endif %}
 						{% endblock %}
 					</span>

@@ -31,7 +31,7 @@
 			{% endif %}
 
 			{% block headlineAdd %}
-				<h1>{{ __df(datatable.identifier|pluralize, 'generic_datatables', 'headline_add') }}</h1>
+				<h1>{{ __df(datatable.identifier|pluralize, 'GenericDatatables', 'headline_add') }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -49,7 +49,7 @@
 
 				{% block formAddButtonSaveClose %}
 					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericDatatableForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericDatatableForm', name: 'submitType', value: 'submitClose'}) }}
 					{% endif %}
 				{% endblock %}
 

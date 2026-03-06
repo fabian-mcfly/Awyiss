@@ -34,16 +34,6 @@ class Language extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'date_format' => 'dateFormat',
-		'time_format' => 'timeFormat',
-		'system_order' => 'systemOrder',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'realm' => true,
 		'shortcode' => true,

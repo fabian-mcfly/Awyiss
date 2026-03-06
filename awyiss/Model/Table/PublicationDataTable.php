@@ -102,7 +102,7 @@ class PublicationDataTable extends Table {
 			'validType',
 			[
 				'errorField' => 'type',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_type'),
 			]
 		);
 

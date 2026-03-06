@@ -185,7 +185,7 @@ class MenuCellTest extends TestCase {
 		$table = $this->fetchTable('BackendMenuEntries');
 		$entity = $table->newEntity([
 			'title' => 'foobar',
-			'created_on' => new DateTime()->subMinutes(10),
+			'createdOn' => new DateTime()->subMinutes(10),
 		]);
 		$table->save($entity);
 

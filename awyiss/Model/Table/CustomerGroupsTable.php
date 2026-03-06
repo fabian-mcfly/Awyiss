@@ -50,6 +50,8 @@ class CustomerGroupsTable extends Table {
 		$this->belongsToMany('Customers', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'customerGroupId',
+			'targetForeignKey' => 'customerId',
 		]);
 	}
 
@@ -108,7 +110,7 @@ class CustomerGroupsTable extends Table {
 			'titleUnique',
 			[
 				'errorField' => 'title',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_title_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_title_unique'),
 			]
 		);
 

@@ -91,7 +91,7 @@ class CustomerGroupAccessSettingsTable extends Table {
 			'validAccessType',
 			[
 				'errorField' => 'accessType',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_access_type'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_access_type'),
 			]
 		);
 
@@ -105,6 +105,6 @@ class CustomerGroupAccessSettingsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('access_type', EnumType::from(CustomerGroupAccessType::class));
+		$schema->setColumnType('accessType', EnumType::from(CustomerGroupAccessType::class));
 	}
 }

@@ -221,10 +221,10 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public static function dataThreadedGlobalContentsDataProvider(): array {
 		return [
-			['dummy_multi_row', 3],
-			['dummy_nested', 1],
-			['dummy_row_overflow', 4],
-			['dummy_single_row', 2],
+			['dummyMultiRow', 3],
+			['dummyNested', 1],
+			['dummyRowOverflow', 4],
+			['dummySingleRow', 2],
 		];
 	}
 
@@ -282,7 +282,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testGetThreadedGlobalContentsContainsInactiveElementsWhenPreviewIsEnabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$globalContents = $globalContents->listNested()->compile(false);
 
@@ -297,7 +297,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testGetThreadedGlobalContentsNotContainsInactiveElementsWhenPreviewIsDisabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', false);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', false);
 
 		$globalContents = $globalContents->listNested()->compile(false);
 
@@ -312,7 +312,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testGetThreadedGlobalContentsContainsUnpublishedElementsWhenPreviewIsEnabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_multi_row', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyMultiRow', true);
 
 		$globalContents = $globalContents->listNested()->compile(false);
 
@@ -327,7 +327,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testGetThreadedGlobalContentsNotContainsUnpublishedElementsWhenPreviewIsDisabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_multi_row', false);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyMultiRow', false);
 
 		$globalContents = $globalContents->listNested()->compile(false);
 
@@ -343,7 +343,7 @@ class GlobalContentsCellTest extends TestCase {
 	public function testCacheAssignedMediaItems(): void {
 		ResizedImageManager::clear();
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested');
 
 		$files = $this->callProtectedMethod($this->cell, 'cacheAssignedMediaItems', $globalContents, 'global_contents');
 		$this->assertCount(1, $files);
@@ -366,7 +366,7 @@ class GlobalContentsCellTest extends TestCase {
 	public function testCacheAssignedMediaItemsIncludingInactiveItemsInPreviewMode(): void {
 		ResizedImageManager::clear();
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$files = $this->callProtectedMethod($this->cell, 'cacheAssignedMediaItems', $globalContents, 'global_contents');
 		$this->assertCount(3, $files);
@@ -473,7 +473,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetsLevel(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -483,7 +483,7 @@ class GlobalContentsCellTest extends TestCase {
 			$this->assertEquals(0, $globalContent->get('level'));
 		});
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -512,7 +512,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetsParentGlobalContents(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -547,7 +547,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetCssClasses(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -565,7 +565,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetCssClassesForInactiveElements(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -586,7 +586,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetsRealColumnWidth(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -607,7 +607,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetsRealColumnWidthWithDifferentBaseWidth(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents, 75.00);
 
@@ -628,7 +628,7 @@ class GlobalContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testPrepareEntitiesSetsTemplate(): void {
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
@@ -683,7 +683,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_nested', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyNested', true);
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -707,7 +707,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummySingleRow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -731,7 +731,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_multi_row', true);
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyMultiRow', true);
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -755,7 +755,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_row_overflow');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummyRowOverflow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -779,7 +779,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'custom_template');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'customTemplate');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -801,7 +801,7 @@ class GlobalContentsCellTest extends TestCase {
 
 		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
 
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'custom_template');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'customTemplate');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $globalContents->toArray());
@@ -819,7 +819,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testParseAwyissImageTag(): void {
 		$output = (string)$this->cell('Frontend/GlobalContents', [
-			'inline_img',
+			'inlineImg',
 			$this->view,
 			[
 				'fullWidth' => 1440.00,
@@ -844,7 +844,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testParseAwyissImageTagWithColumnWidth(): void {
 		$output = (string)$this->cell('Frontend/GlobalContents', [
-			'inline_img',
+			'inlineImg',
 			$this->view,
 			[
 				'fullWidth' => 1440.00,
@@ -959,7 +959,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testRenderElement(): void {
 		/** @var \Cake\Collection\Collection $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummySingleRow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$entity = $globalContents->firstMatch(['id' => 13]);
@@ -978,7 +978,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testRenderElementAddsFullWidthMissingInfo(): void {
 		/** @var \Cake\Collection\Collection $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummySingleRow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$entity = $globalContents->firstMatch(['id' => 13]);
@@ -996,7 +996,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testRenderElementNotAddsFullWidthMissingInfoWhenSet(): void {
 		/** @var \Cake\Collection\Collection $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummySingleRow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$entity = $globalContents->firstMatch(['id' => 13]);
@@ -1024,7 +1024,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testRenderElementRendersParsesWidget() {
 		/** @var \Cake\Collection\Collection $globalContents */
-		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
+		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummySingleRow');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$entity = $globalContents->firstMatch(['id' => 13]);
@@ -1056,7 +1056,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testDisplay(): void {
 		$output = (string)$this->cell('Frontend/GlobalContents', [
-			'dummy_row_overflow',
+			'dummyRowOverflow',
 			$this->view,
 			[
 				'fullWidth' => 1440.00,
@@ -1076,7 +1076,7 @@ class GlobalContentsCellTest extends TestCase {
 	 */
 	public function testDisplayWithColumnWidth(): void {
 		$output = (string)$this->cell('Frontend/GlobalContents', [
-			'dummy_narrow',
+			'dummyNarrow',
 			$this->view,
 			[
 				'fullWidth' => 1440.00,

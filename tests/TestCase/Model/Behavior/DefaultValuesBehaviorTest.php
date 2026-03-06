@@ -205,8 +205,8 @@ class DefaultValuesBehaviorTest extends TestCase {
 	public function testNewDefaultEntityWithUnmappedFields(): void {
 		$additionalData = [
 			'title' => 'Test Entity',
-			'system_order' => 5,
-			'column_width' => '2/3',
+			'systemOrder' => 5,
+			'columnWidth' => '2/3',
 		];
 
 		/** @var \Awyiss\Model\Table\ContentsTable $table */

@@ -184,11 +184,11 @@ class MediaElementsController extends Controller {
 
 		$requestData = $this->request->getData();
 
-		if (!empty($requestData['media_element_selectors'])) {
-			$requestData['media_element_selectors'] = array_map(function ($element) {
+		if (!empty($requestData['mediaElementSelectors'])) {
+			$requestData['mediaElementSelectors'] = array_map(function ($element) {
 				static $systemOrder = 1;
 
-				if (empty($element['media_selector_id']) || empty($element['identifier'])) {
+				if (empty($element['mediaSelectorId']) || empty($element['identifier'])) {
 					return false;
 				}
 
@@ -197,22 +197,22 @@ class MediaElementsController extends Controller {
 					return false;
 				}
 
-				$element['system_order'] = $systemOrder;
+				$element['systemOrder'] = $systemOrder;
 				$systemOrder++;
 
 				return $element;
-			}, $requestData['media_element_selectors']);
-			$requestData['media_element_selectors'] = array_filter($requestData['media_element_selectors']);
+			}, $requestData['mediaElementSelectors']);
+			$requestData['mediaElementSelectors'] = array_filter($requestData['mediaElementSelectors']);
 
 			// Update the request data
-			$request = $this->request->withData('media_element_selectors', $requestData['media_element_selectors']);
+			$request = $this->request->withData('mediaElementSelectors', $requestData['mediaElementSelectors']);
 			$this->setRequest($request);
 
 			$associated[] = 'MediaElementSelectors';
 		}
 
-		if (!empty($requestData['media_element_assignments'])) {
-			$requestData['media_element_assignments'] = array_filter($requestData['media_element_assignments'], function ($element) {
+		if (!empty($requestData['mediaElementAssignments'])) {
+			$requestData['mediaElementAssignments'] = array_filter($requestData['mediaElementAssignments'], function ($element) {
 				if (empty($element['scope'])) {
 					return false;
 				}
@@ -220,25 +220,25 @@ class MediaElementsController extends Controller {
 				return true;
 			});
 
-			$this->request->withData('media_element_assignments', $requestData['media_element_assignments']);
+			$this->request->withData('mediaElementAssignments', $requestData['mediaElementAssignments']);
 
 			$associated[] = 'MediaElementAssignments';
 		}
 
 		$this->MediaElements->patchEntity($mediaElement, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->MediaElements->save($mediaElement, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($mediaElement),

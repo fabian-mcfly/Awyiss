@@ -186,8 +186,8 @@ class PageTemplatesTableTest extends TestCase {
 
 		// Test that the query includes the expected fields
 		$select = $query->clause('select');
-		$this->assertContains('used_for_pages', array_keys($select));
-		$this->assertInstanceOf(AggregateExpression::class, $select['used_for_pages']);
+		$this->assertContains('usedForPages', array_keys($select));
+		$this->assertInstanceOf(AggregateExpression::class, $select['usedForPages']);
 
 		// Test that the query includes group by
 		$this->assertTrue($query->isAutoFieldsEnabled());
@@ -213,7 +213,7 @@ class PageTemplatesTableTest extends TestCase {
 		$result = $this->pageTemplatesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('page_templates', $result->getI18nDomain());
+		$this->assertSame('PageTemplates', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('pageRoleId'));
@@ -601,7 +601,7 @@ class PageTemplatesTableTest extends TestCase {
 		$schema = $this->pageTemplatesTable->getSchema();
 
 		// Test that page_role_id column is configured as an enum type
-		$this->assertSame('enum-customer-model-enum-pagerole', $schema->getColumnType('page_role_id'));
+		$this->assertSame('enum-customer-model-enum-pagerole', $schema->getColumnType('pageRoleId'));
 	}
 
 

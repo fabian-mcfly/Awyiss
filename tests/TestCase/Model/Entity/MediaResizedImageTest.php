@@ -155,13 +155,13 @@ class MediaResizedImageTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'media_id' => 123,
+			'mediaId' => 123,
 			'name' => 'resized_image.jpg',
 			'path' => 'media/resized/image.jpg',
 			'width' => 800,
 			'height' => 600,
-			'real_width' => 750,
-			'real_height' => 550,
+			'realWidth' => 750,
+			'realHeight' => 550,
 			'strategy' => 'fit',
 			'status' => 'completed',
 		];
@@ -178,25 +178,5 @@ class MediaResizedImageTest extends TestCase {
 		$this->assertEquals(550, $entity->realHeight);
 		$this->assertEquals('fit', $entity->strategy);
 		$this->assertEquals('completed', $entity->status);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaResizedImage::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'media_id' => 456,
-			'real_width' => 1024,
-			'real_height' => 768,
-		];
-
-		$entity = new MediaResizedImage($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

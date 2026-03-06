@@ -32,7 +32,7 @@ class PageTemplatesListener implements EventListenerInterface {
 
 	/**
 	 * If the filename of a page templates has changed,
-	 * check the QueuedJobs table for jobs with the identifier 'page_templates::file_changes'.
+	 * check the QueuedJobs table for jobs with the identifier 'PageTemplates::fileChanges'.
 	 *
 	 * If such an active job exists, stop the save event and return an error.
 	 *
@@ -47,9 +47,9 @@ class PageTemplatesListener implements EventListenerInterface {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-			if ($queuedJobsTable->isQueued('page_templates::file_changes')) {
+			if ($queuedJobsTable->isQueued('PageTemplates::fileChanges')) {
 				$event->stopPropagation();
-				$entity->setError('_general', __d('page_templates', 'file_changes_in_progress'));
+				$entity->setError('_general', __d('PageTemplates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -112,7 +112,7 @@ class PageTemplatesListener implements EventListenerInterface {
 			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]);
 		}
 	}
@@ -152,7 +152,7 @@ class PageTemplatesListener implements EventListenerInterface {
 			], [
 				'group' => 'general',
 				'priority' => 1,
-				'reference' => 'page_templates::file_changes',
+				'reference' => 'PageTemplates::fileChanges',
 			]);
 		}
 	}

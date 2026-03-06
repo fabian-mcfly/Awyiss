@@ -40,8 +40,8 @@ class SurveysTable extends Table {
 	protected array $translate = [
 		'fields' => [
 			'title',
-			'success_message',
-			'failure_message',
+			'successMessage',
+			'failureMessage',
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
@@ -51,28 +51,37 @@ class SurveysTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->hasMany('Contents');
+		$this->hasMany('Contents', [
+			'foreignKey' => 'surveyId',
+		]);
 
 		$this->belongsTo('Forms', [
 			'foreignKey' => 'formId',
 		]);
 
-		$this->hasMany('Pages');
+		$this->hasMany('GlobalContents', [
+			'foreignKey' => 'surveyId',
+			'propertyName' => 'globalContents',
+		]);
+
+		$this->hasMany('Pages', [
+			'foreignKey' => 'surveyId',
+		]);
 
 		$this->hasMany('SurveyEntries', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_id',
+			'foreignKey' => 'surveyId',
+			'propertyName' => 'surveyEntries',
 		]);
 
 		$this->hasMany('SurveySurveyQuestions', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_id',
+			'foreignKey' => 'surveyId',
 			'saveStrategy' => 'replace',
+			'propertyName' => 'surveySurveyQuestions',
 		]);
-
-		$this->hasMany('GlobalContents');
 	}
 
 
@@ -170,7 +179,7 @@ class SurveysTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 		]);
 
 		$rules->add(
@@ -178,7 +187,7 @@ class SurveysTable extends Table {
 			'validFormId',
 			[
 				'errorField' => 'formId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_form_id'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_form_id'),
 			]
 		);
 
@@ -193,7 +202,7 @@ class SurveysTable extends Table {
 			'validType',
 			[
 				'errorField' => 'type',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_type'),
 			]
 		);
 
@@ -209,7 +218,7 @@ class SurveysTable extends Table {
 			'validFinalAction',
 			[
 				'errorField' => 'finalAction',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_final_action'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_final_action'),
 			]
 		);
 
@@ -270,7 +279,7 @@ class SurveysTable extends Table {
 			'formIdSetWhenRequired',
 			[
 				'errorField' => 'formId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_form_id_set_when_required'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_form_id_set_when_required'),
 			]
 		);
 
@@ -282,7 +291,7 @@ class SurveysTable extends Table {
 			'noCircularReferences',
 			[
 				'errorField' => 'surveySurveyQuestions',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_circular_references'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_circular_references'),
 			]
 		);
 
@@ -306,7 +315,7 @@ class SurveysTable extends Table {
 			'noRepeatedQuestionsInLinearSurvey',
 			[
 				'errorField' => 'surveySurveyQuestions',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_repeated_questions_in_linear_survey'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_repeated_questions_in_linear_survey'),
 			]
 		);
 
@@ -377,7 +386,7 @@ class SurveysTable extends Table {
 			'noInvalidNextActions',
 			[
 				'errorField' => 'surveySurveyQuestions',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_invalid_next_actions'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_no_invalid_next_actions'),
 			]
 		);
 
@@ -387,7 +396,7 @@ class SurveysTable extends Table {
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_contents'),
 			]
 		);
 
@@ -396,17 +405,17 @@ class SurveysTable extends Table {
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_pages'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_pages'),
 			]
 		);
 
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('GlobalContents', 'global_contents'),
+			$rules->isNotLinkedTo('GlobalContents', 'globalContents'),
 			'noLinkedGlobalContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_global_contents'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_linked_global_contents'),
 			]
 		);
 
@@ -424,7 +433,7 @@ class SurveysTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
 		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('final_action', EnumType::from($surveyNextActionEnum));
+		$schema->setColumnType('finalAction', EnumType::from($surveyNextActionEnum));
 
 		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
 		$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');

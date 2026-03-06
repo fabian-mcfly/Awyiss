@@ -61,34 +61,34 @@ class DatatableTest extends TestCase {
 		$entity = new Datatable();
 
 		$entity->identifier = 'User';
-		$this->assertEquals('users', $entity->identifier);
+		$this->assertEquals('Users', $entity->identifier);
 
 		$entity->identifier = 'Product';
-		$this->assertEquals('products', $entity->identifier);
+		$this->assertEquals('Products', $entity->identifier);
 
 		$entity->identifier = 'OrderItem';
-		$this->assertEquals('orderitems', $entity->identifier);
+		$this->assertEquals('OrderItems', $entity->identifier);
 
 		$entity->identifier = 'User123Data';
-		$this->assertEquals('userdata', $entity->identifier);
+		$this->assertEquals('UserData', $entity->identifier);
 
 		$entity->identifier = 'Customer Profile';
-		$this->assertEquals('customer_profiles', $entity->identifier);
+		$this->assertEquals('CustomerProfiles', $entity->identifier);
 
 		$entity->identifier = 'Test-Item';
-		$this->assertEquals('test_items', $entity->identifier);
+		$this->assertEquals('TestItems', $entity->identifier);
 
 		$entity->identifier = 'Category999Name';
-		$this->assertEquals('categorynames', $entity->identifier);
+		$this->assertEquals('CategoryNames', $entity->identifier);
 
 		$entity->identifier = 'UPPERCASE';
-		$this->assertEquals('uppercases', $entity->identifier);
+		$this->assertEquals('UPPERCASEs', $entity->identifier);
 
 		$entity->identifier = 'child';
-		$this->assertEquals('children', $entity->identifier);
+		$this->assertEquals('Children', $entity->identifier);
 
 		$entity->identifier = 'person';
-		$this->assertEquals('people', $entity->identifier);
+		$this->assertEquals('People', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -103,34 +103,34 @@ class DatatableTest extends TestCase {
 		$entity = new Datatable();
 
 		$entity->set('identifier', 'User');
-		$this->assertEquals('users', $entity->identifier);
+		$this->assertEquals('Users', $entity->identifier);
 
 		$entity->set('identifier', 'Product');
-		$this->assertEquals('products', $entity->identifier);
+		$this->assertEquals('Products', $entity->identifier);
 
 		$entity->set('identifier', 'OrderItem');
-		$this->assertEquals('orderitems', $entity->identifier);
+		$this->assertEquals('OrderItems', $entity->identifier);
 
 		$entity->set('identifier', 'User123Data');
-		$this->assertEquals('userdata', $entity->identifier);
+		$this->assertEquals('UserData', $entity->identifier);
 
 		$entity->set('identifier', 'Customer Profile');
-		$this->assertEquals('customer_profiles', $entity->identifier);
+		$this->assertEquals('CustomerProfiles', $entity->identifier);
 
 		$entity->set('identifier', 'Test-Item');
-		$this->assertEquals('test_items', $entity->identifier);
+		$this->assertEquals('TestItems', $entity->identifier);
 
 		$entity->set('identifier', 'Category999Name');
-		$this->assertEquals('categorynames', $entity->identifier);
+		$this->assertEquals('CategoryNames', $entity->identifier);
 
 		$entity->set('identifier', 'UPPERCASE');
-		$this->assertEquals('uppercases', $entity->identifier);
+		$this->assertEquals('UPPERCASEs', $entity->identifier);
 
 		$entity->set('identifier', 'child');
-		$this->assertEquals('children', $entity->identifier);
+		$this->assertEquals('Children', $entity->identifier);
 
 		$entity->set('identifier', 'person');
-		$this->assertEquals('people', $entity->identifier);
+		$this->assertEquals('People', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -155,28 +155,8 @@ class DatatableTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Test Datatable', $entity->title);
-		$this->assertEquals('users', $entity->identifier); // Should be cleaned by setter
+		$this->assertEquals('Users', $entity->identifier); // Should be cleaned by setter
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\Datatable::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'title' => 'Test Title',
-			'identifier' => 'TestIdentifier',
-			'active' => true,
-		];
-
-		$entity = new Datatable($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

@@ -159,12 +159,12 @@ export default class SurveysController {
 
 				const nextIndex = event.to.dataset.nextIndex;
 
-				// All inputs with name starting with survey_survey_questions[x], where x is a number
+				// All inputs with name starting with surveySurveyQuestions[x], where x is a number
 				// replace the x with the number of the question
-				const inputs = event.item.querySelectorAll('input[name^="survey_survey_questions["], select[name^="survey_survey_questions["]');
+				const inputs = event.item.querySelectorAll('input[name^="surveySurveyQuestions["], select[name^="surveySurveyQuestions["]');
 				inputs.forEach(input => {
 					// noinspection RegExpRedundantEscape
-					input.name = input.name.replace(/survey_survey_questions\[(\d+)\]/, `survey_survey_questions[${nextIndex}]`);
+					input.name = input.name.replace(/surveySurveyQuestions\[(\d+)\]/, `surveySurveyQuestions[${nextIndex}]`);
 					input.disabled = false;
 				});
 
@@ -203,7 +203,7 @@ export default class SurveysController {
 
 		const questions = assignedQuestionsList.querySelectorAll('.AssignedQuestions-ListItem');
 		questions.forEach(question => {
-			const questionIdentifier = question.querySelector('input[name^="survey_survey_questions["][name$="[identifier]"]').value;
+			const questionIdentifier = question.querySelector('input[name^="surveySurveyQuestions["][name$="[identifier]"]').value;
 			const isOpen = this.configStatuses[questionIdentifier] || false;
 
 			const settings = question.querySelectorAll('.Settings');
@@ -311,12 +311,12 @@ export default class SurveysController {
 
 		const nextIndex = targetList.dataset.nextIndex;
 
-		// All inputs with name starting with survey_survey_questions[x], where x is a number
+		// All inputs with name starting with surveySurveyQuestions[x], where x is a number
 		// replace the x with the number of the question
-		const inputs = item.querySelectorAll('input[name^="survey_survey_questions["], select[name^="survey_survey_questions["]');
+		const inputs = item.querySelectorAll('input[name^="surveySurveyQuestions["], select[name^="surveySurveyQuestions["]');
 		inputs.forEach(input => {
 			// noinspection RegExpRedundantEscape
-			input.name = input.name.replace(/survey_survey_questions\[(\d+)\]/, `survey_survey_questions[${nextIndex}]`);
+			input.name = input.name.replace(/surveySurveyQuestions\[(\d+)\]/, `surveySurveyQuestions[${nextIndex}]`);
 			input.disabled = false;
 		});
 
@@ -345,8 +345,8 @@ export default class SurveysController {
 			window.nestedListHandler.adjustScrollPosition(activeButton, false);
 
 			if (target) {
-				const targetIdentifier = target.querySelector('input[name^="survey_survey_questions["][name$="[identifier]"]').value;
-				const nextActionSelect = activeButton.closest('.Settings').querySelector('select[name^="survey_survey_questions["][name$="[next_action_target]"]');
+				const targetIdentifier = target.querySelector('input[name^="surveySurveyQuestions["][name$="[identifier]"]').value;
+				const nextActionSelect = activeButton.closest('.Settings').querySelector('select[name^="surveySurveyQuestions["][name$="[nextActionTarget]"]');
 				if (nextActionSelect) {
 					nextActionSelect.value = targetIdentifier;
 					nextActionSelect.dispatchEvent(new Event('input', { bubbles: true }));
@@ -432,9 +432,9 @@ export default class SurveysController {
 			return;
 		}
 
-		const questionId = +question.querySelector('input[name^="survey_survey_questions["][name$="[survey_question_id]"]').value;
+		const questionId = +question.querySelector('input[name^="surveySurveyQuestions["][name$="[surveyQuestionId]"]').value;
 
-		const selector = `input[name^="survey_survey_questions["][name$="[survey_question_id]"][value="${questionId}"]`;
+		const selector = `input[name^="surveySurveyQuestions["][name$="[surveyQuestionId]"][value="${questionId}"]`;
 		const input = document.getElementById('AvailableQuestions-List').querySelector(selector);
 
 		if (input) {
@@ -458,7 +458,7 @@ export default class SurveysController {
 			return;
 		}
 
-		const questionIdentifier = question.querySelector('input[name^="survey_survey_questions["][name$="[identifier]"]').value;
+		const questionIdentifier = question.querySelector('input[name^="surveySurveyQuestions["][name$="[identifier]"]').value;
 		const isOpen = this.configStatuses[questionIdentifier] || false;
 
 		const settings = question.querySelectorAll('.Settings');

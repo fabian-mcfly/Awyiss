@@ -25,7 +25,7 @@
 			"identifier": "read"
 		},
 		"children": {
-			"pages_overview": {
+			"pagesOverview": {
 				"title": {
 					"translate": ["pages", "menu_overview"]
 				},
@@ -40,7 +40,7 @@
 					"identifier": "read"
 				}
 			},
-			"pages_add": {
+			"pagesAdd": {
 				"title": {
 					"translate": ["pages", "menu_add"]
 				},
@@ -55,7 +55,7 @@
 					"identifier": "create"
 				},
 				"children": {
-					"pages_add_batch": {
+					"pagesAddBatch": {
 						"title": {
 							"translate": ["pages", "menu_add_batch"]
 						},
@@ -72,7 +72,7 @@
 					}
 				}
 			},
-			"contents_add": {
+			"contentsAdd": {
 				"title": {
 					"translate": ["contents", "menu_add"]
 				},
@@ -88,7 +88,7 @@
 				},
 				"children": null
 			},
-			"pages_configure": {
+			"pagesConfigure": {
 				"title": {
 					"translate": ["pages", "menu_configure"]
 				},
@@ -121,7 +121,7 @@
 			"identifier": "read"
 		},
 		"children": {
-			"media_folders": {
+			"mediaFolders": {
 				"title": {
 					"translate": ["media_folders", "menu_title"]
 				},
@@ -136,7 +136,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"media_folders_overview": {
+					"mediaFoldersOverview": {
 						"title": {
 							"translate": ["media_folders", "menu_overview"]
 						},
@@ -151,7 +151,7 @@
 							"identifier": "read"
 						}
 					},
-					"media_folders_add": {
+					"mediaFoldersAdd": {
 						"title": {
 							"translate": ["media_folders", "menu_add"]
 						},
@@ -166,7 +166,7 @@
 							"identifier": "create"
 						}
 					},
-					"media_folders_configure": {
+					"mediaFoldersConfigure": {
 						"title": {
 							"translate": ["media_folders", "menu_configure"]
 						},
@@ -184,7 +184,7 @@
 					}
 				}
 			},
-			"media_batch_edit": {
+			"mediaBatchEdit": {
 				"title": {
 					"translate": ["media", "menu_batch_edit"]
 				},
@@ -200,7 +200,7 @@
 				},
 				"children": null
 			},
-			"media_elements": {
+			"mediaElements": {
 				"title": {
 					"translate": ["media_elements", "menu_title"]
 				},
@@ -215,7 +215,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"media_elements_overview": {
+					"mediaElementsOverview": {
 						"title": {
 							"translate": ["media_elements", "menu_overview"]
 						},
@@ -230,7 +230,7 @@
 							"identifier": "read"
 						}
 					},
-					"media_elements_add": {
+					"mediaElementsAdd": {
 						"title": {
 							"translate": ["media_elements", "menu_add"]
 						},
@@ -245,7 +245,7 @@
 							"identifier": "create"
 						}
 					},
-					"media_selectors": {
+					"mediaSelectors": {
 						"title": {
 							"translate": ["media_selectors", "menu_title"]
 						},
@@ -260,7 +260,7 @@
 							"identifier": "read"
 						},
 						"children": {
-							"media_selectors_overview": {
+							"mediaSelectorsOverview": {
 								"title": {
 									"translate": ["media_selectors", "menu_overview"]
 								},
@@ -275,7 +275,7 @@
 									"identifier": "read"
 								}
 							},
-							"media_selectors_add": {
+							"mediaSelectorsAdd": {
 								"title": {
 									"translate": ["media_selectors", "menu_add"]
 								},
@@ -290,7 +290,7 @@
 									"identifier": "create"
 								}
 							},
-							"media_selectors_configure": {
+							"mediaSelectorsConfigure": {
 								"title": {
 									"translate": ["media_selectors", "menu_configure"]
 								},
@@ -308,7 +308,7 @@
 							}
 						}
 					},
-					"media_elements_configure": {
+					"mediaElementsConfigure": {
 						"title": {
 							"translate": ["media_elements", "menu_configure"]
 						},
@@ -326,7 +326,7 @@
 					}
 				}
 			},
-			"media_configure": {
+			"mediaConfigure": {
 				"title": {
 					"translate": ["media", "menu_configure"]
 				},
@@ -351,7 +351,7 @@
 		"link": null,
 		"access": null,
 		"children": {
-			"global_contents": {
+			"globalContents": {
 				"title": {
 					"translate": ["global_contents", "menu_title"]
 				},
@@ -366,7 +366,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"global_contents_overview": {
+					"globalContentsOverview": {
 						"title": {
 							"translate": ["global_contents", "menu_overview"]
 						},
@@ -381,7 +381,7 @@
 							"identifier": "read"
 						}
 					},
-					"global_contents_add": {
+					"globalContentsAdd": {
 						"title": {
 							"translate": ["global_contents", "menu_add"]
 						},
@@ -396,7 +396,7 @@
 							"identifier": "create"
 						}
 					},
-					"global_contents_configure": {
+					"globalContentsConfigure": {
 						"title": {
 							"translate": ["global_contents", "menu_configure"]
 						},
@@ -429,7 +429,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"menus_overview": {
+					"menusOverview": {
 						"title": {
 							"translate": ["menus", "menu_overview"]
 						},
@@ -444,7 +444,7 @@
 							"identifier": "read"
 						}
 					},
-					"menus_add": {
+					"menusAdd": {
 						"title": {
 							"translate": ["menus", "menu_add"]
 						},
@@ -459,7 +459,7 @@
 							"identifier": "create"
 						}
 					},
-					"menus_configure": {
+					"menusConfigure": {
 						"title": {
 							"translate": ["menus", "menu_configure"]
 						},
@@ -492,7 +492,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"forms_overview": {
+					"formsOverview": {
 						"title": {
 							"translate": ["forms", "menu_overview"]
 						},
@@ -507,7 +507,7 @@
 							"identifier": "read"
 						}
 					},
-					"forms_add": {
+					"formsAdd": {
 						"title": {
 							"translate": ["forms", "menu_add"]
 						},
@@ -522,7 +522,7 @@
 							"identifier": "create"
 						}
 					},
-					"form_entries": {
+					"formEntries": {
 						"title": {
 							"translate": ["form_entries", "menu_title"]
 						},
@@ -538,7 +538,7 @@
 						},
 						"children": null
 					},
-					"forms_configure": {
+					"formsConfigure": {
 						"title": {
 							"translate": ["forms", "menu_configure"]
 						},
@@ -571,7 +571,7 @@
 					"identifier": "read"
 				},
 				"children": {
-					"surveys_overview": {
+					"surveysOverview": {
 						"title": {
 							"translate": ["surveys", "menu_overview"]
 						},
@@ -586,7 +586,7 @@
 							"identifier": "read"
 						}
 					},
-					"surveys_add": {
+					"surveysAdd": {
 						"title": {
 							"translate": ["surveys", "menu_add"]
 						},
@@ -601,7 +601,7 @@
 							"identifier": "create"
 						}
 					},
-					"survey_questions": {
+					"surveyQuestions": {
 						"title": {
 							"translate": ["survey_questions", "menu_title"]
 						},
@@ -617,7 +617,7 @@
 						},
 						"children": null
 					},
-					"survey_answers": {
+					"surveyAnswers": {
 						"title": {
 							"translate": ["survey_answers", "menu_title"]
 						},
@@ -633,7 +633,7 @@
 						},
 						"children": null
 					},
-					"surveys_configure": {
+					"surveysConfigure": {
 						"title": {
 							"translate": ["surveys", "menu_configure"]
 						},

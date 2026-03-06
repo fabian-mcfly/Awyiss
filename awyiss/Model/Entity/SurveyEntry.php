@@ -26,17 +26,6 @@ class SurveyEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'survey_id' => 'surveyId',
-		'page_id' => 'pageId',
-		'ip_hash' => 'ipHash',
-		'post_hash' => 'postHash',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'surveyId' => true,
 		'pageId' => true,

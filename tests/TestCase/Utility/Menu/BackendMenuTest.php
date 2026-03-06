@@ -452,7 +452,7 @@ class BackendMenuTest extends TestCase {
 			'item2' => new BackendMenuEntry([
 				'title' => 'Item 2',
 				'active' => true,
-				'access' => ['scope' => 'test_scope', 'identifier' => 'test_identifier'],
+				'access' => ['scope' => 'TestScope', 'identifier' => 'testIdentifier'],
 				'children' => [
 					'item2_1' => new BackendMenuEntry([
 						'title' => 'Item 2.1',
@@ -488,7 +488,7 @@ class BackendMenuTest extends TestCase {
 			'item2' => new BackendMenuEntry([
 				'title' => 'Item 2',
 				'active' => true,
-				'access' => ['scope' => 'test_scope', 'identifier' => 'test_identifier'],
+				'access' => ['scope' => 'TestScope', 'identifier' => 'testIdentifier'],
 				'children' => [
 					'item2_1' => new BackendMenuEntry([
 						'title' => 'Item 2.1',

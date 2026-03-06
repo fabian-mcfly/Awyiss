@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\Model\Behavior;
 
 use Awyiss\Awyiss;
 use Awyiss\Model\Behavior\SearchBehavior;
+use Awyiss\Model\Enum\ComparisonOperator;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
@@ -109,7 +110,7 @@ class SearchBehaviorTest extends TestCase {
 	public function testInitializationWithSessionData(): void {
 		// Set session data first
 		$sessionData = [
-			'operators' => ['title' => '=', 'id' => '>'],
+			'operators' => ['title' => ComparisonOperator::Equal->value, 'id' => '>'],
 			'values' => ['title' => 'test', 'id' => '5'],
 		];
 		$this->session->write('_filter.TestTable', $sessionData);
@@ -129,7 +130,7 @@ class SearchBehaviorTest extends TestCase {
 		$config = $behavior->getConfig();
 
 		$this->assertSame('_filter.TestTable', $config['sessionIdentifier']);
-		$this->assertSame(['title' => '=', 'id' => '>'], $config['operators']);
+		$this->assertSame(['title' => ComparisonOperator::Equal->value, 'id' => '>'], $config['operators']);
 		$this->assertSame(['title' => 'test', 'id' => '5'], $config['values']);
 	}
 
@@ -170,15 +171,15 @@ class SearchBehaviorTest extends TestCase {
 		// Keys are db field names
 		$this->assertSame([
 			'id',
-			'parent_id',
-			'language_shortcode',
+			'parentId',
+			'languageShortcode',
 			'title',
-			'system_order',
+			'systemOrder',
 			'active',
-			'created_by',
-			'created_on',
-			'changed_by',
-			'changed_on',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
 		], array_keys($columns));
 
 		// Test the contents table
@@ -188,32 +189,32 @@ class SearchBehaviorTest extends TestCase {
 		// Fields include attributes
 		$keys = [
 			'id',
-			'content_area_id',
-			'content_template_id',
-			'parent_id',
+			'contentAreaId',
+			'contentTemplateId',
+			'parentId',
 			'title',
-			'title_tag',
+			'titleTag',
 			'subtitle',
-			'subtitle_tag',
+			'subtitleTag',
 			'text',
 			'link',
-			'column_width',
-			'column_indent',
-			'column_last',
-			'column_rtl',
-			'css_class',
+			'columnWidth',
+			'columnIndent',
+			'columnLast',
+			'columnRtl',
+			'cssClass',
 			'css',
-			'duplicate_of',
+			'duplicateOf',
 			'data',
-			'form_id',
-			'survey_id',
-			'system_order',
+			'formId',
+			'surveyId',
+			'systemOrder',
 			'active',
-			'created_by',
-			'created_on',
-			'changed_by',
-			'changed_on',
-			'attributes__background_color',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'attributes__backgroundColor',
 			'attributes__teaser',
 		];
 		$this->assertEquals([], array_diff(array_keys($columns), $keys));
@@ -225,17 +226,17 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
 	 */
 	public function testGetFilterColumnsWithBlocklistedColumns(): void {
-		$columns = $this->table->getFilterColumns(['title', 'system_order']);
+		$columns = $this->table->getFilterColumns(['title', 'systemOrder']);
 
 		$this->assertSame([
 			'id',
-			'parent_id',
-			'language_shortcode',
+			'parentId',
+			'languageShortcode',
 			'active',
-			'created_by',
-			'created_on',
-			'changed_by',
-			'changed_on',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
 		], array_keys($columns));
 	}
 
@@ -246,12 +247,12 @@ class SearchBehaviorTest extends TestCase {
 	 */
 	public function testGetFilterColumnsWithSelectedOperatorsAndValues(): void {
 		// Set session data with operators and values
-		$this->behavior->setConfig('operators', ['title' => '=', 'id' => '>']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::Equal->value, 'id' => ComparisonOperator::GreaterThan->value]);
 		$this->behavior->setConfig('values', ['title' => 'test', 'id' => '5']);
 
 		$columns = $this->table->getFilterColumns();
 
-		$this->assertSame('=', $columns['title']->operator);
+		$this->assertSame(ComparisonOperator::Equal->value, $columns['title']->operator);
 		$this->assertSame('test', $columns['title']->value);
 		$this->assertSame('>', $columns['id']->operator);
 		$this->assertSame('5', $columns['id']->value);
@@ -267,15 +268,15 @@ class SearchBehaviorTest extends TestCase {
 		$behavior = $table->getBehavior('Search');
 
 		// Set session data with operators and values
-		$behavior->setConfig('operators', ['attributes__teaser' => '=', 'attributes__background_color' => '!=']);
-		$behavior->setConfig('values', ['attributes__teaser' => 'test', 'attributes__background_color' => '#fff']);
+		$behavior->setConfig('operators', ['attributes__teaser' => ComparisonOperator::Equal->value, 'attributes__backgroundColor' => ComparisonOperator::NotEqual->value]);
+		$behavior->setConfig('values', ['attributes__teaser' => 'test', 'attributes__backgroundColor' => '#fff']);
 
 		$columns = $table->getFilterColumns();
 
-		$this->assertSame('=', $columns['attributes__teaser']->operator);
+		$this->assertSame(ComparisonOperator::Equal->value, $columns['attributes__teaser']->operator);
 		$this->assertSame('test', $columns['attributes__teaser']->value);
-		$this->assertSame('!=', $columns['attributes__background_color']->operator);
-		$this->assertSame('#fff', $columns['attributes__background_color']->value);
+		$this->assertSame(ComparisonOperator::NotEqual->value, $columns['attributes__backgroundColor']->operator);
+		$this->assertSame('#fff', $columns['attributes__backgroundColor']->value);
 	}
 
 
@@ -317,9 +318,10 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
+	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesForLanguageShortcode(): void {
-		$values = $this->table->getPossibleFieldValues('language_shortcode');
+		$values = $this->table->getPossibleFieldValues('languageShortcode');
 
 		// Will return the frontend languages
 		$this->assertSame([
@@ -333,9 +335,10 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
+	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesForCreatedBy(): void {
-		$values = $this->table->getPossibleFieldValues('created_by');
+		$values = $this->table->getPossibleFieldValues('createdBy');
 
 		$this->assertSame([
 			1 => 'awyiss',
@@ -349,9 +352,10 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
+	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesForChangedBy(): void {
-		$values = $this->table->getPossibleFieldValues('changed_by');
+		$values = $this->table->getPossibleFieldValues('changedBy');
 
 		$this->assertSame([
 			1 => 'awyiss',
@@ -365,6 +369,7 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
+	 * @throws \ReflectionException
 	 */
 	public function testGetPossibleFieldValuesForUnknownColumn(): void {
 		$values = $this->table->getPossibleFieldValues('unknown_column');
@@ -383,10 +388,10 @@ class SearchBehaviorTest extends TestCase {
 		$values = $table->getPossibleFieldValues('type');
 
 		$this->assertSame([
-			'single_choice' => 'survey_questions::question_type_single_choice',
-			'multiple_choice' => 'survey_questions::question_type_multiple_choice',
-			'free_text' => 'survey_questions::question_type_free_text',
-			'info_text' => 'survey_questions::question_type_info_text',
+			'singleChoice' => 'survey_questions::question_type_single_choice',
+			'multipleChoice' => 'survey_questions::question_type_multiple_choice',
+			'freeText' => 'survey_questions::question_type_free_text',
+			'infoText' => 'survey_questions::question_type_info_text',
 		], $values);
 	}
 
@@ -423,7 +428,7 @@ class SearchBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => '=']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::Equal->value]);
 		$this->behavior->setConfig('values', ['title' => 'Test Entity']);
 
 		$query = $this->table->find();
@@ -451,7 +456,7 @@ class SearchBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => '=']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::Equal->value]);
 		$this->behavior->setConfig('values', ['title' => null]);
 
 		$query = $this->table->find();
@@ -480,7 +485,7 @@ class SearchBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => '!=']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 'Test Entity']);
 
 		$query = $this->table->find()->orderBy(['id' => 'ASC']);
@@ -509,7 +514,7 @@ class SearchBehaviorTest extends TestCase {
 
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => '!=']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotEqual->value]);
 		$this->behavior->setConfig('values', ['title' => null]);
 
 		$query = $this->table->find();
@@ -537,8 +542,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => '>']);
-		$this->behavior->setConfig('values', ['system_order' => '2']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::GreaterThan->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -564,8 +569,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => '>']);
-		$this->behavior->setConfig('values', ['parent_id' => '1']);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::GreaterThan->value]);
+		$this->behavior->setConfig('values', ['parentId' => '1']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -591,8 +596,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => '>=']);
-		$this->behavior->setConfig('values', ['system_order' => '2']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::GreaterThanOrEqual->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -619,8 +624,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => '>=']);
-		$this->behavior->setConfig('values', ['parent_id' => '1']);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::GreaterThanOrEqual->value]);
+		$this->behavior->setConfig('values', ['parentId' => '1']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -649,8 +654,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => '<']);
-		$this->behavior->setConfig('values', ['system_order' => '2']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::LessThan->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -676,8 +681,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => '<']);
-		$this->behavior->setConfig('values', ['parent_id' => '2']);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::LessThan->value]);
+		$this->behavior->setConfig('values', ['parentId' => '2']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -706,8 +711,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => '<=']);
-		$this->behavior->setConfig('values', ['system_order' => '2']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::LessThanOrEqual->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -734,8 +739,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => '<=']);
-		$this->behavior->setConfig('values', ['parent_id' => '1']);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::LessThanOrEqual->value]);
+		$this->behavior->setConfig('values', ['parentId' => '1']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -765,8 +770,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'between']);
-		$this->behavior->setConfig('values', ['system_order' => ['2', '3']]);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::Between->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => ['2', '3']]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -795,8 +800,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => 'between']);
-		$this->behavior->setConfig('values', ['parent_id' => ['1', '2']]);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::Between->value]);
+		$this->behavior->setConfig('values', ['parentId' => ['1', '2']]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -826,8 +831,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'between']);
-		$this->behavior->setConfig('values', ['system_order' => '2,3']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::Between->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2,3']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -856,8 +861,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'between']);
-		$this->behavior->setConfig('values', ['system_order' => '2,invalid']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::Between->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2,invalid']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -883,8 +888,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'not_between']);
-		$this->behavior->setConfig('values', ['system_order' => ['2', '3']]);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::NotBetween->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => ['2', '3']]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -913,8 +918,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['parent_id' => 'not_between']);
-		$this->behavior->setConfig('values', ['parent_id' => ['1', '2']]);
+		$this->behavior->setConfig('operators', ['parentId' => ComparisonOperator::NotBetween->value]);
+		$this->behavior->setConfig('values', ['parentId' => ['1', '2']]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -946,8 +951,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'not_between']);
-		$this->behavior->setConfig('values', ['system_order' => '2,3']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::NotBetween->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2,3']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -976,8 +981,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'not_between']);
-		$this->behavior->setConfig('values', ['system_order' => '2,invalid']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::NotBetween->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '2,invalid']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -1003,7 +1008,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'length_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LengthEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 5]);
 
 		$query = $this->table->find();
@@ -1031,7 +1036,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'length_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LengthEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1060,7 +1065,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'length_not_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LengthNotEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 5]);
 
 		$query = $this->table->find();
@@ -1090,7 +1095,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'length_not_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LengthNotEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1119,7 +1124,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'shorter_than']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::ShorterThan->value]);
 		$this->behavior->setConfig('values', ['title' => 10]);
 
 		$query = $this->table->find();
@@ -1149,7 +1154,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'shorter_than']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::ShorterThan->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1176,7 +1181,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'shorter_than_or_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::ShorterThanOrEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 5]);
 
 		$query = $this->table->find();
@@ -1206,7 +1211,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'shorter_than_or_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::ShorterThanOrEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1235,7 +1240,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'longer_than']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LongerThan->value]);
 		$this->behavior->setConfig('values', ['title' => 10]);
 
 		$query = $this->table->find();
@@ -1263,7 +1268,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'longer_than']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LongerThan->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1292,7 +1297,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'longer_than_or_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LongerThanOrEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 5]);
 
 		$query = $this->table->find();
@@ -1321,7 +1326,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'longer_than_or_equal']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::LongerThanOrEqual->value]);
 		$this->behavior->setConfig('values', ['title' => 0]);
 
 		$query = $this->table->find();
@@ -1352,8 +1357,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'in']);
-		$this->behavior->setConfig('values', ['system_order' => [1, 3]]);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::In->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => [1, 3]]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -1381,8 +1386,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'in']);
-		$this->behavior->setConfig('values', ['system_order' => '1,3']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::In->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '1,3']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -1410,7 +1415,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'in']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::In->value]);
 		$this->behavior->setConfig('values', ['title' => [null, '']]);
 
 		$query = $this->table->find();
@@ -1439,8 +1444,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'not_in']);
-		$this->behavior->setConfig('values', ['system_order' => [1, 3]]);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::NotIn->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => [1, 3]]);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -1468,8 +1473,8 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['system_order' => 'not_in']);
-		$this->behavior->setConfig('values', ['system_order' => '1,3']);
+		$this->behavior->setConfig('operators', ['systemOrder' => ComparisonOperator::NotIn->value]);
+		$this->behavior->setConfig('values', ['systemOrder' => '1,3']);
 
 		$query = $this->table->find();
 		$query = $this->behavior->filterQuery($query);
@@ -1497,7 +1502,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'not_in']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotIn->value]);
 		$this->behavior->setConfig('values', ['title' => [null, '']]);
 
 		$query = $this->table->find();
@@ -1526,7 +1531,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'contains']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::Contains->value]);
 		$this->behavior->setConfig('values', ['title' => 'Another']);
 
 		$query = $this->table->find();
@@ -1554,7 +1559,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'not_contains']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotContains->value]);
 		$this->behavior->setConfig('values', ['title' => 'Another']);
 
 		$query = $this->table->find();
@@ -1584,7 +1589,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'starts_with']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::StartsWith->value]);
 		$this->behavior->setConfig('values', ['title' => 'Another']);
 
 		$query = $this->table->find();
@@ -1612,7 +1617,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'not_starts_with']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotStartsWith->value]);
 		$this->behavior->setConfig('values', ['title' => 'Another']);
 
 		$query = $this->table->find();
@@ -1642,7 +1647,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'ends_with']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::EndsWith->value]);
 		$this->behavior->setConfig('values', ['title' => 'Entity']);
 
 		$query = $this->table->find();
@@ -1669,7 +1674,7 @@ class SearchBehaviorTest extends TestCase {
 		]);
 		$this->assertNotFalse($result);
 
-		$this->behavior->setConfig('operators', ['title' => 'not_ends_with']);
+		$this->behavior->setConfig('operators', ['title' => ComparisonOperator::NotEndsWith->value]);
 		$this->behavior->setConfig('values', ['title' => 'Entity']);
 
 		$query = $this->table->find();

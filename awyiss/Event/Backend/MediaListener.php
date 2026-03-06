@@ -88,7 +88,7 @@ class MediaListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'media::clear_cache',
+			'reference' => 'Media::clearCache',
 		]);
 	}
 
@@ -110,7 +110,7 @@ class MediaListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'media::clear_cache',
+			'reference' => 'Media::clearCache',
 		]);
 	}
 
@@ -147,7 +147,7 @@ class MediaListener implements EventListenerInterface {
 
 		if (!isset(static::$media[ $entity->mediaFolderId ])) {
 			/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
-			$media = $mediaTable->find()->where(['media_folder_id' => $entity->mediaFolderId])->all();
+			$media = $mediaTable->find()->where(['mediaFolderId' => $entity->mediaFolderId])->all();
 			static::$media[ $entity->mediaFolderId ] = $media->indexBy('name')->toArray();
 		}
 
@@ -159,7 +159,7 @@ class MediaListener implements EventListenerInterface {
 
 				$entity->setError(
 					'name',
-					__df(strtolower($mediaTable->getI18nDomain()), 'validation', 'error_media_has_file_extension'),
+					__df(strtolower($mediaTable->getI18nDomain()), 'Validation', 'error_media_has_file_extension'),
 					true
 				);
 
@@ -289,15 +289,15 @@ class MediaListener implements EventListenerInterface {
 		$userId = $this->getIdentity()?->id;
 		$now = new DateTime('now');
 
-		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreignKey', 'status', 'createdBy', 'createdOn']);
 
 		$query->values([
 			'url' => $originalPath,
-			'scope' => 'media',
-			'foreign_key' => $entity->id,
+			'scope' => 'Media',
+			'foreignKey' => $entity->id,
 			'status' => 308,
-			'created_by' => $userId,
-			'created_on' => $now,
+			'createdBy' => $userId,
+			'createdOn' => $now,
 		]);
 
 		$query->execute();
@@ -315,7 +315,7 @@ class MediaListener implements EventListenerInterface {
 
 		$conditions = [
 			'name' => $entity->name,
-			'media_folder_id' => $entity->mediaFolderId,
+			'mediaFolderId' => $entity->mediaFolderId,
 		];
 
 		$primaryKey = $table->getPrimaryKey();
@@ -473,7 +473,7 @@ class MediaListener implements EventListenerInterface {
 				'guard' => false,
 			]);
 
-			$entity->usageCount = $table->MediaAssignments->find()->where(['media_id' => $currentMedia->id, 'deleted' => 0])->count();
+			$entity->usageCount = $table->MediaAssignments->find()->where(['mediaId' => $currentMedia->id, 'deleted' => 0])->count();
 
 			$entity->setDirty('systemOrder', false);
 

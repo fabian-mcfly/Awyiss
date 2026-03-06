@@ -84,7 +84,7 @@
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {
+					{{ LocaleHelper.control('languageShortcode', {
 						disabled: configuration.configOption is defined and configuration.configOption.isLocalizable() == false,
 						columnSpan: 6,
 						languageRealm: configuration.realm,
@@ -230,7 +230,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

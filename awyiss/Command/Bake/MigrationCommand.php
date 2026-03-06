@@ -91,7 +91,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 				//Get the field name of the column from inside the migration
 				$key = array_key_first($fields);
 
-				$fieldName = Inflector::underscore($matches[1]);
+				$fieldName = Inflector::variable($matches[1]);
 				if ($key != $fieldName) {
 					/**
 					 * If the column name in the migration name and the one inside the migration differ,
@@ -104,7 +104,6 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 				}
 			}
 		}
-
 
 		return [
 			'plugin' => $this->plugin,

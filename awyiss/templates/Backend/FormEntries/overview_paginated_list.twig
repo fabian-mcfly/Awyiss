@@ -29,24 +29,24 @@
 
 	{% if CategoriesHelper.selectedCategory('form') == 'all' %}
 		<th class="TableHeader-FormId{% if PaginatorHelper.isCurrentSortKey('form.title') %} Active{% endif %}">
-			{{ PaginatorHelper.sort('form.title', i18nDomain ? __df(i18nDomain, 'system', 'form_id') : __('form_id')) }}
+			{{ PaginatorHelper.sort('form.title', i18nDomain ? __df(i18nDomain, 'System', 'form_id') : __('form_id')) }}
 		</th>
 	{% endif %}
 
 	<th class="TableHeader-Subject{% if PaginatorHelper.isCurrentSortKey('subject') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('subject', i18nDomain ? __df(i18nDomain, 'system', 'subject') : __('subject')) }}
+		{{ PaginatorHelper.sort('subject', i18nDomain ? __df(i18nDomain, 'System', 'subject') : __('subject')) }}
 	</th>
 
 	<th class="TableHeader-SubjectConfirmation{% if PaginatorHelper.isCurrentSortKey('subjectConfirmation') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('subjectConfirmation', i18nDomain ? __df(i18nDomain, 'system', 'subject_confirmation') : __('subject_confirmation')) }}
+		{{ PaginatorHelper.sort('subjectConfirmation', i18nDomain ? __df(i18nDomain, 'System', 'subject_confirmation') : __('subject_confirmation')) }}
 	</th>
 
 	<th class="TableHeader-Language{% if PaginatorHelper.isCurrentSortKey('language') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('language.title', i18nDomain ? __df(i18nDomain, 'system', 'language_shortcode') : __('language_shortcode')) }}
+		{{ PaginatorHelper.sort('language.title', i18nDomain ? __df(i18nDomain, 'System', 'language_shortcode') : __('language_shortcode')) }}
 	</th>
 
 	<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
+		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'System', 'created_on') : __('created_on')) }}
 	</th>
 {% endblock %}
 

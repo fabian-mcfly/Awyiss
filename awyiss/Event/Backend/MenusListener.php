@@ -65,7 +65,7 @@ class MenusListener implements EventListenerInterface {
 		$entries = $menusTable->MenuEntries->find('threaded', nestingKey: 'childMenuEntries')
 		->find('mediaAssignments', formatResult: false)
 		->find('translations')
-		->where(['menu_id' => $originalEntity->id])
+		->where(['menuId' => $originalEntity->id])
 		->all();
 
 		$listedEntries = $entries->listNested('desc', 'childMenuEntries');

@@ -34,10 +34,10 @@
 
 			{% set metaTitle = fetch('metaTitle') %}
 			{% if metaTitle == '' %}
-				{% set identifier = 'meta_title_' ~ _view.getRequest().getParam('action')|underscore %}
-				{% set metaTitle = __(identifier) %}
-				{% if metaTitle ends with identifier and (isGenericPage or isGenericDatatable) %}
-					{% set metaTitle = __d(isGenericDatatable ? 'generic_datatables' : 'generic_pages', identifier, isGenericDatatable ? datatables.title : pageRole.title) %}
+				{% set i18nKey = 'meta_title_' ~ _view.getRequest().getParam('action')|underscore %}
+				{% set metaTitle = __(i18nKey) %}
+				{% if metaTitle ends with i18nKey and (isGenericPage or isGenericDatatable) %}
+					{% set metaTitle = __d(isGenericDatatable ? 'GenericDatatables' : 'GenericPages', i18nKey, isGenericDatatable ? datatables.title : pageRole.title) %}
 				{% endif %}
 
 				{% set metaTitle = metaTitle ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ config('Awyiss.System.Backend.meta.titleAppendix') %}
@@ -98,7 +98,7 @@
 		{% block body %}
 			{% block jumpToContent %}
 				<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'overview'}) }}#Content" id="JumpToContent">
-					{{ __d('system', 'jump_to_content') }}
+					{{ __d('System', 'jump_to_content') }}
 				</a>
 			{% endblock %}
 
@@ -126,12 +126,12 @@
 					{% endblock %}
 
 					{% block logout %}
-						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout" title="{{ __d('users', 'logout') }}">{{ __d('users', 'logout') }}</a>
+						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout" title="{{ __d('Users', 'logout') }}">{{ __d('Users', 'logout') }}</a>
 					{% endblock %}
 
 					{% block loginLogo %}
 						{% if loginLogoPath %}
-							<img src="{{ UrlHelper.build(loginLogoPath) }}" alt="{{ __d('system', 'login_logo') }}" class="LoginLogo">
+							<img src="{{ UrlHelper.build(loginLogoPath) }}" alt="{{ __d('System', 'login_logo') }}" class="LoginLogo">
 						{% endif %}
 					{% endblock %}
 				</header>
@@ -154,15 +154,15 @@
 							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-Off{% if config.Awyiss.System.Backend.interface.darkMode == false %} Active{% endif %}">
 								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'false'}) }}"
 									{% if config.Awyiss.System.Backend.interface.darkMode == false %} tabindex="-1"{% endif %}
-									class="DarkModeSwitch-Link DarkModeSwitch-Link-Off" title="{{ __d('system', 'dark_mode_switch_off') }}">
-									{{ __d('system', 'dark_mode_switch_off') }}
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-Off" title="{{ __d('System', 'dark_mode_switch_off') }}">
+									{{ __d('System', 'dark_mode_switch_off') }}
 								</a>
 							</li>
 							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-On{% if config.Awyiss.System.Backend.interface.darkMode == true %} Active{% endif %}">
 								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'true'}) }}"
 									{% if config.Awyiss.System.Backend.interface.darkMode == true %} tabindex="-1"{% endif %}
-									class="DarkModeSwitch-Link DarkModeSwitch-Link-On" title="{{ __d('system', 'dark_mode_switch_on') }}">
-									{{ __d('system', 'dark_mode_switch_on') }}
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-On" title="{{ __d('System', 'dark_mode_switch_on') }}">
+									{{ __d('System', 'dark_mode_switch_on') }}
 								</a>
 							</li>
 						{% endblock %}

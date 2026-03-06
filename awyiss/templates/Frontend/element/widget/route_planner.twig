@@ -30,17 +30,17 @@
 
 	<div class="Widget-RoutePlanner Lazyload">
 		<form class="RoutePlanner-Form" data-transportation-mode="{{ settings.transportationMode ?? 'car' }}">
-			{{ FormHelper.control(entity ? 'route_planner.' ~ entity.id ~ '.start' : 'route_planner.start', {
-				label: __d('route', 'route_planner_start'),
-				placeholder: __d('route', 'route_planner_start_placeholder'),
+			{{ FormHelper.control(entity ? 'routePlanner.' ~ entity.id ~ '.start' : 'routePlanner.start', {
+				label: __d('Route', 'route_planner_start'),
+				placeholder: __d('Route', 'route_planner_start_placeholder'),
 				required: true,
 				templateVars: {
 					'containerClass': 'RoutePlanner-FormInput RoutePlanner-FormInput-Start',
 				},
 			}) }}
 
-			{{ FormHelper.control(entity ? 'route_planner.' ~ entity.id ~ '.end' : 'route_planner.end', {
-				label: __d('route', 'route_planner_end'),
+			{{ FormHelper.control(entity ? 'routePlanner.' ~ entity.id ~ '.end' : 'routePlanner.end', {
+				label: __d('Route', 'route_planner_end'),
 				readonly: true,
 				templateVars: {
 					'containerClass': 'RoutePlanner-FormInput RoutePlanner-FormInput-Destination',
@@ -49,12 +49,12 @@
 			}) }}
 
 			{% if settings.showTransportationModes %}
-				{{ FormHelper.control(entity ? 'route_planner.' ~ entity.id ~ '.transportation_mode' : 'route_planner.transportation_mode', {
-					label: __d('route', 'transportation_mode'),
+				{{ FormHelper.control(entity ? 'routePlanner.' ~ entity.id ~ '.transportationMode' : 'routePlanner.transportationMode', {
+					label: __d('Route', 'transportation_mode'),
 					options: {
-						car: __d('route', 'transportation_mode_car'),
-						bike: __d('route', 'transportation_mode_bike'),
-						foot: __d('route', 'transportation_mode_foot'),
+						car: __d('Route', 'transportation_mode_car'),
+						bike: __d('Route', 'transportation_mode_bike'),
+						foot: __d('Route', 'transportation_mode_foot'),
 					},
 					templateVars: {
 						'containerClass': 'RoutePlanner-FormInput RoutePlanner-FormInput-TransportationMode',
@@ -64,7 +64,7 @@
 				}) }}
 			{% endif %}
 
-			{{ FormHelper.button(__d('route', 'route_planner_calculate_route'), {
+			{{ FormHelper.button(__d('Route', 'route_planner_calculate_route'), {
 				type: 'submit',
 				class: 'Button Button-RoutePlanner-CalculateRoute'
 			}) }}
@@ -74,7 +74,7 @@
 
 		<div class="RoutePlanner-Message" aria-hidden="true" inert></div>
 		<div class="RoutePlanner-StartChoices" tabindex="0" aria-hidden="true" inert>
-			{{ FormHelper.button(__d('route', 'route_planner_start_choices_close'), {
+			{{ FormHelper.button(__d('Route', 'route_planner_start_choices_close'), {
 				type: 'submit',
 				class: 'Button Button-Close Button-RoutePlanner-StartChoices-Close'
 			}) }}
@@ -84,23 +84,23 @@
 			<template class="Template-Summary">
 				<div class="RoutePlanner-Route-Summary">
 					<p class="RoutePlanner-Route-Summary-Start">
-						{{ __d('route', 'route_planner_route_summary_start') }}:<br>
+						{{ __d('Route', 'route_planner_route_summary_start') }}:<br>
 						<strong>{% verbatim %}{{start}}{% endverbatim %}</strong><br>
-						{{ FormHelper.button(__d('route', 'route_planner_reset'), {
+						{{ FormHelper.button(__d('Route', 'route_planner_reset'), {
 							type: 'button',
 							class: 'Button Button-Reset Button-RoutePlanner-Reset'
 						}) }}
 					</p>
 					<p class="RoutePlanner-Route-Summary-End">
-						{{ __d('route', 'route_planner_route_summary_end') }}:<br>
+						{{ __d('Route', 'route_planner_route_summary_end') }}:<br>
 						<strong>{% verbatim %}{{end}}{% endverbatim %}</strong>
 					</p>
 					<p class="RoutePlanner-Route-Summary-Distance">
-						{{ __d('route', 'route_planner_route_summary_distance') }}:
+						{{ __d('Route', 'route_planner_route_summary_distance') }}:
 						<strong>{% verbatim %}{{distance}}{% endverbatim %}</strong>
 					</p>
 					<p class="RoutePlanner-Route-Summary-Duration">
-						{{ __d('route', 'route_planner_route_summary_duration') }}:
+						{{ __d('Route', 'route_planner_route_summary_duration') }}:
 						<strong>{% verbatim %}{{duration}}{% endverbatim %}</strong>
 					</p>
 				</div>

@@ -19,7 +19,7 @@ class GenericDatatablesPolicyTest extends TestCase {
 	public function testGetScope(): void {
 		$policy = new GenericDatatablesPolicy('TestScope');
 
-		$this->assertSame('test_scopes', $policy->getScope());
+		$this->assertSame('TestScopes', $policy->getScope());
 	}
 
 

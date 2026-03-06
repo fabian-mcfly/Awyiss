@@ -196,7 +196,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 			'type' => 'tel',
 			'identifier' => 'phone',
 			'title' => static::$translations[ $mainLocale ]['phone'],
-			'placeholder' => static::$translations[ $mainLocale ]['optional_placeholder'],
+			'placeholder' => static::$translations[ $mainLocale ]['optionalPlaceholder'],
 		];
 
 		if ($i18n) {
@@ -261,14 +261,14 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	protected static function addPrivacyAccepted(string $mainLocale, bool $i18n, array $languages): array {
 		$settings = [
 			'type' => 'checkbox',
-			'identifier' => 'privacy_accepted',
-			'title' => static::$translations[ $mainLocale ]['privacy_accepted'],
-			'options' => static::getOptions('privacy_accepted', ['yes' => 'text'], $languages),
+			'identifier' => 'privacyAccepted',
+			'title' => static::$translations[ $mainLocale ]['privacyAccepted'],
+			'options' => static::getOptions('privacyAccepted', ['yes' => 'text'], $languages),
 			'required' => true,
 		];
 
 		if ($i18n) {
-			$settings['_translations'] = static::getTranslations('privacy_accepted', $languages);
+			$settings['_translations'] = static::getTranslations('privacyAccepted', $languages);
 		}
 
 		return $settings;
@@ -305,8 +305,8 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 
 		foreach ($languages as $language) {
 			I18n::setLocale($language->locale);
-			foreach (array_merge(static::$strings, ['optional_placeholder']) as $string) {
-				$translation = __d('forms', 'form_template_' . $string);
+			foreach (array_merge(static::$strings, ['optionalPlaceholder']) as $string) {
+				$translation = __d('Forms', 'form_template_' . Inflector::underscore($string));
 
 				if (
 					str_contains($translation, '::') &&
@@ -342,16 +342,16 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		$builtOptions = [];
 
 		foreach ($options as $key => $value) {
-			$translation = $value ? static::$translations[ $mainLocale ][ $field . '_' . $value ] : '';
+			$translation = $value ? static::$translations[ $mainLocale ][ $field . Inflector::camelize($value) ] : '';
 			if ($translation === null) {
-				$translation = static::$translations['en_GB'][ $field . '_' . $value ];
+				$translation = static::$translations['en_GB'][ $field . Inflector::camelize($value) ];
 			}
 
 			$namedKey = $isList ? null : $key;
 			if ($key && is_string($key)) {
-				$namedKey = static::$translations[ $mainLocale ][ $field . '_' . $key ];
+				$namedKey = static::$translations[ $mainLocale ][ $field . Inflector::camelize($key) ];
 				if ($namedKey === null) {
-					$namedKey = static::$translations['en_GB'][ $field . '_' . $key ];
+					$namedKey = static::$translations['en_GB'][ $field . Inflector::camelize($key) ];
 				}
 			}
 
@@ -363,16 +363,16 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 			if ($i18n) {
 				$option['_translations'] = [];
 				foreach ($languages as $language) {
-					$translation = $value ? static::$translations[ $language->locale ][ $field . '_' . $value ] : '';
+					$translation = $value ? static::$translations[ $language->locale ][ $field . Inflector::camelize($value) ] : '';
 					if ($translation === null) {
-						$translation = static::$translations['en_GB'][ $field . '_' . $value ];
+						$translation = static::$translations['en_GB'][ $field . Inflector::camelize($value) ];
 					}
 
 					$namedKey = $isList ? null : $key;
 					if ($key && is_string($key)) {
-						$namedKey = static::$translations[ $language->locale ][ $field . '_' . $key ];
+						$namedKey = static::$translations[ $language->locale ][ $field . Inflector::camelize($key) ];
 						if ($namedKey === null) {
-							$namedKey = static::$translations['en_GB'][ $field . '_' . $key ];
+							$namedKey = static::$translations['en_GB'][ $field . Inflector::camelize($key) ];
 						}
 					}
 
@@ -409,12 +409,12 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 			$translations[ $language->shortcode ][ $property ] = $translation;
 
 			if ($setOptional) {
-				$translation = static::$translations[ $language->locale ]['optional_placeholder'];
+				$translation = static::$translations[ $language->locale ]['optionalPlaceholder'];
 				if ($translation === null) {
-					$translation = static::$translations['en_GB']['optional_placeholder'];
+					$translation = static::$translations['en_GB']['optionalPlaceholder'];
 				}
 
-				$translations[ $language->shortcode ]['optional_placeholder'] = $translation;
+				$translations[ $language->shortcode ]['optionalPlaceholder'] = $translation;
 			}
 		}
 

@@ -29,14 +29,6 @@ class UrlHistory extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'foreign_key' => 'foreignKey',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'url' => true,
 		'scope' => true,

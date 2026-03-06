@@ -187,11 +187,6 @@ class AttributesBehavior extends Behavior {
 			return $query;
 		}
 
-		$fields = $entity::unmapFields($fields);
-
-		$attributesEntityClass = $this->getAttributesTable()->getEntityClass();
-		$fields = $attributesEntityClass::unmapFields($fields);
-
 		foreach ($this->extractAttributeFields($fields, true) as $field) {
 			if (!$attributes->has($field)) {
 				continue;
@@ -265,7 +260,7 @@ class AttributesBehavior extends Behavior {
 			return $association->getAttributes();
 		}
 
-		$scope = substr($this->table()->getTable(), 11);
+		$scope = Inflector::camelize(substr($this->table()->getTable(), 11));
 
 		if (isset(static::$attributes)) {
 			return static::$attributes[ $scope ] ?? [];
@@ -295,13 +290,10 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		$table = $event->getSubject();
-		$entityClass = $table->getEntityClass();
 		$unmappedData = $data->getArrayCopy();
-		$unmappedData = $entityClass::unmapFields($unmappedData, true);
 
 		foreach ($this->getAttributes() as $attribute) {
-			if (!in_array($attribute->inputType, ['input_list', 'input_key_value_list'])) {
+			if (!in_array($attribute->inputType, ['inputList', 'inputKeyValueList'])) {
 				continue;
 			}
 			// If the attribute is not set, skip it
@@ -313,9 +305,9 @@ class AttributesBehavior extends Behavior {
 			 * Unset any mapped fields as the identifier will be used
 			 * and is already an underscored version of the field name.
 			 */
-			unset($data[ $entityClass::mapField($attribute->identifier) ]);
+			unset($data[ $attribute->identifier ]);
 
-			if ($attribute->inputType === 'input_list') {
+			if ($attribute->inputType === 'inputList') {
 				/**
 				 * Filter out all empty values
 				 */
@@ -377,7 +369,7 @@ class AttributesBehavior extends Behavior {
 						return !empty($entity->{$identifier});
 					}, 'validValue' . Inflector::camelize($identifier), [
 						'errorField' => $identifier,
-						'message' => __df($source, 'validation', 'error_valid_value'),
+						'message' => __df($source, 'Validation', 'error_valid_value'),
 					]);
 				}
 
@@ -389,7 +381,7 @@ class AttributesBehavior extends Behavior {
 				return $attributeOptions->validateValue($identifier, $entity->get($identifier), $entity->getEntity());
 			}, 'validValue' . Inflector::camelize($identifier), [
 				'errorField' => $attribute->identifier,
-				'message' => __df($source, 'validation', 'error_valid_value'),
+				'message' => __df($source, 'Validation', 'error_valid_value'),
 			]);
 		}
 	}

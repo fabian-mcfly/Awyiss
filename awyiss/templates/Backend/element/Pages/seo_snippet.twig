@@ -18,40 +18,40 @@
 {% set metaTitlePlaceholder = page.title ~ config.Awyiss.System.Frontend.meta.titleSeparator ~ config.Awyiss.System.Frontend.meta.titleAppendix %}
 <div class="ColumnSpan-6 Grid-12">
 	{% block formControlMetaTitle %}
-		{{ FormHelper.control('meta_title', {
-			label: __d('seo', 'meta_title'),
+		{{ FormHelper.control('metaTitle', {
+			label: __d('Seo', 'metaTitle'),
 			placeholder: metaTitlePlaceholder,
 			templateVars: {
-				additionalContent: '<span data-charcounter-name="meta_title" class="CharCounter">' ~ page.metaTitle|length ~ '</span>',
+				additionalContent: '<span data-charcounter-name="metaTitle" class="CharCounter">' ~ page.metaTitle|length ~ '</span>',
 			},
-			'data-charcounter-name': 'meta_title',
+			'data-charcounter-name': 'metaTitle',
 			'data-appendix': config.Awyiss.System.Frontend.meta.titleAppendix,
 			'data-separator': config.Awyiss.System.Frontend.meta.titleSeparator,
 		}) }}
 	{% endblock %}
 
 	{% block formControlMetaDescription %}
-		{{ FormHelper.control('meta_description', {
-			label: __d('seo', 'meta_description'),
+		{{ FormHelper.control('metaDescription', {
+			label: __d('Seo', 'meta_description'),
 			templateVars: {
-				additionalContent: '<span data-charcounter-name="meta_description" class="CharCounter">' ~ page.metaDescription|length ~ '</span>',
+				additionalContent: '<span data-charcounter-name="metaDescription" class="CharCounter">' ~ page.metaDescription|length ~ '</span>',
 			},
-			'data-charcounter-name': 'meta_description',
+			'data-charcounter-name': 'metaDescription',
 		}) }}
 	{% endblock %}
 
 	{% block formControlRobotsIndex %}
-		{{ FormHelper.control('robots_index', {columnSpan: 6, label: __d('seo', 'robots_index')}) }}
+		{{ FormHelper.control('robotsIndex', {columnSpan: 6, label: __d('Seo', 'robots_index')}) }}
 	{% endblock %}
 
 	{% block formControlRobotsFollow %}
-		{{ FormHelper.control('robots_follow', {columnSpan: 6, label: __d('seo', 'robots_follow')}) }}
+		{{ FormHelper.control('robotsFollow', {columnSpan: 6, label: __d('Seo', 'robots_follow')}) }}
 	{% endblock %}
 </div>
 
 <div class="SeoSnippet ColumnSpan-6">
 	<div class="SearchData">
-		<input name="search_term" class="SearchTerm">
+		<input name="searchTerm" class="SearchTerm">
 	</div>
 
 	<div class="LiveData">
@@ -71,9 +71,9 @@
 			{%- if parentRecord.slug %} ... › {% endif -%} {{ page.title ?? page.slug }}
 
 		</span>
-		<span class="SnippetMetaTitle" data-default="{{ __d('seo', 'title_empty') }}">
-			{{ page.meta_title ?? __d('seo', 'title_empty') }}
+		<span class="SnippetMetaTitle" data-default="{{ __d('Seo', 'title_empty') }}">
+			{{ page.metaTitle ?? __d('Seo', 'title_empty') }}
 		</span>
-		<p class="SnippetMetaDescription" data-default="{{ __d('seo', 'description_empty') }}">{{ page.metaDescription ?? __d('seo', 'description_empty') }}</p>
+		<p class="SnippetMetaDescription" data-default="{{ __d('Seo', 'description_empty') }}">{{ page.metaDescription ?? __d('Seo', 'description_empty') }}</p>
 	</div>
 </div>

@@ -19,7 +19,7 @@ class BackendMenu extends Menu {
 	 *
 	 * @inheritDoc
 	 */
-	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
+	public function appendEntries(array $entries, string|int $identifier, bool $determineVisibility = true): void {
 		// Try to find the item with the given identifier
 		if ($this->hasItem($identifier)) {
 			parent::appendEntries($entries, $identifier, $determineVisibility);
@@ -51,7 +51,7 @@ class BackendMenu extends Menu {
 	 *
 	 * @inheritDoc
 	 */
-	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
+	public function insertEntriesAfter(array $entries, string|int|null $identifier = null, bool $determineVisibility = true): void {
 		/**
 		 * If the identifier doesn't exist in the menu
 		 * or any of its children, set it to the last

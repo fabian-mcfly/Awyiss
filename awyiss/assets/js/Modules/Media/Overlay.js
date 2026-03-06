@@ -105,7 +105,7 @@ export default class Overlay {
 	 * @return {void}
 	 */
 	bindAutoOverwriteChangeLabel() {
-		const autoOverwrite = this.element.querySelector('input[name="upload_auto_overwrite"]');
+		const autoOverwrite = this.element.querySelector('input[name="uploadAutoOverwrite"]');
 		const label = this.element.querySelector('label[for="UploadAutoOverwrite"]');
 
 		if (!autoOverwrite || !label) {
@@ -710,7 +710,7 @@ export default class Overlay {
 		// Disable the delete buttons
 		this.sortable.deleteButtons.forEach(button => button.disabled = true);
 
-		this.upload.uploadData.media_folder_id = folderId;
+		this.upload.uploadData.mediaFolderId = folderId;
 
 		this.mediaList.classList.add('FetchInProgress');
 
@@ -878,7 +878,7 @@ export default class Overlay {
 			dropZone: this.element.querySelector('#UploadQueue-DropZone'),
 			maxFileSize: this.element.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
 			uploadData: {
-				media_folder_id: this.mediaList.dataset.mediaFolderId,
+				mediaFolderId: this.mediaList.dataset.mediaFolderId,
 			},
 			uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/`
 		});
@@ -913,8 +913,8 @@ export default class Overlay {
 						'X-Requested-With': 'XMLHttpRequest',
 					},
 					body: JSON.stringify({
-						media_folder_id: folderId,
-						system_order: 99999,
+						mediaFolderId: folderId,
+						systemOrder: 99999,
 					}),
 				});
 

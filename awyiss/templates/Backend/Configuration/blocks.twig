@@ -94,7 +94,6 @@
 		<label class="Label">{{ __('value') }}</label>
 		{% set currentValue = configuration.hasValue('value') ? configuration.get('value')|jsonDecode :
 			(configuration.isNew() ? configuration.configOption.defaultValue : []) %}
-		{% set currentValue = (currentValue ?? [])|map(value => value|underscore) %}
 		<input type="hidden" name="value" value="">
 
 		{% for key, value in configuration.configOption.values(true, configuration.languageShortcode) %}

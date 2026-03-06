@@ -329,10 +329,10 @@ class UserTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\User $user */
 		$user = $table->get(1);
 
-		$this->assertTrue($user->scopeIsAccessible('news', [], 'read'));
-		$this->assertTrue($user->scopeIsAccessible('news', [], 'create'));
-		$this->assertTrue($user->scopeIsAccessible('news', [], 'update'));
-		$this->assertTrue($user->scopeIsAccessible('news', [], 'delete'));
+		$this->assertTrue($user->scopeIsAccessible('News', [], 'read'));
+		$this->assertTrue($user->scopeIsAccessible('News', [], 'create'));
+		$this->assertTrue($user->scopeIsAccessible('News', [], 'update'));
+		$this->assertTrue($user->scopeIsAccessible('News', [], 'delete'));
 	}
 
 
@@ -349,10 +349,10 @@ class UserTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\User $user */
 		$user = $table->get(3);
 
-		$this->assertFalse($user->scopeIsAccessible('news', [], 'read'));
-		$this->assertFalse($user->scopeIsAccessible('news', [], 'create'));
-		$this->assertFalse($user->scopeIsAccessible('news', [], 'update'));
-		$this->assertFalse($user->scopeIsAccessible('news', [], 'delete'));
+		$this->assertFalse($user->scopeIsAccessible('News', [], 'read'));
+		$this->assertFalse($user->scopeIsAccessible('News', [], 'create'));
+		$this->assertFalse($user->scopeIsAccessible('News', [], 'update'));
+		$this->assertFalse($user->scopeIsAccessible('News', [], 'delete'));
 	}
 
 
@@ -369,14 +369,14 @@ class UserTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\User $user */
 		$user = $table->get(3);
 
-		$this->assertTrue($user->scopeIsAccessible('user_configuration', ['scope' => 'system'], 'read'));
-		$this->assertFalse($user->scopeIsAccessible('user_configuration', ['scope' => 'news'], 'read'));
-		$this->assertTrue($user->scopeIsAccessible('user_configuration', ['scope' => 'system'], 'create'));
-		$this->assertFalse($user->scopeIsAccessible('user_configuration', ['scope' => 'news'], 'create'));
-		$this->assertTrue($user->scopeIsAccessible('user_configuration', ['scope' => 'system'], 'update'));
-		$this->assertFalse($user->scopeIsAccessible('user_configuration', ['scope' => 'news'], 'update'));
-		$this->assertTrue($user->scopeIsAccessible('user_configuration', ['scope' => 'system'], 'delete'));
-		$this->assertFalse($user->scopeIsAccessible('user_configuration', ['scope' => 'news'], 'delete'));
+		$this->assertTrue($user->scopeIsAccessible('UserConfiguration', ['scope' => 'System'], 'read'));
+		$this->assertFalse($user->scopeIsAccessible('UserConfiguration', ['scope' => 'News'], 'read'));
+		$this->assertTrue($user->scopeIsAccessible('UserConfiguration', ['scope' => 'System'], 'create'));
+		$this->assertFalse($user->scopeIsAccessible('UserConfiguration', ['scope' => 'News'], 'create'));
+		$this->assertTrue($user->scopeIsAccessible('UserConfiguration', ['scope' => 'System'], 'update'));
+		$this->assertFalse($user->scopeIsAccessible('UserConfiguration', ['scope' => 'News'], 'update'));
+		$this->assertTrue($user->scopeIsAccessible('UserConfiguration', ['scope' => 'System'], 'delete'));
+		$this->assertFalse($user->scopeIsAccessible('UserConfiguration', ['scope' => 'News'], 'delete'));
 	}
 
 
@@ -487,8 +487,8 @@ class UserTest extends TestCase {
 			'id' => 1,
 			'username' => 'test_user',
 			'password' => 'test_password',
-			'failed_attempts' => 0,
-			'last_login' => '2023-01-01 12:00:00',
+			'failedAttempts' => 0,
+			'lastLogin' => '2023-01-01 12:00:00',
 			'firstname' => 'Test',
 			'lastname' => 'User',
 			'email' => 'test@example.com',
@@ -508,24 +508,5 @@ class UserTest extends TestCase {
 		$this->assertEquals('test@example.com', $entity->email);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\User::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'last_login' => '2023-01-01 12:00:00',
-			'failed_attempts' => 3,
-		];
-
-		$entity = new User($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

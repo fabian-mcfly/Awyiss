@@ -140,7 +140,6 @@ class ControllerFactory extends BaseControllerFactory {
 			throw $this->missingController($request);
 		}
 
-
 		/** @var class-string<Controller>|null */
 		return App::className($pluginPath . $controller, $namespace, 'Controller');
 	}
@@ -183,7 +182,7 @@ class ControllerFactory extends BaseControllerFactory {
 		$datatables = $table->findAllAndCache();
 		$datatable = $datatables->firstMatch([
 			'active' => true,
-			'identifier' => Inflector::underscore($controller),
+			'identifier' => $controller,
 		]);
 
 		if ($datatable) {

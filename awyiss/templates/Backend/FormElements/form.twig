@@ -46,8 +46,8 @@
 			{% endblock %}
 
 			{% block formControlTitleEmail %}
-				{% if 'title_email' not in blocklistedElements %}
-					{{ FormHelper.control('title_email') }}
+				{% if 'titleEmail' not in blocklistedElements %}
+					{{ FormHelper.control('titleEmail') }}
 				{% endif %}
 			{% endblock %}
 
@@ -106,7 +106,7 @@
 										label: __('option_key'),
 										type: translatable ? 'translatableText' : null,
 										templateVars: {
-											dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
+											dialogTitle: __d('System', 'translations_dialog_title', __('option_key')),
 										},
 									}) }}
 
@@ -114,7 +114,7 @@
 										label: __('option_value'),
 										type: translatable ? 'translatableText' : null,
 										templateVars: {
-											dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
+											dialogTitle: __d('System', 'translations_dialog_title', __('option_value')),
 										},
 									}) }}
 
@@ -127,7 +127,7 @@
 									label: __('option_key'),
 									type: translatable ? 'translatableText' : null,
 									templateVars: {
-										dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
+										dialogTitle: __d('System', 'translations_dialog_title', __('option_key')),
 									},
 								}) }}
 
@@ -135,7 +135,7 @@
 									label: __('option_value'),
 									type: translatable ? 'translatableText' : null,
 									templateVars: {
-										dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
+										dialogTitle: __d('System', 'translations_dialog_title', __('option_value')),
 									},
 								}) }}
 							</div>
@@ -196,14 +196,14 @@
 				{% endblock %}
 
 				{% block formControlCssClass %}
-					{{ FormHelper.control('css_class', {
+					{{ FormHelper.control('cssClass', {
 						columnSpan: 6,
 					}) }}
 				{% endblock %}
 
 				{% block formControlColumnWidth %}
-					{% if 'column_width' not in blocklistedElements %}
-						{{ FormHelper.control('column_width', {
+					{% if 'columnWidth' not in blocklistedElements %}
+						{{ FormHelper.control('columnWidth', {
 							columnSpan: 6,
 							empty: false,
 							options: columnWidths,
@@ -213,8 +213,8 @@
 				{% endblock %}
 
 				{% block formControlColumnIndent %}
-					{% if 'column_indent' not in blocklistedElements %}
-						{{ FormHelper.control('column_indent', {
+					{% if 'columnIndent' not in blocklistedElements %}
+						{{ FormHelper.control('columnIndent', {
 							columnSpan: 6,
 							options: columnIndents,
 							type: 'select'
@@ -223,16 +223,16 @@
 				{% endblock %}
 
 				{% block formControlColumnLast %}
-					{% if 'column_last' not in blocklistedElements %}
-						{{ FormHelper.control('column_last', {
+					{% if 'columnLast' not in blocklistedElements %}
+						{{ FormHelper.control('columnLast', {
 							columnSpan: 6,
 						}) }}
 					{% endif %}
 				{% endblock %}
 
 				{% block formControlColumnRtl %}
-					{% if 'column_rtl' not in blocklistedElements %}
-						{{ FormHelper.control('column_rtl', {
+					{% if 'columnRtl' not in blocklistedElements %}
+						{{ FormHelper.control('columnRtl', {
 							columnSpan: 6,
 						}) }}
 					{% endif %}
@@ -260,11 +260,11 @@
 				{% endblock %}
 
 				{% block formControlParentId %}
-					{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentFormElements, 'label', 'id', '- '), 'data-form-updater': true}) }}
+					{{ FormHelper.control('parentId', {options: hashPrinter(possibleParentFormElements, 'label', 'id', '- '), 'data-form-updater': true}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: formElement}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: formElement}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -339,7 +339,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

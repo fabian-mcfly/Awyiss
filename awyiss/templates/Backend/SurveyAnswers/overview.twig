@@ -61,7 +61,7 @@
 
 			{% block overviewButtons %}
 				{% block overviewButtonSaveSystemOrder %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('System', 'save_system_order') }}</button>
 				{% endblock %}
 
 				{% block overviewButtonAdd %}
@@ -83,7 +83,7 @@
 			{{ nestedList(surveyAnswers, _context|merge({
 				data: {
 					'question-id': selectedQuestionId,
-					sortable: _filter['form_elements']['active'] == false,
+					sortable: _filter['formElements']['active'] == false,
 					nestable: false
 				},
 				displayedFields: localConfig.overview.displayedFields,

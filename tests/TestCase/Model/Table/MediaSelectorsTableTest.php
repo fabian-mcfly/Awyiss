@@ -115,7 +115,7 @@ class MediaSelectorsTableTest extends TestCase {
 		$result = $this->mediaSelectorsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_selectors', $result->getI18nDomain());
+		$this->assertSame('MediaSelectors', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -138,7 +138,7 @@ class MediaSelectorsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Media Selector',
-			'identifier' => 'test_media_selector',
+			'identifier' => 'testMediaSelector',
 			'active' => true,
 			'deleted' => false,
 		];
@@ -236,7 +236,7 @@ class MediaSelectorsTableTest extends TestCase {
 	public function testBuildRulesIdentifierUniqueValid(): void {
 		$entity = $this->mediaSelectorsTable->newEntity([
 			'title' => 'Unique Selector',
-			'identifier' => 'unique_selector',
+			'identifier' => 'uniqueSelector',
 			'active' => true,
 		]);
 
@@ -276,7 +276,7 @@ class MediaSelectorsTableTest extends TestCase {
 		// Test that default selectors (id < 10) cannot be created or updated
 		$entity = $this->mediaSelectorsTable->newEntity([
 			'title' => 'Default Selector',
-			'identifier' => 'default_selector',
+			'identifier' => 'defaultSelector',
 			'active' => true,
 			'id' => 10, // Default selector ID
 		]);
@@ -336,7 +336,7 @@ class MediaSelectorsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Media Selector',
-			'identifier' => 'custom_media_selector',
+			'identifier' => 'customMediaSelector',
 			'active' => false,
 		];
 
@@ -348,7 +348,7 @@ class MediaSelectorsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Media Selector', $entity->title);
-		$this->assertSame('custom_media_selector', $entity->identifier);
+		$this->assertSame('customMediaSelector', $entity->identifier);
 		$this->assertFalse($entity->active);
 		$this->assertFalse($entity->deleted); // Should remain default
 	}

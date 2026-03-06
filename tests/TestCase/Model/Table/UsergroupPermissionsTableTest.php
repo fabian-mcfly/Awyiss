@@ -79,7 +79,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$result = $this->usergroupPermissionsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('usergroup_permissions', $result->getI18nDomain());
+		$this->assertSame('UsergroupPermissions', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('scope'));
@@ -103,8 +103,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'usergroupId' => 1,
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => PermissionAccess::Granted,
 			'settings' => ['key' => 'value'],
 		];
@@ -198,7 +198,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testEntityValidationEmptyScope(): void {
 		$data = [
 			'scope' => '',
-			'identifier' => 'test_permission',
+			'identifier' => 'testPermission',
 		];
 
 		$entity = $this->usergroupPermissionsTable->newDefaultEntity();
@@ -216,7 +216,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testEntityValidationBlankScope(): void {
 		$data = [
 			'scope' => '   ', // Only whitespace
-			'identifier' => 'test_permission',
+			'identifier' => 'testPermission',
 		];
 
 		$entity = $this->usergroupPermissionsTable->newDefaultEntity();
@@ -234,7 +234,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationEmptyIdentifier(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'identifier' => '',
 		];
 
@@ -252,7 +252,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationBlankIdentifier(): void {
 		$data = [
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'identifier' => '   ', // Only whitespace
 		];
 
@@ -271,8 +271,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationInvalidAccess(): void {
 		$data = [
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => '3',
 		];
 
@@ -293,8 +293,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	 */
 	public function testEntityValidationSettingsEmpty(): void {
 		$data = [
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'settings' => [],
 		];
 
@@ -314,8 +314,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$largeSettings = array_fill(0, 1000, str_repeat('x', 100)); // Create very large array
 
 		$data = [
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'settings' => $largeSettings,
 		];
 
@@ -335,8 +335,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testBuildRulesValidUsergroup(): void {
 		$data = [
 			'usergroupId' => 1, // Existing usergroup
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => PermissionAccess::Granted,
 		];
 
@@ -355,8 +355,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testBuildRulesInvalidUsergroup(): void {
 		$data = [
 			'usergroupId' => 99999, // Non-existing usergroup
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => PermissionAccess::Granted,
 		];
 
@@ -381,8 +381,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testBuildRulesValidAccess() {
 		$data = [
 			'usergroupId' => 1,
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => 1, // Patching entity will convert to enum
 		];
 
@@ -410,8 +410,8 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testBuildRulesInvalidAccess() {
 		$data = [
 			'usergroupId' => 1,
-			'scope' => 'test_scope',
-			'identifier' => 'test_permission',
+			'scope' => 'TestScope',
+			'identifier' => 'testPermission',
 			'access' => 'invalid', // Patching entity will convert to enum but fail here
 		];
 
@@ -464,10 +464,10 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'usergroupId' => 2,
-			'scope' => 'custom_scope',
-			'identifier' => 'custom_permission',
+			'scope' => 'CustomScope',
+			'identifier' => 'customPermission',
 			'access' => PermissionAccess::Granted,
-			'settings' => ['custom_key' => 'custom_value'],
+			'settings' => ['customKey' => 'custom_value'],
 		];
 
 		$entity = $this->usergroupPermissionsTable->newDefaultEntity($additionalData);
@@ -476,10 +476,10 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		$this->assertSame(2, $entity->usergroupId);
-		$this->assertSame('custom_scope', $entity->scope);
-		$this->assertSame('custom_permission', $entity->identifier);
+		$this->assertSame('CustomScope', $entity->scope);
+		$this->assertSame('customPermission', $entity->identifier);
 		$this->assertSame(PermissionAccess::Granted, $entity->access);
-		$this->assertSame(['custom_key' => 'custom_value'], $entity->settings);
+		$this->assertSame(['customKey' => 'custom_value'], $entity->settings);
 	}
 
 
@@ -490,10 +490,10 @@ class UsergroupPermissionsTableTest extends TestCase {
 	public function testNewDefaultEntityWithIntegerAccess(): void {
 		$additionalData = [
 			'usergroupId' => 2,
-			'scope' => 'custom_scope',
-			'identifier' => 'custom_permission',
+			'scope' => 'CustomScope',
+			'identifier' => 'customPermission',
 			'access' => 1,
-			'settings' => ['custom_key' => 'custom_value'],
+			'settings' => ['customKey' => 'custom_value'],
 		];
 
 		$entity = $this->usergroupPermissionsTable->newDefaultEntity($additionalData);

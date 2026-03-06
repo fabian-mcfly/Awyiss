@@ -81,7 +81,7 @@ class Editor {
 			enabled: false,
 			overlayForm: true,
 			selector: '.GlobalContentElement[id^="GlobalContent"]',
-			uri: 'global_contents/edit/id:'
+			uri: 'global-contents/edit/id:'
 		},
 	};
 

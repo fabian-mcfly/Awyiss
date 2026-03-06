@@ -48,7 +48,7 @@ class UsersConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
 			'email',
-			'last_login',
+			'lastLogin',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('users::email, users::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -59,13 +59,13 @@ class UsersConfigOptionsTest extends TestCase {
 			'firstname' => 'users::firstname',
 			'lastname' => 'users::lastname',
 			'email' => 'users::email',
-			'last_login' => 'users::last_login',
-			'failed_attempts' => 'users::failed_attempts',
+			'lastLogin' => 'users::last_login',
+			'failedAttempts' => 'users::failed_attempts',
 			'active' => 'users::active',
-			'created_by' => 'users::created_by',
-			'created_on' => 'users::created_on',
-			'changed_by' => 'users::changed_by',
-			'changed_on' => 'users::changed_on',
+			'createdBy' => 'users::created_by',
+			'createdOn' => 'users::created_on',
+			'changedBy' => 'users::changed_by',
+			'changedOn' => 'users::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

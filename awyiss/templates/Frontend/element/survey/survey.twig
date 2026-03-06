@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block survey %}
-	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}"{# data-ajax="false"#}>
+	<div class="Survey" id="Survey-{{ survey.identifier|camelize }}"{# data-ajax="false"#}>
 		{% if successMessage %}
 			{% block surveySuccessMessage %}
 				<div class="Survey-SuccessMessage">
@@ -32,7 +32,7 @@
 			{% endblock %}
 		{% else %}
 			{% block surveyForm %}
-				<form method="post" action="#Survey-{{ survey.identifier|ucparts(false) }}">
+				<form method="post" action="#Survey-{{ survey.identifier|camelize }}">
 			{% endblock %}
 
 			{% block surveyFailureEnding %}
@@ -66,7 +66,7 @@
 					{% block surveyActionProceed %}
 						{% if hasNextAction %}
 							<div class="SurveyAction-Proceed">
-								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="proceed" class="Button Survey-NextAction">{{ __d('surveys', 'next') }}</button>
+								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="proceed" class="Button Survey-NextAction">{{ __d('Surveys', 'next') }}</button>
 							</div>
 						{% endif %}
 					{% endblock %}
@@ -74,8 +74,8 @@
 					{% block surveyActionGoBack %}
 						{% if progress is not empty %}
 							<div class="SurveyAction-GoBack">
-								<input type="hidden" name="survey[{{ survey.identifier }}][last_action]" value="{{ progress|keys|last }}">
-								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="go_back" class="Button Survey-GoBack" formnovalidate>{{ __d('surveys', 'back') }}</button>
+								<input type="hidden" name="survey[{{ survey.identifier }}][lastAction]" value="{{ progress|keys|last }}">
+								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>{{ __d('Surveys', 'back') }}</button>
 							</div>
 						{% endif %}
 					{% endblock %}
@@ -84,7 +84,7 @@
 
 			{% block surveyIdentifier %}
 				{% if hasNextAction %}
-					<input type="hidden" name="_survey_identifier" value="{{ survey.identifier }}">
+					<input type="hidden" name="_surveyIdentifier" value="{{ survey.identifier }}">
 				{% endif %}
 			{% endblock %}
 

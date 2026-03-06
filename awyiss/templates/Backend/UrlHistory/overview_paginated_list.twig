@@ -70,7 +70,7 @@
 
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
 	{% if field == 'scope' %}
-		{{ __('scope_' ~ entity.scope) }}
+		{{ __('scope_' ~ entity.scope|underscore) }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

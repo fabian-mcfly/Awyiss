@@ -225,7 +225,7 @@ class UsersController extends Controller {
 
 				/** @var \Cake\Http\Session $session */
 				$session = $this->request->getAttribute('session');
-				$session->write(LocaleMiddleware::getSessionIdentifier(), $this->request->getData('language_shortcode'));
+				$session->write(LocaleMiddleware::getSessionIdentifier(), $this->request->getData('languageShortcode'));
 				$session->write('Backend.lastLogin', $lastLogin);
 			}
 
@@ -289,11 +289,11 @@ class UsersController extends Controller {
 			// Remove all locks
 			$lockTable = $this->fetchTable('Locks');
 
-			$where = ['created_by' => $identity->getIdentifier()];
+			$where = ['createdBy' => $identity->getIdentifier()];
 
 			$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
 			if ($sessionBased) {
-				$where['unique_id'] = $lockIdentifier;
+				$where['uniqueId'] = $lockIdentifier;
 			}
 
 			$lockTable->deleteAll($where);
@@ -330,18 +330,18 @@ class UsersController extends Controller {
 
 		$this->Users->patchEntity($user, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Users->save($user, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					$usergroups = [];
 
 					if ($user->usergroups) {

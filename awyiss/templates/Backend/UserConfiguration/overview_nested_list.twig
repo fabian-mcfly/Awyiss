@@ -23,10 +23,10 @@
 					<li class="ListItem ListItem-Category">
 						<span class="Title">
 							{% set i18nKey = 'configuration_category_backend_' ~ (parents ? parents|join('_') ~ '_' : '')|underscore ~ identifier|underscore %}
-							{% set title = __df(selectedScope, 'configuration', i18nKey) %}
+							{% set title = __df(selectedScope, 'Configuration', i18nKey) %}
 
 							{% if '::' in title and selectedScope is pageRole %}
-								{% set title = __d('generic_pages', i18nKey) %}
+								{% set title = __d('GenericPages', i18nKey) %}
 							{% endif %}
 
 							{{ '::' in title ? identifier : title }}
@@ -68,10 +68,10 @@
 											<span class="Label">{{ __('identifier') }}:</span>
 											{% set output = identifier|split('.')|slice(-1)|join()|variable %}
 											{% set i18nKey = 'configuration_identifier_backend_' ~ (parents ? parents|join('_') ~ '_' : '')|underscore ~ output|underscore %}
-											{% set translatedIdentifier = __df(selectedScope, 'configuration', i18nKey) %}
+											{% set translatedIdentifier = __df(selectedScope, 'Configuration', i18nKey) %}
 
 											{% if '::' in translatedIdentifier and selectedScope is pageRole %}
-												{% set translatedIdentifier = __d('generic_pages', i18nKey) %}
+												{% set translatedIdentifier = __d('GenericPages', i18nKey) %}
 											{% endif %}
 
 											{% if '::' in translatedIdentifier %}
@@ -114,7 +114,7 @@
 											{{ FormHelper.create(null, {action: addUrl, method: 'post', idPrefix: 'Configuration'}) }}
 											{{ FormHelper.hidden('scope', {val: selectedScope}) }}
 											{{ FormHelper.hidden('identifier', {val: (parents and configuration.isGlobal == false ? parents|join('.') ~ '.' : '') ~ configuration.identifier}) }}
-											{{ FormHelper.hidden('reload_form', {val: 1}) }}
+											{{ FormHelper.hidden('reloadForm', {val: 1}) }}
 											{{ FormHelper.button(__('add'), {class: 'Button Button-Small Button-Add'}) }}
 											{{ FormHelper.end() }}
 										{% endif %}

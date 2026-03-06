@@ -51,7 +51,7 @@
 							{% endblock %}
 
 							{% block overviewExportFormControlFormat %}
-								{{ FormHelper.control('export_format', {
+								{{ FormHelper.control('exportFormat', {
 									empty: false,
 									options: {
 										csv: 'CSV',
@@ -66,7 +66,7 @@
 							{% endblock %}
 
 							{% block overviewExportFormControlLanguages %}
-								{{ FormHelper.control('export_languages', {
+								{{ FormHelper.control('exportLanguages', {
 									type: 'select',
 									multiple: 'checkbox',
 									options: languages.Frontend|reduce((carry, language) => carry|merge({(language.shortcode): language.title}), {}),
@@ -75,7 +75,7 @@
 							{% endblock %}
 
 							{% block overviewExportFormControlFormId %}
-								{{ FormHelper.hidden('export_form_id', {val: CategoriesHelper.selectedCategory('form')}) }}
+								{{ FormHelper.hidden('exportFormId', {val: CategoriesHelper.selectedCategory('form')}) }}
 							{% endblock %}
 
 							{% block overviewExportFormSubmit %}
@@ -96,7 +96,7 @@
 
 			{% block overviewButtons %}
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: 'form_entries'}) }}
+					{{ element('search/filter_button', {scope: 'FormEntries'}) }}
 				{% endblock %}
 			{% endblock %}
 		</div>
@@ -118,6 +118,6 @@
 	{% endblock %}
 
 	{% block listFilter %}
-		{{ element('search/filter', {scope: 'form_entries'}) }}
+		{{ element('search/filter', {scope: 'FormEntries'}) }}
 	{% endblock %}
 </div>

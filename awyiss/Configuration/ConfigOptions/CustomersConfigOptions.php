@@ -30,7 +30,7 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'last_login',
+						'lastLogin',
 					],
 					identifier: 'displayedFields',
 					localizable: false,
@@ -93,7 +93,7 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 							$config = TransportFactory::get($profile)->getConfig();
 							unset($config['url'], $config['password']);
 
-							$label = __d('forms', 'transport_profile_' . $profile, $config);
+							$label = __d('Forms', 'transport_profile_' . $profile, $config);
 							$profiles[ $profile ] = str_contains($label, '::') ? $profile : $label;
 						}
 

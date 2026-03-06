@@ -24,16 +24,16 @@ class FormConditionalRecipients {
 	/**
 	 * The first rule that matches will be used.
 	 */
-	public const string PROCESS_STRATEGY_MATCH_FIRST = 'match_first';
+	public const string PROCESS_STRATEGY_MATCH_FIRST = 'matchFirst';
 	/**
 	 * All rules must match.
 	 * The last rule defines the recipient.
 	 */
-	public const string PROCESS_STRATEGY_MATCH_ALL = 'match_all';
+	public const string PROCESS_STRATEGY_MATCH_ALL = 'matchAll';
 	/**
 	 * The last rule that matches will be used.
 	 */
-	public const string PROCESS_STRATEGY_MATCH_LAST = 'match_last';
+	public const string PROCESS_STRATEGY_MATCH_LAST = 'matchLast';
 
 
 	/**
@@ -160,21 +160,21 @@ class FormConditionalRecipients {
 			'>' => $this->compareGreaterThan($value, $compareValue),
 			'>=' => $this->compareGreaterThan($value, $compareValue, true),
 			'between' => $this->compareBetween($value, $compareValue),
-			'not_between' => $this->compareBetween($value, $compareValue, true),
-			'length_equal' => $this->compareLengthEqualTo($value, $compareValue),
-			'length_not_equal' => $this->compareLengthEqualTo($value, $compareValue, true),
-			'shorter_than' => $this->compareLongerThan($value, $compareValue, false, true),
-			'shorter_than_or_equal' => $this->compareLongerThan($value, $compareValue, true, true),
-			'longer_than' => $this->compareLongerThan($value, $compareValue),
-			'longer_than_or_equal' => $this->compareLongerThan($value, $compareValue, true),
+			'notBetween' => $this->compareBetween($value, $compareValue, true),
+			'lengthEqual' => $this->compareLengthEqualTo($value, $compareValue),
+			'lengthNotEqual' => $this->compareLengthEqualTo($value, $compareValue, true),
+			'shorterThan' => $this->compareLongerThan($value, $compareValue, false, true),
+			'shorterThanOrEqual' => $this->compareLongerThan($value, $compareValue, true, true),
+			'longerThan' => $this->compareLongerThan($value, $compareValue),
+			'longerThanOrEqual' => $this->compareLongerThan($value, $compareValue, true),
 			'in' => $this->compareIn($value, $compareValue),
-			'not_in' => $this->compareIn($value, $compareValue, true),
+			'notIn' => $this->compareIn($value, $compareValue, true),
 			'contains' => $this->compareContains($value, $compareValue),
-			'not_contains' => $this->compareContains($value, $compareValue, true),
-			'starts_with' => $this->compareStartsWith($value, $compareValue),
-			'not_starts_with' => $this->compareStartsWith($value, $compareValue, true),
-			'ends_with' => $this->compareEndsWith($value, $compareValue),
-			'not_ends_with' => $this->compareEndsWith($value, $compareValue, true),
+			'notContains' => $this->compareContains($value, $compareValue, true),
+			'startsWith' => $this->compareStartsWith($value, $compareValue),
+			'notStartsWith' => $this->compareStartsWith($value, $compareValue, true),
+			'endsWith' => $this->compareEndsWith($value, $compareValue),
+			'notEndsWith' => $this->compareEndsWith($value, $compareValue, true),
 			'regexp' => $this->compareRegexp($value, $compareValue),
 		};
 	}
@@ -187,7 +187,7 @@ class FormConditionalRecipients {
 	 * @return mixed
 	 */
 	protected function getFieldValue(string $type, string $field, array $requestData): mixed {
-		if ($type === 'element_identifier') {
+		if ($type === 'elementIdentifier') {
 			if (!array_key_exists($field, $requestData)) {
 				throw new OutOfBoundsException('Field not found in request data');
 			}
@@ -197,7 +197,7 @@ class FormConditionalRecipients {
 			}
 
 			$elements = $this->form->formElements->listNested()->filter(function ($formElement) {
-				return !in_array($formElement->type, ['fieldset', 'hidden', 'free_text', 'submit']);
+				return !in_array($formElement->type, ['fieldset', 'hidden', 'freeText', 'submit']);
 			})->indexBy('identifier')->toArray();
 
 			if (!array_key_exists($field, $elements)) {
@@ -219,7 +219,7 @@ class FormConditionalRecipients {
 			return $requestData[ $field ];
 		}
 
-		if ($type === 'current_page') {
+		if ($type === 'currentPage') {
 			if (!$this->currentPage) {
 				return null;
 			}

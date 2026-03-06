@@ -44,12 +44,12 @@
 				{% endblock %}
 
 				{% block formControlDateFormat %}
-					{{ FormHelper.control('date_format', {columnSpan: 4}) }}
+					{{ FormHelper.control('dateFormat', {columnSpan: 4}) }}
 				{% endblock %}
 
 
 				{% block formControlTimeFormat %}
-					{{ FormHelper.control('time_format', {columnSpan: 4}) }}
+					{{ FormHelper.control('timeFormat', {columnSpan: 4}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -129,7 +129,7 @@
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: language}) }}
+					{{ SystemOrderHelper.control('systemOrder', {entity: language}) }}
 				{% endblock %}
 
 				{% block fieldsetConditionsAttributes %}
@@ -202,7 +202,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

@@ -111,11 +111,18 @@ class GlobalContentsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('Forms');
+		$this->belongsTo('Forms', [
+			'foreignKey' => 'formId',
+		]);
 
-		$this->belongsTo('Surveys');
+		$this->belongsTo('GlobalContentTemplates', [
+			'foreignKey' => 'globalContentTemplateId',
+			'propertyName' => 'globalContentTemplate',
+		]);
 
-		$this->belongsTo('GlobalContentTemplates');
+		$this->belongsTo('Surveys', [
+			'foreignKey' => 'surveyId',
+		]);
 	}
 
 
@@ -326,7 +333,7 @@ class GlobalContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				// Global Content Template not found
-				$entity->setError('global_content_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_global_content_template_id'));
+				$entity->setError('globalContentTemplateId', __df($this->getI18nDomain(), 'Validation', 'error_valid_global_content_template_id'));
 
 				return false;
 			}
@@ -349,10 +356,7 @@ class GlobalContentsTable extends Table {
 
 			$errors = $this->validateInputFields($data, $entity, $validator, $attributesValidator ?? null, $globalContentTemplate);
 
-			$errors = $this->getEntityClass()::mapFields($errors, true);
-
 			if ($this->hasAttributes() && !empty($errors['attributes'])) {
-				$errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($errors['attributes'], true);
 				$entity->attributes->setErrors($errors['attributes']);
 			}
 
@@ -384,7 +388,7 @@ class GlobalContentsTable extends Table {
 			return true;
 		}, 'validWidthIndentCombination', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_width_indent_combination'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_width_indent_combination'),
 		]);
 
 
@@ -536,7 +540,7 @@ class GlobalContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_width') {
+			if ($element === 'columnWidth') {
 				$columnWidths = $this->getColumnWidths();
 
 				$validator->add($element, [
@@ -548,7 +552,7 @@ class GlobalContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_last') {
+			if ($element === 'columnLast') {
 				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
@@ -558,7 +562,7 @@ class GlobalContentsTable extends Table {
 				continue;
 			}
 
-			if ($element === 'column_rtl') {
+			if ($element === 'columnRtl') {
 				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
@@ -616,15 +620,15 @@ class GlobalContentsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
-		if ($column === 'form_id') {
+		if ($column === 'formId') {
 			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'survey_id') {
+		if ($column === 'surveyId') {
 			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'global_content_template_id') {
+		if ($column === 'globalContentTemplateId') {
 			return $this->getAssociation('GlobalContentTemplates')->find('list', valueField: 'label')->toArray();
 		}
 

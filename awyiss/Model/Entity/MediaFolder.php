@@ -39,17 +39,6 @@ class MediaFolder extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'language_shortcode' => 'languageShortcode',
-		'system_order' => 'systemOrder',
-		'parents_active' => 'parentsActive',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'parentId' => true,
 		'path' => true,

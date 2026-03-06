@@ -24,6 +24,13 @@ class EavStrategy extends BaseEavStrategy {
 	protected function setupAssociations(): void {
 		parent::setupAssociations();
 
+		$alias = $this->table->getAlias();
+		foreach ($this->_config['fields'] as $field) {
+			$name = $alias . '_' . $field . '_translation';
+			$association = $this->table->getAssociation($name);
+			$association->setForeignKey('foreignKey');
+		}
+
 		$targetAlias = $this->translationTable->getAlias();
 		$association = $this->table->getAssociation($targetAlias);
 
@@ -31,6 +38,7 @@ class EavStrategy extends BaseEavStrategy {
 		$conditions = $association->getConditions();
 		unset($conditions['I18n.content !=']);
 		$association->setConditions($conditions);
+		$association->setForeignKey('foreignKey');
 	}
 
 	/**
@@ -127,11 +135,10 @@ class EavStrategy extends BaseEavStrategy {
 			$preexistentValues = $this->translationTable->find()->select(['id', 'field'])->where([
 				'field IN' => $fields,
 				'locale' => $locale,
-				'foreign_key' => $key,
+				'foreignKey' => $key,
 				'model' => $modelName,
 			])->all()->indexBy('field')->toArray();
 		}
-
 
 		$newValues = $this->prepareTranslationEntities($preexistentValues, $values, $locale, $modelName);
 
@@ -161,7 +168,7 @@ class EavStrategy extends BaseEavStrategy {
 			$primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($translationsDiff),
-				'foreign_key' => $entity->get(current($primaryKey)),
+				'foreignKey' => $entity->get(current($primaryKey)),
 				'model' => $this->_config['referenceName'],
 			])->execute();
 		}
@@ -182,7 +189,7 @@ class EavStrategy extends BaseEavStrategy {
 			$primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($entity->get('_translations')),
-				'foreign_key' => $entity->get(current($primaryKey)),
+				'foreignKey' => $entity->get(current($primaryKey)),
 				'field IN' => $unusedKeys,
 				'model' => $this->_config['referenceName'],
 			])->execute();
@@ -328,5 +335,30 @@ class EavStrategy extends BaseEavStrategy {
 		}
 
 		return array_values($modifiedValues + $newValues);
+	}
+
+
+	/**
+	 * Re-implementation of the original method to work around the hard coded
+	 * `foreign_key` field name in the original method, which is not compatible with the EAV strategy,
+	 * where the field is named `foreignKey`
+	 *
+	 * @param array $ruleSet
+	 * @return array
+	 */
+	protected function findExistingTranslations(array $ruleSet): array {
+		foreach ($ruleSet as &$rule) {
+			if (array_key_exists('foreign_key', $rule)) {
+				$rule['foreignKey'] = $rule['foreign_key'];
+				unset($rule['foreign_key']);
+			}
+
+			if (array_key_exists('foreign_key IS', $rule)) {
+				$rule['foreignKey IS'] = $rule['foreign_key IS'];
+				unset($rule['foreign_key IS']);
+			}
+		}
+
+		return parent::findExistingTranslations($ruleSet);
 	}
 }

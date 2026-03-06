@@ -177,8 +177,8 @@ class ContentTemplatesTableTest extends TestCase {
 
 		// Test that the query includes the expected fields
 		$select = $query->clause('select');
-		$this->assertContains('used_for_contents', array_keys($select));
-		$this->assertInstanceOf(AggregateExpression::class, $select['used_for_contents']);
+		$this->assertContains('usedForContents', array_keys($select));
+		$this->assertInstanceOf(AggregateExpression::class, $select['usedForContents']);
 
 		// Test that the query includes group by
 		$this->assertTrue($query->isAutoFieldsEnabled());
@@ -208,11 +208,11 @@ class ContentTemplatesTableTest extends TestCase {
 		// Test required elements
 		$requiredElements = [
 			'active',
-			'content_template_id',
-			'language_shortcode',
-			'page_id',
-			'content_area_id',
-			'system_order',
+			'contentTemplateId',
+			'languageShortcode',
+			'pageId',
+			'contentAreaId',
+			'systemOrder',
 		];
 
 		foreach ($requiredElements as $element) {
@@ -222,21 +222,21 @@ class ContentTemplatesTableTest extends TestCase {
 
 		// Test optional elements
 		$optionalElements = [
-			'parent_id',
-			'css_class',
-			'column_width',
-			'column_indent',
-			'column_last',
-			'column_rtl',
+			'parentId',
+			'cssClass',
+			'columnWidth',
+			'columnIndent',
+			'columnLast',
+			'columnRtl',
 			'title',
-			'title_tag',
+			'titleTag',
 			'subtitle',
-			'subtitle_tag',
+			'subtitleTag',
 			'text',
 			'link',
-			'duplicate_of',
-			'form_id',
-			'survey_id',
+			'duplicateOf',
+			'formId',
+			'surveyId',
 		];
 
 		foreach ($optionalElements as $element) {
@@ -277,14 +277,14 @@ class ContentTemplatesTableTest extends TestCase {
 		$contentTemplate->contentTemplateElements = [
 			['id' => 1, 'identifier' => 'attributes.free_text'],
 			['id' => 2, 'identifier' => 'teaser'],
-			['id' => 3, 'identifier' => 'attributes.background_color'],
+			['id' => 3, 'identifier' => 'attributes.backgroundColor'],
 			['id' => 4, 'identifier' => 'title'],
 		];
 
 		$assignedAttributes = $this->contentTemplatesTable->getAssignedContentAttributes($contentTemplate);
 
 		$this->assertIsArray($assignedAttributes);
-		$this->assertSame(['background_color'], $assignedAttributes);
+		$this->assertSame(['backgroundColor'], $assignedAttributes);
 	}
 
 
@@ -302,7 +302,7 @@ class ContentTemplatesTableTest extends TestCase {
 
 		$this->assertNotEmpty($contentTemplate->contentTemplateElements);
 		$this->assertIsArray($assignedAttributes);
-		$this->assertSame(['background_color'], $assignedAttributes);
+		$this->assertSame(['backgroundColor'], $assignedAttributes);
 	}
 
 
@@ -354,7 +354,7 @@ class ContentTemplatesTableTest extends TestCase {
 		$result = $this->contentTemplatesTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('content_templates', $result->getI18nDomain());
+		$this->assertSame('ContentTemplates', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -562,7 +562,7 @@ class ContentTemplatesTableTest extends TestCase {
 					'identifier' => 'text',
 				],
 				[
-					'identifier' => 'attributes.background_color',
+					'identifier' => 'attributes.backgroundColor',
 				],
 			],
 		];
@@ -587,7 +587,7 @@ class ContentTemplatesTableTest extends TestCase {
 					'identifier' => 'title',
 				],
 				[
-					'identifier' => 'non_existing_element',
+					'identifier' => 'nonExistingElement',
 				],
 			],
 		];

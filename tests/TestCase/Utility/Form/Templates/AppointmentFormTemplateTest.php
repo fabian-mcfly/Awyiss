@@ -40,7 +40,7 @@ class AppointmentFormTemplateTest extends TestCase {
 		]);
 
 		$this->assertCount(8, $elements);
-		$this->assertSame(['title', 'name', 'phone', 'email', 'datetime', 'message', 'privacy_accepted', null], array_column($elements, 'identifier'));
+		$this->assertSame(['title', 'name', 'phone', 'email', 'datetime', 'message', 'privacyAccepted', null], array_column($elements, 'identifier'));
 		$this->assertSame(['Titel', 'Name', 'Telefon', 'E-Mail', 'Datum/Uhrzeit', 'Nachricht', 'Datenschutz akzeptiert', 'Absenden'], array_column($elements, 'title'));
 	}
 
@@ -60,7 +60,7 @@ class AppointmentFormTemplateTest extends TestCase {
 		$this->assertSame([
 			['de' => ['title' => 'Titel'], 'en' => [ 'title' => 'Title']],
 			['de' => ['title' => 'Name'], 'en' => [ 'title' => 'Name']],
-			['de' => ['title' => 'Telefon', 'optional_placeholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optional_placeholder' => '(optional)']],
+			['de' => ['title' => 'Telefon', 'optionalPlaceholder' => '(optional)'], 'en' => ['title' => 'Phone', 'optionalPlaceholder' => '(optional)']],
 			['de' => ['title' => 'E-Mail'], 'en' => [ 'title' => 'Email']],
 			['de' => ['title' => 'Datum/Uhrzeit'], 'en' => [ 'title' => 'Date and Time']],
 			['de' => ['title' => 'Nachricht'], 'en' => [ 'title' => 'Message']],

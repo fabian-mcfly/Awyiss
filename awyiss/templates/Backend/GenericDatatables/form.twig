@@ -108,7 +108,7 @@
 			{% block fieldsetConditionsInner %}
 				{% block formControlLanguagesShortcode %}
 					{% if (splitIntoLanguages) %}
-						{{ LocaleHelper.control('language_shortcode', {
+						{{ LocaleHelper.control('languageShortcode', {
 							languageRealm: languageRealm,
 							val: record.languageShortcode is empty and localConfig.splitIntoLanguages ? languageShortcode : null,
 						}) }}
@@ -121,13 +121,13 @@
 					{% endif %}
 
 					{% if (nestable and possibleParentRecords is not null) %}
-						{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
+						{{ FormHelper.control('parentId', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
 					{% endif %}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}
 					{% if sortable %}
-						{{ SystemOrderHelper.control('system_order') }}
+						{{ SystemOrderHelper.control('systemOrder') }}
 					{% endif %}
 				{% endblock %}
 
@@ -193,7 +193,7 @@
 		{% endblock %}
 
 		{% block formInputReloadForm %}
-			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+			{{ FormHelper.hidden('reloadForm', {val: 0}) }}
 		{% endblock %}
 	</div>
 {% endblock %}

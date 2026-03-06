@@ -129,10 +129,10 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity);
 
-		$result = $this->helper->allControls('content', ['free_text'], ['onlyProvided' => true]);
+		$result = $this->helper->allControls('content', ['freeText'], ['onlyProvided' => true]);
 
-		$this->assertStringContainsString('<textarea name="attributes[free_text]"', $result);
-		$this->assertStringNotContainsString('<select name="attributes[dropdown_select][]', $result);
+		$this->assertStringContainsString('<textarea name="attributes[freeText]"', $result);
+		$this->assertStringNotContainsString('<select name="attributes[dropdownSelect][]', $result);
 	}
 
 
@@ -212,17 +212,17 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity);
 
-		$result = $this->helper->control('free_text');
+		$result = $this->helper->control('freeText');
 
 		$this->assertStringContainsString('FormInputName-Attributes-FreeText ColumnSpan-6', $result);
-		$this->assertStringContainsString('<textarea name="attributes[free_text]"', $result);
+		$this->assertStringContainsString('<textarea name="attributes[freeText]"', $result);
 		$this->assertStringNotContainsString('required', $result);
 
-		$result = $this->helper->control('dropdown_select');
+		$result = $this->helper->control('dropdownSelect');
 
-		$this->assertStringContainsString('<input type="hidden" name="attributes[dropdown_select]"', $result);
+		$this->assertStringContainsString('<input type="hidden" name="attributes[dropdownSelect]"', $result);
 		$this->assertStringContainsString('FormInputName-Attributes-DropdownSelect Required ColumnSpan-6', $result);
-		$this->assertStringContainsString('<select name="attributes[dropdown_select][]"', $result);
+		$this->assertStringContainsString('<select name="attributes[dropdownSelect][]"', $result);
 		$this->assertStringContainsString('required="', $result);
 	}
 
@@ -240,18 +240,18 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity, ['languageRealm' => Awyiss::REALM_BACKEND]);
 
-		$result = $this->helper->control('free_text');
+		$result = $this->helper->control('freeText');
 
 		$this->assertStringContainsString('FormInputName-Attributes-FreeText ColumnSpan-6', $result);
-		$this->assertStringContainsString('<textarea name="attributes[free_text]"', $result);
+		$this->assertStringContainsString('<textarea name="attributes[freeText]"', $result);
 		$this->assertStringNotContainsString('required', $result);
 
-		$result = $this->helper->control('dropdown_select');
+		$result = $this->helper->control('dropdownSelect');
 
 		$this->assertStringContainsString('<div class="TranslatableTexts"', $result);
-		$this->assertStringContainsString('<input type="hidden" name="attributes[_translations][de][dropdown_select]"', $result);
+		$this->assertStringContainsString('<input type="hidden" name="attributes[_translations][de][dropdownSelect]"', $result);
 		$this->assertStringContainsString('FormInputType-TranslatableText FormInputName-Attributes-DropdownSelect Required ColumnSpan-6', $result);
-		$this->assertStringContainsString('<select name="attributes[_translations][de][dropdown_select][]"', $result);
+		$this->assertStringContainsString('<select name="attributes[_translations][de][dropdownSelect][]"', $result);
 		$this->assertStringContainsString('required="', $result);
 	}
 
@@ -267,9 +267,9 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity);
 
-		$result = $this->helper->control('dropdown_select');
+		$result = $this->helper->control('dropdownSelect');
 
-		$this->assertStringContainsString('<select name="attributes[dropdown_select][]"', $result);
+		$this->assertStringContainsString('<select name="attributes[dropdownSelect][]"', $result);
 		$this->assertStringContainsString('<option value="text" title="Text">Text</option>', $result);
 		$this->assertStringContainsString('<option value="medium" title="Mittel">Mittel</option>', $result);
 		$this->assertStringContainsString('<option value="main" title="Hauptfarbe">Hauptfarbe</option>', $result);
@@ -290,7 +290,7 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity);
 
-		$result = $this->helper->control('dropdown_select', [
+		$result = $this->helper->control('dropdownSelect', [
 			'type' => 'select',
 			'options' => [
 				'val1' => 'Value 1',
@@ -298,7 +298,7 @@ class AttributesHelperTest extends TestCase {
 			],
 		]);
 
-		$this->assertStringContainsString('<select name="attributes[dropdown_select]"', $result);
+		$this->assertStringContainsString('<select name="attributes[dropdownSelect]"', $result);
 		$this->assertStringContainsString('<option value="val1" title="Value 1">Value 1</option>', $result);
 		$this->assertStringContainsString('<option value="val2" title="Value 2">Value 2</option>', $result);
 	}
@@ -317,7 +317,7 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity, ['languageRealm' => Awyiss::REALM_BACKEND]);
 
-		$result = $this->helper->control('dropdown_select', ['type' => 'datetime', 'options' => false]);
+		$result = $this->helper->control('dropdownSelect', ['type' => 'datetime', 'options' => false]);
 
 		$matches = [];
 		preg_match_all('/<span class="Timezone">UTC<\/span>/', $result, $matches);

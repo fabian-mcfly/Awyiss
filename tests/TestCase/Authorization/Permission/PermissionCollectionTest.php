@@ -33,17 +33,17 @@ class PermissionCollectionTest extends TestCase {
 		$collection = new PermissionCollection($authorizationService, [
 			Permission::createFromArray([
 				'scope' => 'FooScope',
-				'identifier' => 'foo_identifier',
+				'identifier' => 'fooIdentifier',
 				'access' => PermissionAccess::Granted,
 			]),
 			[
-				'scope' => 'barScope',
-				'identifier' => 'bar_identifier',
+				'scope' => 'BarScope',
+				'identifier' => 'barIdentifier',
 				'access' => PermissionAccess::Granted,
 			],
 			[
-				'scope' => 'bazScope',
-				'identifier' => 'baz_identifier',
+				'scope' => 'BazScope',
+				'identifier' => 'bazIdentifier',
 				'access' => PermissionAccess::Denied,
 			],
 			$permissionInterface,
@@ -65,14 +65,14 @@ class PermissionCollectionTest extends TestCase {
 
 		$collection->add(Permission::createFromArray([
 			'scope' => 'FooScope',
-			'identifier' => 'foo_identifier',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]));
 
 		$this->assertTrue($collection->hasPermissions('fooScope'));
 		$this->assertTrue($collection->hasPermissions('foo_scope'));
 
-		$this->assertTrue($collection->hasPermissions('foo_scope', 'foo_identifier'));
+		$this->assertTrue($collection->hasPermissions('foo_scope', 'fooIdentifier'));
 		$this->assertTrue($collection->hasPermissions('foo_scope', 'fooIdentifier'));
 	}
 
@@ -85,7 +85,7 @@ class PermissionCollectionTest extends TestCase {
 
 		$collection->add(Permission::createFromArray([
 			'scope' => 'FooScope',
-			'identifier' => 'foo_identifier',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]));
 
@@ -102,7 +102,7 @@ class PermissionCollectionTest extends TestCase {
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
-			'identifier' => 'foo_identifier',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
@@ -122,7 +122,7 @@ class PermissionCollectionTest extends TestCase {
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
-			'identifier' => 'foo_identifier',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
@@ -144,7 +144,7 @@ class PermissionCollectionTest extends TestCase {
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
-			'identifier' => 'foo_identifier',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
@@ -173,15 +173,15 @@ class PermissionCollectionTest extends TestCase {
 		$authorizationService = $this->createMock(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
-			'scope' => 'test_scope',
-			'identifier' => 'foo_identifier',
+			'scope' => 'TestScope',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
 		$collection = new PermissionCollection($authorizationService);
 		$collection->add($permission);
 
-		$this->assertFalse($collection->hasPermissions('test_scope', 'non_existent_identifier'));
+		$this->assertFalse($collection->hasPermissions('TestScope', 'non_existent_identifier'));
 	}
 
 
@@ -193,8 +193,8 @@ class PermissionCollectionTest extends TestCase {
 		$authorizationService = $this->createMock(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
-			'scope' => 'test_scope',
-			'identifier' => 'foo_identifier',
+			'scope' => 'TestScope',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
@@ -213,8 +213,8 @@ class PermissionCollectionTest extends TestCase {
 		$authorizationService = $this->createMock(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
-			'scope' => 'test_scope',
-			'identifier' => 'foo_identifier',
+			'scope' => 'TestScope',
+			'identifier' => 'fooIdentifier',
 			'access' => PermissionAccess::Granted,
 		]);
 
@@ -231,7 +231,7 @@ class PermissionCollectionTest extends TestCase {
 	public function testScopeIsAccessibleReturnsFalseWhenNoPermissions(): void {
 		$collection = new PermissionCollection(null);
 
-		$this->assertFalse($collection->scopeIsAccessible('test_scope', [], 'test_identifier'));
+		$this->assertFalse($collection->scopeIsAccessible('TestScope', [], 'test_identifier'));
 	}
 
 
@@ -250,7 +250,7 @@ class PermissionCollectionTest extends TestCase {
 		$collection = new PermissionCollection($authorizationService);
 		$collection->add($permission);
 
-		$this->assertTrue($collection->scopeIsAccessible('test_scope', [], 'test_identifier'));
+		$this->assertTrue($collection->scopeIsAccessible('TestScope', [], 'test_identifier'));
 	}
 
 
@@ -269,7 +269,7 @@ class PermissionCollectionTest extends TestCase {
 		$collection = new PermissionCollection($authorizationService);
 		$collection->add($permission);
 
-		$this->assertFalse($collection->scopeIsAccessible('test_scope', [], 'test_identifier'));
+		$this->assertFalse($collection->scopeIsAccessible('TestScope', [], 'test_identifier'));
 	}
 
 
@@ -280,7 +280,7 @@ class PermissionCollectionTest extends TestCase {
 		$this->expectException(TypeError::class);
 
 		$collection = new PermissionCollection(null);
-		$collection->scopeIsAccessible('test_scope', [], [true]);
+		$collection->scopeIsAccessible('TestScope', [], [true]);
 	}
 
 
@@ -315,13 +315,13 @@ class PermissionCollectionTest extends TestCase {
 		 * Checking two identifiers in a row
 		 * requires both to be accessible
 		 */
-		$this->assertFalse($collection->scopeIsAccessible('test_scope', [], 'identifier1', 'identifier2'));
+		$this->assertFalse($collection->scopeIsAccessible('TestScope', [], 'identifier1', 'identifier2'));
 
 		/**
 		 * Checking two identifiers in a row
 		 * requires both to be accessible
 		 */
-		$this->assertTrue($collection->scopeIsAccessible('test_scope', [], 'identifier1', 'identifier3'));
+		$this->assertTrue($collection->scopeIsAccessible('TestScope', [], 'identifier1', 'identifier3'));
 	}
 
 
@@ -356,7 +356,7 @@ class PermissionCollectionTest extends TestCase {
 		 * Checking two identifiers as an array
 		 * requires only one to be accessible
 		 */
-		$this->assertTrue($collection->scopeIsAccessible('test_scope', [], ['identifier1', 'identifier2']));
+		$this->assertTrue($collection->scopeIsAccessible('TestScope', [], ['identifier1', 'identifier2']));
 
 		/**
 		 * Checking two identifiers as an array
@@ -366,7 +366,7 @@ class PermissionCollectionTest extends TestCase {
 		 * each of them still must have at least one accessible permission,
 		 * otherwise the whole check will fail.
 		 */
-		$this->assertTrue($collection->scopeIsAccessible('test_scope', [], ['identifier1', 'identifier2'], ['identifier2', 'identifier3']));
+		$this->assertTrue($collection->scopeIsAccessible('TestScope', [], ['identifier1', 'identifier2'], ['identifier2', 'identifier3']));
 
 		/**
 		 * Checking two identifiers as an array
@@ -376,6 +376,6 @@ class PermissionCollectionTest extends TestCase {
 		 * each of them still must have at least one accessible permission,
 		 * otherwise the whole check will fail.
 		 */
-		$this->assertFalse($collection->scopeIsAccessible('test_scope', [], ['identifier1', 'identifier2'], ['identifier2']));
+		$this->assertFalse($collection->scopeIsAccessible('TestScope', [], ['identifier1', 'identifier2'], ['identifier2']));
 	}
 }

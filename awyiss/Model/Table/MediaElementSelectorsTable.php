@@ -65,24 +65,29 @@ class MediaElementSelectorsTable extends Table {
 	public function initializeAssociations(): void {
 		$this->hasMany('MediaAssignments', [
 			'bindingKey' => [
-				'media_element_id',
+				'mediaElementId',
 				'identifier',
 			],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => [
-				'media_element_id',
-				'media_element_selector_identifier',
+				'mediaElementId',
+				'mediaElementSelectorIdentifier',
 			],
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsTo('MediaElements', [
+			'foreignKey' => 'mediaElementId',
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaElement',
 		]);
 
 		$this->belongsTo('MediaSelectors', [
+			'foreignKey' => 'mediaSelectorId',
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaSelector',
 		]);
 	}
 
@@ -165,12 +170,12 @@ class MediaElementSelectorsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('mediaElementId', 'MediaElements'), 'mediaElementExists', [
 			'errorField' => 'mediaElementId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_element_exists'),
 		]);
 
 		$rules->add($rules->existsIn('mediaSelectorId', 'MediaSelectors'), 'mediaSelectorExists', [
 			'errorField' => 'mediaSelectorId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_selectors_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_selectors_exists'),
 		]);
 
 		$rules->add(
@@ -178,7 +183,7 @@ class MediaElementSelectorsTable extends Table {
 			'identifierUniqueForMediaElement',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_media_element'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique_for_media_element'),
 			]
 		);
 

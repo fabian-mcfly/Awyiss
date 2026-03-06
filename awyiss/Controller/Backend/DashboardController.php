@@ -138,7 +138,7 @@ class DashboardController extends Controller {
 			}
 
 			if (
-				in_array($association->getProperty(), ['attributes', '_publication_start', '_publication_end']) ||
+				in_array($association->getProperty(), ['attributes', '_publicationStart', '_publicationEnd']) ||
 				str_starts_with($association->getProperty(), 'parent_')
 			) {
 				continue;
@@ -188,12 +188,12 @@ class DashboardController extends Controller {
 				continue;
 			}
 
-			if (str_ends_with($field, '_id') && $field !== 'parent_id') {
+			if (str_ends_with($field, '_id') && $field !== 'parentId') {
 				$this->applyQuerySortingByAssociation($table, $query, $field, $direction);
 				continue;
 			}
 
-			if ($field === 'language_shortcode') {
+			if ($field === 'languageShortcode') {
 				$this->applyQuerySortingByLanguage($query, $direction);
 				continue;
 			}
@@ -226,7 +226,7 @@ class DashboardController extends Controller {
 			$case = $exp->case();
 			/** @var \Awyiss\Model\Entity\Language $language */
 			foreach ($languages as $language) {
-				$case->when(['language_shortcode' => $language->shortcode])->then($index, 'integer');
+				$case->when(['languageShortcode' => $language->shortcode])->then($index, 'integer');
 
 				$index++;
 			}

@@ -44,7 +44,7 @@ class FormConditionalRecipientsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms', [
-			'foreignKey' => 'form_id',
+			'foreignKey' => 'formId',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -77,7 +77,7 @@ class FormConditionalRecipientsTable extends Table {
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'inList' => ['rule' => ['inList', ['current_page', 'element_identifier']]],
+			'inList' => ['rule' => ['inList', ['currentPage', 'elementIdentifier']]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
@@ -140,7 +140,7 @@ class FormConditionalRecipientsTable extends Table {
 			'formExists',
 			[
 				'errorField' => 'formId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_form_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_form_exists'),
 			]
 		);
 

@@ -51,7 +51,7 @@ class MediaFoldersTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['language_shortcode', 'hidden'],
+		'blocklistedColumns' => ['languageShortcode', 'hidden'],
 	];
 	/**
 	 * @inheritDoc
@@ -74,17 +74,20 @@ class MediaFoldersTable extends Table {
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
-			'foreignKey' => 'language_shortcode',
+			'foreignKey' => 'languageShortcode',
 		]);
 
 		$this->hasMany('Media', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaFolderId',
 		]);
 
 		$this->hasMany('MediaAssignments', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'mediaFolderId',
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 		]);
 	}
@@ -122,7 +125,7 @@ class MediaFoldersTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_exact_length', 2),
 				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
@@ -190,7 +193,7 @@ class MediaFoldersTable extends Table {
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_language_exists'),
 			]
 		);
 
@@ -202,27 +205,27 @@ class MediaFoldersTable extends Table {
 				}
 
 				if (!$entity->get('active')) {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_active_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_active_unchanged');
 				}
 
 				if ($entity->get('hidden')) {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_hidden_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_hidden_unchanged');
 				}
 
 				if ($entity->get('languageShortcode') !== null) {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_language_shortcode_unchanged');
 				}
 
 				if ($entity->get('title') !== 'Media') {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_title_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_title_unchanged');
 				}
 
 				if ($entity->get('parentId') !== null) {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_parent_id_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_parent_id_unchanged');
 				}
 
 				if ($entity->get('path') !== 'media') {
-					return __df($this->getI18nDomain(), 'validation', 'error_root_path_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_root_path_unchanged');
 				}
 
 				return true;
@@ -241,7 +244,7 @@ class MediaFoldersTable extends Table {
 			'notNestedUnderRoot',
 			[
 				'errorField' => 'parentId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_nested_under_root'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_nested_under_root'),
 			]
 		);
 
@@ -253,7 +256,7 @@ class MediaFoldersTable extends Table {
 			'notRootDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_root_deletion'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_root_deletion'),
 			]
 		);
 
@@ -269,7 +272,7 @@ class MediaFoldersTable extends Table {
 	public function findActive(SelectQuery $query): SelectQuery {
 		$query->where([
 			'active' => true,
-			'parents_active' => true,
+			'parentsActive' => true,
 		]);
 
 

@@ -35,12 +35,12 @@ export default class BackendMenuEntriesController {
 	 */
 	initForm(form) {
 		window.eventHandler.add('input', function (event) {
-			// Check if the event target is the insert_after_id select element
-			if (event.target.name === 'insert_after_id') {
-				// Get the parent_id select element
-				const parentIdSelect = form.querySelector('select[name="parent_id"]');
+			// Check if the event target is the insertAfterId select element
+			if (event.target.name === 'insertAfterId') {
+				// Get the parentId select element
+				const parentIdSelect = form.querySelector('select[name="parentId"]');
 
-				// Reset the parent_id select element to its first option
+				// Reset the parentId select element to its first option
 				parentIdSelect.selectedIndex = 0;
 			}
 		}, window, {}, 9);
@@ -49,12 +49,12 @@ export default class BackendMenuEntriesController {
 
 	/**
 	 * Get the order of all list items
-	 * The order resets to 1 whenever an item has a unique "insert_after_id".
+	 * The order resets to 1 whenever an item has a unique "insertAfterId".
 	 *
 	 * @returns {Object} The order of the list items
 	 */
 	getNestedListOrder() {
-		// Initialize a set to keep track of all insert_after_id values
+		// Initialize a set to keep track of all insertAfterId values
 		const insertAfterIdSet = new Set();
 
 		// Initialize a null value to track the last static ID globally, reset at each level
@@ -77,27 +77,27 @@ export default class BackendMenuEntriesController {
 			// Check if the ID is a custom ID
 			const isCustom = id.match(/^\d+$/);
 
-			// Determine the appropriate insert_after_id based on presence of a parent
-			let insert_after_id;
+			// Determine the appropriate insertAfterId based on presence of a parent
+			let insertAfterId;
 			if (isCustom && !parentId) {
-				insert_after_id = lastStaticItemId;
+				insertAfterId = lastStaticItemId;
 			}
 			else {
-				insert_after_id = null;
+				insertAfterId = null;
 			}
 
 			// If the item is custom, update the order object
 			if (isCustom) {
-				// If the insert_after_id is unique, reset the order to 1
-				if (insert_after_id && !insertAfterIdSet.has(insert_after_id)) {
+				// If the insertAfterId is unique, reset the order to 1
+				if (insertAfterId && !insertAfterIdSet.has(insertAfterId)) {
 					orderCounterStack[orderCounterStack.length - 1] = 1;
-					insertAfterIdSet.add(insert_after_id);
+					insertAfterIdSet.add(insertAfterId);
 				}
 
 				// Update the order object
 				order[id] = {
 					id: id,
-					insertAfterId: insert_after_id,
+					insertAfterId: insertAfterId,
 					parentId: parentId,
 					systemOrder: orderCounterStack[orderCounterStack.length - 1]++,
 				};

@@ -5,9 +5,12 @@ namespace Awyiss\ORM;
 
 
 use ArrayObject;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Marshaller as BaseMarshaller;
+use Cake\ORM\PropertyMarshalInterface;
+use InvalidArgumentException;
 
 
 /**
@@ -40,12 +43,6 @@ class Marshaller extends BaseMarshaller {
 					// If the value is a string, use it as the key
 					$key = $value;
 					$value = true;
-				}
-
-				// Map the field name if the entity class has a `mapField()` method
-				if (method_exists($entity, 'mapField')) {
-					// Map the field name
-					$key = $entity::mapField($key);
 				}
 
 				$entity->setAccess($key, $value);
@@ -87,11 +84,6 @@ class Marshaller extends BaseMarshaller {
 		}
 
 		$fields = (array)$options['fields'];
-		// Map the property keys if the entity class has a `mapFields()` method
-		if (method_exists($entity, 'mapFields')) {
-			$fields = $entity::mapFields($fields);
-			$properties = $entity::mapFields($properties, true);
-		}
 
 		foreach ($fields as $field) {
 			assert(is_string($field));
@@ -109,6 +101,98 @@ class Marshaller extends BaseMarshaller {
 		}
 
 		return $entity;
+	}
+
+
+	/**
+	 * Re-implemented 1:1 to override how the result of PropertyMarshalInterface::buildMarshalMap()
+	 * is merged into the map built by Marshaller::_buildPropertyMap().
+	 * Instead of using the `+` operator, we use `array_merge()`, to allow behaviors to override the default
+	 * marshalling of properties provided by the table's schema and associations.
+	 *
+	 * @inheritDoc
+	 */
+	protected function _buildPropertyMap(array $data, array $options): array {
+		$map = [];
+		$schema = $this->_table->getSchema();
+
+		// Is a concrete column?
+		foreach (array_keys($data) as $prop) {
+			$prop = (string)$prop;
+			$columnType = $schema->getColumnType($prop);
+			if ($columnType) {
+				$map[ $prop ] = TypeFactory::build($columnType)->marshal(...);
+			}
+		}
+
+		// Map associations
+		$options['associated'] ??= [];
+		$include = $this->_normalizeAssociations($options['associated']);
+		foreach ($include as $key => $nested) {
+			if (is_int($key) && is_scalar($nested)) {
+				$key = $nested;
+				$nested = [];
+			}
+
+			$stringifiedKey = (string)$key;
+			// If the key is not a special field like _ids or _joinData
+			// it is a missing association that we should error on.
+			if (!$this->_table->hasAssociation($stringifiedKey)) {
+				if (
+					!str_starts_with($stringifiedKey, '_') && (!isset($options['junctionProperty']) || $options['junctionProperty'] !== $stringifiedKey)
+				) {
+					throw new InvalidArgumentException(
+						sprintf(
+							'Cannot marshal data for `%s` association. It is not associated with `%s`.',
+							$stringifiedKey,
+							$this->_table->getAlias(),
+						)
+					);
+				}
+				continue;
+			}
+			$assoc = $this->_table->getAssociation($stringifiedKey);
+
+			if (isset($options['forceNew'])) {
+				$nested['forceNew'] = $options['forceNew'];
+			}
+			if (isset($options['isMerge'])) {
+				$callback = function (
+					$value,
+					EntityInterface $entity,
+				) use (
+					$assoc,
+					$nested,
+				): array|EntityInterface|null {
+					$options = $nested + ['associated' => [], 'association' => $assoc];
+
+					return $this->_mergeAssociation(
+						$this->fieldValue($entity, $assoc->getProperty()),
+						$assoc,
+						$value,
+						$options,
+					);
+				};
+			}
+			else {
+				$callback = function ($value) use ($assoc, $nested): array|EntityInterface|null {
+					$options = $nested + ['associated' => []];
+
+					return $this->_marshalAssociation($assoc, $value, $options);
+				};
+			}
+			$map[ $assoc->getProperty() ] = $callback;
+		}
+
+		$behaviors = $this->_table->behaviors();
+		foreach ($behaviors->loaded() as $name) {
+			$behavior = $behaviors->get($name);
+			if ($behavior instanceof PropertyMarshalInterface) {
+				$map = array_merge($map, $behavior->buildMarshalMap($this, $map, $options));
+			}
+		}
+
+		return $map;
 	}
 
 
@@ -145,7 +229,6 @@ class Marshaller extends BaseMarshaller {
 	/**
 	 * Re-implemented to
 	 * - skip the event if `$options['events']` is set to `false`.
-	 * - unmap field names if the entity class has a `unmapField()` method.
 	 *
 	 * @inheritDoc
 	 */
@@ -165,25 +248,9 @@ class Marshaller extends BaseMarshaller {
 			$this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 		}
 
-		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
-		$entityClass = $this->_table->getEntityClass();
-
 		// Convert back to arrays
 		$data = (array)$data;
 		$options = (array)$options;
-
-		if (method_exists($entityClass, 'unmapField')) {
-			foreach ($data as $field => $value) {
-				$unmappedField = $entityClass::unmapField($field);
-
-				if ($unmappedField === $field) {
-					continue;
-				}
-
-				$data[ $unmappedField ] = $value;
-				unset($data[ $field ]);
-			}
-		}
 
 		return [$data, $options];
 	}

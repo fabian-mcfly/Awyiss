@@ -73,7 +73,7 @@ class MediaFoldersTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertSame('shortcode', $languagesAssociation->getBindingKey());
-		$this->assertSame('language_shortcode', $languagesAssociation->getForeignKey());
+		$this->assertSame('languageShortcode', $languagesAssociation->getForeignKey());
 		$this->assertSame(['realm' => Awyiss::REALM_FRONTEND], $languagesAssociation->getConditions());
 
 		// Test Media association (HasMany)
@@ -148,7 +148,7 @@ class MediaFoldersTableTest extends TestCase {
 		$result = $this->mediaFoldersTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_folders', $result->getI18nDomain());
+		$this->assertSame('MediaFolders', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('languageShortcode'));
@@ -715,7 +715,7 @@ class MediaFoldersTableTest extends TestCase {
 		// Verify the specific conditions are applied
 		$sql = $query->sql();
 		$this->assertStringContainsString('active = :c4', $sql);
-		$this->assertStringContainsString('parents_active = :c5', $sql);
+		$this->assertStringContainsString('parentsActive = :c5', $sql);
 
 		// Verify the bound values
 		$valueBinder = $query->getValueBinder();
@@ -809,7 +809,7 @@ class MediaFoldersTableTest extends TestCase {
 
 		$config = $this->mediaFoldersTable->getBehavior('Search')->getConfig();
 
-		$this->assertSame(['language_shortcode', 'hidden'], $config['blocklistedColumns']);
+		$this->assertSame(['languageShortcode', 'hidden'], $config['blocklistedColumns']);
 	}
 
 

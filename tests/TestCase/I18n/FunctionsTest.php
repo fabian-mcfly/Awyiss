@@ -187,16 +187,16 @@ class FunctionsTest extends TestCase {
 	 * @see __df()
 	 */
 	public function test__dfUsesFallbackDomainWhenNotFound(): void { // phpcs:ignore
-		$message = __df('TestDomain', 'system', 'meta_title_overview');
+		$message = __df('TestDomain', 'System', 'meta_title_overview');
 		$this->assertSame('Overview - Awyiss CMS Backend', $message);
 
-		$message = __df('TestDomain', 'system', 'menu_title');
+		$message = __df('TestDomain', 'System', 'menu_title');
 		$this->assertSame('Menu Title', $message);
 
-		$message = __df('TestDomain', 'system', 'headline_overview');
+		$message = __df('TestDomain', 'System', 'headline_overview');
 		$this->assertSame('This is a test headline for the en_ZW locale in the Backend/test_domain domain.', $message);
 
-		$message = __df('TestDomain', 'validation', 'error_min_length');
+		$message = __df('TestDomain', 'Validation', 'error_min_length');
 		$this->assertSame('The field must be at least {0} characters long.', $message);
 	}
 
@@ -206,7 +206,7 @@ class FunctionsTest extends TestCase {
 	 * @see __df()
 	 */
 	public function test__dfPrefixedWithMainDomainWhenNotFoundInFallback(): void { // phpcs:ignore
-		$message = __df('TestDomain', 'validation', 'unknown_string');
+		$message = __df('TestDomain', 'Validation', 'unknown_string');
 		$this->assertSame('test_domain::unknown_string', $message);
 	}
 
@@ -216,7 +216,7 @@ class FunctionsTest extends TestCase {
 	 * @see __df()
 	 */
 	public function test__dfUnderscoresFallbackDomain(): void { // phpcs:ignore
-		$message = __df('system', 'TestDomain', 'field_name');
+		$message = __df('System', 'TestDomain', 'field_name');
 		$this->assertSame('Testfield', $message);
 	}
 }

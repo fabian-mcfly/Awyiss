@@ -155,12 +155,12 @@ class MediaElementsTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["cars", false, true]
-	 *           ["content_templates", true, false]
-	 *           ["employees", false, true]
-	 *           ["employers", false, true]
-	 *           ["page_templates", true, false]
-	 *           ["global_content_templates", true, false]
+	 * @testWith ["Cars", false, true]
+	 *           ["ContentTemplates", true, false]
+	 *           ["Employees", false, true]
+	 *           ["Employers", false, true]
+	 *           ["PageTemplates", true, false]
+	 *           ["GlobalContentTemplates", true, false]
 	 * @param string $model
 	 * @param bool $entityLevel
 	 * @param bool $modelLevel
@@ -190,12 +190,12 @@ class MediaElementsTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["cars", false]
-	 *           ["content_templates", true]
-	 *           ["employees", false]
-	 *           ["employers", false]
-	 *           ["page_templates", true]
-	 *           ["global_content_templates", true]
+	 * @testWith ["Cars", false]
+	 *           ["ContentTemplates", true]
+	 *           ["Employees", false]
+	 *           ["Employers", false]
+	 *           ["PageTemplates", true]
+	 *           ["GlobalContentTemplates", true]
 	 * @param string $model
 	 * @param bool $hasEntities
 	 * @return void
@@ -224,7 +224,7 @@ class MediaElementsTableTest extends TestCase {
 		$result = $this->mediaElementsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('media_elements', $result->getI18nDomain());
+		$this->assertSame('MediaElements', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('title'));
@@ -247,7 +247,7 @@ class MediaElementsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'title' => 'Test Media Element',
-			'identifier' => 'test_media_element',
+			'identifier' => 'testMediaElement',
 			'columnSpan' => '12/12',
 			'internal' => false,
 			'systemOrder' => 1,
@@ -269,7 +269,7 @@ class MediaElementsTableTest extends TestCase {
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 		];
 
 		$entity = $this->mediaElementsTable->newDefaultEntity();
@@ -359,7 +359,7 @@ class MediaElementsTableTest extends TestCase {
 
 		$data = [
 			'title' => 'Test Element',
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'columnSpan' => $validColumnSpan,
 		];
 
@@ -378,7 +378,7 @@ class MediaElementsTableTest extends TestCase {
 	public function testEntityValidationColumnSpanNotInList(): void {
 		$data = [
 			'title' => 'Test Element',
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'columnSpan' => 'invalid_column_span',
 		];
 
@@ -470,7 +470,7 @@ class MediaElementsTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'title' => 'Custom Media Element',
-			'identifier' => 'custom_element',
+			'identifier' => 'customElement',
 			'columnSpan' => '6/12',
 			'internal' => true,
 			'systemOrder' => 5,
@@ -485,7 +485,7 @@ class MediaElementsTableTest extends TestCase {
 
 		// Check custom values
 		$this->assertSame('Custom Media Element', $entity->title);
-		$this->assertSame('custom_element', $entity->identifier);
+		$this->assertSame('customElement', $entity->identifier);
 		$this->assertSame('6/12', $entity->columnSpan);
 		$this->assertTrue($entity->internal);
 		$this->assertSame(5, $entity->systemOrder);

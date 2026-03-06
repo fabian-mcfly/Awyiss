@@ -50,15 +50,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'last_login' => 'lastLogin',
-		'failed_attempts' => 'failedAttempts',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'username' => true,
 		'password' => true,
@@ -128,22 +119,22 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 * $usergroups = [
 		 *    'usergroup1' => [
 		 *        ...
-		 *        'usergroup_permissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
+		 *        'usergroupPermissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
 		 *     ...
 		 *    ],
 		 *    'usergroup2' => [
 		 *        ...
-		 *        'usergroup_permissions' => [permission2.1, permission2.2],
+		 *        'usergroupPermissions' => [permission2.1, permission2.2],
 		 *        ...
 		 *    ],
 		 *    'usergroup3' => [
 		 *        ...
-		 *        'usergroup_permissions' => [permission3.1, permission3.2, permission3.3],
+		 *        'usergroupPermissions' => [permission3.1, permission3.2, permission3.3],
 		 *        ...
 		 *    ],
 		 * ];
 		 *
-		 * The call of array_column returns all values for 'usergroup_permissions' in all elements of $usergroups:
+		 * The call of array_column returns all values for 'usergroupPermissions' in all elements of $usergroups:
 		 * [[permission1.1, permission1.2, permission1.3, permission1.4], [permission2.1, permission2.2], [permission3.1, permission3.2, permission3.3]]
 		 *
 		 * Calling array_merge with ... expands each child array and then flattens all.
@@ -157,7 +148,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 		foreach (['read', 'create', 'update', 'delete'] as $identifier) {
 			$this->permissionCollection->add(Permission::createFromArray([
-				'scope' => 'user_configuration',
+				'scope' => 'UserConfiguration',
 				'identifier' => $identifier,
 				'access' => PermissionAccess::Granted,
 			]));
@@ -196,7 +187,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		}
 
 		$table = FactoryLocator::get('Table')->get('UserConfiguration');
-		$records = $table->find()->where(['user_id' => $this->id])->all();
+		$records = $table->find()->where(['userId' => $this->id])->all();
 
 		$this->userConfiguration = $records->groupBy(function (UserConfiguration $entity) {
 			return ConfigOptionsProvider::sanitizeScope($entity->scope);
@@ -264,7 +255,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		$inactive = '';
 
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$inactive = __d('users', 'inactive') . ' ';
+			$inactive = __d('Users', 'inactive') . ' ';
 		}
 
 

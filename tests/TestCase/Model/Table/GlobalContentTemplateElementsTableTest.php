@@ -135,7 +135,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		$result = $this->globalContentTemplateElementsTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('global_content_template_elements', $result->getI18nDomain());
+		$this->assertSame('GlobalContentTemplateElements', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('identifier'));
@@ -160,7 +160,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'globalContentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'title' => 'Test Element',
 			'fieldset' => 'general',
 			'columnSpan' => '5/12',
@@ -250,7 +250,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		// Test invalid column span
 		$invalidData = [
 			'globalContentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 			'columnSpan' => 'invalid_span',
 		];
@@ -269,7 +269,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 	public function testEntityValidationEmptyTitle(): void {
 		$data = [
 			'globalContentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 			'title' => '',
 		];
@@ -290,7 +290,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		// Test with existing global content template
 		$validData = [
 			'globalContentTemplateId' => 1,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 		];
 
@@ -301,7 +301,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		// Test with non-existing global content template
 		$invalidData = [
 			'globalContentTemplateId' => 99999,
-			'identifier' => 'test_element',
+			'identifier' => 'testElement',
 			'fieldset' => 'general',
 		];
 
@@ -350,7 +350,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		$additionalData = [
 			'required' => true,
 			'globalContentTemplateId' => 1,
-			'identifier' => 'custom_element',
+			'identifier' => 'customElement',
 			'title' => 'Custom Element',
 			'fieldset' => 'content',
 			'systemOrder' => 5,
@@ -368,7 +368,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		$this->assertTrue($entity->required);
 		$this->assertSame(5, $entity->systemOrder);
 		$this->assertSame(1, $entity->globalContentTemplateId);
-		$this->assertSame('custom_element', $entity->identifier);
+		$this->assertSame('customElement', $entity->identifier);
 
 		$this->assertIsArray($entity->column);
 		$this->assertCount(1, $entity->column);

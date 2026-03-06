@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Enum\Survey\NextAction;
 use Awyiss\Model\Enum\Survey\Type;
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -42,19 +43,6 @@ use InvalidArgumentException;
  */
 class Survey extends Entity {
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'success_message' => 'successMessage',
-		'failure_message' => 'failureMessage',
-		'final_action' => 'finalAction',
-		'form_id' => 'formId',
-		'survey_survey_questions' => 'surveySurveyQuestions',
-		'survey_entries' => 'surveyEntries',
-	];
 
 
 	/**
@@ -224,7 +212,7 @@ class Survey extends Entity {
 		]);
 
 		$questions = $query->where([
-			'survey_id' => $this->id,
+			'surveyId' => $this->id,
 		])->all()->compile();
 
 		if (!$questions->count()) {
@@ -561,7 +549,7 @@ class Survey extends Entity {
 		$this->currentAction = null;
 
 		$customData = $progressData['custom'] ?? [];
-		unset($progressData['custom'], $progressData['action'], $progressData['last_action']);
+		unset($progressData['custom'], $progressData['action'], $progressData['lastAction']);
 
 		foreach ($progressData as $identifier => $answer) {
 			$question = $this->questionsByIdentifier[ $identifier ] ?? null;
@@ -736,7 +724,7 @@ class Survey extends Entity {
 
 				$question->setError(
 					'nextActionTarget',
-					__df('surveys', 'validation', 'error_no_circular_references')
+					__df('Surveys', 'Validation', 'error_no_circular_references')
 				);
 
 				return true;
@@ -1104,6 +1092,6 @@ class Survey extends Entity {
 
 		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($identifier);
+		return Inflector::variable($identifier);
 	}
 }

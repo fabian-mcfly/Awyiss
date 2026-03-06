@@ -68,7 +68,9 @@ class GlobalContentTemplateElementsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('GlobalContentTemplates', [
+			'foreignKey' => 'globalContentTemplateId',
 			'joinType' => 'INNER',
+			'propertyName' => 'globalContentTemplate',
 		]);
 	}
 
@@ -155,7 +157,7 @@ class GlobalContentTemplateElementsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('globalContentTemplateId', 'GlobalContentTemplates'), 'globalContentTemplateExists', [
 			'errorField' => 'globalContentTemplateId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_global_content_template_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_global_content_template_exists'),
 		]);
 
 

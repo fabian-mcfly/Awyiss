@@ -57,7 +57,7 @@ class UserConfigurationTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['user_id'],
+		'blocklistedColumns' => ['userId'],
 	];
 
 
@@ -73,13 +73,11 @@ class UserConfigurationTable extends Table {
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
+			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
 		})->toArray();
 
 		$configScopes = [];
 		foreach ($this->getScopes() as $identifier => $className) {
-			$identifier = Inflector::underscore($identifier);
-
 			if (isset($pageRoles[ $identifier ])) {
 				$configScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
@@ -106,6 +104,7 @@ class UserConfigurationTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Users', [
+			'foreignKey' => 'userId',
 			'joinType' => 'LEFT',
 		]);
 	}
@@ -179,7 +178,7 @@ class UserConfigurationTable extends Table {
 					$entity->hasOriginal('userId') &&
 					$entity->get('userId') !== $entity->getOriginal('userId')
 				) {
-					return __df($this->getI18nDomain(), 'validation', 'error_user_id_unchanged');
+					return __df($this->getI18nDomain(), 'Validation', 'error_user_id_unchanged');
 				}
 
 
@@ -197,7 +196,7 @@ class UserConfigurationTable extends Table {
 				[
 					'scope',
 					'identifier',
-					'user_id',
+					'userId',
 				],
 				[
 					'allowMultipleNulls' => false,
@@ -206,7 +205,7 @@ class UserConfigurationTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -219,7 +218,7 @@ class UserConfigurationTable extends Table {
 			return $configOption && $configOption->isPersonalizable();
 		}, 'configOptionIsPersonalizable', [
 			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_config_option_is_personalizable'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_config_option_is_personalizable'),
 		]);
 
 
@@ -257,7 +256,7 @@ class UserConfigurationTable extends Table {
 		'validValue',
 		[
 			'errorField' => 'value',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_value'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_value'),
 		]);
 
 
@@ -268,7 +267,7 @@ class UserConfigurationTable extends Table {
 			'configOwnedByUser',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_config_owned_by_user'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_config_owned_by_user'),
 			]
 		);
 

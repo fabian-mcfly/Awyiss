@@ -35,13 +35,13 @@
 						{% block tableOverviewHeadRowInner %}
 							{% block tableOverviewHeaderId %}
 								<th class="TableHeader-Id{% if PaginatorHelper.isCurrentSortKey('id') %} Active{% endif %}">
-									{{ PaginatorHelper.sort('id', i18nDomain ? __df(i18nDomain, 'system', 'id') : __('id')) }}
+									{{ PaginatorHelper.sort('id', i18nDomain ? __df(i18nDomain, 'System', 'id') : __('id')) }}
 								</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderTitle %}
 								<th class="TableHeader-Title{% if PaginatorHelper.isCurrentSortKey('title') %} Active{% endif %}">
-									{{ PaginatorHelper.sort('title', i18nDomain ? __df(i18nDomain, 'system', 'title') : __('title')) }}
+									{{ PaginatorHelper.sort('title', i18nDomain ? __df(i18nDomain, 'System', 'title') : __('title')) }}
 								</th>
 							{% endblock %}
 
@@ -51,24 +51,22 @@
 								{% for field in displayedFields %}
 									{% block tableOverviewHeaderDisplayedField %}
 										{% if field starts with 'attributes.' %}
-											{% set field = field|slice(11)|underscore %}
+											{% set field = field|slice(11) %}
 											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
 												{{ PaginatorHelper.sort(field, attributes[field].label) }}
 											</th>
 										{% else %}
-											{% set field = field|underscore %}
-
-											{% if field ends with '_id' and field != 'parent_id' %}
+											{% if field ends with 'Id' and field != 'parentId' %}
 												{% set associationName = field|slice(0, -3) %}
 												<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(associationName|variable ~ '.title') %} Active{% endif %}">
-													{{ PaginatorHelper.sort(associationName|variable ~ '.title', i18nDomain ? __df(i18nDomain, 'system', field) : __(field)) }}
+													{{ PaginatorHelper.sort(associationName|variable ~ '.title', i18nDomain ? __df(i18nDomain, 'System', field|underscore) : __(field|underscore)) }}
 												</th>
 											{% else %}
 												<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
 													{{ PaginatorHelper.sort(field,
-														field in ['meta_title', 'meta_description', 'robots_index', 'robots_follow']
-														? __d('seo', field)
-														: (i18nDomain ? __df(i18nDomain, 'system', field) : __(field))
+														field in ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow']
+														? __d('Seo', field)
+														: (i18nDomain ? __df(i18nDomain, 'System', field|underscore) : __(field|underscore))
 													) }}
 												</th>
 											{% endif %}
@@ -115,12 +113,11 @@
 										{% block tableOverviewCellDisplayedField %}
 											<td class="TableCell-{{ field|camelize }}">
 												{% if field starts with 'attributes.' %}
-													{% set field = field|slice(11)|underscore %}
+													{% set field = field|slice(11) %}
 													{% block tableOverviewCellDisplayedFieldAttributeValue %}
 														{% include '@Backend/element/overview/list_item_attribute_value.twig' %}
 													{% endblock %}
 												{% else %}
-													{% set field = field|underscore %}
 													{% block tableOverviewCellDisplayedFieldDefaultValue %}
 														{% include '@Backend/element/overview/list_item_value.twig' %}
 													{% endblock %}
@@ -137,14 +134,14 @@
 												<li><strong>ID:</strong> {{ entity.id }}</li>
 											</ul>
 
-											{{ HtmlHelper.link(__d('audit', 'show_history'), {
+											{{ HtmlHelper.link(__d('Audit', 'show_history'), {
 												controller: 'audit',
 												action: 'history',
 												scope: entity.source|underscore,
 												id: entity.id
 											}, {
 												escape: false,
-												title: __d('audit', 'show_history'),
+												title: __d('Audit', 'show_history'),
 											}) }}
 										</div>
 									</td>
@@ -168,19 +165,19 @@
 
 											{% block tableOverviewCellActionsUpdate %}
 												{% if AuthorizationHelper.isAccessible('update') %}
-													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 												{% endif %}
 											{% endblock %}
 
 											{% block tableOverviewCellActionsDelete %}
 												{% if AuthorizationHelper.isAccessible('delete') %}
-													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
+													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
 														class: 'Button Button-Small Button-Delete',
-														'data-confirm-title': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_title') : __('confirm_delete_title'),
-														'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_yes') : __('confirm_delete_yes'),
+														'data-confirm-title': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_title') : __('confirm_delete_title'),
+														'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_yes') : __('confirm_delete_yes'),
 														'data-confirm-yes-class': 'Button-Delete',
-														'data-confirm-no': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_no') : __('confirm_delete_no'),
-														'data-confirm': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
+														'data-confirm-no': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_no') : __('confirm_delete_no'),
+														'data-confirm': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
 												{% endif %}
 											{% endblock %}
 										</div>
@@ -215,7 +212,7 @@
 								{% block listControlCounter %}
 									<li class="ListControl-Item ListControl-Item-Counter">
 										{% block listControlCounterInner %}
-											<span class="Pagination-Counter">{{ PaginatorHelper.counter(__d('pagination', 'counter'))|raw }}</span>
+											<span class="Pagination-Counter">{{ PaginatorHelper.counter(__d('Pagination', 'counter'))|raw }}</span>
 										{% endblock %}
 									</li>
 								{% endblock %}

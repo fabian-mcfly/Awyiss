@@ -60,8 +60,8 @@ class CustomerGroupsCustomerTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'customer_group_id' => 123,
-			'customer_id' => 456,
+			'customerGroupId' => 123,
+			'customerId' => 456,
 		];
 
 		$entity = new CustomerGroupsCustomer($properties);
@@ -69,24 +69,5 @@ class CustomerGroupsCustomerTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(123, $entity->customerGroupId);
 		$this->assertEquals(456, $entity->customerId);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\CustomerGroupsCustomer::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'customer_group_id' => 789,
-			'customer_id' => 101,
-		];
-
-		$entity = new CustomerGroupsCustomer($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

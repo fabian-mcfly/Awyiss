@@ -24,12 +24,12 @@
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
-	{% if field == 'default_value' %}
+	{% if field == 'defaultValue' %}
 		{{ entity.defaultValue ?? '<em>null</em>' }}
 	{% elseif field == 'fieldset' %}
 		{{ entity.fieldset ? __('fieldset_' ~ entity.fieldset) : '' }}
-	{% elseif field == 'input_type' %}
-		{{ __('input_type_' ~ entity.inputType) }}
+	{% elseif field == 'inputType' %}
+		{{ __('input_type_' ~ entity.inputType|underscore) }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

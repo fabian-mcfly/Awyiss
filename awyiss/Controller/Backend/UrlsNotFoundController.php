@@ -22,7 +22,7 @@ class UrlsNotFoundController extends Controller {
 	protected array $paginate = [
 		'enabled' => true,
 		'order' => [
-			'created_on' => 'desc',
+			'createdOn' => 'desc',
 			'id' => 'desc',
 		],
 	];
@@ -53,12 +53,12 @@ class UrlsNotFoundController extends Controller {
 		 * @uses \Awyiss\Model\Table::findActive()
 		 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
-		$pagesQuery = $pagesTable->find('active', skipPageRoleCheck: true)
+		$pagesQuery = $pagesTable->find('active', skipPageRoleCheck: true, customerGroupAccessSettings: ['skip' => true])
 			->disableAutoFields()
 			->find('published')
 			->select(function ($query) {
-				return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
-			});
+				return ['slug' => $query->func()->concat(['/', 'languageShortcode' => 'identifier', '/', 'slug' => 'identifier'])];
+			}, true);
 
 		$urlHistoryTable = $this->fetchTable('UrlHistory');
 		$urlHistoryQuery = $urlHistoryTable->find()
@@ -76,26 +76,22 @@ class UrlsNotFoundController extends Controller {
 		if ($grouped) {
 			$query->select([
 				'occurrences' => $query->func()->count('*'),
-				'first_occurrence' => $query->func()->min('created_on', ['datetime']),
-				'last_occurrence' => $query->func()->max('created_on', ['datetime']),
+				'firstOccurrence' => $query->func()->min('createdOn', ['datetime']),
+				'lastOccurrence' => $query->func()->max('createdOn', ['datetime']),
 			])
 			->enableAutoFields()
 			->groupBy('url');
 
 			array_unshift($this->paginate['order'], 'occurrences');
 
-			/** @var \Awyiss\Model\Entity\UrlsNotFound $entityClass */
-			$entityClass = $this->UrlsNotFound->getEntityClass();
-			$entityClass::addFieldMapping('first_occurrence', 'firstOccurrence');
-			$entityClass::addFieldMapping('last_occurrence', 'lastOccurrence');
 			$urlsNotFound = $this->paginate($query, [
 				'order' => [
 					'occurrences' => 'desc',
 				],
 				'defaultSortableFields' => [
 					'occurrences',
-					'first_occurrence',
-					'last_occurrence',
+					'firstOccurrence',
+					'lastOccurrence',
 				],
 			]);
 		}

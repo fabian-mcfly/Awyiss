@@ -36,7 +36,7 @@
 	<label class="Label">{{ label }}</label>
 
 	<div class="MediaSelector-Preview"{% if mediaFolderId %} data-media-folder-id="{{ mediaFolderId }}"{% endif %}>
-		<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
+		<span class="MediaSelector-MediaSelect">{{ __d('Media', 'select_file') }}</span>
 
 		{% if mediaItem %}
 			{% set imageSizeInfo = '' %}
@@ -58,18 +58,18 @@
 		{% endif %}
 	</div>
 
-	<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
+	<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('Media', 'remove_file') }}</button>
 
-	{{ FormHelper.input('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.media_id', {
+	{{ FormHelper.input('mediaAssignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.mediaId', {
 		required: false,
 		type: 'text',
 		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].mediaId,
 		'data-form-updater': true,
 	}) }}
 
-	{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.id', {
+	{{ FormHelper.hidden('mediaAssignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.id', {
 		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].id,
 	}) }}
 
-	{{ FormHelper.error('media_assignments.' ~ element.identifier|variable ~ '.' ~ elementSelector.identifier|variable ~ '.media_id') }}
+	{{ FormHelper.error('mediaAssignments.' ~ element.identifier|variable ~ '.' ~ elementSelector.identifier|variable ~ '.mediaId') }}
 </div>

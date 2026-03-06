@@ -32,18 +32,6 @@ class EmailTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'text_html' => 'textHtml',
-		'text_plain' => 'textPlain',
-		'file_name' => 'fileName',
-		'used_for_emails' => 'usedForEmails',
-		'used_for_confirmation_emails' => 'usedForConfirmationEmails',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'textHtml' => true,

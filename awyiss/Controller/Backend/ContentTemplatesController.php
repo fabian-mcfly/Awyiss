@@ -26,7 +26,7 @@ class ContentTemplatesController extends Controller {
 	 */
 	protected array $paginate = [
 		'enabled' => true,
-		'defaultSortableFields' => ['used_for_contents'],
+		'defaultSortableFields' => ['usedForContents'],
 	];
 
 
@@ -181,22 +181,22 @@ class ContentTemplatesController extends Controller {
 			$contentTemplate->setAccess('attributes', true);
 		}
 
-		$requestData = $this->request->getData() + ['content_template_elements' => []];
+		$requestData = $this->request->getData() + ['contentTemplateElements' => []];
 
-		if (!empty($requestData['content_template_elements'])) {
-			$requestData['content_template_elements'] = array_filter($requestData['content_template_elements'], function ($element) {
+		if (!empty($requestData['contentTemplateElements'])) {
+			$requestData['contentTemplateElements'] = array_filter($requestData['contentTemplateElements'], function ($element) {
 				return !empty($element['identifier']);
 			});
 
-			$requestData['content_template_elements'] = array_map(function ($element) {
+			$requestData['contentTemplateElements'] = array_map(function ($element) {
 				static $systemOrder = 1;
 
-				$element['system_order'] = $systemOrder++;
+				$element['systemOrder'] = $systemOrder++;
 
 				return $element;
-			}, $requestData['content_template_elements']);
+			}, $requestData['contentTemplateElements']);
 
-			$request = $this->request->withData('content_template_elements', $requestData['content_template_elements']);
+			$request = $this->request->withData('contentTemplateElements', $requestData['contentTemplateElements']);
 			$this->setRequest($request);
 
 			$associated[] = 'ContentTemplateElements';
@@ -204,41 +204,41 @@ class ContentTemplatesController extends Controller {
 
 		$this->ContentTemplates->patchEntity($contentTemplate, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
 		$contentTemplate->set('contentAreas', []);
-		if (!empty($requestData['content_areas'])) {
+		if (!empty($requestData['contentAreas'])) {
 			$contentAreas = collection(array_column($this->getPageTemplates(false), 'contentAreas'))->unfold();
 			$contentAreas = $contentAreas->indexBy('id')->toArray();
 
 			$throughTable = $this->ContentTemplates->ContentAreas->getThrough();
 			$throughTable = $this->fetchTable($throughTable);
 
-			foreach ($requestData['content_areas'] as $contentAreaData) {
-				if (empty($contentAreaData['content_area_id'])) {
+			foreach ($requestData['contentAreas'] as $contentAreaData) {
+				if (empty($contentAreaData['contentAreaId'])) {
 					continue;
 				}
 
-				$contentArea = clone $contentAreas[ $contentAreaData['content_area_id'] ];
+				$contentArea = clone $contentAreas[ $contentAreaData['contentAreaId'] ];
 				unset($contentArea->_joinData);
 				$contentArea->_joinData = $throughTable->newEntity([
-					'page_template_id' => $contentAreaData['page_template_id'],
+					'pageTemplateId' => $contentAreaData['pageTemplateId'],
 				]);
 
 				$contentTemplate->contentAreas[] = $contentArea;
 			}
 		}
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->ContentTemplates->save($contentTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($contentTemplate),

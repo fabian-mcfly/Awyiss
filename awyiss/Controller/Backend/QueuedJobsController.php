@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Queue\Model\Entity\QueuedJob;
@@ -201,7 +202,7 @@ class QueuedJobsController extends BackendController {
 	protected function taskFailed(QueuedJob $queuedJob): bool {
 		$taskConfig = $this->taskConfig[ $queuedJob->job_task ] ?? null;
 
-		if (!$queuedJob->failure_message) {
+		if (!$queuedJob->failureMessage) {
 			return false;
 		}
 
@@ -248,6 +249,6 @@ class QueuedJobsController extends BackendController {
 			$arguments = array_slice($referenceParts, 2);
 		}
 
-		$queuedJob->reference = __d($referenceParts[0], $referenceParts[1], ...$arguments);
+		$queuedJob->reference = __d($referenceParts[0], Inflector::underscore($referenceParts[1]), ...$arguments);
 	}
 }

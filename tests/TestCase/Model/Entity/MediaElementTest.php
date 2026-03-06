@@ -76,22 +76,22 @@ class MediaElementTest extends TestCase {
 		$entity = new MediaElement();
 
 		$entity->identifier = 'Media Element';
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->identifier = 'MediaElement';
-		$this->assertEquals('mediaelement', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->identifier = 'Media-Element';
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->identifier = 'Media Element!@#$%';
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->identifier = 'IMAGE GALLERY';
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('iMAGEGALLERY', $entity->identifier);
 
 		$entity->identifier = 'Video Player Element';
-		$this->assertEquals('video_player_element', $entity->identifier);
+		$this->assertEquals('videoPlayerElement', $entity->identifier);
 
 		$entity->identifier = null;
 		$this->assertNull($entity->identifier);
@@ -106,22 +106,22 @@ class MediaElementTest extends TestCase {
 		$entity = new MediaElement();
 
 		$entity->set('identifier', 'Media Element');
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->set('identifier', 'MediaElement');
-		$this->assertEquals('mediaelement', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->set('identifier', 'Media-Element');
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->set('identifier', 'Media Element!@#$%');
-		$this->assertEquals('media_element', $entity->identifier);
+		$this->assertEquals('mediaElement', $entity->identifier);
 
 		$entity->set('identifier', 'IMAGE GALLERY');
-		$this->assertEquals('image_gallery', $entity->identifier);
+		$this->assertEquals('iMAGEGALLERY', $entity->identifier);
 
 		$entity->set('identifier', 'Video Player Element');
-		$this->assertEquals('video_player_element', $entity->identifier);
+		$this->assertEquals('videoPlayerElement', $entity->identifier);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$entity->set('identifier', null);
@@ -186,9 +186,9 @@ class MediaElementTest extends TestCase {
 			'id' => 1,
 			'title' => 'Test Media Element',
 			'identifier' => 'Test Media Element',
-			'column_span' => '4/12',
+			'columnSpan' => '4/12',
 			'internal' => false,
-			'system_order' => 10,
+			'systemOrder' => 10,
 			'active' => true,
 			'deleted' => false,
 		];
@@ -197,32 +197,11 @@ class MediaElementTest extends TestCase {
 
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals('Test Media Element', $entity->title);
-		$this->assertEquals('test_media_element', $entity->identifier);
+		$this->assertEquals('testMediaElement', $entity->identifier);
 		$this->assertEquals('4/12', $entity->columnSpan);
 		$this->assertFalse($entity->internal);
 		$this->assertEquals(10, $entity->systemOrder);
 		$this->assertTrue($entity->active);
 		$this->assertFalse($entity->deleted);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaElement::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'column_span' => '8/12',
-			'system_order' => 5,
-			'media_element_assignments' => [],
-			'media_element_selectors' => [],
-		];
-
-		$entity = new MediaElement($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

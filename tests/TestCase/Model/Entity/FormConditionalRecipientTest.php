@@ -76,17 +76,17 @@ class FormConditionalRecipientTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'form_id' => 123,
+			'formId' => 123,
 			'type' => 'email',
 			'field' => 'anrede',
 			'operator' => 'equals',
 			'value' => 'Frau',
 			'recipient' => 'female@example.com',
-			'system_order' => 10,
-			'created_by' => 456,
-			'created_on' => '2025-01-06 12:00:00',
-			'changed_by' => 789,
-			'changed_on' => '2025-01-06 13:00:00',
+			'systemOrder' => 10,
+			'createdBy' => 456,
+			'createdOn' => '2025-01-06 12:00:00',
+			'changedBy' => 789,
+			'changedOn' => '2025-01-06 13:00:00',
 		];
 
 		$entity = new FormConditionalRecipient($properties);
@@ -113,13 +113,13 @@ class FormConditionalRecipientTest extends TestCase {
 	public function testEntityConstructionWithDifferentOperators(): void {
 		$properties = [
 			'id' => 2,
-			'form_id' => 456,
+			'formId' => 456,
 			'type' => 'cc',
 			'field' => 'multi_select',
 			'operator' => 'contains',
 			'value' => 'option_b',
 			'recipient' => 'manager@example.com',
-			'system_order' => 5,
+			'systemOrder' => 5,
 		];
 
 		$entity = new FormConditionalRecipient($properties);
@@ -142,13 +142,13 @@ class FormConditionalRecipientTest extends TestCase {
 	public function testEntityConstructionWithBccType(): void {
 		$properties = [
 			'id' => 3,
-			'form_id' => 789,
+			'formId' => 789,
 			'type' => 'bcc',
 			'field' => 'telefon',
 			'operator' => 'not_empty',
 			'value' => '',
 			'recipient' => 'audit@example.com',
-			'system_order' => 1,
+			'systemOrder' => 1,
 		];
 
 		$entity = new FormConditionalRecipient($properties);
@@ -171,13 +171,13 @@ class FormConditionalRecipientTest extends TestCase {
 	public function testEntityConstructionWithNotEqualsOperator(): void {
 		$properties = [
 			'id' => 4,
-			'form_id' => 101,
+			'formId' => 101,
 			'type' => 'email',
-			'field' => 'datenschutz_akzeptiert',
-			'operator' => 'not_equals',
+			'field' => 'datenschutzAkzeptiert',
+			'operator' => 'notEquals',
 			'value' => 'Ja',
 			'recipient' => 'legal@example.com',
-			'system_order' => 15,
+			'systemOrder' => 15,
 		];
 
 		$entity = new FormConditionalRecipient($properties);
@@ -185,29 +185,10 @@ class FormConditionalRecipientTest extends TestCase {
 		$this->assertEquals(4, $entity->id);
 		$this->assertEquals(101, $entity->formId);
 		$this->assertEquals('email', $entity->type);
-		$this->assertEquals('datenschutz_akzeptiert', $entity->field);
-		$this->assertEquals('not_equals', $entity->operator);
+		$this->assertEquals('datenschutzAkzeptiert', $entity->field);
+		$this->assertEquals('notEquals', $entity->operator);
 		$this->assertEquals('Ja', $entity->value);
 		$this->assertEquals('legal@example.com', $entity->recipient);
 		$this->assertEquals(15, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\FormConditionalRecipient::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'form_id' => 999,
-			'system_order' => 20,
-		];
-
-		$entity = new FormConditionalRecipient($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

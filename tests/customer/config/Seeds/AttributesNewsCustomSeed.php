@@ -15,7 +15,7 @@ class AttributesNewsCustomSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'page_id' => 38,
+				'pageId' => 38,
 				'date' => '2020-02-02',
 				'teaser' => '<p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p>',
 				'text' => null,

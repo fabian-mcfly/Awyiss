@@ -144,24 +144,6 @@ class CustomerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Model\Entity\Customer::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'verification_code' => 'testcode123',
-		];
-
-		$entity = new Customer($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Model\Entity\Customer
 	 */
 	public function testEntityConstruction(): void {

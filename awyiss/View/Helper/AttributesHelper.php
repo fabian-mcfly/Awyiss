@@ -226,7 +226,7 @@ class AttributesHelper extends Helper {
 		if (
 			$attributeOptions &&
 			empty($options['options']) &&
-			in_array($options['type'], ['checkbox', 'multicheckbox', 'select', 'select_multiple'])
+			in_array($options['type'], ['checkbox', 'multicheckbox', 'select', 'selectMultiple'])
 		) {
 			$options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $options, $this->getContext());
 		}
@@ -313,7 +313,7 @@ class AttributesHelper extends Helper {
 		}
 
 		// If the value is an array, but the type is not a multiple-select, convert the value to a JSON-string
-		if (!in_array($type, ['multicheckbox', 'select_multiple', 'custom_select_multiple'])) {
+		if (!in_array($type, ['multicheckbox', 'selectMultiple', 'customSelectMultiple'])) {
 			$value = json_encode($value);
 		}
 	}
@@ -483,7 +483,7 @@ class AttributesHelper extends Helper {
 			case 'select':
 				$options['empty'] ??= true;
 				break;
-			case 'select_multiple':
+			case 'selectMultiple':
 				$options['type'] = 'select';
 				$options['multiple'] = true;
 				break;

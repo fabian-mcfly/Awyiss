@@ -9,10 +9,10 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% do _view.assign('metaTitle', __d('system', 'headline_error_400') ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ 'Awyiss') %}
+{% do _view.assign('metaTitle', __d('System', 'headline_error_400') ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ 'Awyiss') %}
 {% do _view.assign('controllerName', 'Error') %}
 
-<h1>{{ __d('system', 'headline_error_400') }}</h1>
-<p>{{ __d('system', 'subtitle_error_400') }}</p>
+<h1>{{ __d('System', 'headline_error_400') }}</h1>
+<p>{{ __d('System', 'subtitle_error_400') }}</p>
 
-<img src="{{ UrlHelper.build('/awyiss/assets/img/404.png') }}" alt="{{ __d('system', 'headline_error_400') }}">
+<img src="{{ UrlHelper.build('/awyiss/assets/img/404.png') }}" alt="{{ __d('System', 'headline_error_400') }}">

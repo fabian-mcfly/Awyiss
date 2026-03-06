@@ -1037,7 +1037,7 @@ class FormHelperTest extends TestCase {
 		$form = $formsTable->get(1);
 
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', [
-			'hidden_input',
+			'hiddenInput',
 		]);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -1049,13 +1049,13 @@ class FormHelperTest extends TestCase {
 		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_BEFORE);
 		$this->assertSame('<div class="hidden-input-protection">This is a test for the before position.</div>' . PHP_EOL, $result);
 
-		$result = $this->formHelper->renderFormProtection($form, 'before_submit');
+		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertSame('<div class="hidden-input-protection">This is a test for the before submit position.</div>' . PHP_EOL, $result);
 
 		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertSame('<div class="hidden-input-protection">This is a test for the before submit position.</div>' . PHP_EOL, $result);
 
-		$result = $this->formHelper->renderFormProtection($form, 'after');
+		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_AFTER);
 		$this->assertSame('<div class="hidden-input-protection">This is a test for the after position.</div>' . PHP_EOL, $result);
 
 		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_AFTER);
@@ -1074,7 +1074,7 @@ class FormHelperTest extends TestCase {
 			'<a href="/items?filter=option3">Option 3</a>',
 		];
 
-		$result = $this->formHelper->linkSelect('test_filter', $options);
+		$result = $this->formHelper->linkSelect('testFilter', $options);
 
 		$this->assertStringContainsString('class="LinkSelect LinkSelect-TestFilter"', $result);
 		$this->assertStringContainsString('id="LinkSelect-TestFilter"', $result);
@@ -1110,7 +1110,7 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testLinkSelectWithEmptyOptions(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
-		$result = $this->formHelper->linkSelect('empty_filter', []);
+		$result = $this->formHelper->linkSelect('emptyFilter', []);
 
 		$this->assertStringContainsString('class="LinkSelect LinkSelect-EmptyFilter"', $result);
 		$this->assertStringContainsString('id="LinkSelect-EmptyFilter"', $result);

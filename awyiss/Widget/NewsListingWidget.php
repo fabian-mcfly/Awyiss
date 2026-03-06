@@ -43,7 +43,7 @@ class NewsListingWidget extends AbstractWidget {
 			'settings.titleTag' => [
 				'columnSpan' => 6,
 				'empty' => false,
-				'label' => __df('Frontend/news', 'Frontend/widgets', 'title_tag'),
+				'label' => __df('Frontend/News', 'Frontend/Widgets', 'title_tag'),
 				'options' => [
 					'h1' => 'H1',
 					'h2' => 'H2',
@@ -57,7 +57,7 @@ class NewsListingWidget extends AbstractWidget {
 			],
 
 			'settings.paginate' => [
-				'label' => __df('Frontend/news', 'Frontend/widgets', 'paginate'),
+				'label' => __df('Frontend/News', 'Frontend/Widgets', 'paginate'),
 				'type' => 'checkbox',
 				'data-form-updater' => true,
 			],
@@ -69,7 +69,7 @@ class NewsListingWidget extends AbstractWidget {
 					'columnSpan' => 6,
 					'max' => 100,
 					'min' => 1,
-					'label' => __df('Frontend/news', 'Frontend/widgets', 'items_per_page'),
+					'label' => __df('Frontend/News', 'Frontend/Widgets', 'items_per_page'),
 					'placeholder' => 9,
 					'required' => true,
 					'type' => 'number',
@@ -81,7 +81,7 @@ class NewsListingWidget extends AbstractWidget {
 			$formFields += [
 				'settings.items' => [
 					'columnSpan' => 6,
-					'label' => __df('Frontend/news', 'Frontend/widgets', 'number_of_items'),
+					'label' => __df('Frontend/News', 'Frontend/Widgets', 'number_of_items'),
 					'max' => 20,
 					'min' => 1,
 					'placeholder' => 3,
@@ -92,7 +92,7 @@ class NewsListingWidget extends AbstractWidget {
 
 				'settings.offset' => [
 					'columnSpan' => 6,
-					'label' => __df('Frontend/news', 'Frontend/widgets', 'offset'),
+					'label' => __df('Frontend/News', 'Frontend/Widgets', 'offset'),
 					'max' => 20,
 					'min' => 1,
 					'placeholder' => 0,
@@ -206,7 +206,7 @@ class NewsListingWidget extends AbstractWidget {
 		}
 
 		$categoriesField = [
-			'label' => __df('Frontend/news', 'Frontend/widgets', 'categories'),
+			'label' => __df('Frontend/News', 'Frontend/Widgets', 'categories'),
 			'multiple' => true,
 			'options' => $categories,
 			'type' => 'select',
@@ -257,12 +257,12 @@ class NewsListingWidget extends AbstractWidget {
 		$query->orderBy(['date' => 'DESC']);
 
 		if (!$paginate && isset($newsTable->getAttributes()['inTeaser'])) {
-			$query->where(['in_teaser' => true]);
+			$query->where(['inTeaser' => true]);
 		}
 
 		if (isset($settings['categories'])) {
 			if (is_array($settings['categories'])) {
-				$query->where(['parent_id IN' => $settings['categories']]);
+				$query->where(['parentId IN' => $settings['categories']]);
 			}
 		}
 		elseif ($entity instanceof Page) {
@@ -270,7 +270,7 @@ class NewsListingWidget extends AbstractWidget {
 			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 			if ($entity->pageRoleId === $pageRoleEnum::Newscategory) {
-				$query->where(['parent_id' => $entity->id]);
+				$query->where(['parentId' => $entity->id]);
 			}
 		}
 

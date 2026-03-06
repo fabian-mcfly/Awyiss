@@ -164,7 +164,7 @@ export default class FormUpdater {
 		const form = event.target;
 		event.preventDefault();
 
-		let hiddenInput = form.querySelector('input[name="submit_type"]');
+		let hiddenInput = form.querySelector('input[name="submitType"]');
 		if (!hiddenInput) {
 			hiddenInput = document.createElement('input');
 			hiddenInput.type = 'hidden';
@@ -172,7 +172,7 @@ export default class FormUpdater {
 		}
 
 		const submitter = event.submitter;
-		hiddenInput.name = submitter?.name ?? 'submit_type';
+		hiddenInput.name = submitter?.name ?? 'submitType';
 		hiddenInput.value = submitter?.value ?? '';
 
 		//form.noValidate = false;
@@ -295,8 +295,8 @@ export default class FormUpdater {
 		}
 
 		const formData = new FormData(form);
-		// append "reload_form" key with value "1"
-		formData.append('reload_form', '1');
+		// append "reloadForm" key with value "1"
+		formData.append('reloadForm', '1');
 
 		form.dispatchEvent(new CustomEvent('beforeUpdate', {
 			bubbles: false,

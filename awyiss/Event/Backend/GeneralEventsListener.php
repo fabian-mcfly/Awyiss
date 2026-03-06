@@ -42,7 +42,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function afterConfigurationSaveCommit(Event $event, Configuration $configuration): void {
 		if (
 			$configuration->realm !== Awyiss::REALM_BACKEND ||
-			$configuration->identifier !== 'split_into_languages'
+			$configuration->identifier !== 'splitIntoLanguages'
 		) {
 			return;
 		}
@@ -64,9 +64,9 @@ class GeneralEventsListener implements EventListenerInterface {
 		}
 
 		$table->updateAll([
-			'language_shortcode' => null,
+			'languageShortcode' => null,
 		], [
-			'language_shortcode IS NOT' => null,
+			'languageShortcode IS NOT' => null,
 			'deleted' => false,
 		]);
 	}
@@ -81,7 +81,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function afterConfigurationDeleteCommit(Event $event, Configuration $configuration): void {
 		if (
 			$configuration->realm !== Awyiss::REALM_BACKEND ||
-			$configuration->identifier !== 'split_into_languages'
+			$configuration->identifier !== 'splitIntoLanguages'
 		) {
 			return;
 		}
@@ -111,9 +111,9 @@ class GeneralEventsListener implements EventListenerInterface {
 		}
 
 		$table->updateAll([
-			'language_shortcode' => null,
+			'languageShortcode' => null,
 		], [
-			'language_shortcode IS NOT' => null,
+			'languageShortcode IS NOT' => null,
 			'deleted' => false,
 		]);
 	}

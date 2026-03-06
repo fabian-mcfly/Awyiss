@@ -215,13 +215,13 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->assertTrue($entity->parentsActive);
 
-		$mediaFoldersTable->updateAll(['parents_active' => false], ['id' => 891]);
+		$mediaFoldersTable->updateAll(['parentsActive' => false], ['id' => 891]);
 
 		$this->listener->beforeSave($event, $entity);
 
 		$this->assertFalse($entity->parentsActive);
 
-		$mediaFoldersTable->updateAll(['parents_active' => true], ['id' => 891]);
+		$mediaFoldersTable->updateAll(['parentsActive' => true], ['id' => 891]);
 
 		$this->listener->beforeSave($event, $entity);
 
@@ -414,30 +414,30 @@ class MediaFoldersListenerTest extends TestCase {
 			'id',
 			'name',
 			'path',
-			'mime_type',
-			'media_folder_id',
+			'mimeType',
+			'mediaFolderId',
 		]);
 
 		$insertQuery->values([
 			'id' => 890,
 			'name' => 'file1.jpg',
 			'path' => 'media/parent/file1.jpg',
-			'mime_type' => 'image/jpeg',
-			'media_folder_id' => 890,
+			'mimeType' => 'image/jpeg',
+			'mediaFolderId' => 890,
 		]);
 
 		$insertQuery->values([
 			'id' => 891,
 			'name' => 'file2.png',
 			'path' => 'media/parent/file2.png',
-			'mime_type' => 'image/png',
-			'media_folder_id' => 890,
+			'mimeType' => 'image/png',
+			'mediaFolderId' => 890,
 		]);
 
 		$this->assertNotFalse($insertQuery->execute());
 
-		$this->assertCount(2, $mediaTable->find()->where(['media_folder_id' => 890])->all());
-		$this->assertCount(0, $mediaTable->find()->where(['media_folder_id' => 896])->all());
+		$this->assertCount(2, $mediaTable->find()->where(['mediaFolderId' => 890])->all());
+		$this->assertCount(0, $mediaTable->find()->where(['mediaFolderId' => 896])->all());
 
 		$originalEntity = $mediaFoldersTable->get(890);
 
@@ -451,17 +451,17 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterCopyCommit($event, $entity, new ArrayObject(['_primary' => false]));
 
-		$this->assertCount(2, $mediaTable->find()->where(['media_folder_id' => 890])->all());
-		$this->assertCount(2, $mediaTable->find()->where(['media_folder_id' => 896])->all());
+		$this->assertCount(2, $mediaTable->find()->where(['mediaFolderId' => 890])->all());
+		$this->assertCount(2, $mediaTable->find()->where(['mediaFolderId' => 896])->all());
 
-		$newFiles = $mediaTable->find()->where(['media_folder_id' => 896])->all();
+		$newFiles = $mediaTable->find()->where(['mediaFolderId' => 896])->all();
 		foreach ($newFiles as $file) {
 			$this->assertStringStartsWith('media/parent/child3/file', $file->path);
 		}
 
 		$this->deleteDummyFolders();
 
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -503,7 +503,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->assertSame('test content', file_get_contents($targetDir . DS . 'test.txt'));
 
 		$mediaTable = $this->fetchTable('Media');
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -543,7 +543,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->assertDirectoryDoesNotExist($targetDir);
 
 		$mediaTable = $this->fetchTable('Media');
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -602,7 +602,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -661,7 +661,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -711,9 +711,9 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$mockQuery->expects($this->once())->method('insert')->willReturnSelf();
 		$mockQuery->expects($this->exactly(2))->method('values')->with($this->callback(function (array $data) use ($media1, $media2): bool {
-			return $data['scope'] === 'media' &&
+			return $data['scope'] === 'Media' &&
 				   $data['status'] === 308 &&
-				   ($data['foreign_key'] === $media1->id || $data['foreign_key'] === $media2->id) &&
+				   ($data['foreignKey'] === $media1->id || $data['foreignKey'] === $media2->id) &&
 				   ($data['url'] === $media1->path || $data['url'] === $media2->path);
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
@@ -735,7 +735,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -794,7 +794,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -843,9 +843,9 @@ class MediaFoldersListenerTest extends TestCase {
 		$urlHistoryTableMock->expects($this->once())->method('insertQuery')->willReturn($mockQuery);
 		$mockQuery->expects($this->once())->method('insert')->willReturnSelf();
 		$mockQuery->expects($this->exactly(2))->method('values')->with($this->callback(function (array $data) use ($media1, $media2): bool {
-			return $data['scope'] === 'media' &&
+			return $data['scope'] === 'Media' &&
 				   $data['status'] === 308 &&
-				   ($data['foreign_key'] === $media1->id || $data['foreign_key'] === $media2->id) &&
+				   ($data['foreignKey'] === $media1->id || $data['foreignKey'] === $media2->id) &&
 				   ($data['url'] === $media1->path || $data['url'] === $media2->path);
 		}))->willReturnSelf();
 		$mockQuery->expects($this->once())->method('execute');
@@ -867,7 +867,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -928,7 +928,7 @@ class MediaFoldersListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -1052,14 +1052,14 @@ class MediaFoldersListenerTest extends TestCase {
 		$event = new Event('Model.MediaFolders.afterSave', $mediaFoldersTable);
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$updatedMedia = $mediaTable->find()->where(['media_folder_id' => 890])->all();
+		$updatedMedia = $mediaTable->find()->where(['mediaFolderId' => 890])->all();
 		$this->assertCount(2, $updatedMedia);
 		foreach ($updatedMedia as $file) {
 			$this->assertStringStartsWith('media/new-parent/', $file->path);
 		}
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -1107,14 +1107,14 @@ class MediaFoldersListenerTest extends TestCase {
 		$event = new Event('Model.MediaFolders.afterSave', $mediaFoldersTable);
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$updatedMedia = $mediaTable->find()->where(['media_folder_id' => 890])->all();
+		$updatedMedia = $mediaTable->find()->where(['mediaFolderId' => 890])->all();
 		$this->assertCount(2, $updatedMedia);
 		foreach ($updatedMedia as $file) {
 			$this->assertStringStartsWith('media/parent/', $file->path);
 		}
 
 		$this->deleteDummyFolders();
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -1178,15 +1178,15 @@ class MediaFoldersListenerTest extends TestCase {
 		$event = new Event('Model.MediaFolders.afterSave', $mediaFoldersTable);
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$updatedResizedImages = $mediaResizedImagesTable->find()->where(['media_id' => $media->id])->all();
+		$updatedResizedImages = $mediaResizedImagesTable->find()->where(['mediaId' => $media->id])->all();
 		$this->assertCount(2, $updatedResizedImages);
 		foreach ($updatedResizedImages as $file) {
 			$this->assertStringStartsWith('media/new-parent/', $file->path);
 		}
 
 		$this->deleteDummyFolders();
-		$mediaResizedImagesTable->deleteAll(['media_id' => $media->id]);
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaResizedImagesTable->deleteAll(['mediaId' => $media->id]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -1252,15 +1252,15 @@ class MediaFoldersListenerTest extends TestCase {
 		$event = new Event('Model.MediaFolders.afterSave', $mediaFoldersTable);
 		$this->listener->afterSave($event, $entity, new ArrayObject());
 
-		$updatedResizedImages = $mediaResizedImagesTable->find()->where(['media_id' => $media->id])->all();
+		$updatedResizedImages = $mediaResizedImagesTable->find()->where(['mediaId' => $media->id])->all();
 		$this->assertCount(2, $updatedResizedImages);
 		foreach ($updatedResizedImages as $file) {
 			$this->assertStringStartsWith('media/parent/', $file->path);
 		}
 
 		$this->deleteDummyFolders();
-		$mediaResizedImagesTable->deleteAll(['media_id' => $media->id]);
-		$mediaTable->deleteAll(['media_folder_id' => 890]);
+		$mediaResizedImagesTable->deleteAll(['mediaId' => $media->id]);
+		$mediaTable->deleteAll(['mediaFolderId' => 890]);
 	}
 
 
@@ -1288,7 +1288,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1331,7 +1331,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1376,7 +1376,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1478,7 +1478,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1521,7 +1521,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1566,7 +1566,7 @@ class MediaFoldersListenerTest extends TestCase {
 
 		$this->listener->afterSave($event, $entity, $options);
 
-		$entitys = $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
+		$entitys = $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->orderByAsc('MediaFolders.id')->all();
 		$actives = $entitys->extract(function (MediaFolder $entity): array {
 			return [$entity->active, $entity->parentsActive];
 		})->toList();
@@ -1770,8 +1770,8 @@ class MediaFoldersListenerTest extends TestCase {
 	protected function createDummyFolders(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
 
-		$mediaFoldersTable->deleteAll(['language_shortcode' => 'xy']);
-		$mediaFoldersTable->deleteAll(['language_shortcode' => 'yx']);
+		$mediaFoldersTable->deleteAll(['languageShortcode' => 'xy']);
+		$mediaFoldersTable->deleteAll(['languageShortcode' => 'yx']);
 
 		$insertQuery = $mediaFoldersTable->insertQuery();
 
@@ -1780,9 +1780,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title',
 			'path',
 			'active',
-			'language_shortcode',
-			'parent_id',
-			'system_order',
+			'languageShortcode',
+			'parentId',
+			'systemOrder',
 		]);
 
 		$insertQuery->values([
@@ -1790,9 +1790,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Root',
 			'path' => 'media/parent',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => null,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => null,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1800,9 +1800,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Child 1',
 			'path' => 'media/parent/child1',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1810,9 +1810,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Grandchild 1',
 			'path' => 'media/parent/child1/grandchild1',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 891,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => 891,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1820,9 +1820,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Grandchild 2',
 			'path' => 'media/parent/child1/grandchild2',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 891,
-			'system_order' => 2,
+			'languageShortcode' => 'xy',
+			'parentId' => 891,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
@@ -1830,9 +1830,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Child 2',
 			'path' => 'media/parent/child2',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 2,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 2,
 		]);
 
 		$insertQuery->values([
@@ -1840,9 +1840,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Grandchild 3',
 			'path' => 'media/parent/child2/grandchild3',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 894,
-			'system_order' => 1,
+			'languageShortcode' => 'xy',
+			'parentId' => 894,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1850,9 +1850,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Child 3',
 			'path' => 'media/parent/child3',
 			'active' => true,
-			'language_shortcode' => 'xy',
-			'parent_id' => 890,
-			'system_order' => 3,
+			'languageShortcode' => 'xy',
+			'parentId' => 890,
+			'systemOrder' => 3,
 		]);
 
 		$insertQuery->values([
@@ -1860,9 +1860,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Root in Different Language',
 			'path' => 'media/parent-lang2',
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => null,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => null,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1870,9 +1870,9 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Child in Different Language',
 			'path' => 'media/parent-lang2/child',
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => 897,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => 897,
+			'systemOrder' => 1,
 		]);
 
 		$insertQuery->values([
@@ -1880,15 +1880,15 @@ class MediaFoldersListenerTest extends TestCase {
 			'title' => 'Grandchild in Different Language',
 			'path' => 'media/parent-lang2/child/grandchild',
 			'active' => true,
-			'language_shortcode' => 'yx',
-			'parent_id' => 898,
-			'system_order' => 1,
+			'languageShortcode' => 'yx',
+			'parentId' => 898,
+			'systemOrder' => 1,
 		]);
 
 		$this->assertNotFalse($insertQuery->execute());
 
-		$this->assertCount(7, $mediaFoldersTable->find()->where(['language_shortcode' => 'xy'])->all());
-		$this->assertCount(3, $mediaFoldersTable->find()->where(['language_shortcode' => 'yx'])->all());
+		$this->assertCount(7, $mediaFoldersTable->find()->where(['languageShortcode' => 'xy'])->all());
+		$this->assertCount(3, $mediaFoldersTable->find()->where(['languageShortcode' => 'yx'])->all());
 
 		MediaListener::clearMediaFoldersCache();
 	}
@@ -1900,11 +1900,11 @@ class MediaFoldersListenerTest extends TestCase {
 	protected function deleteDummyFolders(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
 
-		$mediaFoldersTable->deleteAll(['language_shortcode' => 'xy']);
-		$mediaFoldersTable->deleteAll(['language_shortcode' => 'yx']);
+		$mediaFoldersTable->deleteAll(['languageShortcode' => 'xy']);
+		$mediaFoldersTable->deleteAll(['languageShortcode' => 'yx']);
 
-		$this->assertCount(0, $mediaFoldersTable->find('all')->where(['language_shortcode' => 'xy'])->all());
-		$this->assertCount(0, $mediaFoldersTable->find('all')->where(['language_shortcode' => 'yx'])->all());
+		$this->assertCount(0, $mediaFoldersTable->find('all')->where(['languageShortcode' => 'xy'])->all());
+		$this->assertCount(0, $mediaFoldersTable->find('all')->where(['languageShortcode' => 'yx'])->all());
 
 		MediaListener::clearMediaFoldersCache();
 	}

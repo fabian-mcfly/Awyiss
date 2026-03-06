@@ -47,7 +47,7 @@ class ContentTemplatesConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame([
-			'file_name',
+			'fileName',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
 		$this->assertSame('content_templates::file_name', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
@@ -55,14 +55,14 @@ class ContentTemplatesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'file_name' => 'content_templates::file_name',
-			'in_content_row' => 'content_templates::in_content_row',
-			'system_order' => 'content_templates::system_order',
+			'fileName' => 'content_templates::file_name',
+			'inContentRow' => 'content_templates::in_content_row',
+			'systemOrder' => 'content_templates::system_order',
 			'active' => 'content_templates::active',
-			'created_by' => 'content_templates::created_by',
-			'created_on' => 'content_templates::created_on',
-			'changed_by' => 'content_templates::changed_by',
-			'changed_on' => 'content_templates::changed_on',
+			'createdBy' => 'content_templates::created_by',
+			'createdOn' => 'content_templates::created_on',
+			'changedBy' => 'content_templates::changed_by',
+			'changedOn' => 'content_templates::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

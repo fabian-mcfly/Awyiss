@@ -32,18 +32,6 @@ class SurveyAnswer extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected static array $fieldMap = [
-		'survey_question_id' => 'surveyQuestionId',
-		'system_order' => 'systemOrder',
-		'survey_question' => 'surveyQuestion',
-		'survey_survey_answers' => 'surveySurveyAnswers',
-		'survey_survey_question' => 'surveySurveyQuestion',
-	];
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected array $_accessible = [ // phpcs:ignore
 		'surveyQuestionId' => true,
 		'title' => true,

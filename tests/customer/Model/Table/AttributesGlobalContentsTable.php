@@ -55,12 +55,12 @@ class AttributesGlobalContentsTable extends Table {
 			->allowEmptyString('teaser');
 
 		$validator
-			->scalar('free_text')
-			->allowEmptyString('free_text');
+			->scalar('freeText')
+			->allowEmptyString('freeText');
 
 		$validator
-			->scalar('free_text_inactive')
-			->allowEmptyString('free_text_inactive');
+			->scalar('freeTextInactive')
+			->allowEmptyString('freeTextInactive');
 
 		return $validator;
 	}

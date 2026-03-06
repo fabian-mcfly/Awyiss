@@ -53,16 +53,16 @@ class ConfigurationPolicy extends AbstractPolicy {
 			return $accessible;
 		}
 
-		$scope = Inflector::underscore($additionalData['scope']);
+		$scope = Inflector::camelize($additionalData['scope']);
 
-		if (strtolower($scope) !== 'system') {
+		if ($scope !== 'System') {
 			// Form elements are accessible if the user has access to the Forms scope
-			if ($scope === 'form_elements') {
-				$scope = 'forms';
+			if ($scope === 'FormElements') {
+				$scope = 'Forms';
 			}
 			// Menu entries are accessible if the user has access to the Menus scope
-			elseif ($scope === 'menu_entries') {
-				$scope = 'menus';
+			elseif ($scope === 'MenuEntries') {
+				$scope = 'Menus';
 			}
 
 			$accessible = $permissionCollection->scopeIsAccessible($scope, [], 'configure');
@@ -151,7 +151,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 		// Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
 		$query->mapReduce(function (Configuration|array $entity, int $key, MapReduce $mapReduce) use ($permissionCollection): void {
-			if (!$entity instanceof Configuration || strtolower($entity->scope) === 'system') {
+			if (!$entity instanceof Configuration || strtolower($entity->scope) === 'System') {
 				$mapReduce->emit($entity);
 
 				return;

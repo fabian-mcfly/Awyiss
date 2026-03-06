@@ -163,9 +163,9 @@ class ContentsListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.class_name',
+			'identifier' => 'columnSystem.className',
 			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
 		]);
 
@@ -208,9 +208,9 @@ class ContentsListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'contents',
+			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
-			'identifier' => 'column_system.max_columns',
+			'identifier' => 'columnSystem.maxColumns',
 			'value' => 10,
 		]);
 
@@ -329,7 +329,7 @@ class ContentsListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 
@@ -340,7 +340,7 @@ class ContentsListenerTest extends TestCase {
 			->with(
 				$this->callback(function ($locks) {
 					return count($locks) === 1
-						&& $locks[0]->scope === 'contents'
+						&& $locks[0]->scope === 'Contents'
 						&& $locks[0]->foreignKey === 1
 						&& $locks[0]->uniqueId === 'autoTranslate';
 				}),
@@ -512,7 +512,7 @@ class ContentsListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 
@@ -577,7 +577,7 @@ class ContentsListenerTest extends TestCase {
 				[
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => 'system::auto_translation',
+					'reference' => 'System::autoTranslation',
 				]
 			);
 

@@ -34,15 +34,24 @@ class MediaElementAssignmentsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->hasMany('MediaAssignments', [
-			'bindingKey' => ['media_element_id', 'scope'],
+			'bindingKey' => [
+				'mediaElementId',
+				'scope',
+			],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => ['media_element_id', 'scope'],
+			'foreignKey' => [
+				'mediaElementId',
+				'scope',
+			],
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsTo('MediaElements', [
+			'foreignKey' => 'mediaElementId',
 			'joinType' => 'INNER',
+			'propertyName' => 'mediaElement',
 		]);
 	}
 
@@ -99,15 +108,11 @@ class MediaElementAssignmentsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		static $assignableModels;
-
-		if (!isset($assignableModels)) {
-			$assignableModels = $this->MediaElements->getAssignableModels(true, false);
-		}
+		static $assignableModels = $this->MediaElements->getAssignableModels(true, false, false);
 
 		$rules->add($rules->existsIn('mediaElementId', 'MediaElements'), 'mediaElementExists', [
 			'errorField' => 'mediaElementId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_element_exists'),
 		]);
 
 		$rules->add(function (MediaElementAssignment $entity) use ($assignableModels) {
@@ -116,23 +121,23 @@ class MediaElementAssignmentsTable extends Table {
 			}
 
 			if ($entity->foreignKey && $assignableModels[ $entity->scope ]['entityLevel'] === false) {
-				return __df($this->getI18nDomain(), 'validation', 'error_assignment_allows_entity_level');
+				return __df($this->getI18nDomain(), 'Validation', 'error_assignment_allows_entity_level');
 			}
 
 			if (!$entity->foreignKey && $assignableModels[ $entity->scope ]['modelLevel'] === false) {
-				return __df($this->getI18nDomain(), 'validation', 'error_assignment_allows_model_level');
+				return __df($this->getI18nDomain(), 'Validation', 'error_assignment_allows_model_level');
 			}
 
 			$possibleEntities = $assignableModels[ $entity->scope ]['entities'];
 
 			if ($entity->foreignKey && !isset($possibleEntities[ $entity->foreignKey ])) {
-				return __df($this->getI18nDomain(), 'validation', 'error_assignment_invalid_entity');
+				return __df($this->getI18nDomain(), 'Validation', 'error_assignment_invalid_entity');
 			}
 
 			return true;
 		}, 'foreignKeyExists', [
 			'errorField' => 'foreignKey',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_foreign_key_exists'),
+			'message' => __df($this->getI18nDomain(), 'Validation', 'error_foreign_key_exists'),
 		]);
 
 		$rules->add(
@@ -140,7 +145,7 @@ class MediaElementAssignmentsTable extends Table {
 			'mediaElementUniqueForScope',
 			[
 				'errorField' => 'foreignKey',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_media_element_unique_for_scope'),
 			]
 		);
 

@@ -55,15 +55,15 @@ class SurveysConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'type' => 'surveys::type',
 			'identifier' => 'surveys::identifier',
-			'success_message' => 'surveys::success_message',
-			'failure_message' => 'surveys::failure_message',
-			'final_action' => 'surveys::final_action',
-			'form_id' => 'surveys::form_id',
+			'successMessage' => 'surveys::success_message',
+			'failureMessage' => 'surveys::failure_message',
+			'finalAction' => 'surveys::final_action',
+			'formId' => 'surveys::form_id',
 			'active' => 'surveys::active',
-			'created_by' => 'surveys::created_by',
-			'created_on' => 'surveys::created_on',
-			'changed_by' => 'surveys::changed_by',
-			'changed_on' => 'surveys::changed_on',
+			'createdBy' => 'surveys::created_by',
+			'createdOn' => 'surveys::created_on',
+			'changedBy' => 'surveys::changed_by',
+			'changedOn' => 'surveys::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

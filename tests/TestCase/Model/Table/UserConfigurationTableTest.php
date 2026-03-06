@@ -108,7 +108,7 @@ class UserConfigurationTableTest extends TestCase {
 		$result = $this->userConfigurationTable->validationDefault($validator);
 
 		$this->assertInstanceOf(Validator::class, $result);
-		$this->assertSame('user_configuration', $result->getI18nDomain());
+		$this->assertSame('UserConfiguration', $result->getI18nDomain());
 
 		// Test required fields
 		$this->assertTrue($result->hasField('userId'));
@@ -133,8 +133,8 @@ class UserConfigurationTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'userId' => 1,
-			'scope' => 'test_scope',
-			'identifier' => 'test_identifier',
+			'scope' => 'TestScope',
+			'identifier' => 'testIdentifier',
 			'value' => 'test_value',
 		];
 
@@ -230,7 +230,7 @@ class UserConfigurationTableTest extends TestCase {
 		$data = [
 			'userId' => 1,
 			'scope' => '',
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -249,7 +249,7 @@ class UserConfigurationTableTest extends TestCase {
 		$data = [
 			'userId' => 1,
 			'scope' => '   ', // Only whitespace
-			'identifier' => 'test_identifier',
+			'identifier' => 'testIdentifier',
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -268,7 +268,7 @@ class UserConfigurationTableTest extends TestCase {
 	public function testEntityValidationEmptyIdentifier(): void {
 		$data = [
 			'userId' => 1,
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'identifier' => '',
 		];
 
@@ -287,7 +287,7 @@ class UserConfigurationTableTest extends TestCase {
 	public function testEntityValidationBlankIdentifier(): void {
 		$data = [
 			'userId' => 1,
-			'scope' => 'test_scope',
+			'scope' => 'TestScope',
 			'identifier' => '   ', // Only whitespace
 		];
 
@@ -308,9 +308,9 @@ class UserConfigurationTableTest extends TestCase {
 		// Create a new entity (userId should be allowed to be set)
 		$data = [
 			'userId' => 1,
-			'scope' => 'forms',
+			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -349,9 +349,9 @@ class UserConfigurationTableTest extends TestCase {
 	public function testBuildRulesValidScope(): void {
 		$data = [
 			'userId' => 1,
-			'scope' => 'forms',
+			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -370,9 +370,9 @@ class UserConfigurationTableTest extends TestCase {
 	public function testBuildRulesInvalidScope(): void {
 		$data = [
 			'userId' => 1,
-			'scope' => 'unknown',
+			'scope' => 'Unknown',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -400,9 +400,9 @@ class UserConfigurationTableTest extends TestCase {
 
 		$data = [
 			'userId' => 1,
-			'scope' => 'forms',
+			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -462,7 +462,7 @@ class UserConfigurationTableTest extends TestCase {
 			'userId' => 1,
 			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -510,7 +510,7 @@ class UserConfigurationTableTest extends TestCase {
 			'userId' => 1,
 			'scope' => 'Forms',
 			'identifier' => 'overview.displayedFields',
-			'value' => json_encode(['send_email']),
+			'value' => json_encode(['sendEmail']),
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -592,7 +592,7 @@ class UserConfigurationTableTest extends TestCase {
 
 		// Test default values
 		$this->assertNull($entity->userId);
-		$this->assertSame('system', $entity->scope);
+		$this->assertSame('System', $entity->scope);
 		$this->assertNull($entity->identifier);
 		$this->assertNull($entity->value);
 	}
@@ -605,8 +605,8 @@ class UserConfigurationTableTest extends TestCase {
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
 			'userId' => 2,
-			'scope' => 'custom_scope',
-			'identifier' => 'custom_identifier',
+			'scope' => 'CustomScope',
+			'identifier' => 'customIdentifier',
 			'value' => 'custom_value',
 		];
 
@@ -616,8 +616,8 @@ class UserConfigurationTableTest extends TestCase {
 		$this->assertTrue($entity->isNew());
 
 		$this->assertSame(2, $entity->userId);
-		$this->assertSame('custom_scope', $entity->scope);
-		$this->assertSame('custom_identifier', $entity->identifier);
+		$this->assertSame('CustomScope', $entity->scope);
+		$this->assertSame('customIdentifier', $entity->identifier);
 		$this->assertSame('custom_value', $entity->value);
 	}
 
@@ -632,43 +632,43 @@ class UserConfigurationTableTest extends TestCase {
 
 		$this->assertIsArray($categories);
 		$this->assertSame([
-			'employers' => 'Arbeitgeber',
-			'attributes' => 'attributes::menu_title',
-			'cars' => 'Autos',
-			'content_templates' => 'content_templates::menu_title',
-			'contents' => 'contents::menu_title',
-			'customer_groups' => 'customer_groups::menu_title',
-			'customers' => 'customers::menu_title',
-			'dashboard_elements' => 'dashboard_elements::menu_title',
-			'datatables' => 'datatables::menu_title',
-			'email_templates' => 'email_templates::menu_title',
-			'form_elements' => 'form_elements::menu_title',
-			'form_entries' => 'form_entries::menu_title',
-			'forms' => 'forms::menu_title',
-			'global_content_templates' => 'global_content_templates::menu_title',
-			'global_contents' => 'global_contents::menu_title',
-			'languages' => 'languages::menu_title',
-			'media_elements' => 'media_elements::menu_title',
-			'media_folders' => 'media_folders::menu_title',
-			'media_selectors' => 'media_selectors::menu_title',
-			'media' => 'media::menu_title',
-			'menu_entries' => 'menu_entries::menu_title',
-			'menus' => 'menus::menu_title',
-			'employees' => 'Mitarbeiter',
-			'news' => 'News',
-			'newscategories' => 'Newskategorie',
-			'products' => 'page_roles::inactive Produkt',
-			'page_roles' => 'page_roles::menu_title',
-			'page_templates' => 'page_templates::menu_title',
-			'queued_jobs' => 'queued_jobs::menu_title',
-			'pages' => 'Seite',
-			'survey_questions' => 'survey_questions::menu_title',
-			'surveys' => 'surveys::menu_title',
-			'system' => 'system::menu_title',
-			'url_history' => 'url_history::menu_title',
-			'urls_not_found' => 'urls_not_found::menu_title',
-			'usergroups' => 'usergroups::menu_title',
-			'users' => 'users::menu_title',
+			'Employers' => 'Arbeitgeber',
+			'Attributes' => 'attributes::menu_title',
+			'Cars' => 'Autos',
+			'ContentTemplates' => 'content_templates::menu_title',
+			'Contents' => 'contents::menu_title',
+			'CustomerGroups' => 'customer_groups::menu_title',
+			'Customers' => 'customers::menu_title',
+			'DashboardElements' => 'dashboard_elements::menu_title',
+			'Datatables' => 'datatables::menu_title',
+			'EmailTemplates' => 'email_templates::menu_title',
+			'FormElements' => 'form_elements::menu_title',
+			'FormEntries' => 'form_entries::menu_title',
+			'Forms' => 'forms::menu_title',
+			'GlobalContentTemplates' => 'global_content_templates::menu_title',
+			'GlobalContents' => 'global_contents::menu_title',
+			'Languages' => 'languages::menu_title',
+			'MediaElements' => 'media_elements::menu_title',
+			'MediaFolders' => 'media_folders::menu_title',
+			'MediaSelectors' => 'media_selectors::menu_title',
+			'Media' => 'media::menu_title',
+			'MenuEntries' => 'menu_entries::menu_title',
+			'Menus' => 'menus::menu_title',
+			'Employees' => 'Mitarbeiter',
+			'News' => 'News',
+			'Newscategories' => 'Newskategorie',
+			'Products' => 'page_roles::inactive Produkt',
+			'PageRoles' => 'page_roles::menu_title',
+			'PageTemplates' => 'page_templates::menu_title',
+			'QueuedJobs' => 'queued_jobs::menu_title',
+			'Pages' => 'Seite',
+			'SurveyQuestions' => 'survey_questions::menu_title',
+			'Surveys' => 'surveys::menu_title',
+			'System' => 'system::menu_title',
+			'UrlHistory' => 'url_history::menu_title',
+			'UrlsNotFound' => 'urls_not_found::menu_title',
+			'Usergroups' => 'usergroups::menu_title',
+			'Users' => 'users::menu_title',
 		], $categories);
 	}
 
@@ -686,8 +686,8 @@ class UserConfigurationTableTest extends TestCase {
 		$categories = $this->userConfigurationTable->buildCategories();
 		$this->assertIsArray($categories);
 		$this->assertSame([
-			'contents',
-			'system',
+			'Contents',
+			'System',
 		], array_keys($categories));
 	}
 
@@ -772,6 +772,6 @@ class UserConfigurationTableTest extends TestCase {
 		$config = $this->userConfigurationTable->getBehavior('Search')->getConfig();
 
 		$this->assertIsArray($config['blocklistedColumns']);
-		$this->assertContains('user_id', $config['blocklistedColumns']);
+		$this->assertContains('userId', $config['blocklistedColumns']);
 	}
 }

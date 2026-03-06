@@ -122,13 +122,13 @@ class MediaElementSelectorTest extends TestCase {
 	public function testEntityConstruction(): void {
 		$properties = [
 			'id' => 1,
-			'media_element_id' => 123,
-			'media_selector_id' => 456,
+			'mediaElementId' => 123,
+			'mediaSelectorId' => 456,
 			'title' => 'Test Media Element Selector',
-			'identifier' => 'test_selector',
-			'column_span' => '4/12',
+			'identifier' => 'testSelector',
+			'columnSpan' => '4/12',
 			'required' => true,
-			'system_order' => 10,
+			'systemOrder' => 10,
 		];
 
 		$entity = new MediaElementSelector($properties);
@@ -137,30 +137,9 @@ class MediaElementSelectorTest extends TestCase {
 		$this->assertEquals(123, $entity->mediaElementId);
 		$this->assertEquals(456, $entity->mediaSelectorId);
 		$this->assertEquals('Test Media Element Selector', $entity->title);
-		$this->assertEquals('test_selector', $entity->identifier);
+		$this->assertEquals('testSelector', $entity->identifier);
 		$this->assertEquals('4/12', $entity->columnSpan);
 		$this->assertTrue($entity->required);
 		$this->assertEquals(10, $entity->systemOrder);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Entity\MediaElementSelector::$fieldMap
-	 */
-	public function testFieldMapDuringConstruction(): void {
-		$properties = [
-			'media_element_id' => 789,
-			'media_selector_id' => 101,
-			'column_span' => '8/12',
-			'system_order' => 5,
-		];
-
-		$entity = new MediaElementSelector($properties);
-		$entityArray = $entity->toArray();
-
-		foreach ($entityArray as $key => $value) {
-			$this->assertStringNotContainsString('_', $key);
-		}
 	}
 }

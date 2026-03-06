@@ -28,14 +28,6 @@ class GlobalContentTemplateElement extends Entity {
 	 * @var array The column spans
 	 */
 	protected static array $columnSpans;
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'column_span' => 'columnSpan',
-		'global_content_template_id' => 'globalContentTemplateId',
-		'system_order' => 'systemOrder',
-	];
 
 
 	/**
@@ -68,7 +60,7 @@ class GlobalContentTemplateElement extends Entity {
 			return null;
 		}
 
-		return Inflector::underscore($identifier);
+		return Inflector::variable($identifier);
 	}
 
 

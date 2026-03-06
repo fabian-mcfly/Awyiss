@@ -302,7 +302,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 			$options + [
 				'default' => $defaultPerPage,
 				'empty' => false,
-				'label' => __d('pagination', 'limit_per_page'),
+				'label' => __d('Pagination', 'limit_per_page'),
 				'options' => $limits,
 				'type' => 'select',
 				'value' => $this->param('perPage'),
@@ -345,7 +345,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 */
 	protected function _formatNumber(StringTemplate|BaseStringTemplate $templater, array $options): string {
 		$vars = [
-			'page' => __d('pagination', 'page'),
+			'page' => __d('Pagination', 'page'),
 			'text' => $options['text'],
 			'url' => $this->generateUrl(['page' => $options['page']], $options['url']),
 		];
@@ -369,14 +369,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 		for ($i = 1; $i <= $params['pageCount']; $i++) {
 			if ($i === $params['currentPage']) {
 				$output .= $templater->format('current', [
-					'page' => __d('pagination', 'page'),
+					'page' => __d('Pagination', 'page'),
 					'text' => $this->Number->format($params['currentPage']),
 					'url' => $this->generateUrl(['page' => $i], $options['url']),
 				]);
 			}
 			else {
 				$vars = [
-					'page' => __d('pagination', 'page'),
+					'page' => __d('Pagination', 'page'),
 					'text' => $this->Number->format($i),
 					'url' => $this->generateUrl(['page' => $i], $options['url']),
 				];

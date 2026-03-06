@@ -35,9 +35,9 @@ class ColumnParserTest extends TestCase {
 	public static function parseFieldsProvider(): array {
 		return [
 			[
-				'input' => 'parent_id:integer?[11]:index',
+				'input' => 'parentId:integer?[11]:index',
 				'output' => [
-					'parent_id' => [
+					'parentId' => [
 						'columnType' => 'integer',
 						'options' => [
 							'null' => true,
@@ -48,9 +48,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'language_shortcode:char?[2]:index',
+				'input' => 'languageShortcode:char?[2]:index',
 				'output' => [
-					'language_shortcode' => [
+					'languageShortcode' => [
 						'columnType' => 'char',
 						'options' => [
 							'null' => true,
@@ -74,9 +74,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'system_order:integer[11](0)',
+				'input' => 'systemOrder:integer[11](0)',
 				'output' => [
-					'system_order' => [
+					'systemOrder' => [
 						'columnType' => 'integer',
 						'options' => [
 							'null' => false,
@@ -113,9 +113,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'created_by:integer?[11]',
+				'input' => 'createdBy:integer?[11]',
 				'output' => [
-					'created_by' => [
+					'createdBy' => [
 						'columnType' => 'integer',
 						'options' => [
 							'null' => true,
@@ -126,9 +126,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'created_on:datetime?',
+				'input' => 'createdOn:datetime?',
 				'output' => [
-					'created_on' => [
+					'createdOn' => [
 						'columnType' => 'datetime',
 						'options' => [
 							'null' => true,
@@ -138,9 +138,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'changed_by:integer?[11]',
+				'input' => 'changedBy:integer?[11]',
 				'output' => [
-					'changed_by' => [
+					'changedBy' => [
 						'columnType' => 'integer',
 						'options' => [
 							'null' => true,
@@ -151,9 +151,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'changed_on:datetime?',
+				'input' => 'changedOn:datetime?',
 				'output' => [
-					'changed_on' => [
+					'changedOn' => [
 						'columnType' => 'datetime',
 						'options' => [
 							'null' => true,
@@ -163,9 +163,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'deleted_by:integer?[11]',
+				'input' => 'deletedBy:integer?[11]',
 				'output' => [
-					'deleted_by' => [
+					'deletedBy' => [
 						'columnType' => 'integer',
 						'options' => [
 							'null' => true,
@@ -176,9 +176,9 @@ class ColumnParserTest extends TestCase {
 				],
 			],
 			[
-				'input' => 'deleted_on:datetime?',
+				'input' => 'deletedOn:datetime?',
 				'output' => [
-					'deleted_on' => [
+					'deletedOn' => [
 						'columnType' => 'datetime',
 						'options' => [
 							'null' => true,

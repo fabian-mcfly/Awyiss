@@ -493,7 +493,7 @@ HTML;
 	 */
 	public function testInitializeAddsSystemOrderBehaviorWhenSystemOrderColumnExists(): void {
 		$schema = new TableSchema('pages');
-		$schema->addColumn('id', ['type' => 'integer'])->addColumn('system_order', ['type' => 'integer']);
+		$schema->addColumn('id', ['type' => 'integer'])->addColumn('systemOrder', ['type' => 'integer']);
 
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
 
@@ -830,7 +830,7 @@ HTML;
 				'translatable' => true,
 			]),
 			new Attribute()->patch([
-				'identifier' => 'non_translatable',
+				'identifier' => 'nonTranslatable',
 				'translatable' => false,
 			]),
 		];
@@ -1037,8 +1037,8 @@ HTML;
 
 		$query->expects($this->once())->method('where')->with([
 			'OR' => [
-				'language_shortcode' => 'es',
-				'language_shortcode IS' => null,
+				'languageShortcode' => 'es',
+				'languageShortcode IS' => null,
 			],
 		])->willReturnSelf();
 
@@ -1062,8 +1062,8 @@ HTML;
 
 		$query->expects($this->once())->method('where')->with([
 			'OR' => [
-				'language_shortcode' => 'en',
-				'language_shortcode IS' => null,
+				'languageShortcode' => 'en',
+				'languageShortcode IS' => null,
 			],
 		])->willReturnSelf();
 
@@ -1083,7 +1083,7 @@ HTML;
 	public function testFindForCurrentLanguageWithSpecificLanguageAndExcludeGlobal(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
 
-		$query->expects($this->once())->method('where')->with(['language_shortcode' => 'fr'])->willReturnSelf();
+		$query->expects($this->once())->method('where')->with(['languageShortcode' => 'fr'])->willReturnSelf();
 
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
 
@@ -1101,7 +1101,7 @@ HTML;
 	public function testFindForCurrentLanguageWithFalseLanguageShortcode(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
 
-		$query->expects($this->once())->method('where')->with(['language_shortcode IS' => null])->willReturnSelf();
+		$query->expects($this->once())->method('where')->with(['languageShortcode IS' => null])->willReturnSelf();
 
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
 
@@ -1121,8 +1121,8 @@ HTML;
 
 		$query->expects($this->once())->method('where')->with([
 			'OR' => [
-				'language_shortcode' => 'es',
-				'language_shortcode IS' => null,
+				'languageShortcode' => 'es',
+				'languageShortcode IS' => null,
 			],
 		])->willReturnSelf();
 
@@ -1145,7 +1145,7 @@ HTML;
 	public function testFindForCurrentLanguageWithEntityAndExcludeGlobal(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
 
-		$query->expects($this->once())->method('where')->with(['language_shortcode' => 'it'])->willReturnSelf();
+		$query->expects($this->once())->method('where')->with(['languageShortcode' => 'it'])->willReturnSelf();
 
 		$entity = new Entity(['languageShortcode' => 'it']);
 
@@ -1300,7 +1300,7 @@ HTML;
 			'contain' => ['Users'],
 			'conditions' => ['status' => 'published'],
 			'order' => ['created' => 'DESC'],
-			'group' => ['category_id'],
+			'group' => ['categoryId'],
 		];
 
 		$table->expects($this->once())->method('find')->with('all')->willReturn($query);
@@ -1431,7 +1431,7 @@ HTML;
 		};
 
 		$validator = $table->getValidator('default');
-		$this->assertSame('test_table', $table->validationDefault($validator)->getI18nDomain());
+		$this->assertSame('TestTable', $table->validationDefault($validator)->getI18nDomain());
 	}
 
 
@@ -2059,7 +2059,7 @@ HTML;
 			/**
 			 * @inheritDoc
 			 */
-			protected array $attributes = ['custom_attribute' => true];
+			protected array $attributes = ['customAttribute' => true];
 
 
 			/**
@@ -2098,7 +2098,7 @@ HTML;
 		// Test that getI18nDomain returns the table alias
 		$result = $table->getI18nDomain();
 
-		$this->assertSame('test_table', $result);
+		$this->assertSame('TestTable', $result);
 	}
 
 
@@ -2113,7 +2113,7 @@ HTML;
 		// Test that getI18nDomain returns the main table alias for attributes
 		$result = $table->getI18nDomain();
 
-		$this->assertSame('contents', $result);
+		$this->assertSame('Contents', $result);
 	}
 
 
@@ -2124,7 +2124,7 @@ HTML;
 	public function testAddCategoriesBehaviorDisablesBuildRulesOnNestPropertyWhenNestForeignKeyEqualsCategoriesFieldName(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 			protected array $categories = [
-				'field' => 'parent_id',
+				'field' => 'parentId',
 				'enabled' => true,
 			];
 
@@ -2135,7 +2135,7 @@ HTML;
 			protected array $nest = [
 				'enabled' => true,
 				'parent' => [
-					'foreignKey' => 'parent_id',
+					'foreignKey' => 'parentId',
 				],
 			];
 		};
@@ -2155,7 +2155,7 @@ HTML;
 	public function testAddCategoriesBehaviorNotDisablesBuildRulesOnNestPropertyWhenNestForeignKeyEqualsCategoriesFieldName(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 			protected array $categories = [
-				'field' => 'parent_id',
+				'field' => 'parentId',
 				'enabled' => true,
 			];
 
@@ -2291,7 +2291,7 @@ HTML;
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnSystemOrderProperty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 			protected array $categories = [
-				'field' => 'language_shortcode',
+				'field' => 'languageShortcode',
 				'enabled' => true,
 			];
 		};
@@ -2299,7 +2299,7 @@ HTML;
 		$behaviors = $table->behaviors();
 		$this->assertTrue($behaviors->has('Categories'));
 		$this->assertTrue($behaviors->has('SystemOrder'));
-		$this->assertSame(['language_shortcode'], $behaviors->get('SystemOrder')->getConfig('relatedColumns'));
+		$this->assertSame(['languageShortcode'], $behaviors->get('SystemOrder')->getConfig('relatedColumns'));
 	}
 
 
@@ -2428,11 +2428,11 @@ HTML;
 		$entity = new Entity(['id' => 1, 'title' => 'Test', 'subtitle' => 'Subtitle']);
 		$entity->setNew(false);
 
-		$entity->test_associations = [
+		$entity->testAssociations = [
 			new Entity(['id' => 2, 'title' => 'Associated Test 1', 'subtitle' => 'Associated Subtitle 1']),
 			new Entity(['id' => 3, 'title' => 'Associated Test 2', 'subtitle' => 'Associated Subtitle 2']),
 		];
-		foreach ($entity->test_associations as $association) {
+		foreach ($entity->testAssociations as $association) {
 			$association->setNew(false);
 		}
 
@@ -2444,8 +2444,8 @@ HTML;
 			public function initializeAssociations(): void {
 				$this->hasMany('TestAssociations', [
 					'className' => PagesTable::class,
-					'foreignKey' => 'test_id',
-					'propertyName' => 'test_associations',
+					'foreignKey' => 'testId',
+					'propertyName' => 'testAssociations',
 				]);
 			}
 
@@ -2465,7 +2465,7 @@ HTML;
 		$this->assertTrue($entity->isNew());
 
 		// Test associated entities
-		foreach ($entity->test_associations as $association) {
+		foreach ($entity->testAssociations as $association) {
 			$this->assertFalse($association->has('id'));
 			$this->assertTrue($association->isNew());
 		}
@@ -2475,9 +2475,9 @@ HTML;
 		$this->assertSame(['label', 'originalEntity'], $entity->getVirtual());
 		$this->assertSame(1, $entity->originalEntity->id);
 
-		$this->assertCount(2, $entity->originalEntity->test_associations);
-		$this->assertSame(2, $entity->originalEntity->test_associations[0]->id);
-		$this->assertSame(3, $entity->originalEntity->test_associations[1]->id);
+		$this->assertCount(2, $entity->originalEntity->testAssociations);
+		$this->assertSame(2, $entity->originalEntity->testAssociations[0]->id);
+		$this->assertSame(3, $entity->originalEntity->testAssociations[1]->id);
 	}
 
 
@@ -2490,8 +2490,8 @@ HTML;
 	public function testSaveWithAsCopyMarksHasOneAssociationAsNew(): void {
 		$entity = new Entity(['id' => 1, 'title' => 'Test', 'subtitle' => 'Subtitle']);
 		$entity->setNew(false);
-		$entity->test_association = new Entity(['id' => 2, 'title' => 'Associated Test', 'subtitle' => 'Associated Subtitle']);
-		$entity->test_association->setNew(false);
+		$entity->testAssociation = new Entity(['id' => 2, 'title' => 'Associated Test', 'subtitle' => 'Associated Subtitle']);
+		$entity->testAssociation->setNew(false);
 
 		// Create a concrete table class to avoid mock issues with behaviors
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2501,8 +2501,8 @@ HTML;
 			public function initializeAssociations(): void {
 				$this->hasOne('TestAssociation', [
 					'className' => PagesTable::class,
-					'foreignKey' => 'test_id',
-					'propertyName' => 'test_association',
+					'foreignKey' => 'testId',
+					'propertyName' => 'testAssociation',
 				]);
 			}
 
@@ -2522,16 +2522,16 @@ HTML;
 		$this->assertTrue($entity->isNew());
 
 		// Test associated entity
-		$this->assertFalse($entity->test_association->has('id'));
-		$this->assertTrue($entity->test_association->isNew());
+		$this->assertFalse($entity->testAssociation->has('id'));
+		$this->assertTrue($entity->testAssociation->isNew());
 
 		// Test that other data is preserved
 		$this->assertSame('Test', $entity->title);
-		$this->assertSame('Associated Test', $entity->test_association->title);
+		$this->assertSame('Associated Test', $entity->testAssociation->title);
 
 		$this->assertSame(['label', 'originalEntity'], $entity->getVirtual());
 		$this->assertSame(1, $entity->originalEntity->id);
-		$this->assertSame(2, $entity->originalEntity->test_association->id);
+		$this->assertSame(2, $entity->originalEntity->testAssociation->id);
 	}
 
 
@@ -2667,8 +2667,8 @@ HTML;
 		/** @var \Customer\Model\Entity\Car $car */
 		$car = $table->newDefaultEntity();
 		$car->set('name', 'Test Car');
-		$car->set('free_text', 'This is a test car with attributes');
-		$car->set('dropdown_select', 'dark');
+		$car->set('freeText', 'This is a test car with attributes');
+		$car->set('dropdownSelect', 'dark');
 		$car->set('languageShortcode', 'de');
 
 		$beforeSaveAssociationsSent = false;
@@ -2704,8 +2704,8 @@ HTML;
 		/** @var \Customer\Model\Entity\Car $car */
 		$car = $table->newDefaultEntity();
 		$car->set('name', 'Test Car');
-		$car->set('free_text', 'This is a test car with attributes');
-		$car->set('dropdown_select', 'Mitsubishi');
+		$car->set('freeText', 'This is a test car with attributes');
+		$car->set('dropdownSelect', 'Mitsubishi');
 		$car->set('languageShortcode', 'de');
 
 		$beforeSaveAssociationsSent = false;
@@ -2796,17 +2796,17 @@ HTML;
 			}
 		};
 
-		$attribute->identifier = 'test_field';
+		$attribute->identifier = 'testField';
 		$attribute->type = 'json';
 		$attribute->defaultValue = '{"test": "value"}';
 
 		$table->setTestAttributes([$attribute]);
 
-		$schema->expects($this->once())->method('getColumn')->with('test_field')->willReturn(['type' => 'text', 'default' => null]);
+		$schema->expects($this->once())->method('getColumn')->with('testField')->willReturn(['type' => 'text', 'default' => null]);
 
-		$schema->expects($this->once())->method('setColumnType')->with('test_field', 'json');
+		$schema->expects($this->once())->method('setColumnType')->with('testField', 'json');
 
-		$schema->expects($this->once())->method('addColumn')->with('test_field', ['type' => 'text', 'default' => '{"test": "value"}']);
+		$schema->expects($this->once())->method('addColumn')->with('testField', ['type' => 'text', 'default' => '{"test": "value"}']);
 
 		$table->testInitializeSchema($schema);
 	}

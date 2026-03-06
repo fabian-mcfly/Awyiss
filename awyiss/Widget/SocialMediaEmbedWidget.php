@@ -53,13 +53,13 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 		$services = array_combine(
 			static::$supportedServices,
 			array_map(function (string $service): string {
-				return __df('Frontend/social_media_embed', 'Frontend/widgets', 'service_' . $service);
+				return __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'service_' . $service);
 			}, static::$supportedServices)
 		);
 
 		$formFields = [
 			'settings.service' => [
-				'label' => __df('Frontend/social_media_embed', 'Frontend/widgets', 'service'),
+				'label' => __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'service'),
 				'options' => $services,
 				'required' => true,
 				'type' => 'select',
@@ -77,7 +77,7 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 			};
 
 			$formFields['settings.embedId'] = [
-				'label' => __df('Frontend/social_media_embed', 'Frontend/widgets', 'embed_id'),
+				'label' => __df('Frontend/SocialMediaEmbed', 'Frontend/Widgets', 'embed_id'),
 				'placeholder' => $placeholder,
 				'required' => true,
 				'type' => 'text',

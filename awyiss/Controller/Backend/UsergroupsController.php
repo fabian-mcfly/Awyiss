@@ -186,7 +186,7 @@ class UsergroupsController extends Controller {
 		}
 
 		$requestData = $this->request->getData();
-		$requestData['usergroup_permissions'] = $this->reformatPermissionsData($requestData);
+		$requestData['usergroupPermissions'] = $this->reformatPermissionsData($requestData);
 		unset($requestData['permissions']);
 
 		$associated[] = 'UsergroupPermissions';
@@ -198,11 +198,11 @@ class UsergroupsController extends Controller {
 
 		$this->Usergroups->patchEntity($usergroup, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->Usergroups->save($usergroup, ['asCopy' => $saveAsCopy])) {
 				/** @var \Awyiss\Model\Entity\User $currentUser */
@@ -219,7 +219,7 @@ class UsergroupsController extends Controller {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'page' => $this->Paginate->calculateEntityPagePosition($usergroup),
@@ -281,10 +281,9 @@ class UsergroupsController extends Controller {
 			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
 			foreach ((!is_object($authorizationPolicy) ? $authorizationPolicy::getPermissionOptions() : $authorizationPolicy->getPermissionOptions()) as $permission) {
 				$scope = !is_object($authorizationPolicy) ? $authorizationPolicy::getScope() : $authorizationPolicy->getScope();
-				$scope = Inflector::underscore($scope);
 
 				$identifier = $permission->getConfig('identifier');
-				$identifier = Inflector::underscore($identifier);
+				$identifier = Inflector::variable($identifier);
 
 				$accessSettings = Hash::get($data, ['permissions', $scope, $identifier]);
 
@@ -316,7 +315,7 @@ class UsergroupsController extends Controller {
 
 
 	/**
-	 * Formats the usergroup_permissions entities of the Usergroup entity for the add and edit views
+	 * Formats the usergroupPermissions entities of the Usergroup entity for the add and edit views
 	 *
 	 * The result is a multidimensional array:
 	 *

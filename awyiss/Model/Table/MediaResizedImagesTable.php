@@ -41,7 +41,9 @@ class MediaResizedImagesTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->belongsTo('Media');
+		$this->belongsTo('Media', [
+			'foreignKey' => 'mediaId',
+		]);
 	}
 
 
@@ -170,7 +172,7 @@ class MediaResizedImagesTable extends Table {
 			'validStatus',
 			[
 				'errorField' => 'status',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_status'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_status'),
 			]
 		);
 
@@ -189,7 +191,7 @@ class MediaResizedImagesTable extends Table {
 			'validStrategy',
 			[
 				'errorField' => 'strategy',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_strategy'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_strategy'),
 			]
 		);
 

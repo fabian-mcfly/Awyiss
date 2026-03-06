@@ -56,11 +56,15 @@ class UsersTable extends Table {
 		$this->belongsToMany('Usergroups', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'userId',
+			'targetForeignKey' => 'usergroupId',
 		]);
 
 		$this->hasMany('UserConfiguration', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'foreignKey' => 'userId',
+			'propertyName' => 'userConfiguration',
 		]);
 	}
 
@@ -75,8 +79,8 @@ class UsersTable extends Table {
 		$query->where([
 			'active' => 1,
 			'OR' => [
-				'failed_attempts <' => 5,
-				'last_login <=' => DateTime::now()->subMinutes(10),
+				'failedAttempts <' => 5,
+				'lastLogin <=' => DateTime::now()->subMinutes(10),
 			],
 		]);
 
@@ -119,7 +123,7 @@ class UsersTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
-			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+			'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
 		]);
 
 
@@ -183,7 +187,7 @@ class UsersTable extends Table {
 			'usernameUnique',
 			[
 				'errorField' => 'username',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_username_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_username_unique'),
 			]
 		);
 
@@ -193,7 +197,7 @@ class UsersTable extends Table {
 			'emailUnique',
 			[
 				'errorField' => 'email',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_email_unique'),
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_email_unique'),
 			]
 		);
 

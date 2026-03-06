@@ -32,7 +32,7 @@ class GlobalContentsController extends Controller {
 	 */
 	protected ?string $selectedIdentifierSessionIdentifier = null;
 	/**
-	 * @var string|null Session identifier for the selected parent_id
+	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
 	/**
@@ -51,8 +51,8 @@ class GlobalContentsController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedIdentifierSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.identifier';
-		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+		$this->selectedIdentifierSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.identifier';
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
 	}
 
 
@@ -306,17 +306,17 @@ class GlobalContentsController extends Controller {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 			$this->set('success', true);
-			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('message', $affectedRows > 0 ? __d('System', 'system_order_saved') : __d('System', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 		}
 		else {
 			if ($affectedRows) {
-				$this->Flash->success(__d('system', 'system_order_saved'));
+				$this->Flash->success(__d('System', 'system_order_saved'));
 			}
 			else {
-				$this->Flash->error(__d('system', 'system_order_not_saved'));
+				$this->Flash->error(__d('System', 'system_order_not_saved'));
 			}
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -341,13 +341,13 @@ class GlobalContentsController extends Controller {
 
 		$this->GlobalContents->patchEntity($globalContent, $requestData, [
 			'associated' => $associated,
-			'validate' => !$this->request->getData('reload_form'),
+			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 			$this->unsetUnassignedElements($globalContent);
 
-			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->GlobalContents->save($globalContent, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
@@ -359,7 +359,7 @@ class GlobalContentsController extends Controller {
 				$session->write($this->selectedIdentifierSessionIdentifier, $globalContent->identifier);
 				$session->write($this->selectedParentIdSessionIdentifier, $globalContent->parentId);
 
-				if ($this->request->getData('submit_type') == 'submit_close') {
+				if ($this->request->getData('submitType') == 'submitClose') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
@@ -409,8 +409,8 @@ class GlobalContentsController extends Controller {
 
 			return [
 				'identifier' => $identifierCase,
-				'parent_id' => $parentCase,
-				'system_order' => $systemOrderCase,
+				'parentId' => $parentCase,
+				'systemOrder' => $systemOrderCase,
 			];
 		}, [
 			'id IN' => array_column($orderData, 'id'),
@@ -497,18 +497,18 @@ class GlobalContentsController extends Controller {
 
 		$globalContent->setDirty('parentId', false);
 
-		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected content template
+		// If the parentId is not in the list of possible parent ids or the parentId is not assigned to the selected content template
 		if (
-			$globalContent->parentId && (!in_array($globalContent->parentId, $possibleParentIds) || !isset($assignedGlobalContentElements['parent_id']))
+			$globalContent->parentId && (!in_array($globalContent->parentId, $possibleParentIds) || !isset($assignedGlobalContentElements['parentId']))
 		) {
 			// Remember the errors
 			$errors = $globalContent->getError('parentId');
 
-			// If the parent_id is required and there are possible parent ids, set the parent_id to the first possible parent id
-			if (($assignedGlobalContentElements['parent_id'] ?? null)?->required === true && $possibleParentIds) {
+			// If the parentId is required and there are possible parent ids, set the parentId to the first possible parent id
+			if (($assignedGlobalContentElements['parentId'] ?? null)?->required === true && $possibleParentIds) {
 				$globalContent->parentId = reset($possibleParentIds);
 			}
-			// Otherwise, set the parent_id to null
+			// Otherwise, set the parentId to null
 			else {
 				$globalContent->parentId = null;
 			}
@@ -519,9 +519,9 @@ class GlobalContentsController extends Controller {
 			}
 
 			$request = $this->getRequest();
-			//When parent_id is part of the request data, overwrite it since it might be outdated
-			if ($request->getData('parent_id') !== null) {
-				$request = $request->withData('parent_id', $globalContent->parentId);
+			//When parentId is part of the request data, overwrite it since it might be outdated
+			if ($request->getData('parentId') !== null) {
+				$request = $request->withData('parentId', $globalContent->parentId);
 				$this->setRequest($request);
 			}
 		}
@@ -550,8 +550,8 @@ class GlobalContentsController extends Controller {
 
 		$request = $this->getRequest();
 		//When global_content_template_id is part of the request data, overwrite it since it might be outdated
-		if ($request->getData('global_content_template_id') !== null) {
-			$request = $request->withData('global_content_template_id', $globalContent->globalContentTemplateId);
+		if ($request->getData('globalContentTemplateId') !== null) {
+			$request = $request->withData('globalContentTemplateId', $globalContent->globalContentTemplateId);
 			$this->setRequest($request);
 		}
 	}
@@ -571,7 +571,7 @@ class GlobalContentsController extends Controller {
 				array_column($globalContentTemplate->globalContentTemplateElements ?? [], 'identifier')
 			) as $element
 		) {
-			if ($element === 'column_width') {
+			if ($element === 'columnWidth') {
 				$columnWidths = $this->GlobalContents->getColumnWidths();
 
 				$globalContent->set($element, key($columnWidths));

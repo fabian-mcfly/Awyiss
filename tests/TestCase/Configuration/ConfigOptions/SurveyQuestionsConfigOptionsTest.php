@@ -57,10 +57,10 @@ class SurveyQuestionsConfigOptionsTest extends TestCase {
 			'subtitle' => 'survey_questions::subtitle',
 			'text' => 'survey_questions::text',
 			'active' => 'survey_questions::active',
-			'created_by' => 'survey_questions::created_by',
-			'created_on' => 'survey_questions::created_on',
-			'changed_by' => 'survey_questions::changed_by',
-			'changed_on' => 'survey_questions::changed_on',
+			'createdBy' => 'survey_questions::created_by',
+			'createdOn' => 'survey_questions::created_on',
+			'changedBy' => 'survey_questions::changed_by',
+			'changedOn' => 'survey_questions::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);
