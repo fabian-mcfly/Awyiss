@@ -96,6 +96,11 @@ export default class Survey {
 			}
 
 			survey.classList.remove('FetchInProgress');
+
+			// Update lazy loading if it exists
+			if (window.lazyLoad && typeof window.lazyLoad.update === 'function') {
+				window.lazyLoad.update();
+			}
 		})
 		.catch(error => console.error('Error:', error));
 	}
