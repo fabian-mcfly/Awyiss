@@ -46,7 +46,7 @@ jobs:
           fi
           
           # Save to file to handle multiline output
-          echo "$CHANGELOG" > changelog.txt
+          echo "$CHANGELOG" > CHANGELOG.txt
           
           # Also save to output with proper formatting
           echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
@@ -120,17 +120,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ steps.get_version.outputs.VERSION }}
-          body: |
-            ## Changes in ${{ steps.get_version.outputs.VERSION }}
-            
-            ${{ steps.changelog.outputs.CHANGELOG }}
-            
-            ---
-            
-            ### Downloads
-            
-            - **Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip**: Source code only (requires `composer install`)
-            - **Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip**: Full package with all dependencies (ready to deploy)
+          body_path: CHANGELOG.txt
           files: |
             Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip
             Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip
