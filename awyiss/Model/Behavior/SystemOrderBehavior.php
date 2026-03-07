@@ -721,14 +721,19 @@ class SystemOrderBehavior extends Behavior {
 		$relatedColumns = $this->getDirtyRelatedColumns($entity);
 
 		foreach ($relatedColumns as $column) {
-			if ($entity->isDirty($column) && $entity->hasOriginal($column)) {
+			if (
+				$entity->isDirty($column) &&
+				$entity->hasOriginal($column) &&
+				$entity->get($column) !== $entity->getOriginal($column)
+			) {
 				return true;
 			}
 
 			if (
 				$entity->get('attributes') instanceof EntityInterface &&
 				$entity->get('attributes')->isDirty($column) &&
-				$entity->get('attributes')->hasOriginal($column)
+				$entity->get('attributes')->hasOriginal($column) &&
+				$entity->get('attributes')->get($column) !== $entity->get('attributes')->getOriginal($column)
 			) {
 				return true;
 			}
