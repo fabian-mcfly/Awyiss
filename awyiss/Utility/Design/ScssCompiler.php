@@ -400,36 +400,10 @@ class ScssCompiler {
 
 		return [
 			'columnSystem' => ValueConverter::fromPhp($columnSystemClassName::getName()),
-			'columnWidths' => ValueConverter::parseValue(static::arrayToScssMap($widths)),
-			'columnIndents' => ValueConverter::parseValue(static::arrayToScssMap($indents)),
+			'columnWidths' => ValueConverter::fromPhp($widths),
+			'columnIndents' => ValueConverter::fromPhp($indents),
 			'maxColumns' => ValueConverter::fromPhp($columnSystemClassName::getMaxDenominator()),
 		];
-	}
-
-
-	/**
-	 * Converts an array to a SCSS map.
-	 *
-	 * @param array $array
-	 * @return string
-	 */
-	protected static function arrayToScssMap(array $array): string {
-		$result = '(';
-
-		foreach ($array as $key => $value) {
-			if (is_array($value)) {
-				$value = static::arrayToScssMap($value); // Recursive call for nested arrays
-			}
-
-			if (gettype($key) === 'string') {
-				$result .= '"' . $key . '": ' . $value . ', ';
-			}
-			else {
-				$result .= $value . ', ';
-			}
-		}
-
-		return rtrim($result, ', ') . ')';
 	}
 
 
