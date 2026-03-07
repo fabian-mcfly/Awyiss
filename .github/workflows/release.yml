@@ -37,14 +37,16 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
+          REPO_URL="https://github.com/${{ github.repository }}"
+          
           if [ -n "${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}" ]; then
             echo "Generating changelog from ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }} to ${{ steps.get_version.outputs.VERSION }}"
             COMMIT_COUNT=$(git rev-list --count ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --no-merges)
-            CHANGELOG=$(git log ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges -n 100)
+            CHANGELOG=$(git log ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s ([%h](${REPO_URL}/commit/%H))" --no-merges -n 100)
           else
             echo "No previous tag found, generating changelog for last 100 commits"
             COMMIT_COUNT=$(git rev-list --count ${{ steps.get_version.outputs.VERSION }} --no-merges)
-            CHANGELOG=$(git log ${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges -n 100)
+            CHANGELOG=$(git log ${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s ([%h](${REPO_URL}/commit/%H))" --no-merges -n 100)
           fi
           
           # Create formatted changelog file
@@ -154,4 +156,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
