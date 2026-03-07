@@ -38,6 +38,13 @@
 					{{ HtmlHelper.link(__('group_entries'), {grouped: grouped ? false : 'true'}, {class: 'Button Button-Toggle' ~ (grouped ? ' Button-Toggle-Active' : '')}) }}
 				{% endblock %}
 
+				{{ FormHelper.linkSelect(__('delete_older_than'), [
+					HtmlHelper.link(__('delete_older_than_one_week'), {action: 'delete-old', olderThan: 'oneWeek'}, {class: 'Button Button-Delete'}),
+					HtmlHelper.link(__('delete_older_than_one_month'), {action: 'delete-old', olderThan: 'oneMonth'}, {class: 'Button Button-Delete'}),
+					HtmlHelper.link(__('delete_older_than_one_year'), {action: 'delete-old', olderThan: 'oneYear'}, {class: 'Button Button-Delete'}),
+					HtmlHelper.link(__('delete_older_all'), {action: 'delete-old', olderThan: 'all'}, {class: 'Button Button-Delete'}),
+				]) }}
+
 				{% block overviewButtonFilter %}
 					{{ element('search/filter_button', {scope: 'urls_not_found'}) }}
 				{% endblock %}

@@ -7,7 +7,9 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Cake\Http\Response;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
+use Exception;
 
 
 /**
@@ -139,6 +141,44 @@ class UrlsNotFoundController extends Controller {
 				foreach ($urlsNotFound->getError('_general') as $error) {
 					$this->Flash->error($error);
 				}
+			}
+		}
+
+		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @return \Cake\Http\Response
+	 * @throws \Exception
+	 */
+	public function deleteOld(): Response {
+		$this->Authorization->ensure('delete');
+
+		$this->request->allowMethod(['get', 'delete']);
+
+		$duration = $this->request->getParam('olderThan');
+		$duration = match ($duration) {
+			'oneWeek' => '-1 week',
+			'oneMonth' => '-1 month',
+			'oneYear' => '-1 year',
+			'all' => null,
+		};
+
+		$where = [];
+		if ($duration) {
+			$where['createdOn <'] = new DateTime($duration);
+		}
+
+		try {
+			$this->UrlsNotFound->deleteAll($where);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_old_succeeded'));
+			}
+		}
+		catch (Exception) {
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_old_failed'));
 			}
 		}
 
