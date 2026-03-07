@@ -268,8 +268,8 @@
 
 	{% set attributeOptions = isAttribute ? (settings.attributeOptionsCollection.getAttributeOption(field).getOptions(field) ?? []) : null %}
 
-	{%- set oldValue = _self.formatOldValue(field, oldData, entity, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
-	{%- set newValue = _self.formatOldValue(field, newData, entity, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
+	{%- set oldValue = _self.formatOldValue(field, oldData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
+	{%- set newValue = _self.formatOldValue(field, newData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
 
 	{% set realOldValue = oldData[ field ] %}
 	{% set realNewValue = newData[ field ] %}
@@ -307,6 +307,10 @@
 			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
 			{{- entity.get(field) is not empty ? entity.get(field)|jsonEncode : '' }}
+		{%- elseif field == 'fieldset' %}
+			{{- entity.get(field) is not empty ? __d(scope, 'fieldset_' ~ entity.get(field)|underscore) : '' }}
+		{%- elseif field == 'inputType' %}
+			{{- entity.get(field) is not empty ? __d(scope, 'input_type_' ~ entity.get(field)|underscore) : '' }}
 		{%- elseif field == 'columnWidth' %}
 			{{- entity.column.width.label }}
 		{%- elseif field == 'columnIndent' %}
@@ -373,11 +377,12 @@
 	</tr>
 {% endmacro %}
 
-{% macro formatOldValue(field, oldData, entity, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
+{% macro formatOldValue(field, oldData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
 	{#
 	@var field string
 	@var oldData array
 	@var entity \Awyiss\Model\Entity
+	@var scope string
 	@var associations array<string, array{name: string, property: string}>
 	@var columnType string
 	@var oldDiffersFromCurrent bool
@@ -428,6 +433,10 @@
 		{{- oldData[ field ] is not empty ? oldData[ field ]|jsonEncode : '' }}
 	{%- elseif columnType == 'string' and field == 'languageShortcode' %}
 		{{- oldData[ field ] ? languages.Frontend[ oldData[ field ] ].title : '' }}
+	{%- elseif field == 'fieldset' %}
+		{{- oldData[ field ] is not empty ? __d(scope, 'fieldset_' ~ oldData[ field ]|underscore) : '' }}
+	{%- elseif field == 'inputType' %}
+		{{- oldData[ field ] is not empty ? __d(scope, 'input_type_' ~ oldData[ field ]|underscore) : '' }}
 	{%- elseif field == 'columnWidth' %}
 		{{- oldData['column'].width.label }}
 	{%- elseif field == 'columnIndent' %}
