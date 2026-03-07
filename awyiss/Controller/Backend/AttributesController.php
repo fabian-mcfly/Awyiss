@@ -324,7 +324,7 @@ class AttributesController extends Controller {
 		$this->ensurePossibleFieldset($attribute, $availableFieldsets);
 
 		if (in_array($attribute->scope, ['Contents', 'GlobalContents'])) {
-			$attribute->fieldset = '';
+			$attribute->fieldset = null;
 		}
 
 		$pageRoles = array_keys(array_filter($this->attributeScopes, function ($table) {

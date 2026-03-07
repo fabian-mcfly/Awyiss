@@ -66,7 +66,7 @@ class Attributes  {
 		])->addColumn('fieldset', 'string', [
 			'default' => null,
 			'limit' => 30,
-			'null' => false,
+			'null' => true,
 		])->addColumn('input_type', 'string', [
 			'default' => 'text',
 			'limit' => 30,
