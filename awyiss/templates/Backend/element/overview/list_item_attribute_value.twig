@@ -30,9 +30,9 @@
 {% else %}
 	{% set value = entity.attributes.has(field) ? entity.attributes.get(field) : '-' %}
 
-	{% if if attributes[field].inputType == 'checkbox' and (value is same as true or value is same as 'true') %}
+	{% if attributes[field].inputType == 'checkbox' and (value is same as true or value is same as 'true') %}
 		<i class="las la-check">{{ __('true') }}</i>
-	{% elseif if attributes[field].inputType == 'checkbox' and (value is same as false or value is same as 'false') %}
+	{% elseif attributes[field].inputType == 'checkbox' and (value is same as false or value is same as 'false') %}
 		<i class="las la-times">{{ __('false') }}</i>
 	{% elseif (value is enum) %}
 		{{ value.name }}
