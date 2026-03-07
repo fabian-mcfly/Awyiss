@@ -83,7 +83,9 @@ class AttributesController extends Controller {
 		}
 		else {
 			$attributes = $query->all();
-			$attributesGroupedByFieldset = $query->all()->groupBy('fieldset')->toArray();
+			$attributesGroupedByFieldset = $query->all()->groupBy(function (Attribute $attribute): string {
+				return $attribute->fieldset ?: '';
+			})->toArray();
 		}
 
 		$selectedScope = $this->Categories->getSelectedCategory();
