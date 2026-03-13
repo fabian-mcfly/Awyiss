@@ -157,7 +157,7 @@ class UserConfigurationTable extends Table {
 		$validator->add('value', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 255]],
+			'maxLength' => ['rule' => ['maxLength', 1024]],
 		]);
 
 

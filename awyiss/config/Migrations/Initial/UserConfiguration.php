@@ -53,7 +53,7 @@ class UserConfiguration {
 			'null' => false,
 		])->addColumn('value', 'string', [
 			'default' => null,
-			'limit' => 255,
+			'limit' => 1024,
 			'null' => true,
 		])->addIndex(
 			[
