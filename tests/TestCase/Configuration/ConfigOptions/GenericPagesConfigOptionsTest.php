@@ -195,7 +195,7 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame(['pageTemplateId'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('system::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('System::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
@@ -262,14 +262,14 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isPersonalizable());
 		$this->assertSame(SORT_ASC, $configOptions['Backend.systemOrder.direction']->getDefaultValue());
-		$this->assertSame('news::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
+		$this->assertSame('News::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.direction']->getType());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.direction']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.direction']->getValidate());
 		$this->assertIsArray($configOptions['Backend.systemOrder.direction']->getValues());
 		$this->assertSame([
-			4 => 'news::sort_asc',
-			3 => 'news::sort_desc',
+			4 => 'News::sort_asc',
+			3 => 'News::sort_desc',
 		], $configOptions['Backend.systemOrder.direction']->getValues());
 
 		$this->assertArrayHasKey('Backend.systemOrder.field', $configOptions);
@@ -277,34 +277,34 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.field']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.field']->isPersonalizable());
 		$this->assertSame('title', $configOptions['Backend.systemOrder.field']->getDefaultValue());
-		$this->assertSame('system::title', $configOptions['Backend.systemOrder.field']->getPrintableValue());
+		$this->assertSame('System::title', $configOptions['Backend.systemOrder.field']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.field']->getType());
 		$this->assertNull($configOptions['Backend.systemOrder.field']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.field']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.field']->getValues());
 		$this->assertSame([
-			'id' => 'system::id',
-			'pageRoleId' => 'system::page_role_id',
-			'pageTemplateId' => 'system::page_template_id',
-			'parentId' => 'system::parent_id',
-			'languageShortcode' => 'system::language_shortcode',
-			'slug' => 'system::slug',
-			'title' => 'system::title',
-			'redirectLink' => 'system::redirect_link',
-			'metaTitle' => 'seo::meta_title',
-			'metaDescription' => 'seo::meta_description',
-			'robotsIndex' => 'seo::robots_index',
-			'robotsFollow' => 'seo::robots_follow',
-			'duplicateOf' => 'system::duplicate_of',
-			'formId' => 'system::form_id',
-			'surveyId' => 'system::survey_id',
-			'systemOrder' => 'system::system_order',
-			'active' => 'system::active',
-			'parentsActive' => 'system::parents_active',
-			'createdBy' => 'system::created_by',
-			'createdOn' => 'system::created_on',
-			'changedBy' => 'system::changed_by',
-			'changedOn' => 'system::changed_on',
+			'id' => 'System::id',
+			'pageRoleId' => 'System::page_role_id',
+			'pageTemplateId' => 'System::page_template_id',
+			'parentId' => 'System::parent_id',
+			'languageShortcode' => 'System::language_shortcode',
+			'slug' => 'System::slug',
+			'title' => 'System::title',
+			'redirectLink' => 'System::redirect_link',
+			'metaTitle' => 'Seo::meta_title',
+			'metaDescription' => 'Seo::meta_description',
+			'robotsIndex' => 'Seo::robots_index',
+			'robotsFollow' => 'Seo::robots_follow',
+			'duplicateOf' => 'System::duplicate_of',
+			'formId' => 'System::form_id',
+			'surveyId' => 'System::survey_id',
+			'systemOrder' => 'System::system_order',
+			'active' => 'System::active',
+			'parentsActive' => 'System::parents_active',
+			'createdBy' => 'System::created_by',
+			'createdOn' => 'System::created_on',
+			'changedBy' => 'System::changed_by',
+			'changedOn' => 'System::changed_on',
 			'attributes.date' => 'Datum',
 			'attributes.teaser' => 'Teaser',
 			'attributes.text' => 'Text',

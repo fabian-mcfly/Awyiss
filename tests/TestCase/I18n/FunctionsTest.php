@@ -123,7 +123,7 @@ class FunctionsTest extends TestCase {
 		$this->assertSame('This is a test headline for the en_ZW locale in the Backend/test_domain domain.', $message);
 
 		$message = __('menu_title');
-		$this->assertSame('test_domain::menu_title', $message);
+		$this->assertSame('TestDomain::menu_title', $message);
 	}
 
 
@@ -163,10 +163,10 @@ class FunctionsTest extends TestCase {
 	 */
 	public function test__dNotUsesSystemFallbackAsDomainForBlocklistedString(): void { // phpcs:ignore
 		$message = __d('TestDomain', 'meta_title_overview');
-		$this->assertSame('test_domain::meta_title_overview', $message);
+		$this->assertSame('TestDomain::meta_title_overview', $message);
 
 		$message = __d('TestDomain', 'menu_title');
-		$this->assertSame('test_domain::menu_title', $message);
+		$this->assertSame('TestDomain::menu_title', $message);
 
 		$message = __d('TestDomain', 'headline_overview');
 		$this->assertSame('This is a test headline for the en_ZW locale in the Backend/test_domain domain.', $message);
@@ -207,7 +207,7 @@ class FunctionsTest extends TestCase {
 	 */
 	public function test__dfPrefixedWithMainDomainWhenNotFoundInFallback(): void { // phpcs:ignore
 		$message = __df('TestDomain', 'Validation', 'unknown_string');
-		$this->assertSame('test_domain::unknown_string', $message);
+		$this->assertSame('TestDomain::unknown_string', $message);
 	}
 
 

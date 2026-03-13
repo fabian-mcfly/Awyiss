@@ -719,7 +719,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageId', $errors);
 		$this->assertArrayHasKey('validPageId', $errors['pageId']);
-		$this->assertEquals('contents::error_valid_page_id', $errors['pageId']['validPageId']);
+		$this->assertEquals('Contents::error_valid_page_id', $errors['pageId']['validPageId']);
 	}
 
 
@@ -744,7 +744,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('contentTemplateId', $errors);
 		$this->assertArrayHasKey('validContentTemplateId', $errors['contentTemplateId']);
-		$this->assertEquals('contents::error_valid_content_template_id', $errors['contentTemplateId']['validContentTemplateId']);
+		$this->assertEquals('Contents::error_valid_content_template_id', $errors['contentTemplateId']['validContentTemplateId']);
 	}
 
 
@@ -769,7 +769,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('contentAreaId', $errors);
 		$this->assertArrayHasKey('validContentAreaId', $errors['contentAreaId']);
-		$this->assertEquals('contents::error_valid_content_area_id', $errors['contentAreaId']['validContentAreaId']);
+		$this->assertEquals('Contents::error_valid_content_area_id', $errors['contentAreaId']['validContentAreaId']);
 	}
 
 
@@ -837,7 +837,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('validFormId', $errors['formId']);
-		$this->assertEquals('validation::error_exists_in', $errors['formId']['validFormId']);
+		$this->assertEquals('Validation::error_exists_in', $errors['formId']['validFormId']);
 	}
 
 
@@ -905,7 +905,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('validSurveyId', $errors['surveyId']);
-		$this->assertEquals('validation::error_exists_in', $errors['surveyId']['validSurveyId']);
+		$this->assertEquals('Validation::error_exists_in', $errors['surveyId']['validSurveyId']);
 	}
 
 
@@ -954,7 +954,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('validWidthIndentCombination', $errors['_general']);
-		$this->assertEquals('contents::error_valid_width_indent_combination', $errors['_general']['validWidthIndentCombination']);
+		$this->assertEquals('Contents::error_valid_width_indent_combination', $errors['_general']['validWidthIndentCombination']);
 	}
 
 
@@ -1001,7 +1001,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('contents::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Contents::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1027,7 +1027,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('contents::error_duplicate_not_on_same_page', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Contents::error_duplicate_not_on_same_page', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1054,7 +1054,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('contents::error_not_self_duplicating', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Contents::error_not_self_duplicating', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1082,7 +1082,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('contents::error_not_duplicating_duplicated', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Contents::error_not_duplicating_duplicated', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1108,7 +1108,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('contents::error_not_duplicating_duplicating', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Contents::error_not_duplicating_duplicating', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1126,7 +1126,7 @@ class ContentsTableTest extends TestCase {
 		$errors = $content->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noDuplicatingContents', $errors['_general']);
-		$this->assertEquals('contents::error_no_duplicating_contents', $errors['_general']['noDuplicatingContents']);
+		$this->assertEquals('Contents::error_no_duplicating_contents', $errors['_general']['noDuplicatingContents']);
 	}
 
 
@@ -1324,7 +1324,7 @@ class ContentsTableTest extends TestCase {
 		$this->assertSame([
 			1 => 'Kontaktformular',
 			2 => 'Kontaktformular2',
-			3 => 'forms::inactive Kontaktformular3',
+			3 => 'Forms::inactive Kontaktformular3',
 			4 => 'Kontaktformular4',
 			5 => 'Kontaktformular5',
 		], $result);
@@ -1367,25 +1367,25 @@ class ContentsTableTest extends TestCase {
 			56 => '- - Preisgruppe 1',
 			51 => '- Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et e...',
 			57 => '- - logo-awyiss2.jpg',
-			2 => 'contents::inactive logo-awyiss.jpg',
+			2 => 'Contents::inactive logo-awyiss.jpg',
 			8 => '- Widget: test',
 			30 => 'Template: Inhaltsblock',
-			31 => '- contents::duplicate_of: (h1) Titel H1 (ID: 32)',
+			31 => '- Contents::duplicate_of: (h1) Titel H1 (ID: 32)',
 			37 => 'Template: Inhaltsblock',
-			38 => '- contents::inactive (h2) Bildergalerie',
+			38 => '- Contents::inactive (h2) Bildergalerie',
 			39 => '- - logo-awyiss.jpg',
 			40 => '- - Template: Standard',
 			41 => '- - Template: Standard',
 			42 => '- - Template: Standard',
 			44 => 'logo-awyiss.jpg',
 			3 => 'Template: Inhaltsblock',
-			16 => '- contents::inactive (h2) Aktuelle Meldungen',
+			16 => '- Contents::inactive (h2) Aktuelle Meldungen',
 			45 => 'Content with inline img tagbetween two paragraphs',
 			48 => '- Nested content',
 			47 => '- - Nested content',
 			4 => 'Template: Inhaltsblock',
 			17 => '- Template: Standard',
-			46 => 'contents::survey_id: Dummy Survey',
+			46 => 'Contents::survey_id: Dummy Survey',
 			5 => 'Template: Inhaltsblock',
 			18 => '- Zwischenüberschrift (h2) mit integriertem Zeilenumbruch. In Farbe.',
 			20 => '- Template: Standard',
@@ -1428,7 +1428,7 @@ class ContentsTableTest extends TestCase {
 
 		$this->assertSame([
 			1 => 'Dummy Survey',
-			2 => 'surveys::inactive Dummy Survey (Inactive)',
+			2 => 'Surveys::inactive Dummy Survey (Inactive)',
 			3 => 'Dummy Survey (Inline Image)',
 			4 => 'Dummy Survey (Survey Results)',
 		], $result);

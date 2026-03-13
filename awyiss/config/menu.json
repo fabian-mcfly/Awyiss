@@ -1,7 +1,7 @@
 {
 	"dashboard": {
 		"title": {
-			"translate": ["dashboard", "menu_title"]
+			"translate": ["Dashboard", "menu_title"]
 		},
 		"link": {
 			"url": {
@@ -12,7 +12,7 @@
 	},
 	"pages": {
 		"title": {
-			"translate": ["pages", "menu_title"]
+			"translate": ["Pages", "menu_title"]
 		},
 		"link": {
 			"url": {
@@ -21,13 +21,13 @@
 			}
 		},
 		"access": {
-			"scope": "pages",
+			"scope": "Pages",
 			"identifier": "read"
 		},
 		"children": {
 			"pagesOverview": {
 				"title": {
-					"translate": ["pages", "menu_overview"]
+					"translate": ["Pages", "menu_overview"]
 				},
 				"link": {
 					"url": {
@@ -42,7 +42,7 @@
 			},
 			"pagesAdd": {
 				"title": {
-					"translate": ["pages", "menu_add"]
+					"translate": ["Pages", "menu_add"]
 				},
 				"link": {
 					"url": {
@@ -51,13 +51,13 @@
 					}
 				},
 				"access": {
-					"scope": "pages",
+					"scope": "Pages",
 					"identifier": "create"
 				},
 				"children": {
 					"pagesAddBatch": {
 						"title": {
-							"translate": ["pages", "menu_add_batch"]
+							"translate": ["Pages", "menu_add_batch"]
 						},
 						"link": {
 							"url": {
@@ -66,7 +66,7 @@
 							}
 						},
 						"access": {
-							"scope": "pages",
+							"scope": "Pages",
 							"identifier": "create"
 						}
 					}
@@ -74,7 +74,7 @@
 			},
 			"contentsAdd": {
 				"title": {
-					"translate": ["contents", "menu_add"]
+					"translate": ["Contents", "menu_add"]
 				},
 				"link": {
 					"url": {
@@ -83,14 +83,14 @@
 					}
 				},
 				"access": {
-					"scope": "pages",
+					"scope": "Pages",
 					"identifier": "contents"
 				},
 				"children": null
 			},
 			"pagesConfigure": {
 				"title": {
-					"translate": ["pages", "menu_configure"]
+					"translate": ["Pages", "menu_configure"]
 				},
 				"link": {
 					"url": {
@@ -100,7 +100,7 @@
 					}
 				},
 				"access": {
-					"scope": "pages",
+					"scope": "Pages",
 					"identifier": "configure"
 				}
 			}
@@ -108,7 +108,7 @@
 	},
 	"media": {
 		"title": {
-			"translate": ["media", "menu_title"]
+			"translate": ["Media", "menu_title"]
 		},
 		"link": {
 			"url": {
@@ -117,13 +117,13 @@
 			}
 		},
 		"access": {
-			"scope": "media",
+			"scope": "Media",
 			"identifier": "read"
 		},
 		"children": {
 			"mediaFolders": {
 				"title": {
-					"translate": ["media_folders", "menu_title"]
+					"translate": ["MediaFolders", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -132,13 +132,13 @@
 					}
 				},
 				"access": {
-					"scope": "media_folders",
+					"scope": "MediaFolders",
 					"identifier": "read"
 				},
 				"children": {
 					"mediaFoldersOverview": {
 						"title": {
-							"translate": ["media_folders", "menu_overview"]
+							"translate": ["MediaFolders", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -153,7 +153,7 @@
 					},
 					"mediaFoldersAdd": {
 						"title": {
-							"translate": ["media_folders", "menu_add"]
+							"translate": ["MediaFolders", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -162,13 +162,13 @@
 							}
 						},
 						"access": {
-							"scope": "media_folders",
+							"scope": "MediaFolders",
 							"identifier": "create"
 						}
 					},
 					"mediaFoldersConfigure": {
 						"title": {
-							"translate": ["media_folders", "menu_configure"]
+							"translate": ["MediaFolders", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -178,7 +178,7 @@
 							}
 						},
 						"access": {
-							"scope": "media_folders",
+							"scope": "MediaFolders",
 							"identifier": "configure"
 						}
 					}
@@ -186,7 +186,7 @@
 			},
 			"mediaBatchEdit": {
 				"title": {
-					"translate": ["media", "menu_batch_edit"]
+					"translate": ["Media", "menu_batch_edit"]
 				},
 				"link": {
 					"url": {
@@ -195,14 +195,14 @@
 					}
 				},
 				"access": {
-					"scope": "media",
+					"scope": "Media",
 					"identifier": "create"
 				},
 				"children": null
 			},
 			"mediaElements": {
 				"title": {
-					"translate": ["media_elements", "menu_title"]
+					"translate": ["MediaElements", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -211,13 +211,13 @@
 					}
 				},
 				"access": {
-					"scope": "media_elements",
+					"scope": "MediaElements",
 					"identifier": "read"
 				},
 				"children": {
 					"mediaElementsOverview": {
 						"title": {
-							"translate": ["media_elements", "menu_overview"]
+							"translate": ["MediaElements", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -232,7 +232,7 @@
 					},
 					"mediaElementsAdd": {
 						"title": {
-							"translate": ["media_elements", "menu_add"]
+							"translate": ["MediaElements", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -241,13 +241,13 @@
 							}
 						},
 						"access": {
-							"scope": "media_elements",
+							"scope": "MediaElements",
 							"identifier": "create"
 						}
 					},
 					"mediaSelectors": {
 						"title": {
-							"translate": ["media_selectors", "menu_title"]
+							"translate": ["MediaSelectors", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -256,13 +256,13 @@
 							}
 						},
 						"access": {
-							"scope": "media_selectors",
+							"scope": "MediaSelectors",
 							"identifier": "read"
 						},
 						"children": {
 							"mediaSelectorsOverview": {
 								"title": {
-									"translate": ["media_selectors", "menu_overview"]
+									"translate": ["MediaSelectors", "menu_overview"]
 								},
 								"link": {
 									"url": {
@@ -277,7 +277,7 @@
 							},
 							"mediaSelectorsAdd": {
 								"title": {
-									"translate": ["media_selectors", "menu_add"]
+									"translate": ["MediaSelectors", "menu_add"]
 								},
 								"link": {
 									"url": {
@@ -286,13 +286,13 @@
 									}
 								},
 								"access": {
-									"scope": "media_selectors",
+									"scope": "MediaSelectors",
 									"identifier": "create"
 								}
 							},
 							"mediaSelectorsConfigure": {
 								"title": {
-									"translate": ["media_selectors", "menu_configure"]
+									"translate": ["MediaSelectors", "menu_configure"]
 								},
 								"link": {
 									"url": {
@@ -302,7 +302,7 @@
 									}
 								},
 								"access": {
-									"scope": "media_selectors",
+									"scope": "MediaSelectors",
 									"identifier": "configure"
 								}
 							}
@@ -310,7 +310,7 @@
 					},
 					"mediaElementsConfigure": {
 						"title": {
-							"translate": ["media_elements", "menu_configure"]
+							"translate": ["MediaElements", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -320,7 +320,7 @@
 							}
 						},
 						"access": {
-							"scope": "media_elements",
+							"scope": "MediaElements",
 							"identifier": "configure"
 						}
 					}
@@ -328,7 +328,7 @@
 			},
 			"mediaConfigure": {
 				"title": {
-					"translate": ["media", "menu_configure"]
+					"translate": ["Media", "menu_configure"]
 				},
 				"link": {
 					"url": {
@@ -338,7 +338,7 @@
 					}
 				},
 				"access": {
-					"scope": "media",
+					"scope": "Media",
 					"identifier": "configure"
 				}
 			}
@@ -346,14 +346,14 @@
 	},
 	"components": {
 		"title": {
-			"translate": ["system", "components"]
+			"translate": ["System", "components"]
 		},
 		"link": null,
 		"access": null,
 		"children": {
 			"globalContents": {
 				"title": {
-					"translate": ["global_contents", "menu_title"]
+					"translate": ["GlobalContents", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -362,13 +362,13 @@
 					}
 				},
 				"access": {
-					"scope": "global_contents",
+					"scope": "GlobalContents",
 					"identifier": "read"
 				},
 				"children": {
 					"globalContentsOverview": {
 						"title": {
-							"translate": ["global_contents", "menu_overview"]
+							"translate": ["GlobalContents", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -377,13 +377,13 @@
 							}
 						},
 						"access": {
-							"scope": "global_contents",
+							"scope": "GlobalContents",
 							"identifier": "read"
 						}
 					},
 					"globalContentsAdd": {
 						"title": {
-							"translate": ["global_contents", "menu_add"]
+							"translate": ["GlobalContents", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -392,13 +392,13 @@
 							}
 						},
 						"access": {
-							"scope": "global_contents",
+							"scope": "GlobalContents",
 							"identifier": "create"
 						}
 					},
 					"globalContentsConfigure": {
 						"title": {
-							"translate": ["global_contents", "menu_configure"]
+							"translate": ["GlobalContents", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -408,7 +408,7 @@
 							}
 						},
 						"access": {
-							"scope": "global_contents",
+							"scope": "GlobalContents",
 							"identifier": "configure"
 						}
 					}
@@ -416,7 +416,7 @@
 			},
 			"menus": {
 				"title": {
-					"translate": ["menus", "menu_title"]
+					"translate": ["Menus", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -425,13 +425,13 @@
 					}
 				},
 				"access": {
-					"scope": "menus",
+					"scope": "Menus",
 					"identifier": "read"
 				},
 				"children": {
 					"menusOverview": {
 						"title": {
-							"translate": ["menus", "menu_overview"]
+							"translate": ["Menus", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -440,13 +440,13 @@
 							}
 						},
 						"access": {
-							"scope": "menus",
+							"scope": "Menus",
 							"identifier": "read"
 						}
 					},
 					"menusAdd": {
 						"title": {
-							"translate": ["menus", "menu_add"]
+							"translate": ["Menus", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -455,13 +455,13 @@
 							}
 						},
 						"access": {
-							"scope": "menus",
+							"scope": "Menus",
 							"identifier": "create"
 						}
 					},
 					"menusConfigure": {
 						"title": {
-							"translate": ["menus", "menu_configure"]
+							"translate": ["Menus", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -471,7 +471,7 @@
 							}
 						},
 						"access": {
-							"scope": "menus",
+							"scope": "Menus",
 							"identifier": "configure"
 						}
 					}
@@ -479,7 +479,7 @@
 			},
 			"forms": {
 				"title": {
-					"translate": ["forms", "menu_title"]
+					"translate": ["Forms", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -488,13 +488,13 @@
 					}
 				},
 				"access": {
-					"scope": "forms",
+					"scope": "Forms",
 					"identifier": "read"
 				},
 				"children": {
 					"formsOverview": {
 						"title": {
-							"translate": ["forms", "menu_overview"]
+							"translate": ["Forms", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -503,13 +503,13 @@
 							}
 						},
 						"access": {
-							"scope": "forms",
+							"scope": "Forms",
 							"identifier": "read"
 						}
 					},
 					"formsAdd": {
 						"title": {
-							"translate": ["forms", "menu_add"]
+							"translate": ["Forms", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -518,13 +518,13 @@
 							}
 						},
 						"access": {
-							"scope": "forms",
+							"scope": "Forms",
 							"identifier": "create"
 						}
 					},
 					"formEntries": {
 						"title": {
-							"translate": ["form_entries", "menu_title"]
+							"translate": ["FormEntries", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -533,14 +533,14 @@
 							}
 						},
 						"access": {
-							"scope": "form_entries",
+							"scope": "FormEntries",
 							"identifier": "read"
 						},
 						"children": null
 					},
 					"formsConfigure": {
 						"title": {
-							"translate": ["forms", "menu_configure"]
+							"translate": ["Forms", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -550,7 +550,7 @@
 							}
 						},
 						"access": {
-							"scope": "forms",
+							"scope": "Forms",
 							"identifier": "configure"
 						}
 					}
@@ -558,7 +558,7 @@
 			},
 			"surveys": {
 				"title": {
-					"translate": ["surveys", "menu_title"]
+					"translate": ["Surveys", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -567,13 +567,13 @@
 					}
 				},
 				"access": {
-					"scope": "surveys",
+					"scope": "Surveys",
 					"identifier": "read"
 				},
 				"children": {
 					"surveysOverview": {
 						"title": {
-							"translate": ["surveys", "menu_overview"]
+							"translate": ["Surveys", "menu_overview"]
 						},
 						"link": {
 							"url": {
@@ -582,13 +582,13 @@
 							}
 						},
 						"access": {
-							"scope": "surveys",
+							"scope": "Surveys",
 							"identifier": "read"
 						}
 					},
 					"surveysAdd": {
 						"title": {
-							"translate": ["surveys", "menu_add"]
+							"translate": ["Surveys", "menu_add"]
 						},
 						"link": {
 							"url": {
@@ -597,13 +597,13 @@
 							}
 						},
 						"access": {
-							"scope": "surveys",
+							"scope": "Surveys",
 							"identifier": "create"
 						}
 					},
 					"surveyQuestions": {
 						"title": {
-							"translate": ["survey_questions", "menu_title"]
+							"translate": ["SurveyQuestions", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -612,14 +612,14 @@
 							}
 						},
 						"access": {
-							"scope": "survey_questions",
+							"scope": "SurveyQuestions",
 							"identifier": "read"
 						},
 						"children": null
 					},
 					"surveyAnswers": {
 						"title": {
-							"translate": ["survey_answers", "menu_title"]
+							"translate": ["SurveyAnswers", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -628,14 +628,14 @@
 							}
 						},
 						"access": {
-							"scope": "survey_answers",
+							"scope": "SurveyAnswers",
 							"identifier": "read"
 						},
 						"children": null
 					},
 					"surveysConfigure": {
 						"title": {
-							"translate": ["surveys", "menu_configure"]
+							"translate": ["Surveys", "menu_configure"]
 						},
 						"link": {
 							"url": {
@@ -645,7 +645,7 @@
 							}
 						},
 						"access": {
-							"scope": "surveys",
+							"scope": "Surveys",
 							"identifier": "configure"
 						}
 					}
@@ -653,7 +653,7 @@
 			},
 			"designs": {
 				"title": {
-					"translate": ["designs", "menu_title"]
+					"translate": ["Designs", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -662,7 +662,7 @@
 					}
 				},
 				"access": {
-					"scope": "designs",
+					"scope": "Designs",
 					"identifier": "read"
 				}
 			}
@@ -670,7 +670,7 @@
 	},
 	"system": {
 		"title": {
-			"translate": ["system", "menu_title"]
+			"translate": ["System", "menu_title"]
 		},
 		"link": {
 			"url": {

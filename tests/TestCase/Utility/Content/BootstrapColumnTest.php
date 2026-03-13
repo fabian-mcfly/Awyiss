@@ -25,7 +25,7 @@ class BootstrapColumnTest extends TestCase {
 		$label = $column->getLabel();
 
 		// Should return full width translation
-		$this->assertStringContainsString('column_system::column_width (50%)', $label);
+		$this->assertStringContainsString('ColumnSystem::column_width (50%)', $label);
 
 		$column = new BootstrapColumn(12, 12);
 
@@ -205,7 +205,7 @@ class BootstrapColumnTest extends TestCase {
 			'cssClass' => 'col-md-6',
 			'denominator' => 12,
 			'fraction' => '6/12',
-			'label' => 'column_system::column_width (50%)',
+			'label' => 'ColumnSystem::column_width (50%)',
 			'numerator' => 6,
 			'percentage' => 0.5,
 		], $data, 'JSON serialization should match expected structure');

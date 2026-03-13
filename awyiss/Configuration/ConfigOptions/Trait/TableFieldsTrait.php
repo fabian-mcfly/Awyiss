@@ -58,7 +58,7 @@ trait TableFieldsTrait {
 			}
 
 			if ($table instanceof PagesTable && $table->getAlias() !== 'Pages') {
-				$title = __df(Inflector::underscore($table->getAlias()), 'GenericPages', Inflector::underscore($column));
+				$title = __df($table->getAlias(), 'GenericPages', Inflector::underscore($column));
 
 				if (str_contains($title, '::')) {
 					$title = __d('System', Inflector::underscore($column));
@@ -69,7 +69,7 @@ trait TableFieldsTrait {
 				continue;
 			}
 
-			$columns[ $column ] = __d(Inflector::underscore($scope), Inflector::underscore($column));
+			$columns[ $column ] = __d($scope, Inflector::underscore($column));
 		}
 
 		if ($table->hasBehavior('Attributes')) {

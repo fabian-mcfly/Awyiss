@@ -74,7 +74,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_not_empty', $result['fieldName']['_empty']);
+		$this->assertSame('TestDomain::error_not_empty', $result['fieldName']['_empty']);
 	}
 
 
@@ -98,7 +98,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_min_length', $result['fieldName']['minLength']);
+		$this->assertSame('TestDomain::error_min_length', $result['fieldName']['minLength']);
 	}
 
 
@@ -148,7 +148,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_not_boolean', $result['fieldName']['notBoolean']);
+		$this->assertSame('TestDomain::error_not_boolean', $result['fieldName']['notBoolean']);
 
 		$data = [
 			'fieldName' => false,
@@ -158,7 +158,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_not_boolean', $result['fieldName']['notBoolean']);
+		$this->assertSame('TestDomain::error_not_boolean', $result['fieldName']['notBoolean']);
 	}
 
 
@@ -187,9 +187,9 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_max_length', $result['fieldName']['maxLength']);
+		$this->assertSame('TestDomain::error_max_length', $result['fieldName']['maxLength']);
 		$this->assertArrayHasKey('anotherFieldName', $result);
-		$this->assertSame('test_domain::error_compare_with', $result['anotherFieldName']['compareWith']);
+		$this->assertSame('TestDomain::error_compare_with', $result['anotherFieldName']['compareWith']);
 	}
 
 
@@ -211,7 +211,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_in_list', $result['fieldName']['inList']);
+		$this->assertSame('TestDomain::error_in_list', $result['fieldName']['inList']);
 	}
 
 
@@ -233,7 +233,7 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('fieldName', $result);
-		$this->assertSame('test_domain::error_date_time', $result['fieldName']['dateTime']);
+		$this->assertSame('TestDomain::error_date_time', $result['fieldName']['dateTime']);
 	}
 
 
@@ -302,7 +302,7 @@ class ValidatorTest extends TestCase {
 
 		$this->validator->field('fieldName');
 		$message = $this->validator->getRequiredMessage('fieldName');
-		$this->assertSame('test_domain::error_required', $message);
+		$this->assertSame('TestDomain::error_required', $message);
 	}
 
 
@@ -313,6 +313,6 @@ class ValidatorTest extends TestCase {
 	public function testGetNotEmptyMessage(): void {
 		$this->validator->field('fieldName');
 		$message = $this->validator->getNotEmptyMessage('fieldName');
-		$this->assertSame('test_domain::error_not_empty', $message);
+		$this->assertSame('TestDomain::error_not_empty', $message);
 	}
 }

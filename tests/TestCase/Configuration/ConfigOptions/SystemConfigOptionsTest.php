@@ -117,7 +117,7 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Frontend.timezone']->isNullable());
 		$this->assertTrue($configOptions['Frontend.timezone']->isPersonalizable());
 		$this->assertSame('auto', $configOptions['Frontend.timezone']->getDefaultValue());
-		$this->assertSame('system::timezone_automatic', $configOptions['Frontend.timezone']->getPrintableValue());
+		$this->assertSame('System::timezone_automatic', $configOptions['Frontend.timezone']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Frontend.timezone']->getType());
 		$this->assertNull($configOptions['Frontend.timezone']->getTypecast());
 		$this->assertNull($configOptions['Frontend.timezone']->getValidate());
@@ -173,14 +173,14 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.autoTranslate.mode']->isNullable());
 		$this->assertFalse($configOptions['Backend.autoTranslate.mode']->isPersonalizable());
 		$this->assertSame('disabled', $configOptions['Backend.autoTranslate.mode']->getDefaultValue());
-		$this->assertSame('system::auto_translate_disabled', $configOptions['Backend.autoTranslate.mode']->getPrintableValue());
+		$this->assertSame('System::auto_translate_disabled', $configOptions['Backend.autoTranslate.mode']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.autoTranslate.mode']->getType());
 		$this->assertNull($configOptions['Backend.autoTranslate.mode']->getTypecast());
 		$this->assertNull($configOptions['Backend.autoTranslate.mode']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.autoTranslate.mode']->getValues());
 		$this->assertSame([
-			'disabled' => 'system::auto_translate_disabled',
-			'auto' => 'system::auto_translate_automatic',
+			'disabled' => 'System::auto_translate_disabled',
+			'auto' => 'System::auto_translate_automatic',
 		], $configOptions['Backend.autoTranslate.mode']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.autoTranslate.translationService', $configOptions);
@@ -204,15 +204,15 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.htmlCleaning']->isNullable());
 		$this->assertFalse($configOptions['Backend.htmlCleaning']->isPersonalizable());
 		$this->assertSame('strict', $configOptions['Backend.htmlCleaning']->getDefaultValue());
-		$this->assertSame('system::html_cleaning_strict', $configOptions['Backend.htmlCleaning']->getPrintableValue());
+		$this->assertSame('System::html_cleaning_strict', $configOptions['Backend.htmlCleaning']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.htmlCleaning']->getType());
 		$this->assertNull($configOptions['Backend.htmlCleaning']->getTypecast());
 		$this->assertNull($configOptions['Backend.htmlCleaning']->getValidate());
 		$this->assertIsArray($configOptions['Backend.htmlCleaning']->getValues());
 		$this->assertSame([
-			'none' => 'system::html_cleaning_none',
-			'moderate' => 'system::html_cleaning_moderate',
-			'strict' => 'system::html_cleaning_strict',
+			'none' => 'System::html_cleaning_none',
+			'moderate' => 'System::html_cleaning_moderate',
+			'strict' => 'System::html_cleaning_strict',
 		], $configOptions['Backend.htmlCleaning']->getValues());
 
 		$this->assertArrayHasKey('Backend.interface.darkMode', $configOptions);
@@ -253,15 +253,15 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.interface.editor']->isNullable());
 		$this->assertTrue($configOptions['Backend.interface.editor']->isPersonalizable());
 		$this->assertSame('plain', $configOptions['Backend.interface.editor']->getDefaultValue());
-		$this->assertSame('system::interface_editor_plain', $configOptions['Backend.interface.editor']->getPrintableValue());
+		$this->assertSame('System::interface_editor_plain', $configOptions['Backend.interface.editor']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.interface.editor']->getType());
 		$this->assertNull($configOptions['Backend.interface.editor']->getTypecast());
 		$this->assertNull($configOptions['Backend.interface.editor']->getValidate());
 		$this->assertIsArray($configOptions['Backend.interface.editor']->getValues());
 		$this->assertSame([
-			'plain' => 'system::interface_editor_plain',
-			'jodit' => 'system::interface_editor_jodit',
-			'tinymce' => 'system::interface_editor_tinymce',
+			'plain' => 'System::interface_editor_plain',
+			'jodit' => 'System::interface_editor_jodit',
+			'tinymce' => 'System::interface_editor_tinymce',
 		], $configOptions['Backend.interface.editor']->getValues());
 
 		$this->assertArrayHasKey('Backend.interface.scale', $configOptions);
@@ -269,15 +269,15 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.interface.scale']->isNullable());
 		$this->assertTrue($configOptions['Backend.interface.scale']->isPersonalizable());
 		$this->assertSame('regular', $configOptions['Backend.interface.scale']->getDefaultValue());
-		$this->assertSame('system::interface_scale_regular', $configOptions['Backend.interface.scale']->getPrintableValue());
+		$this->assertSame('System::interface_scale_regular', $configOptions['Backend.interface.scale']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.interface.scale']->getType());
 		$this->assertNull($configOptions['Backend.interface.scale']->getTypecast());
 		$this->assertNull($configOptions['Backend.interface.scale']->getValidate());
 		$this->assertIsArray($configOptions['Backend.interface.scale']->getValues());
 		$this->assertSame([
-			'small' => 'system::interface_scale_small',
-			'medium' => 'system::interface_scale_medium',
-			'regular' => 'system::interface_scale_regular',
+			'small' => 'System::interface_scale_small',
+			'medium' => 'System::interface_scale_medium',
+			'regular' => 'System::interface_scale_regular',
 		], $configOptions['Backend.interface.scale']->getValues());
 
 		$this->assertArrayHasKey('Backend.interface.sidebarMode', $configOptions);
@@ -351,7 +351,7 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.timezone']->isNullable());
 		$this->assertTrue($configOptions['Backend.timezone']->isPersonalizable());
 		$this->assertSame('auto', $configOptions['Backend.timezone']->getDefaultValue());
-		$this->assertSame('system::timezone_automatic', $configOptions['Backend.timezone']->getPrintableValue());
+		$this->assertSame('System::timezone_automatic', $configOptions['Backend.timezone']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.timezone']->getType());
 		$this->assertNull($configOptions['Backend.timezone']->getTypecast());
 		$this->assertNull($configOptions['Backend.timezone']->getValidate());

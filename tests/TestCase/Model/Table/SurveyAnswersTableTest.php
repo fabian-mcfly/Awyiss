@@ -206,7 +206,7 @@ class SurveyAnswersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('_required', $errors['title']);
-		$this->assertSame('survey_answers::error_required', $errors['title']['_required']);
+		$this->assertSame('SurveyAnswers::error_required', $errors['title']['_required']);
 	}
 
 
@@ -372,7 +372,7 @@ class SurveyAnswersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedSurveys', $errors['_general']);
-		$this->assertSame('survey_answers::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
+		$this->assertSame('SurveyAnswers::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
 	}
 
 

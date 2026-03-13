@@ -431,7 +431,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$errors = $entity2->getErrors();
 		$this->assertArrayHasKey('fileName', $errors);
 		$this->assertArrayHasKey('fileNameUnique', $errors['fileName']);
-		$this->assertEquals('global_content_templates::error_file_name_unique', $errors['fileName']['fileNameUnique']);
+		$this->assertEquals('GlobalContentTemplates::error_file_name_unique', $errors['fileName']['fileNameUnique']);
 	}
 
 
@@ -452,7 +452,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('globalContentTemplateElements', $errors);
 		$this->assertArrayHasKey('validGlobalContentElements', $errors['globalContentTemplateElements']);
-		$this->assertEquals('global_content_templates::error_valid_global_content_elements', $errors['globalContentTemplateElements']['validGlobalContentElements']);
+		$this->assertEquals('GlobalContentTemplates::error_valid_global_content_elements', $errors['globalContentTemplateElements']['validGlobalContentElements']);
 	}
 
 
@@ -470,7 +470,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedGlobalContents', $errors['_general']);
-		$this->assertEquals('global_content_templates::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
+		$this->assertEquals('GlobalContentTemplates::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
 
 		/** @var \Awyiss\Model\Entity\GlobalContentTemplate $entity */
 		$entity = $this->globalContentTemplatesTable->get(2);

@@ -287,7 +287,7 @@ class MenusTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('identifierUnique', $errors['identifier']);
-		$this->assertEquals('menus::error_identifier_unique', $errors['identifier']['identifierUnique']);
+		$this->assertEquals('Menus::error_identifier_unique', $errors['identifier']['identifierUnique']);
 	}
 
 

@@ -71,31 +71,31 @@ class PagesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'pageTemplateId',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('pages::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Pages::page_template_id', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'pageRoleId' => 'pages::page_role_id',
-			'pageTemplateId' => 'pages::page_template_id',
-			'parentId' => 'pages::parent_id',
-			'languageShortcode' => 'pages::language_shortcode',
-			'redirectLink' => 'pages::redirect_link',
-			'metaTitle' => 'seo::meta_title',
-			'metaDescription' => 'seo::meta_description',
-			'robotsIndex' => 'seo::robots_index',
-			'robotsFollow' => 'seo::robots_follow',
-			'duplicateOf' => 'pages::duplicate_of',
-			'formId' => 'pages::form_id',
-			'surveyId' => 'pages::survey_id',
-			'systemOrder' => 'pages::system_order',
-			'active' => 'pages::active',
-			'parentsActive' => 'pages::parents_active',
-			'createdBy' => 'pages::created_by',
-			'createdOn' => 'pages::created_on',
-			'changedBy' => 'pages::changed_by',
-			'changedOn' => 'pages::changed_on',
+			'pageRoleId' => 'Pages::page_role_id',
+			'pageTemplateId' => 'Pages::page_template_id',
+			'parentId' => 'Pages::parent_id',
+			'languageShortcode' => 'Pages::language_shortcode',
+			'redirectLink' => 'Pages::redirect_link',
+			'metaTitle' => 'Seo::meta_title',
+			'metaDescription' => 'Seo::meta_description',
+			'robotsIndex' => 'Seo::robots_index',
+			'robotsFollow' => 'Seo::robots_follow',
+			'duplicateOf' => 'Pages::duplicate_of',
+			'formId' => 'Pages::form_id',
+			'surveyId' => 'Pages::survey_id',
+			'systemOrder' => 'Pages::system_order',
+			'active' => 'Pages::active',
+			'parentsActive' => 'Pages::parents_active',
+			'createdBy' => 'Pages::created_by',
+			'createdOn' => 'Pages::created_on',
+			'changedBy' => 'Pages::changed_by',
+			'changedOn' => 'Pages::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

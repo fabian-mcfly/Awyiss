@@ -177,7 +177,7 @@ class UsergroupsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('_required', $errors['title']);
-		$this->assertSame('usergroups::error_required', $errors['title']['_required']);
+		$this->assertSame('Usergroups::error_required', $errors['title']['_required']);
 	}
 
 
@@ -299,7 +299,7 @@ class UsergroupsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('titleUnique', $errors['title']);
-		$this->assertSame('usergroups::error_title_unique', $errors['title']['titleUnique']);
+		$this->assertSame('Usergroups::error_title_unique', $errors['title']['titleUnique']);
 	}
 
 

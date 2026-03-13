@@ -357,7 +357,7 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['identifier' => 'testIdentifier']);
 		$entity->setSource('TestTable');
 
-		$this->assertEquals('test_table::title_test_identifier', $entity->label);
+		$this->assertEquals('TestTable::title_test_identifier', $entity->label);
 	}
 
 
@@ -393,7 +393,7 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['title' => 'Test Title', 'active' => 0]);
 		$entity->setSource('TestTable');
 
-		$this->assertEquals('test_table::inactive Test Title', $entity->label);
+		$this->assertEquals('TestTable::inactive Test Title', $entity->label);
 	}
 
 

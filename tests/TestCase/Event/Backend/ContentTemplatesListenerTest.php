@@ -313,7 +313,7 @@ class ContentTemplatesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['content_templates::file_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['ContentTemplates::file_changes_in_progress'], $errors['_general']);
 	}
 
 

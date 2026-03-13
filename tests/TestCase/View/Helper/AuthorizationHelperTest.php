@@ -190,7 +190,7 @@ class AuthorizationHelperTest extends TestCase {
 
 		$scope = $helper->getScope();
 
-		$this->assertSame('the_controller', $scope);
+		$this->assertSame('TheControllers', $scope);
 	}
 
 
@@ -201,7 +201,7 @@ class AuthorizationHelperTest extends TestCase {
 	public function testSetScope(): void {
 		$this->helper->setScope('CustomScope');
 
-		$this->assertEquals('custom_scopes', $this->helper->getConfig('scope'));
+		$this->assertEquals('CustomScopes', $this->helper->getConfig('scope'));
 	}
 
 
@@ -248,10 +248,10 @@ class AuthorizationHelperTest extends TestCase {
 		->setConstructorArgs([$this->view])->getMock();
 
 		$helper->expects($this->once())->method('scopeIsAccessible')
-		->with('the_controller', ['foo' => 'bar'], 'identifier')
+		->with('TheController', ['foo' => 'bar'], 'identifier')
 		->willReturn(true);
 
-		$helper->setConfig('scope', 'the_controller');
+		$helper->setConfig('scope', 'TheController');
 		$helper->setConfig('additionalData', ['foo' => 'bar']);
 
 		$result = $helper->isAccessible('identifier');
@@ -276,10 +276,10 @@ class AuthorizationHelperTest extends TestCase {
 			->getMock();
 
 		$helper->expects($this->once())->method('scopeIsAccessible')
-			->with('the_controller', ['foo' => 'bar'], 'identifier1', 'identifier2')
+			->with('TheController', ['foo' => 'bar'], 'identifier1', 'identifier2')
 			->willReturn(true);
 
-		$helper->setConfig('scope', 'the_controller');
+		$helper->setConfig('scope', 'TheController');
 		$helper->setConfig('additionalData', ['foo' => 'bar']);
 
 		$result = $helper->isAccessible('identifier1', 'identifier2');

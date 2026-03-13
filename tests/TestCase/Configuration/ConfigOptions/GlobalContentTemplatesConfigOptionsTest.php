@@ -49,20 +49,20 @@ class GlobalContentTemplatesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'fileName',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('global_content_templates::file_name', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('GlobalContentTemplates::file_name', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'fileName' => 'global_content_templates::file_name',
-			'inContentRow' => 'global_content_templates::in_content_row',
-			'systemOrder' => 'global_content_templates::system_order',
-			'active' => 'global_content_templates::active',
-			'createdBy' => 'global_content_templates::created_by',
-			'createdOn' => 'global_content_templates::created_on',
-			'changedBy' => 'global_content_templates::changed_by',
-			'changedOn' => 'global_content_templates::changed_on',
+			'fileName' => 'GlobalContentTemplates::file_name',
+			'inContentRow' => 'GlobalContentTemplates::in_content_row',
+			'systemOrder' => 'GlobalContentTemplates::system_order',
+			'active' => 'GlobalContentTemplates::active',
+			'createdBy' => 'GlobalContentTemplates::created_by',
+			'createdOn' => 'GlobalContentTemplates::created_on',
+			'changedBy' => 'GlobalContentTemplates::changed_by',
+			'changedOn' => 'GlobalContentTemplates::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

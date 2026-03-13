@@ -433,7 +433,7 @@ class MediaTableTest extends TestCase {
 		$this->assertArrayHasKey('mediaFolderId', $errors);
 		$this->assertArrayHasKey('validMediaFolderId', $errors['mediaFolderId']);
 		// Error message comes from the nest behavior
-		$this->assertEquals('media::error_valid_media_folder_id', $errors['mediaFolderId']['validMediaFolderId']);
+		$this->assertEquals('Media::error_valid_media_folder_id', $errors['mediaFolderId']['validMediaFolderId']);
 	}
 
 
@@ -502,7 +502,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('preview', $errors);
 		$this->assertArrayHasKey('validPreview', $errors['preview']);
-		$this->assertSame('media::error_valid_preview', $errors['preview']['validPreview']);
+		$this->assertSame('Media::error_valid_preview', $errors['preview']['validPreview']);
 	}
 
 
@@ -571,7 +571,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('avif', $errors);
 		$this->assertArrayHasKey('validAvif', $errors['avif']);
-		$this->assertSame('media::error_valid_avif', $errors['avif']['validAvif']);
+		$this->assertSame('Media::error_valid_avif', $errors['avif']['validAvif']);
 	}
 
 
@@ -640,7 +640,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('webp', $errors);
 		$this->assertArrayHasKey('validWebp', $errors['webp']);
-		$this->assertSame('media::error_valid_webp', $errors['webp']['validWebp']);
+		$this->assertSame('Media::error_valid_webp', $errors['webp']['validWebp']);
 	}
 
 
@@ -713,7 +713,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('file', $errors);
 		$this->assertArrayHasKey('validFileNameExtension', $errors['file']);
-		$this->assertEquals('media::error_media_has_file_extension', $errors['file']['validFileNameExtension']);
+		$this->assertEquals('Media::error_media_has_file_extension', $errors['file']['validFileNameExtension']);
 	}
 
 
@@ -751,7 +751,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('file', $errors);
 		$this->assertArrayHasKey('validFileNameExtension', $errors['file']);
-		$this->assertEquals('media::error_media_mime_type_matches_extension', $errors['file']['validFileNameExtension']);
+		$this->assertEquals('Media::error_media_mime_type_matches_extension', $errors['file']['validFileNameExtension']);
 	}
 
 
@@ -882,7 +882,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('file', $errors);
 		$this->assertArrayHasKey('validFileNameExtension', $errors['file']);
-		$this->assertEquals('media::error_media_mime_type_matches_extension', $errors['file']['validFileNameExtension']);
+		$this->assertEquals('Media::error_media_mime_type_matches_extension', $errors['file']['validFileNameExtension']);
 	}
 
 
@@ -902,7 +902,7 @@ class MediaTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('file', $errors);
 		$this->assertArrayHasKey('mimetypeNotModified', $errors['file']);
-		$this->assertEquals('media::error_mimetype_not_modified', $errors['file']['mimetypeNotModified']);
+		$this->assertEquals('Media::error_mimetype_not_modified', $errors['file']['mimetypeNotModified']);
 	}
 
 

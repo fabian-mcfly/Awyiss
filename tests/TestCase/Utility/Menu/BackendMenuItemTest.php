@@ -492,7 +492,7 @@ class BackendMenuItemTest extends TestCase {
 	 */
 	public function testObjectTitleTranslation(): void {
 		$titleObj = new stdClass();
-		$titleObj->translate = ['pages', 'headline_overview'];
+		$titleObj->translate = ['Pages', 'headline_overview'];
 
 		$menuEntry = new stdClass();
 		$menuEntry->id = 4;
@@ -501,7 +501,7 @@ class BackendMenuItemTest extends TestCase {
 
 		$menuItem = new BackendMenuItem($menuEntry, $this->menuConfig);
 
-		$this->assertSame('pages::headline_overview', $menuItem->getTitle());
+		$this->assertSame('Pages::headline_overview', $menuItem->getTitle());
 	}
 
 

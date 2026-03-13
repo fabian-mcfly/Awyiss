@@ -370,7 +370,7 @@ class AttributesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('typeRegex', $errors['type']);
-		$this->assertEquals('attributes::error_type_regex', $errors['type']['typeRegex']);
+		$this->assertEquals('Attributes::error_type_regex', $errors['type']['typeRegex']);
 	}
 
 
@@ -459,7 +459,7 @@ class AttributesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('validIdentifier', $errors['identifier']);
-		$this->assertEquals('attributes::error_reserved_identifier', $errors['identifier']['validIdentifier']);
+		$this->assertEquals('Attributes::error_reserved_identifier', $errors['identifier']['validIdentifier']);
 	}
 
 
@@ -534,7 +534,7 @@ class AttributesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('identifierUniqueForScope', $errors['identifier']);
-		$this->assertEquals('attributes::error_identifier_unique_for_scope', $errors['identifier']['identifierUniqueForScope']);
+		$this->assertEquals('Attributes::error_identifier_unique_for_scope', $errors['identifier']['identifierUniqueForScope']);
 	}
 
 
@@ -599,7 +599,7 @@ class AttributesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('fieldset', $errors);
 		$this->assertArrayHasKey('validFieldset', $errors['fieldset']);
-		$this->assertEquals('attributes::error_valid_fieldset', $errors['fieldset']['validFieldset']);
+		$this->assertEquals('Attributes::error_valid_fieldset', $errors['fieldset']['validFieldset']);
 	}
 
 
@@ -646,7 +646,7 @@ class AttributesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('inputType', $errors);
 		$this->assertArrayHasKey('validInputType', $errors['inputType']);
-		$this->assertEquals('attributes::error_valid_input_type', $errors['inputType']['validInputType']);
+		$this->assertEquals('Attributes::error_valid_input_type', $errors['inputType']['validInputType']);
 	}
 
 
@@ -661,31 +661,31 @@ class AttributesTableTest extends TestCase {
 		$this->assertSame([
 			'Employers' => 'Arbeitgeber',
 			'Cars' => 'Autos',
-			'ContentTemplates' => 'content_templates::menu_title',
-			'Contents' => 'contents::menu_title',
-			'CustomerGroups' => 'customer_groups::menu_title',
-			'Customers' => 'customers::menu_title',
-			'DummyUsers' => 'dummy_users::menu_title',
-			'GlobalContentTemplates' => 'global_content_templates::menu_title',
-			'GlobalContents' => 'global_contents::menu_title',
-			'Languages' => 'languages::menu_title',
-			'MediaFolders' => 'media_folders::menu_title',
-			'Media' => 'media::menu_title',
-			'MenuEntries' => 'menu_entries::menu_title',
+			'Contents' => 'Contents::menu_title',
+			'ContentTemplates' => 'ContentTemplates::menu_title',
+			'CustomerGroups' => 'CustomerGroups::menu_title',
+			'Customers' => 'Customers::menu_title',
+			'DummyUsers' => 'DummyUsers::menu_title',
+			'GlobalContents' => 'GlobalContents::menu_title',
+			'GlobalContentTemplates' => 'GlobalContentTemplates::menu_title',
+			'Languages' => 'Languages::menu_title',
+			'Media' => 'Media::menu_title',
+			'MediaFolders' => 'MediaFolders::menu_title',
+			'MenuEntries' => 'MenuEntries::menu_title',
 			'Employees' => 'Mitarbeiter',
 			'News' => 'News',
 			'Newscategories' => 'Newskategorie',
-			'Products' => 'page_roles::inactive Produkt',
-			'PageRoles' => 'page_roles::menu_title',
-			'PageTemplates' => 'page_templates::menu_title',
-			'Pages' => 'pages::menu_title',
-			'SurveyAnswers' => 'survey_answers::menu_title',
-			'SurveyQuestions' => 'survey_questions::menu_title',
-			'Surveys' => 'surveys::menu_title',
-			'UrlHistory' => 'url_history::menu_title',
-			'UrlsNotFound' => 'urls_not_found::menu_title',
-			'Usergroups' => 'usergroups::menu_title',
-			'Users' => 'users::menu_title',
+			'Products' => 'PageRoles::inactive Produkt',
+			'PageRoles' => 'PageRoles::menu_title',
+			'Pages' => 'Pages::menu_title',
+			'PageTemplates' => 'PageTemplates::menu_title',
+			'SurveyAnswers' => 'SurveyAnswers::menu_title',
+			'SurveyQuestions' => 'SurveyQuestions::menu_title',
+			'Surveys' => 'Surveys::menu_title',
+			'UrlHistory' => 'UrlHistory::menu_title',
+			'UrlsNotFound' => 'UrlsNotFound::menu_title',
+			'Usergroups' => 'Usergroups::menu_title',
+			'Users' => 'Users::menu_title',
 		], $categories);
 	}
 

@@ -423,7 +423,7 @@ class PagesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('enum', $errors['pageRoleId']);
-		$this->assertSame('pages::error_enum', $errors['pageRoleId']['enum']);
+		$this->assertSame('Pages::error_enum', $errors['pageRoleId']['enum']);
 
 		$this->assertArrayHasKey('pageTemplateId', $errors);
 		$this->assertArrayHasKey('duplicateOf', $errors);
@@ -560,7 +560,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('languageShortcode', $errors);
 		$this->assertArrayHasKey('languageExists', $errors['languageShortcode']);
-		$this->assertEquals('pages::error_language_exists', $errors['languageShortcode']['languageExists']);
+		$this->assertEquals('Pages::error_language_exists', $errors['languageShortcode']['languageExists']);
 	}
 
 
@@ -630,7 +630,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('validPageRoleId', $errors['pageRoleId']);
-		$this->assertSame('pages::error_valid_page_role_id', $errors['pageRoleId']['validPageRoleId']);
+		$this->assertSame('Pages::error_valid_page_role_id', $errors['pageRoleId']['validPageRoleId']);
 	}
 
 
@@ -675,7 +675,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageTemplateId', $errors);
 		$this->assertArrayHasKey('validPageTemplate', $errors['pageTemplateId']);
-		$this->assertEquals('pages::error_valid_page_template', $errors['pageTemplateId']['validPageTemplate']);
+		$this->assertEquals('Pages::error_valid_page_template', $errors['pageTemplateId']['validPageTemplate']);
 	}
 
 
@@ -700,7 +700,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageTemplateId', $errors);
 		$this->assertArrayHasKey('validPageTemplate', $errors['pageTemplateId']);
-		$this->assertEquals('pages::error_valid_page_template', $errors['pageTemplateId']['validPageTemplate']);
+		$this->assertEquals('Pages::error_valid_page_template', $errors['pageTemplateId']['validPageTemplate']);
 	}
 
 
@@ -768,7 +768,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('validFormId', $errors['formId']);
-		$this->assertEquals('validation::error_exists_in', $errors['formId']['validFormId']);
+		$this->assertEquals('Validation::error_exists_in', $errors['formId']['validFormId']);
 	}
 
 
@@ -836,7 +836,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('validSurveyId', $errors['surveyId']);
-		$this->assertEquals('validation::error_exists_in', $errors['surveyId']['validSurveyId']);
+		$this->assertEquals('Validation::error_exists_in', $errors['surveyId']['validSurveyId']);
 	}
 
 
@@ -904,7 +904,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('pages::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Pages::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -930,7 +930,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('pages::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Pages::error_valid_duplicate_of', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -958,7 +958,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('pages::error_not_self_duplicating', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Pages::error_not_self_duplicating', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -987,7 +987,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('pages::error_not_duplicating_duplicated', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Pages::error_not_duplicating_duplicated', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1014,7 +1014,7 @@ class PagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('duplicateOf', $errors);
 		$this->assertArrayHasKey('validDuplicateOf', $errors['duplicateOf']);
-		$this->assertEquals('pages::error_not_duplicating_duplicating', $errors['duplicateOf']['validDuplicateOf']);
+		$this->assertEquals('Pages::error_not_duplicating_duplicating', $errors['duplicateOf']['validDuplicateOf']);
 	}
 
 
@@ -1032,7 +1032,7 @@ class PagesTableTest extends TestCase {
 		$errors = $page->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noDuplicatingPages', $errors['_general']);
-		$this->assertEquals('pages::error_no_duplicating_pages', $errors['_general']['noDuplicatingPages']);
+		$this->assertEquals('Pages::error_no_duplicating_pages', $errors['_general']['noDuplicatingPages']);
 	}
 
 
@@ -1050,7 +1050,7 @@ class PagesTableTest extends TestCase {
 		$errors = $page->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noDuplicatingPages', $errors['_general']);
-		$this->assertEquals('pages::error_no_duplicating_pages', $errors['_general']['noDuplicatingPages']);
+		$this->assertEquals('Pages::error_no_duplicating_pages', $errors['_general']['noDuplicatingPages']);
 	}
 
 
@@ -1068,7 +1068,7 @@ class PagesTableTest extends TestCase {
 		$errors = $page->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noDuplicatedContents', $errors['_general']);
-		$this->assertEquals('pages::error_no_duplicated_contents', $errors['_general']['noDuplicatedContents']);
+		$this->assertEquals('Pages::error_no_duplicated_contents', $errors['_general']['noDuplicatedContents']);
 	}
 
 
@@ -1087,7 +1087,7 @@ class PagesTableTest extends TestCase {
 		$errors = $page->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noNestedChildrenWithDifferentPageRole', $errors['_general']);
-		$this->assertEquals('pages::error_no_nested_children_with_different_page_role', $errors['_general']['noNestedChildrenWithDifferentPageRole']);
+		$this->assertEquals('Pages::error_no_nested_children_with_different_page_role', $errors['_general']['noNestedChildrenWithDifferentPageRole']);
 	}
 
 
@@ -1151,7 +1151,7 @@ class PagesTableTest extends TestCase {
 		$this->assertSame([
 			1 => 'Kontaktformular',
 			2 => 'Kontaktformular2',
-			3 => 'forms::inactive Kontaktformular3',
+			3 => 'Forms::inactive Kontaktformular3',
 			4 => 'Kontaktformular4',
 			5 => 'Kontaktformular5',
 		], $result);
@@ -1252,7 +1252,7 @@ class PagesTableTest extends TestCase {
 
 		$this->assertSame([
 			1 => 'Dummy Survey',
-			2 => 'surveys::inactive Dummy Survey (Inactive)',
+			2 => 'Surveys::inactive Dummy Survey (Inactive)',
 			3 => 'Dummy Survey (Inline Image)',
 			4 => 'Dummy Survey (Survey Results)',
 		], $result);

@@ -1087,7 +1087,7 @@ class NestBehaviorTest extends TestCase {
 
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertSame('employers::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertSame('Employers::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 
 
@@ -1109,7 +1109,7 @@ class NestBehaviorTest extends TestCase {
 
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertSame('employers::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertSame('Employers::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 
 

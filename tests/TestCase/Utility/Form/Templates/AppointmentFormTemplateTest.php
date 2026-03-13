@@ -22,7 +22,7 @@ class AppointmentFormTemplateTest extends TestCase {
 	 */
 	public function testGetTitle(): void {
 		$this->assertSame(
-			'forms::form_template_appointment_form',
+			'Forms::form_template_appointment_form',
 			AppointmentFormTemplate::getTitle()
 		);
 	}

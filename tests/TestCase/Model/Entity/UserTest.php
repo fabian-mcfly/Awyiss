@@ -213,7 +213,7 @@ class UserTest extends TestCase {
 
 		$label = $entity->label;
 
-		$this->assertSame('users::inactive test_user', $label);
+		$this->assertSame('Users::inactive test_user', $label);
 	}
 
 

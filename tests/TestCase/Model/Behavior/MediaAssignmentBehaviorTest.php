@@ -669,7 +669,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertArrayHasKey('mediaAssignments', $errors);
 		$this->assertArrayHasKey(0, $errors['mediaAssignments']);
 		$this->assertArrayHasKey('mediaFolderId', $errors['mediaAssignments'][0]);
-		$this->assertSame(['_empty' => 'media_assignments::error_not_empty'], $errors['mediaAssignments'][0]['mediaFolderId']);
+		$this->assertSame(['_empty' => 'MediaAssignments::error_not_empty'], $errors['mediaAssignments'][0]['mediaFolderId']);
 	}
 
 

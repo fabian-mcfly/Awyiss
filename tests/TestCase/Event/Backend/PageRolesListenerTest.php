@@ -146,7 +146,7 @@ class PageRolesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['attributes::table_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['Attributes::table_changes_in_progress'], $errors['_general']);
 	}
 
 
@@ -177,9 +177,9 @@ class PageRolesListenerTest extends TestCase {
 		$entries = $entries->combine('title', 'link')->toArray();
 
 		$this->assertSame([
-			'generic_datatables::menu_configure' => 'Configuration::overview::scope:TestRoles',
-			'generic_datatables::menu_add' => 'TestRoles::add',
-			'generic_datatables::menu_overview' => 'TestRoles::overview',
+			'GenericDatatables::menu_configure' => 'Configuration::overview::scope:TestRoles',
+			'GenericDatatables::menu_add' => 'TestRoles::add',
+			'GenericDatatables::menu_overview' => 'TestRoles::overview',
 			'' => 'TestRoles::overview',
 		], $entries);
 

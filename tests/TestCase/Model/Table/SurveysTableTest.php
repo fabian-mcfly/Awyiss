@@ -222,11 +222,11 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('_required', $errors['title']);
-		$this->assertSame('surveys::error_required', $errors['title']['_required']);
+		$this->assertSame('Surveys::error_required', $errors['title']['_required']);
 
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('_required', $errors['identifier']);
-		$this->assertSame('surveys::error_required', $errors['identifier']['_required']);
+		$this->assertSame('Surveys::error_required', $errors['identifier']['_required']);
 	}
 
 
@@ -256,7 +256,7 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('enum', $errors['type']);
-		$this->assertSame('surveys::error_enum', $errors['type']['enum']);
+		$this->assertSame('Surveys::error_enum', $errors['type']['enum']);
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('identifier', $errors);
@@ -265,7 +265,7 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertArrayHasKey('finalAction', $errors);
 		$this->assertArrayHasKey('enum', $errors['finalAction']);
-		$this->assertSame('surveys::error_enum', $errors['finalAction']['enum']);
+		$this->assertSame('Surveys::error_enum', $errors['finalAction']['enum']);
 
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('active', $errors);
@@ -365,7 +365,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('identifierUnique', $errors['identifier']);
-		$this->assertSame('surveys::error_identifier_unique', $errors['identifier']['identifierUnique']);
+		$this->assertSame('Surveys::error_identifier_unique', $errors['identifier']['identifierUnique']);
 	}
 
 
@@ -428,7 +428,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('validType', $errors['type']);
-		$this->assertSame('surveys::error_valid_type', $errors['type']['validType']);
+		$this->assertSame('Surveys::error_valid_type', $errors['type']['validType']);
 	}
 
 
@@ -498,7 +498,7 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('formIdSetWhenRequired', $errors['formId']);
-		$this->assertSame('surveys::error_form_id_set_when_required', $errors['formId']['formIdSetWhenRequired']);
+		$this->assertSame('Surveys::error_form_id_set_when_required', $errors['formId']['formIdSetWhenRequired']);
 	}
 
 
@@ -524,7 +524,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('validFormId', $errors['formId']);
-		$this->assertSame('surveys::error_valid_form_id', $errors['formId']['validFormId']);
+		$this->assertSame('Surveys::error_valid_form_id', $errors['formId']['validFormId']);
 	}
 
 
@@ -588,7 +588,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('finalAction', $errors);
 		$this->assertArrayHasKey('validFinalAction', $errors['finalAction']);
-		$this->assertSame('surveys::error_valid_final_action', $errors['finalAction']['validFinalAction']);
+		$this->assertSame('Surveys::error_valid_final_action', $errors['finalAction']['validFinalAction']);
 	}
 
 
@@ -636,7 +636,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('formIdSetWhenRequired', $errors['formId']);
-		$this->assertSame('surveys::error_form_id_set_when_required', $errors['formId']['formIdSetWhenRequired']);
+		$this->assertSame('Surveys::error_form_id_set_when_required', $errors['formId']['formIdSetWhenRequired']);
 	}
 
 
@@ -750,7 +750,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveySurveyQuestions', $errors);
 		$this->assertArrayHasKey('noRepeatedQuestionsInLinearSurvey', $errors['surveySurveyQuestions']);
-		$this->assertSame('surveys::error_no_repeated_questions_in_linear_survey', $errors['surveySurveyQuestions']['noRepeatedQuestionsInLinearSurvey']);
+		$this->assertSame('Surveys::error_no_repeated_questions_in_linear_survey', $errors['surveySurveyQuestions']['noRepeatedQuestionsInLinearSurvey']);
 	}
 
 
@@ -860,7 +860,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveySurveyQuestions', $errors);
 		$this->assertArrayHasKey('noInvalidNextActions', $errors['surveySurveyQuestions']);
-		$this->assertSame('surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
+		$this->assertSame('Surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
 	}
 
 
@@ -911,7 +911,7 @@ class SurveysTableTest extends TestCase {
 
 		$this->assertArrayHasKey('surveySurveyQuestions', $errors);
 		$this->assertArrayHasKey('noInvalidNextActions', $errors['surveySurveyQuestions']);
-		$this->assertSame('surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
+		$this->assertSame('Surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
 	}
 
 
@@ -1006,7 +1006,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveySurveyQuestions', $errors);
 		$this->assertArrayHasKey('noInvalidNextActions', $errors['surveySurveyQuestions']);
-		$this->assertSame('surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
+		$this->assertSame('Surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
 	}
 
 
@@ -1056,7 +1056,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveySurveyQuestions', $errors);
 		$this->assertArrayHasKey('noInvalidNextActions', $errors['surveySurveyQuestions']);
-		$this->assertSame('surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
+		$this->assertSame('Surveys::error_no_invalid_next_actions', $errors['surveySurveyQuestions']['noInvalidNextActions']);
 	}
 
 
@@ -1088,7 +1088,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $survey->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedContents', $errors['_general']);
-		$this->assertSame('surveys::error_linked_contents', $errors['_general']['noLinkedContents']);
+		$this->assertSame('Surveys::error_linked_contents', $errors['_general']['noLinkedContents']);
 	}
 
 
@@ -1120,7 +1120,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $survey->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedPages', $errors['_general']);
-		$this->assertSame('surveys::error_linked_pages', $errors['_general']['noLinkedPages']);
+		$this->assertSame('Surveys::error_linked_pages', $errors['_general']['noLinkedPages']);
 	}
 
 
@@ -1152,7 +1152,7 @@ class SurveysTableTest extends TestCase {
 		$errors = $survey->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedGlobalContents', $errors['_general']);
-		$this->assertSame('surveys::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
+		$this->assertSame('Surveys::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
 	}
 
 

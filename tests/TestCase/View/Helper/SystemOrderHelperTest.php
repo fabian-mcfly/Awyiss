@@ -77,7 +77,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity->setSource('News');
 
 		$result = $this->helper->control(null, ['entity' => $entity]);
-		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="System::select_filter_placeholder" data-empty-label="System::select_empty_label">', $result);
 	}
 
 
@@ -91,7 +91,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity->setSource('News');
 
 		$result = $this->helper->control('customField', ['entity' => $entity]);
-		$this->assertStringContainsString('<select name="customField" id="CustomField" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="customField" id="CustomField" data-filter-placeholder="System::select_filter_placeholder" data-empty-label="System::select_empty_label">', $result);
 	}
 
 
@@ -363,7 +363,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'disabled' => true]);
-		$this->assertStringContainsString('<select name="systemOrder" disabled="disabled" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" disabled="disabled" id="SystemOrder" data-filter-placeholder="System::select_filter_placeholder" data-empty-label="System::select_empty_label">', $result);
 	}
 
 
@@ -383,7 +383,7 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, $attributes);
 
-		$this->assertStringContainsString('<select name="systemOrder" class="custom-class" data-test="test-value" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label">', $result);
+		$this->assertStringContainsString('<select name="systemOrder" class="custom-class" data-test="test-value" id="SystemOrder" data-filter-placeholder="System::select_filter_placeholder" data-empty-label="System::select_empty_label">', $result);
 	}
 
 
@@ -396,7 +396,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => []]);
-		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="system::select_filter_placeholder" data-empty-label="system::select_empty_label"><option value="1" title="-&gt; system_order_first" selected="selected">-&gt; system_order_first</option></select>', $result);
+		$this->assertStringContainsString('<select name="systemOrder" id="SystemOrder" data-filter-placeholder="System::select_filter_placeholder" data-empty-label="System::select_empty_label"><option value="1" title="-&gt; system_order_first" selected="selected">-&gt; system_order_first</option></select>', $result);
 	}
 
 

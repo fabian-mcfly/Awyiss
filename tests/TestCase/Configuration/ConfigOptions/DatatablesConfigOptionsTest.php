@@ -60,18 +60,18 @@ class DatatablesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('datatables::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Datatables::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'datatables::identifier',
-			'active' => 'datatables::active',
-			'createdBy' => 'datatables::created_by',
-			'createdOn' => 'datatables::created_on',
-			'changedBy' => 'datatables::changed_by',
-			'changedOn' => 'datatables::changed_on',
+			'identifier' => 'Datatables::identifier',
+			'active' => 'Datatables::active',
+			'createdBy' => 'Datatables::created_by',
+			'createdOn' => 'Datatables::created_on',
+			'changedBy' => 'Datatables::changed_by',
+			'changedOn' => 'Datatables::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

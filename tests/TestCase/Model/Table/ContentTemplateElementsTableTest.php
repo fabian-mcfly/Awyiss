@@ -311,7 +311,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('contentTemplateId', $errors);
 		$this->assertArrayHasKey('contentTemplateExists', $errors['contentTemplateId']);
-		$this->assertEquals('content_template_elements::error_content_template_exists', $errors['contentTemplateId']['contentTemplateExists']);
+		$this->assertEquals('ContentTemplateElements::error_content_template_exists', $errors['contentTemplateId']['contentTemplateExists']);
 	}
 
 

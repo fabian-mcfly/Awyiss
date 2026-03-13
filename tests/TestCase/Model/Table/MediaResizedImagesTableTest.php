@@ -273,11 +273,11 @@ class MediaResizedImagesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('status', $errors);
 		$this->assertArrayHasKey('enum', $errors['status']);
-		$this->assertSame('media_resized_images::error_enum', $errors['status']['enum']);
+		$this->assertSame('MediaResizedImages::error_enum', $errors['status']['enum']);
 
 		$this->assertArrayHasKey('strategy', $errors);
 		$this->assertArrayHasKey('enum', $errors['strategy']);
-		$this->assertSame('media_resized_images::error_enum', $errors['strategy']['enum']);
+		$this->assertSame('MediaResizedImages::error_enum', $errors['strategy']['enum']);
 	}
 
 
@@ -451,7 +451,7 @@ class MediaResizedImagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('status', $errors);
 		$this->assertArrayHasKey('validStatus', $errors['status']);
-		$this->assertSame('media_resized_images::error_valid_status', $errors['status']['validStatus']);
+		$this->assertSame('MediaResizedImages::error_valid_status', $errors['status']['validStatus']);
 	}
 
 
@@ -514,7 +514,7 @@ class MediaResizedImagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('strategy', $errors);
 		$this->assertArrayHasKey('validStrategy', $errors['strategy']);
-		$this->assertSame('media_resized_images::error_valid_strategy', $errors['strategy']['validStrategy']);
+		$this->assertSame('MediaResizedImages::error_valid_strategy', $errors['strategy']['validStrategy']);
 	}
 
 

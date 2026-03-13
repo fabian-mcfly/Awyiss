@@ -240,14 +240,14 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertEquals([
-			'parentId' => 'cars::parent_id',
-			'languageShortcode' => 'cars::language_shortcode',
-			'systemOrder' => 'cars::system_order',
-			'active' => 'cars::active',
-			'createdBy' => 'cars::created_by',
-			'createdOn' => 'cars::created_on',
-			'changedBy' => 'cars::changed_by',
-			'changedOn' => 'cars::changed_on',
+			'parentId' => 'Cars::parent_id',
+			'languageShortcode' => 'Cars::language_shortcode',
+			'systemOrder' => 'Cars::system_order',
+			'active' => 'Cars::active',
+			'createdBy' => 'Cars::created_by',
+			'createdOn' => 'Cars::created_on',
+			'changedBy' => 'Cars::changed_by',
+			'changedOn' => 'Cars::changed_on',
 			'attributes.freeText' => 'Freitext',
 			'attributes.inputList' => 'Input List',
 			'attributes.dropdownSelect' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
@@ -293,14 +293,14 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isPersonalizable());
 		$this->assertSame(SORT_ASC, $configOptions['Backend.systemOrder.direction']->getDefaultValue());
-		$this->assertSame('cars::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
+		$this->assertSame('Cars::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.direction']->getType());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.direction']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.direction']->getValidate());
 		$this->assertIsArray($configOptions['Backend.systemOrder.direction']->getValues());
 		$this->assertSame([
-			4 => 'cars::sort_asc',
-			3 => 'cars::sort_desc',
+			4 => 'Cars::sort_asc',
+			3 => 'Cars::sort_desc',
 		], $configOptions['Backend.systemOrder.direction']->getValues());
 
 		$this->assertArrayHasKey('Backend.systemOrder.field', $configOptions);
@@ -308,22 +308,22 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.field']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.field']->isPersonalizable());
 		$this->assertSame('title', $configOptions['Backend.systemOrder.field']->getDefaultValue());
-		$this->assertSame('cars::title', $configOptions['Backend.systemOrder.field']->getPrintableValue());
+		$this->assertSame('Cars::title', $configOptions['Backend.systemOrder.field']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.field']->getType());
 		$this->assertNull($configOptions['Backend.systemOrder.field']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.field']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.field']->getValues());
 		$this->assertSame([
-			'id' => 'cars::id',
-			'parentId' => 'cars::parent_id',
-			'languageShortcode' => 'cars::language_shortcode',
-			'title' => 'cars::title',
-			'systemOrder' => 'cars::system_order',
-			'active' => 'cars::active',
-			'createdBy' => 'cars::created_by',
-			'createdOn' => 'cars::created_on',
-			'changedBy' => 'cars::changed_by',
-			'changedOn' => 'cars::changed_on',
+			'id' => 'Cars::id',
+			'parentId' => 'Cars::parent_id',
+			'languageShortcode' => 'Cars::language_shortcode',
+			'title' => 'Cars::title',
+			'systemOrder' => 'Cars::system_order',
+			'active' => 'Cars::active',
+			'createdBy' => 'Cars::created_by',
+			'createdOn' => 'Cars::created_on',
+			'changedBy' => 'Cars::changed_by',
+			'changedOn' => 'Cars::changed_on',
 			'attributes.freeText' => 'Freitext',
 			'attributes.inputList' => 'Input List',
 			'attributes.dropdownSelect' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
@@ -379,7 +379,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'splitIntoLanguages');
 
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
-		$this->assertSame('configuration::error_option_when_split_into_languages_when_translatable', $configOption->validateConfigValue(true));
+		$this->assertSame('Configuration::error_option_when_split_into_languages_when_translatable', $configOption->validateConfigValue(true));
 		$this->assertTrue($configOption->validateConfigValue(false));
 
 		Configure::write('Awyiss.Cars.Backend.translatable', false);
@@ -395,7 +395,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'translatable');
 
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', true);
-		$this->assertSame('configuration::error_option_not_translatable_when_split_into_languages', $configOption->validateConfigValue(true));
+		$this->assertSame('Configuration::error_option_not_translatable_when_split_into_languages', $configOption->validateConfigValue(true));
 		$this->assertTrue($configOption->validateConfigValue(false));
 
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', false);

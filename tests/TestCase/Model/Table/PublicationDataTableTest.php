@@ -115,11 +115,11 @@ class PublicationDataTableTest extends TestCase {
 
 		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayHasKey('_required', $errors['scope']);
-		$this->assertSame('publication_data::error_required', $errors['scope']['_required']);
+		$this->assertSame('PublicationData::error_required', $errors['scope']['_required']);
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('_required', $errors['type']);
-		$this->assertSame('publication_data::error_required', $errors['type']['_required']);
+		$this->assertSame('PublicationData::error_required', $errors['type']['_required']);
 
 		$this->assertArrayNotHasKey('dateTime', $errors);
 	}
@@ -146,7 +146,7 @@ class PublicationDataTableTest extends TestCase {
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('enum', $errors['type']);
-		$this->assertSame('publication_data::error_enum', $errors['type']['enum']);
+		$this->assertSame('PublicationData::error_enum', $errors['type']['enum']);
 
 		$this->assertArrayHasKey('dateTime', $errors);
 	}
@@ -311,7 +311,7 @@ class PublicationDataTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('validType', $errors['type']);
-		$this->assertSame('publication_data::error_valid_type', $errors['type']['validType']);
+		$this->assertSame('PublicationData::error_valid_type', $errors['type']['validType']);
 	}
 
 

@@ -52,28 +52,28 @@ class AttributesConfigOptionsTest extends TestCase {
 			'inputType',
 			'defaultValue',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('attributes::identifier, attributes::input_type, attributes::default_value', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Attributes::identifier, Attributes::input_type, Attributes::default_value', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'scope' => 'attributes::scope',
-			'identifier' => 'attributes::identifier',
-			'type' => 'attributes::type',
-			'hasIndex' => 'attributes::has_index',
-			'fieldset' => 'attributes::fieldset',
-			'inputType' => 'attributes::input_type',
-			'defaultValue' => 'attributes::default_value',
-			'required' => 'attributes::required',
-			'translatable' => 'attributes::translatable',
-			'columnSpan' => 'attributes::column_span',
-			'systemOrder' => 'attributes::system_order',
-			'active' => 'attributes::active',
-			'createdBy' => 'attributes::created_by',
-			'createdOn' => 'attributes::created_on',
-			'changedBy' => 'attributes::changed_by',
-			'changedOn' => 'attributes::changed_on',
+			'scope' => 'Attributes::scope',
+			'identifier' => 'Attributes::identifier',
+			'type' => 'Attributes::type',
+			'hasIndex' => 'Attributes::has_index',
+			'fieldset' => 'Attributes::fieldset',
+			'inputType' => 'Attributes::input_type',
+			'defaultValue' => 'Attributes::default_value',
+			'required' => 'Attributes::required',
+			'translatable' => 'Attributes::translatable',
+			'columnSpan' => 'Attributes::column_span',
+			'systemOrder' => 'Attributes::system_order',
+			'active' => 'Attributes::active',
+			'createdBy' => 'Attributes::created_by',
+			'createdOn' => 'Attributes::created_on',
+			'changedBy' => 'Attributes::changed_by',
+			'changedOn' => 'Attributes::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

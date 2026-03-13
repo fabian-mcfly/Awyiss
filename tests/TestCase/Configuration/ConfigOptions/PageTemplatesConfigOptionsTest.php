@@ -49,19 +49,19 @@ class PageTemplatesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'fileName',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('page_templates::file_name', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('PageTemplates::file_name', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'fileName' => 'page_templates::file_name',
-			'systemOrder' => 'page_templates::system_order',
-			'active' => 'page_templates::active',
-			'createdBy' => 'page_templates::created_by',
-			'createdOn' => 'page_templates::created_on',
-			'changedBy' => 'page_templates::changed_by',
-			'changedOn' => 'page_templates::changed_on',
+			'fileName' => 'PageTemplates::file_name',
+			'systemOrder' => 'PageTemplates::system_order',
+			'active' => 'PageTemplates::active',
+			'createdBy' => 'PageTemplates::created_by',
+			'createdOn' => 'PageTemplates::created_on',
+			'changedBy' => 'PageTemplates::changed_by',
+			'changedOn' => 'PageTemplates::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

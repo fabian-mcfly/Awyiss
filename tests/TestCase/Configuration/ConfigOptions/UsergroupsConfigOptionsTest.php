@@ -53,11 +53,11 @@ class UsergroupsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'active' => 'usergroups::active',
-			'createdBy' => 'usergroups::created_by',
-			'createdOn' => 'usergroups::created_on',
-			'changedBy' => 'usergroups::changed_by',
-			'changedOn' => 'usergroups::changed_on',
+			'active' => 'Usergroups::active',
+			'createdBy' => 'Usergroups::created_by',
+			'createdOn' => 'Usergroups::created_on',
+			'changedBy' => 'Usergroups::changed_by',
+			'changedOn' => 'Usergroups::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

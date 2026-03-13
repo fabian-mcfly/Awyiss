@@ -187,7 +187,7 @@ class CustomerGroupsCustomersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('customerGroupId', $errors);
 		$this->assertArrayHasKey('customerGroupExists', $errors['customerGroupId']);
-		$this->assertSame('customer_groups_customers::error_customer_group_exists', $errors['customerGroupId']['customerGroupExists']);
+		$this->assertSame('CustomerGroupsCustomers::error_customer_group_exists', $errors['customerGroupId']['customerGroupExists']);
 	}
 
 
@@ -211,7 +211,7 @@ class CustomerGroupsCustomersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('customerId', $errors);
 		$this->assertArrayHasKey('customerExists', $errors['customerId']);
-		$this->assertSame('customer_groups_customers::error_customer_exists', $errors['customerId']['customerExists']);
+		$this->assertSame('CustomerGroupsCustomers::error_customer_exists', $errors['customerId']['customerExists']);
 	}
 
 

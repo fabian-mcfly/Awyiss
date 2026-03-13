@@ -347,7 +347,7 @@ class MenuEntriesTableTest extends TestCase {
 		$this->assertArrayHasKey('menuId', $errors);
 		$this->assertArrayHasKey('validMenuId', $errors['menuId']);
 		// Error message comes from the nest behavior
-		$this->assertEquals('menu_entries::error_valid_menu_id', $errors['menuId']['validMenuId']);
+		$this->assertEquals('MenuEntries::error_valid_menu_id', $errors['menuId']['validMenuId']);
 	}
 
 
@@ -388,7 +388,7 @@ class MenuEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('languageShortcode', $errors);
 		$this->assertArrayHasKey('languageExists', $errors['languageShortcode']);
-		$this->assertEquals('menu_entries::error_language_exists', $errors['languageShortcode']['languageExists']);
+		$this->assertEquals('MenuEntries::error_language_exists', $errors['languageShortcode']['languageExists']);
 	}
 
 
@@ -450,7 +450,7 @@ class MenuEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertEquals('menu_entries::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertEquals('MenuEntries::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 
 

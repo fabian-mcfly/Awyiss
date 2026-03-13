@@ -307,7 +307,7 @@ class ContentTest extends TestCase {
 
 		$label = $entity->label;
 
-		$this->assertSame('contents::inactive Test Content', $label);
+		$this->assertSame('Contents::inactive Test Content', $label);
 	}
 
 

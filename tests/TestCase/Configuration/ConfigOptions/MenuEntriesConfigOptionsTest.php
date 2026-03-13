@@ -49,23 +49,23 @@ class MenuEntriesConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'link',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('menu_entries::link', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('MenuEntries::link', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'menuId' => 'menu_entries::menu_id',
-			'parentId' => 'menu_entries::parent_id',
-			'languageShortcode' => 'menu_entries::language_shortcode',
-			'link' => 'menu_entries::link',
-			'external' => 'menu_entries::external',
-			'systemOrder' => 'menu_entries::system_order',
-			'active' => 'menu_entries::active',
-			'createdBy' => 'menu_entries::created_by',
-			'createdOn' => 'menu_entries::created_on',
-			'changedBy' => 'menu_entries::changed_by',
-			'changedOn' => 'menu_entries::changed_on',
+			'menuId' => 'MenuEntries::menu_id',
+			'parentId' => 'MenuEntries::parent_id',
+			'languageShortcode' => 'MenuEntries::language_shortcode',
+			'link' => 'MenuEntries::link',
+			'external' => 'MenuEntries::external',
+			'systemOrder' => 'MenuEntries::system_order',
+			'active' => 'MenuEntries::active',
+			'createdBy' => 'MenuEntries::created_by',
+			'createdOn' => 'MenuEntries::created_on',
+			'changedBy' => 'MenuEntries::changed_by',
+			'changedOn' => 'MenuEntries::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

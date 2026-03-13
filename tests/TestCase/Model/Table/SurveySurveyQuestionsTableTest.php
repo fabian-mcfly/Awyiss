@@ -225,7 +225,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('_required', $errors['identifier']);
-		$this->assertSame('survey_survey_questions::error_required', $errors['identifier']['_required']);
+		$this->assertSame('SurveySurveyQuestions::error_required', $errors['identifier']['_required']);
 	}
 
 
@@ -303,7 +303,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('nextAction', $errors);
 		$this->assertArrayHasKey('enum', $errors['nextAction']);
-		$this->assertSame('survey_survey_questions::error_enum', $errors['nextAction']['enum']);
+		$this->assertSame('SurveySurveyQuestions::error_enum', $errors['nextAction']['enum']);
 
 		$this->assertArrayHasKey('nextActionTarget', $errors);
 		$this->assertArrayHasKey('customAnswerTitle', $errors);
@@ -433,7 +433,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('identifierUnique', $errors['identifier']);
-		$this->assertSame('surveys::error_identifier_unique', $errors['identifier']['identifierUnique']);
+		$this->assertSame('Surveys::error_identifier_unique', $errors['identifier']['identifierUnique']);
 	}
 
 
@@ -479,7 +479,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('validSurveyId', $errors['surveyId']);
-		$this->assertSame('surveys::error_valid_survey_id', $errors['surveyId']['validSurveyId']);
+		$this->assertSame('Surveys::error_valid_survey_id', $errors['surveyId']['validSurveyId']);
 	}
 
 
@@ -525,7 +525,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyQuestionId', $errors);
 		$this->assertArrayHasKey('validSurveyQuestionId', $errors['surveyQuestionId']);
-		$this->assertSame('surveys::error_valid_survey_question_id', $errors['surveyQuestionId']['validSurveyQuestionId']);
+		$this->assertSame('Surveys::error_valid_survey_question_id', $errors['surveyQuestionId']['validSurveyQuestionId']);
 	}
 
 
@@ -613,7 +613,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('nextAction', $errors);
 		$this->assertArrayHasKey('validNextAction', $errors['nextAction']);
-		$this->assertSame('survey_survey_questions::error_valid_next_action', $errors['nextAction']['validNextAction']);
+		$this->assertSame('SurveySurveyQuestions::error_valid_next_action', $errors['nextAction']['validNextAction']);
 	}
 
 

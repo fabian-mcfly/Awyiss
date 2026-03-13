@@ -312,7 +312,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('globalContentTemplateId', $errors);
 		$this->assertArrayHasKey('globalContentTemplateExists', $errors['globalContentTemplateId']);
-		$this->assertEquals('global_content_template_elements::error_global_content_template_exists', $errors['globalContentTemplateId']['globalContentTemplateExists']);
+		$this->assertEquals('GlobalContentTemplateElements::error_global_content_template_exists', $errors['globalContentTemplateId']['globalContentTemplateExists']);
 	}
 
 

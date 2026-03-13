@@ -122,7 +122,7 @@ class SurveySurveyAnswerTest extends TestCase {
 	public function testLabelVirtualPropertyWithTitleInactive(): void {
 		$entity = new SurveySurveyAnswer(['title' => 'Test Answer', 'active' => false]);
 
-		$this->assertSame('survey_answers::inactive Test Answer', $entity->label);
+		$this->assertSame('SurveyAnswers::inactive Test Answer', $entity->label);
 	}
 
 
@@ -141,7 +141,7 @@ class SurveySurveyAnswerTest extends TestCase {
 			'surveyAnswer' => $surveyAnswer,
 		]);
 
-		$this->assertSame('survey_answers::inactive Answer From Relation', $entity->label);
+		$this->assertSame('SurveyAnswers::inactive Answer From Relation', $entity->label);
 	}
 
 
@@ -161,7 +161,7 @@ class SurveySurveyAnswerTest extends TestCase {
 			'active' => true,
 		]);
 
-		$this->assertSame('survey_answers::inactive Inactive Answer', $entity->label);
+		$this->assertSame('SurveyAnswers::inactive Inactive Answer', $entity->label);
 	}
 
 
@@ -175,6 +175,6 @@ class SurveySurveyAnswerTest extends TestCase {
 			'active' => false,
 		]);
 
-		$this->assertSame('survey_answers::inactive Answer Title', $entity->label);
+		$this->assertSame('SurveyAnswers::inactive Answer Title', $entity->label);
 	}
 }

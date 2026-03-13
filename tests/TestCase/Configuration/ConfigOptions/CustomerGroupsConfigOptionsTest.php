@@ -53,11 +53,11 @@ class CustomerGroupsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'active' => 'customer_groups::active',
-			'createdBy' => 'customer_groups::created_by',
-			'createdOn' => 'customer_groups::created_on',
-			'changedBy' => 'customer_groups::changed_by',
-			'changedOn' => 'customer_groups::changed_on',
+			'active' => 'CustomerGroups::active',
+			'createdBy' => 'CustomerGroups::created_by',
+			'createdOn' => 'CustomerGroups::created_on',
+			'changedBy' => 'CustomerGroups::changed_by',
+			'changedOn' => 'CustomerGroups::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

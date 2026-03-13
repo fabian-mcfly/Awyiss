@@ -603,19 +603,19 @@ class FormTest extends TestCase {
 		// Should have errors for required fields
 		$this->assertArrayHasKey('nachname', $errors);
 		$this->assertArrayHasKey('_required', $errors['nachname']);
-		$this->assertSame('form::error_required', $errors['nachname']['_required']);
+		$this->assertSame('Form::error_required', $errors['nachname']['_required']);
 
 		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('_required', $errors['email']);
-		$this->assertSame('form::error_required', $errors['email']['_required']);
+		$this->assertSame('Form::error_required', $errors['email']['_required']);
 
 		$this->assertArrayHasKey('nachricht', $errors);
 		$this->assertArrayHasKey('_required', $errors['nachricht']);
-		$this->assertSame('form::error_required', $errors['nachricht']['_required']);
+		$this->assertSame('Form::error_required', $errors['nachricht']['_required']);
 
 		$this->assertArrayHasKey('datenschutzAkzeptiert', $errors);
 		$this->assertArrayHasKey('_required', $errors['datenschutzAkzeptiert']);
-		$this->assertSame('form::error_required', $errors['datenschutzAkzeptiert']['_required']);
+		$this->assertSame('Form::error_required', $errors['datenschutzAkzeptiert']['_required']);
 	}
 
 
@@ -827,7 +827,7 @@ class FormTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('hiddenInput', $errors['_general']);
-		$this->assertEquals('form::protection_method_hidden_input_error_field_empty', $errors['_general']['hiddenInput']);
+		$this->assertEquals('Form::protection_method_hidden_input_error_field_empty', $errors['_general']['hiddenInput']);
 	}
 
 

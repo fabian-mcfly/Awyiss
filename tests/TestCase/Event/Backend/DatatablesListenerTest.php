@@ -147,7 +147,7 @@ class DatatablesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['attributes::table_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['Attributes::table_changes_in_progress'], $errors['_general']);
 	}
 
 
@@ -178,9 +178,9 @@ class DatatablesListenerTest extends TestCase {
 		$entries = $entries->combine('title', 'link')->toArray();
 
 		$this->assertSame([
-			'generic_datatables::menu_configure' => 'Configuration::overview::scope:TestDatatable',
-			'generic_datatables::menu_add' => 'TestDatatable::add',
-			'generic_datatables::menu_overview' => 'TestDatatable::overview',
+			'GenericDatatables::menu_configure' => 'Configuration::overview::scope:TestDatatable',
+			'GenericDatatables::menu_add' => 'TestDatatable::add',
+			'GenericDatatables::menu_overview' => 'TestDatatable::overview',
 			'' => 'TestDatatable::overview',
 		], $entries);
 

@@ -403,7 +403,7 @@ class UrlHistoryTableTest extends TestCase {
 
 		$this->assertArrayHasKey('status', $errors);
 		$this->assertArrayHasKey('inList', $errors['status']);
-		$this->assertSame('url_history::error_in_list', $errors['status']['inList']);
+		$this->assertSame('UrlHistory::error_in_list', $errors['status']['inList']);
 	}
 
 
@@ -424,7 +424,7 @@ class UrlHistoryTableTest extends TestCase {
 
 		$this->assertArrayHasKey('status', $errors);
 		$this->assertArrayHasKey('inList', $errors['status']);
-		$this->assertSame('url_history::error_in_list', $errors['status']['inList']);
+		$this->assertSame('UrlHistory::error_in_list', $errors['status']['inList']);
 	}
 
 
@@ -456,7 +456,7 @@ class UrlHistoryTableTest extends TestCase {
 		else {
 			$this->assertArrayHasKey('status', $errors);
 			$this->assertArrayHasKey('inList', $errors['status']);
-			$this->assertSame('url_history::error_in_list', $errors['status']['inList']);
+			$this->assertSame('UrlHistory::error_in_list', $errors['status']['inList']);
 		}
 	}
 
@@ -539,7 +539,7 @@ class UrlHistoryTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('foreignKey', $errors);
 		$this->assertArrayHasKey('validForeignKey', $errors['foreignKey']);
-		$this->assertSame('url_history::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
+		$this->assertSame('UrlHistory::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
 	}
 
 
@@ -585,7 +585,7 @@ class UrlHistoryTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('foreignKey', $errors);
 		$this->assertArrayHasKey('validForeignKey', $errors['foreignKey']);
-		$this->assertSame('url_history::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
+		$this->assertSame('UrlHistory::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
 	}
 
 
@@ -631,7 +631,7 @@ class UrlHistoryTableTest extends TestCase {
 
 		$this->assertArrayHasKey('foreignKey', $errors);
 		$this->assertArrayHasKey('validForeignKey', $errors['foreignKey']);
-		$this->assertSame('url_history::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
+		$this->assertSame('UrlHistory::error_valid_foreign_key', $errors['foreignKey']['validForeignKey']);
 	}
 
 
@@ -680,7 +680,7 @@ class UrlHistoryTableTest extends TestCase {
 
 		$this->assertArrayHasKey('target', $errors);
 		$this->assertArrayHasKey('validTarget', $errors['target']);
-		$this->assertSame('url_history::error_valid_target', $errors['target']['validTarget']);
+		$this->assertSame('UrlHistory::error_valid_target', $errors['target']['validTarget']);
 	}
 
 

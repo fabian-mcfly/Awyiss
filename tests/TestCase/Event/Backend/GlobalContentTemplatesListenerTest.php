@@ -309,7 +309,7 @@ class GlobalContentTemplatesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['global_content_templates::file_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['GlobalContentTemplates::file_changes_in_progress'], $errors['_general']);
 	}
 
 

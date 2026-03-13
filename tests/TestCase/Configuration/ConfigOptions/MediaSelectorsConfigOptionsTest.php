@@ -49,18 +49,18 @@ class MediaSelectorsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('media_selectors::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('MediaSelectors::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'media_selectors::identifier',
-			'active' => 'media_selectors::active',
-			'createdBy' => 'media_selectors::created_by',
-			'createdOn' => 'media_selectors::created_on',
-			'changedBy' => 'media_selectors::changed_by',
-			'changedOn' => 'media_selectors::changed_on',
+			'identifier' => 'MediaSelectors::identifier',
+			'active' => 'MediaSelectors::active',
+			'createdBy' => 'MediaSelectors::created_by',
+			'createdOn' => 'MediaSelectors::created_on',
+			'changedBy' => 'MediaSelectors::changed_by',
+			'changedOn' => 'MediaSelectors::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

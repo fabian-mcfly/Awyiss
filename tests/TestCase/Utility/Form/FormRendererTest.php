@@ -573,7 +573,7 @@ class FormRendererTest extends TestCase {
 			'<div class="FormElement Column-100 FormElementType-Checkbox FormElement-DatenschutzAkzeptiert FormElement-IsInvalid" id="FormElement9">',
 			$formBody
 		);
-		$this->assertStringContainsString('<div class="FormElement-Error">form::error_required</div>', $formBody);
+		$this->assertStringContainsString('<div class="FormElement-Error">Form::error_required</div>', $formBody);
 	}
 
 

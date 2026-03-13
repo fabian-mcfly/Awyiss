@@ -396,7 +396,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('_existsIn', $errors['parentId']);
-		$this->assertEquals('validation::error_exists_in', $errors['parentId']['_existsIn']);
+		$this->assertEquals('Validation::error_exists_in', $errors['parentId']['_existsIn']);
 	}
 
 
@@ -419,7 +419,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertEquals('backend_menu_entries::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertEquals('BackendMenuEntries::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 
 
@@ -457,15 +457,15 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$this->assertCount(3, $entries->childBackendMenuEntries);
 
 		$children = $entries->childBackendMenuEntries;
-		$this->assertEquals('generic_datatables::menu_overview', $children[0]->title);
+		$this->assertEquals('GenericDatatables::menu_overview', $children[0]->title);
 		$this->assertEquals('TestController::overview', $children[0]->link);
 		$this->assertEquals(1, $children[0]->systemOrder);
 
-		$this->assertEquals('generic_datatables::menu_add', $children[1]->title);
+		$this->assertEquals('GenericDatatables::menu_add', $children[1]->title);
 		$this->assertEquals('TestController::add', $children[1]->link);
 		$this->assertEquals(2, $children[1]->systemOrder);
 
-		$this->assertEquals('generic_datatables::menu_configure', $children[2]->title);
+		$this->assertEquals('GenericDatatables::menu_configure', $children[2]->title);
 		$this->assertEquals('Configuration::overview::scope:TestScope', $children[2]->link);
 		$this->assertEquals(3, $children[2]->systemOrder);
 	}

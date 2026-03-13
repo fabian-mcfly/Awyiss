@@ -131,11 +131,11 @@ class UsergroupPermissionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayHasKey('_required', $errors['scope']);
-		$this->assertSame('usergroup_permissions::error_required', $errors['scope']['_required']);
+		$this->assertSame('UsergroupPermissions::error_required', $errors['scope']['_required']);
 
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('_required', $errors['identifier']);
-		$this->assertSame('usergroup_permissions::error_required', $errors['identifier']['_required']);
+		$this->assertSame('UsergroupPermissions::error_required', $errors['identifier']['_required']);
 	}
 
 
@@ -283,7 +283,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('access', $errors);
 		$this->assertArrayHasKey('enum', $errors['access']);
-		$this->assertSame('usergroup_permissions::error_enum', $errors['access']['enum']);
+		$this->assertSame('UsergroupPermissions::error_enum', $errors['access']['enum']);
 	}
 
 
@@ -370,7 +370,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('usergroupId', $errors);
 		$this->assertArrayHasKey('usergroupExists', $errors['usergroupId']);
-		$this->assertSame('usergroup_permissions::error_usergroup_exists', $errors['usergroupId']['usergroupExists']);
+		$this->assertSame('UsergroupPermissions::error_usergroup_exists', $errors['usergroupId']['usergroupExists']);
 	}
 
 
@@ -433,7 +433,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('access', $errors);
 		$this->assertArrayHasKey('validAccess', $errors['access']);
-		$this->assertSame('usergroup_permissions::error_valid_access', $errors['access']['validAccess']);
+		$this->assertSame('UsergroupPermissions::error_valid_access', $errors['access']['validAccess']);
 	}
 
 

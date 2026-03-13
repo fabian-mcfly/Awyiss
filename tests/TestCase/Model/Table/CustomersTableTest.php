@@ -221,7 +221,7 @@ class CustomersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('_required', $errors['email']);
-		$this->assertSame('customers::error_required', $errors['email']['_required']);
+		$this->assertSame('Customers::error_required', $errors['email']['_required']);
 	}
 
 
@@ -418,7 +418,7 @@ class CustomersTableTest extends TestCase {
 		$errors = $entity2->getErrors();
 		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('emailUnique', $errors['email']);
-		$this->assertSame('customers::error_email_unique', $errors['email']['emailUnique']);
+		$this->assertSame('Customers::error_email_unique', $errors['email']['emailUnique']);
 	}
 
 
@@ -594,7 +594,7 @@ class CustomersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('_required', $errors['email']);
-		$this->assertSame('customers::error_required', $errors['email']['_required']);
+		$this->assertSame('Customers::error_required', $errors['email']['_required']);
 	}
 
 	/**
@@ -615,7 +615,7 @@ class CustomersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('password', $errors);
 		$this->assertArrayHasKey('_required', $errors['password']);
-		$this->assertSame('customers::error_required', $errors['password']['_required']);
+		$this->assertSame('Customers::error_required', $errors['password']['_required']);
 	}
 
 	/**
@@ -636,7 +636,7 @@ class CustomersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('passwordConfirm', $errors);
 		$this->assertArrayHasKey('_required', $errors['passwordConfirm']);
-		$this->assertSame('customers::error_required', $errors['passwordConfirm']['_required']);
+		$this->assertSame('Customers::error_required', $errors['passwordConfirm']['_required']);
 	}
 
 	/**

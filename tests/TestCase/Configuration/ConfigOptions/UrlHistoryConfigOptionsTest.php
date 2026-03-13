@@ -53,15 +53,15 @@ class UrlHistoryConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'url' => 'url_history::url',
-			'scope' => 'url_history::scope',
-			'foreignKey' => 'url_history::foreign_key',
-			'target' => 'url_history::target',
-			'status' => 'url_history::status',
-			'createdBy' => 'url_history::created_by',
-			'createdOn' => 'url_history::created_on',
-			'changedBy' => 'url_history::changed_by',
-			'changedOn' => 'url_history::changed_on',
+			'url' => 'UrlHistory::url',
+			'scope' => 'UrlHistory::scope',
+			'foreignKey' => 'UrlHistory::foreign_key',
+			'target' => 'UrlHistory::target',
+			'status' => 'UrlHistory::status',
+			'createdBy' => 'UrlHistory::created_by',
+			'createdOn' => 'UrlHistory::created_on',
+			'changedBy' => 'UrlHistory::changed_by',
+			'changedOn' => 'UrlHistory::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

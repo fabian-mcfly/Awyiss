@@ -146,7 +146,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 
 		if (!isset(static::$pageRoles)) {
 			static::$pageRoles = $tableLocator->get('PageRoles')->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-				return Inflector::pluralize($pageRole->identifier);
+				return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
 			})->toArray();
 		}
 

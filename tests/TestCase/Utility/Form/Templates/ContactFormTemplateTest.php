@@ -22,7 +22,7 @@ class ContactFormTemplateTest extends TestCase {
 	 */
 	public function testGetTitle(): void {
 		$this->assertSame(
-			'forms::form_template_contact_form',
+			'Forms::form_template_contact_form',
 			ContactFormTemplate::getTitle()
 		);
 	}

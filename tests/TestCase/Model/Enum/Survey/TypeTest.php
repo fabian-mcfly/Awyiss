@@ -88,10 +88,10 @@ class TypeTest extends TestCase {
 	public function testLabel(): void {
 		$label = Type::Linear->label();
 		$this->assertIsString($label);
-		$this->assertSame('surveys::survey_type_linear', $label);
+		$this->assertSame('Surveys::survey_type_linear', $label);
 
 		$label = Type::Configurator->label();
 		$this->assertIsString($label);
-		$this->assertSame('surveys::survey_type_configurator', $label);
+		$this->assertSame('Surveys::survey_type_configurator', $label);
 	}
 }

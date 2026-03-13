@@ -482,7 +482,7 @@ class RulesCheckerTest extends TestCase {
 			$this->equalTo('_existsIn'),
 			$this->callback(function (array $options): bool {
 				$this->assertSame('user_id', $options['errorField']);
-				$this->assertSame('validation::error_exists_in', $options['message']);
+				$this->assertSame('Validation::error_exists_in', $options['message']);
 
 				return true;
 			})
@@ -576,7 +576,7 @@ class RulesCheckerTest extends TestCase {
 			$this->equalTo('_isUnique'),
 			$this->callback(function (array $options): bool {
 				$this->assertSame('username', $options['errorField']);
-				$this->assertSame('validation::error_unique', $options['message']);
+				$this->assertSame('Validation::error_unique', $options['message']);
 
 				return true;
 			})
@@ -644,7 +644,7 @@ class RulesCheckerTest extends TestCase {
 
 		$this->assertSame(0, $options['count']);
 		$this->assertSame('>', $options['operator']);
-		$this->assertSame('validation::error_valid_count', $options['message']);
+		$this->assertSame('Validation::error_valid_count', $options['message']);
 	}
 
 
@@ -724,7 +724,7 @@ class RulesCheckerTest extends TestCase {
 			$this->callback(function (array $options): bool {
 				// Error field stays unchanged
 				$this->assertSame('includeInLinklist', $options['errorField']);
-				$this->assertSame('validation::error_valid_count', $options['message']);
+				$this->assertSame('Validation::error_valid_count', $options['message']);
 
 				return true;
 			})
@@ -922,7 +922,7 @@ class RulesCheckerTest extends TestCase {
 		$options = $optionsProperty->getValue($result);
 
 		$this->assertSame('user_id', $options['errorField']);
-		$this->assertSame('validation::error_link_constraint_rule', $options['message']);
+		$this->assertSame('Validation::error_link_constraint_rule', $options['message']);
 	}
 
 

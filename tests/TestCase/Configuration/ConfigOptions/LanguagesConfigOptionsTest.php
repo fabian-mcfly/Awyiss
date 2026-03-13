@@ -51,24 +51,24 @@ class LanguagesConfigOptionsTest extends TestCase {
 			'timezone',
 			'locale',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('languages::shortcode, languages::timezone, languages::locale', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Languages::shortcode, Languages::timezone, Languages::locale', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'realm' => 'languages::realm',
-			'shortcode' => 'languages::shortcode',
-			'timezone' => 'languages::timezone',
-			'locale' => 'languages::locale',
-			'dateFormat' => 'languages::date_format',
-			'timeFormat' => 'languages::time_format',
-			'systemOrder' => 'languages::system_order',
-			'active' => 'languages::active',
-			'createdBy' => 'languages::created_by',
-			'createdOn' => 'languages::created_on',
-			'changedBy' => 'languages::changed_by',
-			'changedOn' => 'languages::changed_on',
+			'realm' => 'Languages::realm',
+			'shortcode' => 'Languages::shortcode',
+			'timezone' => 'Languages::timezone',
+			'locale' => 'Languages::locale',
+			'dateFormat' => 'Languages::date_format',
+			'timeFormat' => 'Languages::time_format',
+			'systemOrder' => 'Languages::system_order',
+			'active' => 'Languages::active',
+			'createdBy' => 'Languages::created_by',
+			'createdOn' => 'Languages::created_on',
+			'changedBy' => 'Languages::changed_by',
+			'changedOn' => 'Languages::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

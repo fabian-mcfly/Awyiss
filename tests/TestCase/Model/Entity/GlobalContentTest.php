@@ -308,7 +308,7 @@ class GlobalContentTest extends TestCase {
 
 		$label = $entity->label;
 
-		$this->assertSame('global_contents::inactive Test GlobalContent', $label);
+		$this->assertSame('GlobalContents::inactive Test GlobalContent', $label);
 	}
 
 

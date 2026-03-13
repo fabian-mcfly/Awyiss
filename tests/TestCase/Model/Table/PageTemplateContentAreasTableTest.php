@@ -196,7 +196,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('pageTemplateId', $errors);
 		$this->assertArrayHasKey('pageTemplateExists', $errors['pageTemplateId']);
-		$this->assertEquals('page_template_content_areas::error_page_template_exists', $errors['pageTemplateId']['pageTemplateExists']);
+		$this->assertEquals('PageTemplateContentAreas::error_page_template_exists', $errors['pageTemplateId']['pageTemplateExists']);
 	}
 
 
@@ -237,7 +237,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('contentAreaId', $errors);
 		$this->assertArrayHasKey('contentAreaExists', $errors['contentAreaId']);
-		$this->assertEquals('page_template_content_areas::error_content_area_exists', $errors['contentAreaId']['contentAreaExists']);
+		$this->assertEquals('PageTemplateContentAreas::error_content_area_exists', $errors['contentAreaId']['contentAreaExists']);
 	}
 
 

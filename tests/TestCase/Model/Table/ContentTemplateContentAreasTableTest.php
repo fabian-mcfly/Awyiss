@@ -273,7 +273,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('contentTemplateId', $errors);
 		$this->assertArrayHasKey('contentTemplateExists', $errors['contentTemplateId']);
-		$this->assertEquals('content_template_content_areas::error_content_template_exists', $errors['contentTemplateId']['contentTemplateExists']);
+		$this->assertEquals('ContentTemplateContentAreas::error_content_template_exists', $errors['contentTemplateId']['contentTemplateExists']);
 	}
 
 
@@ -314,7 +314,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('contentAreaId', $errors);
 		$this->assertArrayHasKey('contentAreaExists', $errors['contentAreaId']);
-		$this->assertEquals('content_template_content_areas::error_content_area_exists', $errors['contentAreaId']['contentAreaExists']);
+		$this->assertEquals('ContentTemplateContentAreas::error_content_area_exists', $errors['contentAreaId']['contentAreaExists']);
 	}
 
 
@@ -355,7 +355,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('pageTemplateId', $errors);
 		$this->assertArrayHasKey('pageTemplateExists', $errors['pageTemplateId']);
-		$this->assertEquals('content_template_content_areas::error_page_template_exists', $errors['pageTemplateId']['pageTemplateExists']);
+		$this->assertEquals('ContentTemplateContentAreas::error_page_template_exists', $errors['pageTemplateId']['pageTemplateExists']);
 	}
 
 
@@ -396,7 +396,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$errors = $invalidEntity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('contentTemplateContentAreas', $errors['_general']);
-		$this->assertEquals('content_template_content_areas::error_page_template_content_area_exists', $errors['_general']['contentTemplateContentAreas']);
+		$this->assertEquals('ContentTemplateContentAreas::error_page_template_content_area_exists', $errors['_general']['contentTemplateContentAreas']);
 	}
 
 

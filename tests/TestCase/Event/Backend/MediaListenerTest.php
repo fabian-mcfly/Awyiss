@@ -176,7 +176,7 @@ class MediaListenerTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('name', $errors);
-		$this->assertSame(['media::error_media_has_file_extension'], $errors['name']);
+		$this->assertSame(['Media::error_media_has_file_extension'], $errors['name']);
 	}
 
 

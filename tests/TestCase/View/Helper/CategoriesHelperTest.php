@@ -414,9 +414,9 @@ class CategoriesHelperTest extends TestCase {
 			'groupBy' => '_group',
 		]);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_1"', $result);
-		$this->assertStringNotContainsString('<optgroup label="the_controller::media_folder_grouplabel_2"', $result);
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_3"', $result);
+		$this->assertStringContainsString('<optgroup label="TheController::media_folder_grouplabel_1"', $result);
+		$this->assertStringNotContainsString('<optgroup label="TheController::media_folder_grouplabel_2"', $result);
+		$this->assertStringContainsString('<optgroup label="TheController::media_folder_grouplabel_3"', $result);
 	}
 
 
@@ -444,7 +444,7 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('mediaFolders', ['options' => $options, 'groupBy' => '_group']);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
+		$this->assertStringContainsString('<optgroup label="TheController::media_folder_grouplabel_general"', $result);
 		$this->assertStringContainsString('<optgroup label="1 - 2"', $result);
 		$this->assertStringContainsString('<optgroup label="8 - 9"', $result);
 
@@ -459,7 +459,7 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('mediaFolders', ['options' => $options]);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
+		$this->assertStringContainsString('<optgroup label="TheController::media_folder_grouplabel_general"', $result);
 		$this->assertStringContainsString('<optgroup label="5 - 3"', $result);
 	}
 
@@ -834,7 +834,7 @@ class CategoriesHelperTest extends TestCase {
 			'groupBy' => '_group',
 		]);
 
-		$this->assertStringContainsString('the_controller::media_folders_grouplabel_1', $result);
+		$this->assertStringContainsString('TheController::media_folders_grouplabel_1', $result);
 	}
 
 

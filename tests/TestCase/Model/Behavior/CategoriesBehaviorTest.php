@@ -1275,7 +1275,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertSame('news::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertSame('News::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 
 
@@ -1297,6 +1297,6 @@ class CategoriesBehaviorTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('validParentId', $errors['parentId']);
-		$this->assertSame('news::error_valid_parent_id', $errors['parentId']['validParentId']);
+		$this->assertSame('News::error_valid_parent_id', $errors['parentId']['validParentId']);
 	}
 }

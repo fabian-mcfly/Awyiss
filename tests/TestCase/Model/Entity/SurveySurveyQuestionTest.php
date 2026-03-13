@@ -161,6 +161,6 @@ class SurveySurveyQuestionTest extends TestCase {
 			'surveyQuestion' => $surveyQuestion,
 		]);
 
-		$this->assertSame('survey_questions::inactive Inactive Question (q3)', $entity->label);
+		$this->assertSame('SurveyQuestions::inactive Inactive Question (q3)', $entity->label);
 	}
 }

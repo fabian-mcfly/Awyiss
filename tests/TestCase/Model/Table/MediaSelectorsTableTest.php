@@ -305,7 +305,7 @@ class MediaSelectorsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('notDefaultSelectorDeletion', $errors['_general']);
-		$this->assertSame('media_selectors::error_not_default_selector_deletion', $errors['_general']['notDefaultSelectorDeletion']);
+		$this->assertSame('MediaSelectors::error_not_default_selector_deletion', $errors['_general']['notDefaultSelectorDeletion']);
 	}
 
 

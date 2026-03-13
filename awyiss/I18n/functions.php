@@ -28,8 +28,6 @@ if (!function_exists('__')) {
 
 		$controller = Router::getRequest()?->getParam('controller');
 		if ($controller) {
-			$controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
-
 			return __d($controller, $string, $args);
 		}
 
@@ -107,7 +105,7 @@ if (!function_exists('__d')) {
 			return $return;
 		}
 
-		$return = Inflector::underscore($domain) . '::' . $string;
+		$return = $domain . '::' . $string;
 
 		// Fallback to system domain
 		if (
@@ -160,11 +158,11 @@ if (!function_exists('__df')) {
 		}
 
 		if ($return === $string || empty($return)) {
-			$return = Inflector::underscore($domain) . '::' . $string;
+			$return = $domain . '::' . $string;
 
 			// Fallback to system domain
 			if (
-				Inflector::camelize($fallbackDomain) === 'GenericPages' &&
+				Inflector::underscore($fallbackDomain) === 'generic_pages' &&
 				!in_array($string, [
 					'meta_title_overview',
 					'menu_title',
@@ -355,7 +353,7 @@ if (!function_exists('__ld')) {
 			return $return;
 		}
 
-		$return = Inflector::underscore($domain) . '::' . $string;
+		$return = $domain . '::' . $string;
 
 		// Fallback to system domain
 		if (

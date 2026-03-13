@@ -49,21 +49,21 @@ class MediaElementsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('media_elements::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('MediaElements::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'media_elements::identifier',
-			'columnSpan' => 'media_elements::column_span',
-			'internal' => 'media_elements::internal',
-			'systemOrder' => 'media_elements::system_order',
-			'active' => 'media_elements::active',
-			'createdBy' => 'media_elements::created_by',
-			'createdOn' => 'media_elements::created_on',
-			'changedBy' => 'media_elements::changed_by',
-			'changedOn' => 'media_elements::changed_on',
+			'identifier' => 'MediaElements::identifier',
+			'columnSpan' => 'MediaElements::column_span',
+			'internal' => 'MediaElements::internal',
+			'systemOrder' => 'MediaElements::system_order',
+			'active' => 'MediaElements::active',
+			'createdBy' => 'MediaElements::created_by',
+			'createdOn' => 'MediaElements::created_on',
+			'changedBy' => 'MediaElements::changed_by',
+			'changedOn' => 'MediaElements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

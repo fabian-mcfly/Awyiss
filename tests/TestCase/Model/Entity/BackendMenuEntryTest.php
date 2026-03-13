@@ -105,10 +105,10 @@ class BackendMenuEntryTest extends TestCase {
 		$entity->title = 'Simple Title';
 		$this->assertEquals('Simple Title', $entity->title);
 
-		$entity->title = 'system::meta_title_overview';
+		$entity->title = 'System::meta_title_overview';
 		$this->assertEquals('Systemübersicht', $entity->title);
 
-		$entity->title = 'customers::menu_overview';
+		$entity->title = 'Customers::menu_overview';
 		$this->assertEquals('Übersicht', $entity->title);
 
 		$entity->title = '';
@@ -129,10 +129,10 @@ class BackendMenuEntryTest extends TestCase {
 		$entity->set('title', 'Simple Title');
 		$this->assertEquals('Simple Title', $entity->title);
 
-		$entity->set('title', 'system::meta_title_overview');
+		$entity->set('title', 'System::meta_title_overview');
 		$this->assertEquals('Systemübersicht', $entity->title);
 
-		$entity->set('title', 'customers::menu_overview');
+		$entity->set('title', 'Customers::menu_overview');
 		$this->assertEquals('Übersicht', $entity->title);
 
 		$entity->set('title', '');

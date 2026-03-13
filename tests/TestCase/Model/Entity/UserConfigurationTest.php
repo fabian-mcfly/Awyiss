@@ -235,7 +235,7 @@ class UserConfigurationTest extends TestCase {
 		$printableValue = $entity->printableValue;
 
 		$this->assertIsString($printableValue);
-		$this->assertSame('contents::title, contents::active', $printableValue);
+		$this->assertSame('Contents::title, Contents::active', $printableValue);
 	}
 
 

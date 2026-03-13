@@ -61,7 +61,7 @@ trait ForcedTitleTrait {
 
 		$inactive = '';
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$inactive = __d($this->getSource() !== 'GlobalContents' ? 'contents' : 'global_contents', 'inactive') . ' ';
+			$inactive = __d($this->getSource() !== 'GlobalContents' ? 'Contents' : 'GlobalContents', 'inactive') . ' ';
 		}
 
 		return $inactive . ($title ?: $defaultTitle);

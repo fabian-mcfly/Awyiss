@@ -378,7 +378,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('mediaElementId', $errors);
 		$this->assertArrayHasKey('mediaElementExists', $errors['mediaElementId']);
-		$this->assertSame('media_assignments::error_media_element_exists', $errors['mediaElementId']['mediaElementExists']);
+		$this->assertSame('MediaAssignments::error_media_element_exists', $errors['mediaElementId']['mediaElementExists']);
 	}
 
 
@@ -423,7 +423,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('mediaId', $errors);
 		$this->assertArrayHasKey('mediaExists', $errors['mediaId']);
-		$this->assertSame('media_assignments::error_media_exists', $errors['mediaId']['mediaExists']);
+		$this->assertSame('MediaAssignments::error_media_exists', $errors['mediaId']['mediaExists']);
 	}
 
 
@@ -489,7 +489,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('mediaFolderId', $errors);
 		$this->assertArrayHasKey('mediaFolderExists', $errors['mediaFolderId']);
-		$this->assertSame('media_assignments::error_media_folder_exists', $errors['mediaFolderId']['mediaFolderExists']);
+		$this->assertSame('MediaAssignments::error_media_folder_exists', $errors['mediaFolderId']['mediaFolderExists']);
 	}
 
 

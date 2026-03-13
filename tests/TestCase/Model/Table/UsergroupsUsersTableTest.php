@@ -189,7 +189,7 @@ class UsergroupsUsersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('usergroupId', $errors);
 		$this->assertArrayHasKey('usergroupExists', $errors['usergroupId']);
-		$this->assertSame('usergroups_users::error_usergroup_exists', $errors['usergroupId']['usergroupExists']);
+		$this->assertSame('UsergroupsUsers::error_usergroup_exists', $errors['usergroupId']['usergroupExists']);
 	}
 
 
@@ -213,7 +213,7 @@ class UsergroupsUsersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('userId', $errors);
 		$this->assertArrayHasKey('userExists', $errors['userId']);
-		$this->assertSame('usergroups_users::error_user_exists', $errors['userId']['userExists']);
+		$this->assertSame('UsergroupsUsers::error_user_exists', $errors['userId']['userExists']);
 	}
 
 

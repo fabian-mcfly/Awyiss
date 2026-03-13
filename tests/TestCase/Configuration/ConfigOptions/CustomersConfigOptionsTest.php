@@ -50,27 +50,27 @@ class CustomersConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'lastLogin',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('customers::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Customers::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'email' => 'customers::email',
-			'firstname' => 'customers::firstname',
-			'lastname' => 'customers::lastname',
-			'lastLogin' => 'customers::last_login',
-			'failedAttempts' => 'customers::failed_attempts',
-			'verified' => 'customers::verified',
-			'verifiedOn' => 'customers::verified_on',
-			'verificationCode' => 'customers::verification_code',
-			'passwordResetCode' => 'customers::password_reset_code',
-			'passwordResetOn' => 'customers::password_reset_on',
-			'active' => 'customers::active',
-			'createdBy' => 'customers::created_by',
-			'createdOn' => 'customers::created_on',
-			'changedBy' => 'customers::changed_by',
-			'changedOn' => 'customers::changed_on',
+			'email' => 'Customers::email',
+			'firstname' => 'Customers::firstname',
+			'lastname' => 'Customers::lastname',
+			'lastLogin' => 'Customers::last_login',
+			'failedAttempts' => 'Customers::failed_attempts',
+			'verified' => 'Customers::verified',
+			'verifiedOn' => 'Customers::verified_on',
+			'verificationCode' => 'Customers::verification_code',
+			'passwordResetCode' => 'Customers::password_reset_code',
+			'passwordResetOn' => 'Customers::password_reset_on',
+			'active' => 'Customers::active',
+			'createdBy' => 'Customers::created_by',
+			'createdOn' => 'Customers::created_on',
+			'changedBy' => 'Customers::changed_by',
+			'changedOn' => 'Customers::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

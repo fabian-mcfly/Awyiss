@@ -469,13 +469,13 @@ class FrontendMenuItemTest extends TestCase {
 	 */
 	public function testObjectTitleTranslation(): void {
 		$titleObj = new stdClass();
-		$titleObj->translate = ['pages', 'headline_overview'];
+		$titleObj->translate = ['Pages', 'headline_overview'];
 
 		$this->menuEntry->title = $titleObj;
 
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 
-		$this->assertSame('pages::headline_overview', $menuItem->getTitle());
+		$this->assertSame('Pages::headline_overview', $menuItem->getTitle());
 	}
 
 

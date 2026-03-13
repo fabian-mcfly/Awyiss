@@ -373,7 +373,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('languageShortcode', $errors);
 		$this->assertArrayHasKey('languageExists', $errors['languageShortcode']);
-		$this->assertSame('media_folders::error_language_exists', $errors['languageShortcode']['languageExists']);
+		$this->assertSame('MediaFolders::error_language_exists', $errors['languageShortcode']['languageExists']);
 	}
 
 
@@ -397,7 +397,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_language_shortcode_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_language_shortcode_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -422,7 +422,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_active_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_active_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -467,7 +467,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_hidden_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_hidden_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -512,7 +512,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_title_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_title_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -556,7 +556,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_parent_id_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_parent_id_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -601,7 +601,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('rootUnchanged', $errors['_general']);
-		$this->assertSame('media_folders::error_root_path_unchanged', $errors['_general']['rootUnchanged']);
+		$this->assertSame('MediaFolders::error_root_path_unchanged', $errors['_general']['rootUnchanged']);
 	}
 
 
@@ -645,7 +645,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('parentId', $errors);
 		$this->assertArrayHasKey('notNestedUnderRoot', $errors['parentId']);
-		$this->assertSame('media_folders::error_not_nested_under_root', $errors['parentId']['notNestedUnderRoot']);
+		$this->assertSame('MediaFolders::error_not_nested_under_root', $errors['parentId']['notNestedUnderRoot']);
 	}
 
 
@@ -684,7 +684,7 @@ class MediaFoldersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('notRootDeletion', $errors['_general']);
-		$this->assertSame('media_folders::error_not_root_deletion', $errors['_general']['notRootDeletion']);
+		$this->assertSame('MediaFolders::error_not_root_deletion', $errors['_general']['notRootDeletion']);
 	}
 
 

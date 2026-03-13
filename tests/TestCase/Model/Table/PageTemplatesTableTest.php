@@ -294,7 +294,7 @@ class PageTemplatesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('enum', $errors['pageRoleId']);
-		$this->assertSame('page_templates::error_enum', $errors['pageRoleId']['enum']);
+		$this->assertSame('PageTemplates::error_enum', $errors['pageRoleId']['enum']);
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('fileName', $errors);
@@ -386,7 +386,7 @@ class PageTemplatesTableTest extends TestCase {
 		$errors = $entity2->getErrors();
 		$this->assertArrayHasKey('fileName', $errors);
 		$this->assertArrayHasKey('fileNameUnique', $errors['fileName']);
-		$this->assertEquals('page_templates::error_file_name_unique', $errors['fileName']['fileNameUnique']);
+		$this->assertEquals('PageTemplates::error_file_name_unique', $errors['fileName']['fileNameUnique']);
 	}
 
 
@@ -449,7 +449,7 @@ class PageTemplatesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('validPageRoleId', $errors['pageRoleId']);
-		$this->assertSame('page_templates::error_valid_page_role_id', $errors['pageRoleId']['validPageRoleId']);
+		$this->assertSame('PageTemplates::error_valid_page_role_id', $errors['pageRoleId']['validPageRoleId']);
 	}
 
 
@@ -474,7 +474,7 @@ class PageTemplatesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('_isNotLinkedTo', $errors['pageRoleId']);
-		$this->assertEquals('page_templates::error_no_linked_pages', $errors['pageRoleId']['_isNotLinkedTo']);
+		$this->assertEquals('PageTemplates::error_no_linked_pages', $errors['pageRoleId']['_isNotLinkedTo']);
 	}
 
 
@@ -497,7 +497,7 @@ class PageTemplatesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('pageRoleId', $errors);
 		$this->assertArrayHasKey('_isNotLinkedTo', $errors['pageRoleId']);
-		$this->assertEquals('page_templates::error_no_linked_pages', $errors['pageRoleId']['_isNotLinkedTo']);
+		$this->assertEquals('PageTemplates::error_no_linked_pages', $errors['pageRoleId']['_isNotLinkedTo']);
 	}
 
 
@@ -532,7 +532,7 @@ class PageTemplatesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedPages', $errors['_general']);
-		$this->assertEquals('page_templates::error_no_linked_pages', $errors['_general']['noLinkedPages']);
+		$this->assertEquals('PageTemplates::error_no_linked_pages', $errors['_general']['noLinkedPages']);
 
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity */
 		$entity = $this->pageTemplatesTable->get(4);

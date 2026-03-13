@@ -442,7 +442,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 		$this->assertArrayHasKey('mediaElementAssignments', $errors);
 		$this->assertArrayHasKey('mediaElementId', $errors['mediaElementAssignments'][0]);
 		$this->assertSame([
-			'isInteger' => 'media_element_assignments::error_is_integer',
+			'isInteger' => 'MediaElementAssignments::error_is_integer',
 		], $errors['mediaElementAssignments'][0]['mediaElementId']);
 	}
 }

@@ -58,14 +58,14 @@ class MediaConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Frontend.resizing.driver']->isNullable());
 		$this->assertFalse($configOptions['Frontend.resizing.driver']->isPersonalizable());
 		$this->assertSame('imagick', $configOptions['Frontend.resizing.driver']->getDefaultValue());
-		$this->assertSame('media::driver_imagick', $configOptions['Frontend.resizing.driver']->getPrintableValue());
+		$this->assertSame('Media::driver_imagick', $configOptions['Frontend.resizing.driver']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Frontend.resizing.driver']->getType());
 		$this->assertNull($configOptions['Frontend.resizing.driver']->getTypecast());
 		$this->assertNull($configOptions['Frontend.resizing.driver']->getValidate());
 		$this->assertIsCallable($configOptions['Frontend.resizing.driver']->getValues());
 		$this->assertSame([
-			'imagick' => 'media::driver_imagick',
-			'gd' => 'media::driver_gd',
+			'imagick' => 'Media::driver_imagick',
+			'gd' => 'Media::driver_gd',
 		], $configOptions['Frontend.resizing.driver']->getValues(true));
 
 		$this->assertArrayHasKey('Frontend.resizing.fileType', $configOptions);
@@ -73,15 +73,15 @@ class MediaConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Frontend.resizing.fileType']->isNullable());
 		$this->assertFalse($configOptions['Frontend.resizing.fileType']->isPersonalizable());
 		$this->assertSame(MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF, $configOptions['Frontend.resizing.fileType']->getDefaultValue());
-		$this->assertSame('media::resize_media_file_type_avif', $configOptions['Frontend.resizing.fileType']->getPrintableValue());
+		$this->assertSame('Media::resize_media_file_type_avif', $configOptions['Frontend.resizing.fileType']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Frontend.resizing.fileType']->getType());
 		$this->assertNull($configOptions['Frontend.resizing.fileType']->getTypecast());
 		$this->assertNull($configOptions['Frontend.resizing.fileType']->getValidate());
 		$this->assertIsArray($configOptions['Frontend.resizing.fileType']->getValues());
 		$this->assertSame([
-			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => 'media::resize_media_file_type_match_source',
-			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF => 'media::resize_media_file_type_avif',
-			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP => 'media::resize_media_file_type_webp',
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => 'Media::resize_media_file_type_match_source',
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF => 'Media::resize_media_file_type_avif',
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP => 'Media::resize_media_file_type_webp',
 		], $configOptions['Frontend.resizing.fileType']->getValues());
 
 		$this->assertArrayHasKey('Frontend.resizing.quality', $configOptions);
@@ -100,16 +100,16 @@ class MediaConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.createHistoricalPaths']->isNullable());
 		$this->assertFalse($configOptions['Backend.createHistoricalPaths']->isPersonalizable());
 		$this->assertSame('disabled', $configOptions['Backend.createHistoricalPaths']->getDefaultValue());
-		$this->assertSame('media::create_historical_paths_disabled', $configOptions['Backend.createHistoricalPaths']->getPrintableValue());
+		$this->assertSame('Media::create_historical_paths_disabled', $configOptions['Backend.createHistoricalPaths']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.createHistoricalPaths']->getType());
 		$this->assertNull($configOptions['Backend.createHistoricalPaths']->getTypecast());
 		$this->assertNull($configOptions['Backend.createHistoricalPaths']->getValidate());
 		$this->assertIsArray($configOptions['Backend.createHistoricalPaths']->getValues());
 		$this->assertSame([
-			MediaConfigOptions::CREATE_HISTORICAL_PATHS_DISABLED => 'media::create_historical_paths_disabled',
-			MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE => 'media::create_historical_paths_file_name_change',
-			MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE => 'media::create_historical_paths_folder_name_change',
-			MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS => 'media::create_historical_paths_always',
+			MediaConfigOptions::CREATE_HISTORICAL_PATHS_DISABLED => 'Media::create_historical_paths_disabled',
+			MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE => 'Media::create_historical_paths_file_name_change',
+			MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE => 'Media::create_historical_paths_folder_name_change',
+			MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS => 'Media::create_historical_paths_always',
 		], $configOptions['Backend.createHistoricalPaths']->getValues());
 
 		$this->assertArrayHasKey('Backend.handleImagesInHtml', $configOptions);
@@ -128,32 +128,32 @@ class MediaConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame(['usageCount'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('media::usage_count', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Media::usage_count', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'mediaFolderId' => 'media::media_folder_id',
-			'mimeType' => 'media::mime_type',
-			'name' => 'media::name',
-			'path' => 'media::path',
-			'alt' => 'media::alt',
-			'width' => 'media::width',
-			'height' => 'media::height',
-			'metaData' => 'media::meta_data',
-			'averageColor' => 'media::average_color',
-			'preview' => 'media::preview',
-			'avif' => 'media::avif',
-			'webp' => 'media::webp',
-			'crop' => 'media::crop',
-			'focusPoint' => 'media::focus_point',
-			'systemOrder' => 'media::system_order',
-			'createdBy' => 'media::created_by',
-			'createdOn' => 'media::created_on',
-			'changedBy' => 'media::changed_by',
-			'changedOn' => 'media::changed_on',
-			'usageCount' => 'media::usage_count',
+			'mediaFolderId' => 'Media::media_folder_id',
+			'mimeType' => 'Media::mime_type',
+			'name' => 'Media::name',
+			'path' => 'Media::path',
+			'alt' => 'Media::alt',
+			'width' => 'Media::width',
+			'height' => 'Media::height',
+			'metaData' => 'Media::meta_data',
+			'averageColor' => 'Media::average_color',
+			'preview' => 'Media::preview',
+			'avif' => 'Media::avif',
+			'webp' => 'Media::webp',
+			'crop' => 'Media::crop',
+			'focusPoint' => 'Media::focus_point',
+			'systemOrder' => 'Media::system_order',
+			'createdBy' => 'Media::created_by',
+			'createdOn' => 'Media::created_on',
+			'changedBy' => 'Media::changed_by',
+			'changedOn' => 'Media::changed_on',
+			'usageCount' => 'Media::usage_count',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

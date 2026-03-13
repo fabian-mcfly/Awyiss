@@ -157,19 +157,19 @@ class SurveyEntriesTableTest extends TestCase {
 
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('_required', $errors['surveyId']);
-		$this->assertSame('survey_entries::error_required', $errors['surveyId']['_required']);
+		$this->assertSame('SurveyEntries::error_required', $errors['surveyId']['_required']);
 
 		$this->assertArrayHasKey('ipHash', $errors);
 		$this->assertArrayHasKey('_required', $errors['ipHash']);
-		$this->assertSame('survey_entries::error_required', $errors['ipHash']['_required']);
+		$this->assertSame('SurveyEntries::error_required', $errors['ipHash']['_required']);
 
 		$this->assertArrayHasKey('postHash', $errors);
 		$this->assertArrayHasKey('_required', $errors['postHash']);
-		$this->assertSame('survey_entries::error_required', $errors['postHash']['_required']);
+		$this->assertSame('SurveyEntries::error_required', $errors['postHash']['_required']);
 
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('_required', $errors['identifier']);
-		$this->assertSame('survey_entries::error_required', $errors['identifier']['_required']);
+		$this->assertSame('SurveyEntries::error_required', $errors['identifier']['_required']);
 	}
 
 
@@ -323,7 +323,7 @@ class SurveyEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('surveyExists', $errors['surveyId']);
-		$this->assertSame('survey_entries::error_survey_exists', $errors['surveyId']['surveyExists']);
+		$this->assertSame('SurveyEntries::error_survey_exists', $errors['surveyId']['surveyExists']);
 	}
 
 
@@ -392,7 +392,7 @@ class SurveyEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('pageId', $errors);
 		$this->assertArrayHasKey('pageExists', $errors['pageId']);
-		$this->assertSame('survey_entries::error_page_exists', $errors['pageId']['pageExists']);
+		$this->assertSame('SurveyEntries::error_page_exists', $errors['pageId']['pageExists']);
 	}
 
 

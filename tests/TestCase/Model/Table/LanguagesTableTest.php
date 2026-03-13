@@ -409,7 +409,7 @@ class LanguagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('shortcode', $errors);
 		$this->assertArrayHasKey('shortcodeUniqueForRealm', $errors['shortcode']);
-		$this->assertSame('languages::error_shortcode_unique_for_realm', $errors['shortcode']['shortcodeUniqueForRealm']);
+		$this->assertSame('Languages::error_shortcode_unique_for_realm', $errors['shortcode']['shortcodeUniqueForRealm']);
 	}
 
 
@@ -471,7 +471,7 @@ class LanguagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('realm', $errors);
 		$this->assertArrayHasKey('validRealm', $errors['realm']);
-		$this->assertSame('languages::error_valid_realm', $errors['realm']['validRealm']);
+		$this->assertSame('Languages::error_valid_realm', $errors['realm']['validRealm']);
 	}
 
 
@@ -516,7 +516,7 @@ class LanguagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('timezone', $errors);
 		$this->assertArrayHasKey('validTimezone', $errors['timezone']);
-		$this->assertSame('languages::error_valid_timezone', $errors['timezone']['validTimezone']);
+		$this->assertSame('Languages::error_valid_timezone', $errors['timezone']['validTimezone']);
 	}
 
 
@@ -561,7 +561,7 @@ class LanguagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('locale', $errors);
 		$this->assertArrayHasKey('validLocale', $errors['locale']);
-		$this->assertSame('languages::error_valid_locale', $errors['locale']['validLocale']);
+		$this->assertSame('Languages::error_valid_locale', $errors['locale']['validLocale']);
 	}
 
 
@@ -594,7 +594,7 @@ class LanguagesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('notLastLanguageInRealm', $errors['_general']);
-		$this->assertSame('languages::error_not_last_language_in_realm', $errors['_general']['notLastLanguageInRealm']);
+		$this->assertSame('Languages::error_not_last_language_in_realm', $errors['_general']['notLastLanguageInRealm']);
 	}
 
 

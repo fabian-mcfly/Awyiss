@@ -220,7 +220,7 @@ class ConfigOptionTest extends TestCase {
 	 */
 	public function testValidateConfigValueLocalizable(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', false);
-		$this->assertSame('configuration::error_option_not_localizable', $configOption->validateConfigValue('valid', 'en'));
+		$this->assertSame('Configuration::error_option_not_localizable', $configOption->validateConfigValue('valid', 'en'));
 
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', true);
 		$this->assertTrue($configOption->validateConfigValue('valid', 'en'));
@@ -232,7 +232,7 @@ class ConfigOptionTest extends TestCase {
 	 */
 	public function testValidateConfigValueNullable(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', true, false);
-		$this->assertSame('configuration::error_option_not_nullable', $configOption->validateConfigValue(null));
+		$this->assertSame('Configuration::error_option_not_nullable', $configOption->validateConfigValue(null));
 
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', true, true);
 		$this->assertTrue($configOption->validateConfigValue(null));

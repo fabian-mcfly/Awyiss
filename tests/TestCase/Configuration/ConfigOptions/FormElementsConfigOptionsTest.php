@@ -62,32 +62,32 @@ class FormElementsConfigOptionsTest extends TestCase {
 			'required',
 			'columnWidth',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('form_elements::identifier, form_elements::required, form_elements::column_width', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('FormElements::identifier, FormElements::required, FormElements::column_width', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'formId' => 'form_elements::form_id',
-			'parentId' => 'form_elements::parent_id',
-			'type' => 'form_elements::type',
-			'identifier' => 'form_elements::identifier',
-			'titleEmail' => 'form_elements::title_email',
-			'placeholder' => 'form_elements::placeholder',
-			'text' => 'form_elements::text',
-			'options' => 'form_elements::options',
-			'columnWidth' => 'form_elements::column_width',
-			'columnIndent' => 'form_elements::column_indent',
-			'columnLast' => 'form_elements::column_last',
-			'columnRtl' => 'form_elements::column_rtl',
-			'cssClass' => 'form_elements::css_class',
-			'required' => 'form_elements::required',
-			'systemOrder' => 'form_elements::system_order',
-			'active' => 'form_elements::active',
-			'createdBy' => 'form_elements::created_by',
-			'createdOn' => 'form_elements::created_on',
-			'changedBy' => 'form_elements::changed_by',
-			'changedOn' => 'form_elements::changed_on',
+			'formId' => 'FormElements::form_id',
+			'parentId' => 'FormElements::parent_id',
+			'type' => 'FormElements::type',
+			'identifier' => 'FormElements::identifier',
+			'titleEmail' => 'FormElements::title_email',
+			'placeholder' => 'FormElements::placeholder',
+			'text' => 'FormElements::text',
+			'options' => 'FormElements::options',
+			'columnWidth' => 'FormElements::column_width',
+			'columnIndent' => 'FormElements::column_indent',
+			'columnLast' => 'FormElements::column_last',
+			'columnRtl' => 'FormElements::column_rtl',
+			'cssClass' => 'FormElements::css_class',
+			'required' => 'FormElements::required',
+			'systemOrder' => 'FormElements::system_order',
+			'active' => 'FormElements::active',
+			'createdBy' => 'FormElements::created_by',
+			'createdOn' => 'FormElements::created_on',
+			'changedBy' => 'FormElements::changed_by',
+			'changedOn' => 'FormElements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.publicationData.enabled', $configOptions);

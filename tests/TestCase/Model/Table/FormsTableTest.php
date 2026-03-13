@@ -781,7 +781,7 @@ class FormsTableTest extends TestCase {
 		$errors = $form->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedContents', $errors['_general']);
-		$this->assertSame('forms::error_linked_contents', $errors['_general']['noLinkedContents']);
+		$this->assertSame('Forms::error_linked_contents', $errors['_general']['noLinkedContents']);
 	}
 
 
@@ -799,7 +799,7 @@ class FormsTableTest extends TestCase {
 		$errors = $form->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedPages', $errors['_general']);
-		$this->assertSame('forms::error_linked_pages', $errors['_general']['noLinkedPages']);
+		$this->assertSame('Forms::error_linked_pages', $errors['_general']['noLinkedPages']);
 	}
 
 
@@ -817,7 +817,7 @@ class FormsTableTest extends TestCase {
 		$errors = $form->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedSurveys', $errors['_general']);
-		$this->assertSame('forms::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
+		$this->assertSame('Forms::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
 	}
 
 
@@ -835,7 +835,7 @@ class FormsTableTest extends TestCase {
 		$errors = $form->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedGlobalContents', $errors['_general']);
-		$this->assertSame('forms::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
+		$this->assertSame('Forms::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
 	}
 
 
@@ -850,10 +850,10 @@ class FormsTableTest extends TestCase {
 		$this->assertIsArray($templates);
 
 		$this->assertSame([
-			'AppointmentFormTemplate' => 'forms::form_template_appointment_form',
-			'CallbackFormTemplate' => 'forms::form_template_callback_form',
-			'ContactFormTemplate' => 'forms::form_template_contact_form',
-			'JobApplicationFormTemplate' => 'forms::form_template_job_application_form',
+			'AppointmentFormTemplate' => 'Forms::form_template_appointment_form',
+			'CallbackFormTemplate' => 'Forms::form_template_callback_form',
+			'ContactFormTemplate' => 'Forms::form_template_contact_form',
+			'JobApplicationFormTemplate' => 'Forms::form_template_job_application_form',
 		], $templates);
 	}
 

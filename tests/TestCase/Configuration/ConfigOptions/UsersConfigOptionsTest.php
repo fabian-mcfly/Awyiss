@@ -50,22 +50,22 @@ class UsersConfigOptionsTest extends TestCase {
 			'email',
 			'lastLogin',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('users::email, users::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Users::email, Users::last_login', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'firstname' => 'users::firstname',
-			'lastname' => 'users::lastname',
-			'email' => 'users::email',
-			'lastLogin' => 'users::last_login',
-			'failedAttempts' => 'users::failed_attempts',
-			'active' => 'users::active',
-			'createdBy' => 'users::created_by',
-			'createdOn' => 'users::created_on',
-			'changedBy' => 'users::changed_by',
-			'changedOn' => 'users::changed_on',
+			'firstname' => 'Users::firstname',
+			'lastname' => 'Users::lastname',
+			'email' => 'Users::email',
+			'lastLogin' => 'Users::last_login',
+			'failedAttempts' => 'Users::failed_attempts',
+			'active' => 'Users::active',
+			'createdBy' => 'Users::created_by',
+			'createdOn' => 'Users::created_on',
+			'changedBy' => 'Users::changed_by',
+			'changedOn' => 'Users::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

@@ -186,7 +186,7 @@ class EmailTemplatesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['email_templates::file_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['EmailTemplates::file_changes_in_progress'], $errors['_general']);
 	}
 
 

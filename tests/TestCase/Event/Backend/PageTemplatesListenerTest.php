@@ -173,7 +173,7 @@ class PageTemplatesListenerTest extends TestCase {
 
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertSame(['page_templates::file_changes_in_progress'], $errors['_general']);
+		$this->assertSame(['PageTemplates::file_changes_in_progress'], $errors['_general']);
 	}
 
 

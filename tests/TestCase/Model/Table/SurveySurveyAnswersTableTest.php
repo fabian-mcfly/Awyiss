@@ -271,7 +271,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('nextAction', $errors);
 		$this->assertArrayHasKey('enum', $errors['nextAction']);
-		$this->assertSame('survey_survey_answers::error_enum', $errors['nextAction']['enum']);
+		$this->assertSame('SurveySurveyAnswers::error_enum', $errors['nextAction']['enum']);
 
 		$this->assertArrayHasKey('nextActionTarget', $errors);
 	}
@@ -405,7 +405,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyAnswerId', $errors);
 		$this->assertArrayHasKey('validSurveyAnswerId', $errors['surveyAnswerId']);
-		$this->assertSame('surveys::error_valid_survey_answer_id', $errors['surveyAnswerId']['validSurveyAnswerId']);
+		$this->assertSame('Surveys::error_valid_survey_answer_id', $errors['surveyAnswerId']['validSurveyAnswerId']);
 	}
 
 
@@ -449,7 +449,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveySurveyQuestionId', $errors);
 		$this->assertArrayHasKey('validSurveySurveyQuestionId', $errors['surveySurveyQuestionId']);
-		$this->assertSame('surveys::error_valid_survey_survey_question_id', $errors['surveySurveyQuestionId']['validSurveySurveyQuestionId']);
+		$this->assertSame('Surveys::error_valid_survey_survey_question_id', $errors['surveySurveyQuestionId']['validSurveySurveyQuestionId']);
 	}
 
 
@@ -474,7 +474,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('surveyAnswerId', $errors);
 		$this->assertArrayHasKey('validSurveyAnswerId', $errors['surveyAnswerId']);
-		$this->assertSame('surveys::error_valid_survey_answer_id', $errors['surveyAnswerId']['validSurveyAnswerId']);
+		$this->assertSame('Surveys::error_valid_survey_answer_id', $errors['surveyAnswerId']['validSurveyAnswerId']);
 	}
 
 
@@ -559,7 +559,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('nextAction', $errors);
 		$this->assertArrayHasKey('validNextAction', $errors['nextAction']);
-		$this->assertSame('survey_survey_answers::error_valid_next_action', $errors['nextAction']['validNextAction']);
+		$this->assertSame('SurveySurveyAnswers::error_valid_next_action', $errors['nextAction']['validNextAction']);
 	}
 
 

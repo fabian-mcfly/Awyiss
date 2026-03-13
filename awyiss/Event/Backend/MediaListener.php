@@ -159,7 +159,7 @@ class MediaListener implements EventListenerInterface {
 
 				$entity->setError(
 					'name',
-					__df(strtolower($mediaTable->getI18nDomain()), 'Validation', 'error_media_has_file_extension'),
+					__df($mediaTable->getI18nDomain(), 'Validation', 'error_media_has_file_extension'),
 					true
 				);
 

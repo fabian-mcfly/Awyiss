@@ -126,15 +126,15 @@ class ThirdPartyConsentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('consentId', $errors);
 		$this->assertArrayHasKey('_required', $errors['consentId']);
-		$this->assertSame('third_party_consents::error_required', $errors['consentId']['_required']);
+		$this->assertSame('ThirdPartyConsents::error_required', $errors['consentId']['_required']);
 
 		$this->assertArrayHasKey('acceptedCategories', $errors);
 		$this->assertArrayHasKey('_required', $errors['acceptedCategories']);
-		$this->assertSame('third_party_consents::error_required', $errors['acceptedCategories']['_required']);
+		$this->assertSame('ThirdPartyConsents::error_required', $errors['acceptedCategories']['_required']);
 
 		$this->assertArrayHasKey('rejectedCategories', $errors);
 		$this->assertArrayHasKey('_required', $errors['rejectedCategories']);
-		$this->assertSame('third_party_consents::error_required', $errors['rejectedCategories']['_required']);
+		$this->assertSame('ThirdPartyConsents::error_required', $errors['rejectedCategories']['_required']);
 	}
 
 
@@ -434,7 +434,7 @@ class ThirdPartyConsentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('acceptType', $errors);
 		$this->assertArrayHasKey('inList', $errors['acceptType']);
-		$this->assertSame('third_party_consents::error_in_list', $errors['acceptType']['inList']);
+		$this->assertSame('ThirdPartyConsents::error_in_list', $errors['acceptType']['inList']);
 	}
 
 

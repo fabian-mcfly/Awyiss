@@ -333,7 +333,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('validIdentifier', $errors['identifier']);
-		$this->assertEquals('page_roles::error_identifier_allowed', $errors['identifier']['validIdentifier']);
+		$this->assertEquals('PageRoles::error_identifier_allowed', $errors['identifier']['validIdentifier']);
 	}
 
 
@@ -359,7 +359,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('validIdentifier', $errors['identifier']);
-		$this->assertEquals('page_roles::error_identifier_allowed', $errors['identifier']['validIdentifier']);
+		$this->assertEquals('PageRoles::error_identifier_allowed', $errors['identifier']['validIdentifier']);
 	}
 
 
@@ -385,7 +385,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('validIdentifier', $errors['identifier']);
-		$this->assertEquals('page_roles::error_identifier_unique', $errors['identifier']['validIdentifier']);
+		$this->assertEquals('PageRoles::error_identifier_unique', $errors['identifier']['validIdentifier']);
 	}
 
 
@@ -405,7 +405,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $pageRole->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('validIdentifier', $errors['identifier']);
-		$this->assertEquals('page_roles::error_identifier_unchanged', $errors['identifier']['validIdentifier']);
+		$this->assertEquals('PageRoles::error_identifier_unchanged', $errors['identifier']['validIdentifier']);
 	}
 
 
@@ -440,7 +440,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $pageRole->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('notPageRolePageDeletion', $errors['_general']);
-		$this->assertEquals('page_roles::error_not_page_role_page_deletion', $errors['_general']['notPageRolePageDeletion']);
+		$this->assertEquals('PageRoles::error_not_page_role_page_deletion', $errors['_general']['notPageRolePageDeletion']);
 	}
 
 
@@ -459,7 +459,7 @@ class PageRolesTableTest extends TestCase {
 		$errors = $pageRole->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedPageTemplates', $errors['_general']);
-		$this->assertEquals('page_roles::error_no_linked_page_templates', $errors['_general']['noLinkedPageTemplates']);
+		$this->assertEquals('PageRoles::error_no_linked_page_templates', $errors['_general']['noLinkedPageTemplates']);
 	}
 
 

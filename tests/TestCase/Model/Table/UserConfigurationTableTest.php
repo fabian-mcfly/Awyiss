@@ -160,15 +160,15 @@ class UserConfigurationTableTest extends TestCase {
 
 		$this->assertArrayHasKey('userId', $errors);
 		$this->assertArrayHasKey('_required', $errors['userId']);
-		$this->assertSame('user_configuration::error_required', $errors['userId']['_required']);
+		$this->assertSame('UserConfiguration::error_required', $errors['userId']['_required']);
 
 		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayHasKey('_required', $errors['scope']);
-		$this->assertSame('user_configuration::error_required', $errors['scope']['_required']);
+		$this->assertSame('UserConfiguration::error_required', $errors['scope']['_required']);
 
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('_required', $errors['identifier']);
-		$this->assertSame('user_configuration::error_required', $errors['identifier']['_required']);
+		$this->assertSame('UserConfiguration::error_required', $errors['identifier']['_required']);
 	}
 
 
@@ -207,7 +207,7 @@ class UserConfigurationTableTest extends TestCase {
 			'userId' => 123456789123, // exceeds 11 char limit
 			'scope' => str_repeat('a', 51), // exceeds 50 char limit
 			'identifier' => str_repeat('b', 51), // exceeds 50 char limit
-			'value' => str_repeat('c', 256), // exceeds 255 char limit
+			'value' => str_repeat('c', 1025), // exceeds 1024 char limit
 		];
 
 		$entity = $this->userConfigurationTable->newDefaultEntity();
@@ -338,7 +338,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('userIdUnchanged', $errors['_general']);
-		$this->assertSame('user_configuration::error_user_id_unchanged', $errors['_general']['userIdUnchanged']);
+		$this->assertSame('UserConfiguration::error_user_id_unchanged', $errors['_general']['userIdUnchanged']);
 	}
 
 
@@ -385,7 +385,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayHasKey('validScope', $errors['scope']);
-		$this->assertSame('user_configuration::error_valid_scope', $errors['scope']['validScope']);
+		$this->assertSame('UserConfiguration::error_valid_scope', $errors['scope']['validScope']);
 	}
 
 
@@ -415,7 +415,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayHasKey('validScope', $errors['scope']);
-		$this->assertSame('user_configuration::error_valid_scope', $errors['scope']['validScope']);
+		$this->assertSame('UserConfiguration::error_valid_scope', $errors['scope']['validScope']);
 	}
 
 
@@ -448,7 +448,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('identifierUniqueForScope', $errors['identifier']);
-		$this->assertSame('user_configuration::error_identifier_unique_for_scope', $errors['identifier']['identifierUniqueForScope']);
+		$this->assertSame('UserConfiguration::error_identifier_unique_for_scope', $errors['identifier']['identifierUniqueForScope']);
 	}
 
 
@@ -496,7 +496,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('configOptionIsPersonalizable', $errors['_general']);
-		$this->assertSame('user_configuration::error_config_option_is_personalizable', $errors['_general']['configOptionIsPersonalizable']);
+		$this->assertSame('UserConfiguration::error_config_option_is_personalizable', $errors['_general']['configOptionIsPersonalizable']);
 	}
 
 
@@ -544,7 +544,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('value', $errors);
 		$this->assertArrayHasKey('validValue', $errors['value']);
-		$this->assertSame('user_configuration::error_valid_value', $errors['value']['validValue']);
+		$this->assertSame('UserConfiguration::error_valid_value', $errors['value']['validValue']);
 	}
 
 
@@ -575,7 +575,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('configOwnedByUser', $errors['_general']);
-		$this->assertSame('user_configuration::error_config_owned_by_user', $errors['_general']['configOwnedByUser']);
+		$this->assertSame('UserConfiguration::error_config_owned_by_user', $errors['_general']['configOwnedByUser']);
 	}
 
 
@@ -633,42 +633,42 @@ class UserConfigurationTableTest extends TestCase {
 		$this->assertIsArray($categories);
 		$this->assertSame([
 			'Employers' => 'Arbeitgeber',
-			'Attributes' => 'attributes::menu_title',
+			'Attributes' => 'Attributes::menu_title',
 			'Cars' => 'Autos',
-			'ContentTemplates' => 'content_templates::menu_title',
-			'Contents' => 'contents::menu_title',
-			'CustomerGroups' => 'customer_groups::menu_title',
-			'Customers' => 'customers::menu_title',
-			'DashboardElements' => 'dashboard_elements::menu_title',
-			'Datatables' => 'datatables::menu_title',
-			'EmailTemplates' => 'email_templates::menu_title',
-			'FormElements' => 'form_elements::menu_title',
-			'FormEntries' => 'form_entries::menu_title',
-			'Forms' => 'forms::menu_title',
-			'GlobalContentTemplates' => 'global_content_templates::menu_title',
-			'GlobalContents' => 'global_contents::menu_title',
-			'Languages' => 'languages::menu_title',
-			'MediaElements' => 'media_elements::menu_title',
-			'MediaFolders' => 'media_folders::menu_title',
-			'MediaSelectors' => 'media_selectors::menu_title',
-			'Media' => 'media::menu_title',
-			'MenuEntries' => 'menu_entries::menu_title',
-			'Menus' => 'menus::menu_title',
+			'Contents' => 'Contents::menu_title',
+			'ContentTemplates' => 'ContentTemplates::menu_title',
+			'CustomerGroups' => 'CustomerGroups::menu_title',
+			'Customers' => 'Customers::menu_title',
+			'DashboardElements' => 'DashboardElements::menu_title',
+			'Datatables' => 'Datatables::menu_title',
+			'EmailTemplates' => 'EmailTemplates::menu_title',
+			'FormElements' => 'FormElements::menu_title',
+			'FormEntries' => 'FormEntries::menu_title',
+			'Forms' => 'Forms::menu_title',
+			'GlobalContents' => 'GlobalContents::menu_title',
+			'GlobalContentTemplates' => 'GlobalContentTemplates::menu_title',
+			'Languages' => 'Languages::menu_title',
+			'Media' => 'Media::menu_title',
+			'MediaElements' => 'MediaElements::menu_title',
+			'MediaFolders' => 'MediaFolders::menu_title',
+			'MediaSelectors' => 'MediaSelectors::menu_title',
+			'MenuEntries' => 'MenuEntries::menu_title',
+			'Menus' => 'Menus::menu_title',
 			'Employees' => 'Mitarbeiter',
 			'News' => 'News',
 			'Newscategories' => 'Newskategorie',
-			'Products' => 'page_roles::inactive Produkt',
-			'PageRoles' => 'page_roles::menu_title',
-			'PageTemplates' => 'page_templates::menu_title',
-			'QueuedJobs' => 'queued_jobs::menu_title',
+			'Products' => 'PageRoles::inactive Produkt',
+			'PageRoles' => 'PageRoles::menu_title',
+			'PageTemplates' => 'PageTemplates::menu_title',
+			'QueuedJobs' => 'QueuedJobs::menu_title',
 			'Pages' => 'Seite',
-			'SurveyQuestions' => 'survey_questions::menu_title',
-			'Surveys' => 'surveys::menu_title',
-			'System' => 'system::menu_title',
-			'UrlHistory' => 'url_history::menu_title',
-			'UrlsNotFound' => 'urls_not_found::menu_title',
-			'Usergroups' => 'usergroups::menu_title',
-			'Users' => 'users::menu_title',
+			'SurveyQuestions' => 'SurveyQuestions::menu_title',
+			'Surveys' => 'Surveys::menu_title',
+			'System' => 'System::menu_title',
+			'UrlHistory' => 'UrlHistory::menu_title',
+			'UrlsNotFound' => 'UrlsNotFound::menu_title',
+			'Usergroups' => 'Usergroups::menu_title',
+			'Users' => 'Users::menu_title',
 		], $categories);
 	}
 

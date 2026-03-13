@@ -53,15 +53,15 @@ class DashboardElementsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'scope' => 'dashboard_elements::scope',
-			'access' => 'dashboard_elements::access',
-			'settings' => 'dashboard_elements::settings',
-			'systemOrder' => 'dashboard_elements::system_order',
-			'active' => 'dashboard_elements::active',
-			'createdBy' => 'dashboard_elements::created_by',
-			'createdOn' => 'dashboard_elements::created_on',
-			'changedBy' => 'dashboard_elements::changed_by',
-			'changedOn' => 'dashboard_elements::changed_on',
+			'scope' => 'DashboardElements::scope',
+			'access' => 'DashboardElements::access',
+			'settings' => 'DashboardElements::settings',
+			'systemOrder' => 'DashboardElements::system_order',
+			'active' => 'DashboardElements::active',
+			'createdBy' => 'DashboardElements::created_by',
+			'createdOn' => 'DashboardElements::created_on',
+			'changedBy' => 'DashboardElements::changed_by',
+			'changedOn' => 'DashboardElements::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

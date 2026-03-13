@@ -301,7 +301,7 @@ class DashboardElementsTable extends Table {
 				continue;
 			}
 
-			static::$scopes[ Inflector::camelize($tableName) ] = __d($tableName, 'headline_overview');
+			static::$scopes[ Inflector::camelize($tableName) ] = __d(Inflector::camelize($tableName), 'headline_overview');
 		}
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */

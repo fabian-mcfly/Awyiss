@@ -235,11 +235,11 @@ class UsersTableTest extends TestCase {
 
 		$this->assertArrayHasKey('username', $errors);
 		$this->assertArrayHasKey('_required', $errors['username']);
-		$this->assertSame('users::error_required', $errors['username']['_required']);
+		$this->assertSame('Users::error_required', $errors['username']['_required']);
 
 		$this->assertArrayHasKey('password', $errors);
 		$this->assertArrayHasKey('_required', $errors['password']);
-		$this->assertSame('users::error_required', $errors['password']['_required']);
+		$this->assertSame('Users::error_required', $errors['password']['_required']);
 	}
 
 
@@ -426,7 +426,7 @@ class UsersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('username', $errors);
 		$this->assertArrayHasKey('usernameUnique', $errors['username']);
-		$this->assertSame('users::error_username_unique', $errors['username']['usernameUnique']);
+		$this->assertSame('Users::error_username_unique', $errors['username']['usernameUnique']);
 	}
 
 
@@ -473,7 +473,7 @@ class UsersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('emailUnique', $errors['email']);
-		$this->assertSame('users::error_email_unique', $errors['email']['emailUnique']);
+		$this->assertSame('Users::error_email_unique', $errors['email']['emailUnique']);
 	}
 
 

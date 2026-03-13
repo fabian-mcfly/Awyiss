@@ -2574,7 +2574,7 @@ class FormSenderTest extends TestCase {
 		$this->callProtectedMethod($sender, 'send', $mailer, $bodyHtml, $bodyPlain);
 
 		$this->assertIsArray($sender->getErrors());
-		$this->assertEquals(['form::error_email_send'], $sender->getErrors());
+		$this->assertEquals(['Form::error_email_send'], $sender->getErrors());
 	}
 
 

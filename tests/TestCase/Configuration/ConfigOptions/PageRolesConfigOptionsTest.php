@@ -61,20 +61,20 @@ class PageRolesConfigOptionsTest extends TestCase {
 			'identifier',
 			'includeInLinklist',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('page_roles::identifier, page_roles::include_in_linklist', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('PageRoles::identifier, PageRoles::include_in_linklist', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'page_roles::identifier',
-			'includeInLinklist' => 'page_roles::include_in_linklist',
-			'systemOrder' => 'page_roles::system_order',
-			'active' => 'page_roles::active',
-			'createdBy' => 'page_roles::created_by',
-			'createdOn' => 'page_roles::created_on',
-			'changedBy' => 'page_roles::changed_by',
-			'changedOn' => 'page_roles::changed_on',
+			'identifier' => 'PageRoles::identifier',
+			'includeInLinklist' => 'PageRoles::include_in_linklist',
+			'systemOrder' => 'PageRoles::system_order',
+			'active' => 'PageRoles::active',
+			'createdBy' => 'PageRoles::created_by',
+			'createdOn' => 'PageRoles::created_on',
+			'changedBy' => 'PageRoles::changed_by',
+			'changedOn' => 'PageRoles::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

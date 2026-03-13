@@ -199,7 +199,7 @@ class SurveyQuestionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('_required', $errors['title']);
-		$this->assertSame('survey_questions::error_required', $errors['title']['_required']);
+		$this->assertSame('SurveyQuestions::error_required', $errors['title']['_required']);
 	}
 
 
@@ -219,7 +219,7 @@ class SurveyQuestionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('_required', $errors['type']);
-		$this->assertSame('survey_questions::error_required', $errors['type']['_required']);
+		$this->assertSame('SurveyQuestions::error_required', $errors['type']['_required']);
 	}
 
 
@@ -246,7 +246,7 @@ class SurveyQuestionsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('enum', $errors['type']);
-		$this->assertSame('survey_questions::error_enum', $errors['type']['enum']);
+		$this->assertSame('SurveyQuestions::error_enum', $errors['type']['enum']);
 
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('subtitle', $errors);
@@ -382,7 +382,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('type', $errors);
 		$this->assertArrayHasKey('validType', $errors['type']);
-		$this->assertSame('survey_questions::error_valid_type', $errors['type']['validType']);
+		$this->assertSame('SurveyQuestions::error_valid_type', $errors['type']['validType']);
 	}
 
 
@@ -423,7 +423,7 @@ class SurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('noLinkedSurveys', $errors['_general']);
-		$this->assertSame('survey_questions::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
+		$this->assertSame('SurveyQuestions::error_linked_surveys', $errors['_general']['noLinkedSurveys']);
 	}
 
 

@@ -47,23 +47,23 @@ class SurveysConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
 		$this->assertSame(['identifier'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('surveys::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Surveys::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'type' => 'surveys::type',
-			'identifier' => 'surveys::identifier',
-			'successMessage' => 'surveys::success_message',
-			'failureMessage' => 'surveys::failure_message',
-			'finalAction' => 'surveys::final_action',
-			'formId' => 'surveys::form_id',
-			'active' => 'surveys::active',
-			'createdBy' => 'surveys::created_by',
-			'createdOn' => 'surveys::created_on',
-			'changedBy' => 'surveys::changed_by',
-			'changedOn' => 'surveys::changed_on',
+			'type' => 'Surveys::type',
+			'identifier' => 'Surveys::identifier',
+			'successMessage' => 'Surveys::success_message',
+			'failureMessage' => 'Surveys::failure_message',
+			'finalAction' => 'Surveys::final_action',
+			'formId' => 'Surveys::form_id',
+			'active' => 'Surveys::active',
+			'createdBy' => 'Surveys::created_by',
+			'createdOn' => 'Surveys::created_on',
+			'changedBy' => 'Surveys::changed_by',
+			'changedOn' => 'Surveys::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

@@ -60,18 +60,18 @@ class MenusConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('menus::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Menus::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'menus::identifier',
-			'active' => 'menus::active',
-			'createdBy' => 'menus::created_by',
-			'createdOn' => 'menus::created_on',
-			'changedBy' => 'menus::changed_by',
-			'changedOn' => 'menus::changed_on',
+			'identifier' => 'Menus::identifier',
+			'active' => 'Menus::active',
+			'createdBy' => 'Menus::created_by',
+			'createdOn' => 'Menus::created_on',
+			'changedBy' => 'Menus::changed_by',
+			'changedOn' => 'Menus::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

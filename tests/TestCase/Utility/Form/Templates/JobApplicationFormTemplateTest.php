@@ -22,7 +22,7 @@ class JobApplicationFormTemplateTest extends TestCase {
 	 */
 	public function testGetTitle(): void {
 		$this->assertSame(
-			'forms::form_template_job_application_form',
+			'Forms::form_template_job_application_form',
 			JobApplicationFormTemplate::getTitle()
 		);
 	}

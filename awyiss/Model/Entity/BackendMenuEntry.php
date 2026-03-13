@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 
@@ -60,7 +61,7 @@ class BackendMenuEntry extends Entity {
 		if (str_contains($value, '::')) {
 			$parts = explode('::', $value);
 
-			return __d($parts[0], $parts[1]);
+			return __d(Inflector::camelize($parts[0]), $parts[1]);
 		}
 
 		return $value;

@@ -109,7 +109,7 @@ class UrlsNotFoundTableTest extends TestCase {
 
 		$this->assertArrayHasKey('url', $errors);
 		$this->assertArrayHasKey('_required', $errors['url']);
-		$this->assertSame('urls_not_found::error_required', $errors['url']['_required']);
+		$this->assertSame('UrlsNotFound::error_required', $errors['url']['_required']);
 	}
 
 

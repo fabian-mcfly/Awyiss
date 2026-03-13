@@ -175,7 +175,7 @@ class AbstractConfigOptionsTest extends TestCase {
 	 */
 	public function testValidateConfigValueForLocalizableOption(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', true, 'en');
-		$this->assertSame('configuration::error_option_not_localizable', $isValid);
+		$this->assertSame('Configuration::error_option_not_localizable', $isValid);
 
 		$this->configOptions->add('Backend', [
 			new ConfigOption(
@@ -197,7 +197,7 @@ class AbstractConfigOptionsTest extends TestCase {
 	 */
 	public function testValidateConfigValueForNullableOption(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', null);
-		$this->assertSame('configuration::error_option_not_nullable', $isValid);
+		$this->assertSame('Configuration::error_option_not_nullable', $isValid);
 
 		$this->configOptions->add('Backend', [
 			new ConfigOption(

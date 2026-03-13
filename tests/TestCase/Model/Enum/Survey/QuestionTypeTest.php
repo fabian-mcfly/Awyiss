@@ -93,18 +93,18 @@ class QuestionTypeTest extends TestCase {
 	public function testLabel(): void {
 		$label = QuestionType::SingleChoice->label();
 		$this->assertIsString($label);
-		$this->assertSame('survey_questions::question_type_single_choice', $label);
+		$this->assertSame('SurveyQuestions::question_type_single_choice', $label);
 
 		$label = QuestionType::MultiChoice->label();
 		$this->assertIsString($label);
-		$this->assertSame('survey_questions::question_type_multiple_choice', $label);
+		$this->assertSame('SurveyQuestions::question_type_multiple_choice', $label);
 
 		$label = QuestionType::FreeText->label();
 		$this->assertIsString($label);
-		$this->assertSame('survey_questions::question_type_free_text', $label);
+		$this->assertSame('SurveyQuestions::question_type_free_text', $label);
 
 		$label = QuestionType::InfoText->label();
 		$this->assertIsString($label);
-		$this->assertSame('survey_questions::question_type_info_text', $label);
+		$this->assertSame('SurveyQuestions::question_type_info_text', $label);
 	}
 }

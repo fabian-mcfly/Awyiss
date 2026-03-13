@@ -578,7 +578,7 @@ class GlobalContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 		$this->assertArrayHasKey('globalContentTemplateId', $errors);
 		$this->assertArrayHasKey(0, $errors['globalContentTemplateId']);
-		$this->assertSame('global_contents::error_valid_global_content_template_id', $errors['globalContentTemplateId'][0]);
+		$this->assertSame('GlobalContents::error_valid_global_content_template_id', $errors['globalContentTemplateId'][0]);
 	}
 
 
@@ -645,10 +645,10 @@ class GlobalContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertSame('global_contents::error_required', $errors['identifier']['_required']);
+		$this->assertSame('GlobalContents::error_required', $errors['identifier']['_required']);
 
 		$this->assertArrayHasKey('systemOrder', $errors);
-		$this->assertSame('global_contents::error_required', $errors['systemOrder']['_required']);
+		$this->assertSame('GlobalContents::error_required', $errors['systemOrder']['_required']);
 	}
 
 
@@ -729,25 +729,25 @@ class GlobalContentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertSame('global_contents::error_is_empty', $errors['title']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['title']['isEmpty']);
 
 		$this->assertArrayHasKey('subtitle', $errors);
-		$this->assertSame('global_contents::error_is_empty', $errors['subtitle']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['subtitle']['isEmpty']);
 
 		$this->assertArrayHasKey('link', $errors);
-		$this->assertSame('global_contents::error_is_empty', $errors['link']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['link']['isEmpty']);
 
 		$this->assertArrayHasKey('formId', $errors);
-		$this->assertSame('global_contents::error_is_empty', $errors['formId']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['formId']['isEmpty']);
 
 		$this->assertArrayHasKey('surveyId', $errors);
-		$this->assertSame('global_contents::error_is_empty', $errors['surveyId']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['surveyId']['isEmpty']);
 
 		$this->assertArrayHasKey('columnLast', $errors);
-		$this->assertSame('global_contents::error_equal_to', $errors['columnLast']['equalTo']);
+		$this->assertSame('GlobalContents::error_equal_to', $errors['columnLast']['equalTo']);
 
 		$this->assertArrayHasKey('columnRtl', $errors);
-		$this->assertSame('global_contents::error_equal_to', $errors['columnRtl']['equalTo']);
+		$this->assertSame('GlobalContents::error_equal_to', $errors['columnRtl']['equalTo']);
 	}
 
 
@@ -818,7 +818,7 @@ class GlobalContentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('attributes', $errors);
 		$this->assertArrayHasKey('teaser', $errors['attributes']);
-		$this->assertSame('global_contents::error_is_empty', $errors['attributes']['teaser']['isEmpty']);
+		$this->assertSame('GlobalContents::error_is_empty', $errors['attributes']['teaser']['isEmpty']);
 	}
 
 
@@ -898,7 +898,7 @@ class GlobalContentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('formId', $errors);
 		$this->assertArrayHasKey('validFormId', $errors['formId']);
-		$this->assertSame('validation::error_exists_in', $errors['formId']['validFormId']);
+		$this->assertSame('Validation::error_exists_in', $errors['formId']['validFormId']);
 	}
 
 
@@ -979,7 +979,7 @@ class GlobalContentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('surveyId', $errors);
 		$this->assertArrayHasKey('validSurveyId', $errors['surveyId']);
-		$this->assertSame('validation::error_exists_in', $errors['surveyId']['validSurveyId']);
+		$this->assertSame('Validation::error_exists_in', $errors['surveyId']['validSurveyId']);
 	}
 
 
@@ -1035,7 +1035,7 @@ class GlobalContentsTableTest extends TestCase {
 
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('validWidthIndentCombination', $errors['_general']);
-		$this->assertSame('global_contents::error_valid_width_indent_combination', $errors['_general']['validWidthIndentCombination']);
+		$this->assertSame('GlobalContents::error_valid_width_indent_combination', $errors['_general']['validWidthIndentCombination']);
 	}
 
 
@@ -1227,7 +1227,7 @@ class GlobalContentsTableTest extends TestCase {
 		$this->assertSame([
 			1 => 'Kontaktformular',
 			2 => 'Kontaktformular2',
-			3 => 'forms::inactive Kontaktformular3',
+			3 => 'Forms::inactive Kontaktformular3',
 			4 => 'Kontaktformular4',
 			5 => 'Kontaktformular5',
 		], $result);
@@ -1246,7 +1246,7 @@ class GlobalContentsTableTest extends TestCase {
 
 		$this->assertSame([
 			1 => 'Dummy Survey',
-			2 => 'surveys::inactive Dummy Survey (Inactive)',
+			2 => 'Surveys::inactive Dummy Survey (Inactive)',
 			3 => 'Dummy Survey (Inline Image)',
 			4 => 'Dummy Survey (Survey Results)',
 		], $result);

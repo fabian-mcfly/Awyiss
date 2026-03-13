@@ -49,23 +49,23 @@ class MediaFoldersConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'path',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('media_folders::path', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('MediaFolders::path', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'parentId' => 'media_folders::parent_id',
-			'languageShortcode' => 'media_folders::language_shortcode',
-			'path' => 'media_folders::path',
-			'hidden' => 'media_folders::hidden',
-			'systemOrder' => 'media_folders::system_order',
-			'active' => 'media_folders::active',
-			'parentsActive' => 'media_folders::parents_active',
-			'createdBy' => 'media_folders::created_by',
-			'createdOn' => 'media_folders::created_on',
-			'changedBy' => 'media_folders::changed_by',
-			'changedOn' => 'media_folders::changed_on',
+			'parentId' => 'MediaFolders::parent_id',
+			'languageShortcode' => 'MediaFolders::language_shortcode',
+			'path' => 'MediaFolders::path',
+			'hidden' => 'MediaFolders::hidden',
+			'systemOrder' => 'MediaFolders::system_order',
+			'active' => 'MediaFolders::active',
+			'parentsActive' => 'MediaFolders::parents_active',
+			'createdBy' => 'MediaFolders::created_by',
+			'createdOn' => 'MediaFolders::created_on',
+			'changedBy' => 'MediaFolders::changed_by',
+			'changedOn' => 'MediaFolders::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.enabled', $configOptions);

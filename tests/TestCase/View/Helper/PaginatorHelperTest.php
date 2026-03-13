@@ -271,7 +271,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:never-translated-key/direction:asc/'],
-			'the_controller::_never_translated_key_',
+			'TheController::_never_translated_key_',
 			'/a',
 		];
 
@@ -293,7 +293,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class' => 'preg:/.*Sort-Desc.*/', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:id/direction:asc/'],
-			'the_controller::id',
+			'TheController::id',
 			'/a',
 		];
 
@@ -315,7 +315,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class' => 'preg:/.*Sort-Asc.*/', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:id/direction:desc/'],
-			'the_controller::id',
+			'TheController::id',
 			'/a',
 		];
 
@@ -407,7 +407,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:association.title/direction:asc/'],
-			'the_controller::association.title',
+			'TheController::association.title',
 			'/a',
 		];
 
@@ -429,7 +429,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class' => 'preg:/.*Sort-Desc.*/', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:association.title/direction:asc/'],
-			'the_controller::association.title',
+			'TheController::association.title',
 			'/a',
 		];
 
@@ -451,7 +451,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$expected = [
 			'a' => ['class' => 'preg:/.*Sort-Asc.*/', 'href' => '/backend/xy/the-controller/the-action/testparam:testvalue/sort:association.title/direction:desc/'],
-			'the_controller::association.title',
+			'TheController::association.title',
 			'/a',
 		];
 
@@ -812,12 +812,12 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->render();
 
-		$this->assertStringNotContainsString('pagination::first', $result);
-		$this->assertStringContainsString('<li class="Sort-Prev Disabled"><span class="Arrow Arrow-Prev">pagination::previous</span></li>', $result);
+		$this->assertStringNotContainsString('Pagination::first', $result);
+		$this->assertStringContainsString('<li class="Sort-Prev Disabled"><span class="Arrow Arrow-Prev">Pagination::previous</span></li>', $result);
 		$this->assertStringContainsString('<li class="Sort-Number Sort-Current"><span class="Number">1</span></li>', $result);
-		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Number" title="pagination::page 2">2</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Next">pagination::next</a></li>', $result);
-		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">pagination::last</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Number" title="Pagination::page 2">2</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Next">Pagination::next</a></li>', $result);
+		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">Pagination::last</a>', $result);
 	}
 
 
@@ -877,13 +877,13 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->render();
 
-		$this->assertStringContainsString('<li class="Sort-First"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Arrow Arrow-First">pagination::first</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Prev"><a rel="prev" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Prev">pagination::previous</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Number" title="pagination::page 1">1</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-First"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Arrow Arrow-First">Pagination::first</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Prev"><a rel="prev" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Prev">Pagination::previous</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Number" title="Pagination::page 1">1</a>', $result);
 		$this->assertStringContainsString('<li class="Sort-Number Sort-Current"><span class="Number">3</span>', $result);
-		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:4/" class="Number" title="pagination::page 4">4</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:4/" class="Arrow Arrow-Next">pagination::next</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">pagination::last</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:4/" class="Number" title="Pagination::page 4">4</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:4/" class="Arrow Arrow-Next">Pagination::next</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">Pagination::last</a>', $result);
 	}
 
 
@@ -906,12 +906,12 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->render();
 
-		$this->assertStringContainsString('<li class="Sort-First"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Arrow Arrow-First">pagination::first</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Prev"><a rel="prev" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:6/" class="Arrow Arrow-Prev">pagination::previous</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:6/" class="Number" title="pagination::page 6">6</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-First"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/" class="Arrow Arrow-First">Pagination::first</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Prev"><a rel="prev" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:6/" class="Arrow Arrow-Prev">Pagination::previous</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:6/" class="Number" title="Pagination::page 6">6</a>', $result);
 		$this->assertStringContainsString('<li class="Sort-Number Sort-Current"><span class="Number">7</span>', $result);
-		$this->assertStringContainsString('<li class="Sort-Next Disabled"><span class="Arrow Arrow-Next">pagination::next</span>', $result);
-		$this->assertStringNotContainsString('pagination::last', $result);
+		$this->assertStringContainsString('<li class="Sort-Next Disabled"><span class="Arrow Arrow-Next">Pagination::next</span>', $result);
+		$this->assertStringNotContainsString('Pagination::last', $result);
 	}
 
 
@@ -927,12 +927,12 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = (string)$this->paginator;
 
-		$this->assertStringNotContainsString('pagination::first', $result);
-		$this->assertStringContainsString('<li class="Sort-Prev Disabled"><span class="Arrow Arrow-Prev">pagination::previous</span></li>', $result);
+		$this->assertStringNotContainsString('Pagination::first', $result);
+		$this->assertStringContainsString('<li class="Sort-Prev Disabled"><span class="Arrow Arrow-Prev">Pagination::previous</span></li>', $result);
 		$this->assertStringContainsString('<li class="Sort-Number Sort-Current"><span class="Number">1</span></li>', $result);
-		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Number" title="pagination::page 2">2</a>', $result);
-		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Next">pagination::next</a></li>', $result);
-		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">pagination::last</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Number"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Number" title="Pagination::page 2">2</a>', $result);
+		$this->assertStringContainsString('<li class="Sort-Next"><a rel="next" href="/backend/xy/the-controller/the-action/testparam:testvalue/page:2/" class="Arrow Arrow-Next">Pagination::next</a></li>', $result);
+		$this->assertStringContainsString('<li class="Sort-Last"><a href="/backend/xy/the-controller/the-action/testparam:testvalue/page:7/" class="Arrow Arrow-Last">Pagination::last</a>', $result);
 	}
 
 

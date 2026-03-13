@@ -268,7 +268,7 @@ class SoftDeleteBehaviorTest extends TestCase {
 
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('deletedNotModified', $errors['_general']);
-		$this->assertSame('employers::error_deleted_not_modified', $errors['_general']['deletedNotModified']);
+		$this->assertSame('Employers::error_deleted_not_modified', $errors['_general']['deletedNotModified']);
 	}
 
 
@@ -296,7 +296,7 @@ class SoftDeleteBehaviorTest extends TestCase {
 
 		$this->assertArrayHasKey('_general', $errors);
 		$this->assertArrayHasKey('deletedNotModified', $errors['_general']);
-		$this->assertSame('employers::error_deleted_not_modified', $errors['_general']['deletedNotModified']);
+		$this->assertSame('Employers::error_deleted_not_modified', $errors['_general']['deletedNotModified']);
 	}
 
 

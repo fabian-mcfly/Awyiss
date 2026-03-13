@@ -49,37 +49,37 @@ class FormsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'identifier',
 		], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('forms::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame('Forms::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
-			'identifier' => 'forms::identifier',
-			'sendEmail' => 'forms::send_email',
-			'emailTemplateId' => 'forms::email_template_id',
-			'sendConfirmationEmail' => 'forms::send_confirmation_email',
-			'confirmationEmailTemplateId' => 'forms::confirmation_email_template_id',
-			'ownerEmail' => 'forms::owner_email',
-			'ownerName' => 'forms::owner_name',
-			'userEmail' => 'forms::user_email',
-			'userName' => 'forms::user_name',
-			'cc' => 'forms::cc',
-			'bcc' => 'forms::bcc',
-			'subject' => 'forms::subject',
-			'subjectConfirmation' => 'forms::subject_confirmation',
-			'salutation' => 'forms::salutation',
-			'salutationConfirmation' => 'forms::salutation_confirmation',
-			'summarizeErrors' => 'forms::summarize_errors',
-			'successMessage' => 'forms::success_message',
-			'multistep' => 'forms::multistep',
-			'conditionalRecipientsStrategy' => 'forms::conditional_recipients_strategy',
-			'transportProfile' => 'forms::transport_profile',
-			'active' => 'forms::active',
-			'createdBy' => 'forms::created_by',
-			'createdOn' => 'forms::created_on',
-			'changedBy' => 'forms::changed_by',
-			'changedOn' => 'forms::changed_on',
+			'identifier' => 'Forms::identifier',
+			'sendEmail' => 'Forms::send_email',
+			'emailTemplateId' => 'Forms::email_template_id',
+			'sendConfirmationEmail' => 'Forms::send_confirmation_email',
+			'confirmationEmailTemplateId' => 'Forms::confirmation_email_template_id',
+			'ownerEmail' => 'Forms::owner_email',
+			'ownerName' => 'Forms::owner_name',
+			'userEmail' => 'Forms::user_email',
+			'userName' => 'Forms::user_name',
+			'cc' => 'Forms::cc',
+			'bcc' => 'Forms::bcc',
+			'subject' => 'Forms::subject',
+			'subjectConfirmation' => 'Forms::subject_confirmation',
+			'salutation' => 'Forms::salutation',
+			'salutationConfirmation' => 'Forms::salutation_confirmation',
+			'summarizeErrors' => 'Forms::summarize_errors',
+			'successMessage' => 'Forms::success_message',
+			'multistep' => 'Forms::multistep',
+			'conditionalRecipientsStrategy' => 'Forms::conditional_recipients_strategy',
+			'transportProfile' => 'Forms::transport_profile',
+			'active' => 'Forms::active',
+			'createdBy' => 'Forms::created_by',
+			'createdOn' => 'Forms::created_on',
+			'changedBy' => 'Forms::changed_by',
+			'changedOn' => 'Forms::changed_on',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.publicationData.enabled', $configOptions);
@@ -114,18 +114,18 @@ class FormsConfigOptionsTest extends TestCase {
 			'ipCheck',
 			'hiddenInput',
 		], $configOptions['Frontend.protection.methods']->getDefaultValue());
-		$this->assertSame('forms::protection_method_altcha, forms::protection_method_duplicate_check, forms::protection_method_ip_check, forms::protection_method_hidden_input', $configOptions['Frontend.protection.methods']->getPrintableValue());
+		$this->assertSame('Forms::protection_method_altcha, Forms::protection_method_duplicate_check, Forms::protection_method_ip_check, Forms::protection_method_hidden_input', $configOptions['Frontend.protection.methods']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Frontend.protection.methods']->getType());
 		$this->assertNull($configOptions['Frontend.protection.methods']->getTypecast());
 		$this->assertNull($configOptions['Frontend.protection.methods']->getValidate());
 		$this->assertIsCallable($configOptions['Frontend.protection.methods']->getValues());
 		$this->assertSame([
-			'altcha' => 'forms::protection_method_altcha',
-			'dummy' => 'forms::protection_method_dummy',
-			'dummyStopsFormEntry' => 'forms::protection_method_dummy_stops_form_entry',
-			'duplicateCheck' => 'forms::protection_method_duplicate_check',
-			'hiddenInput' => 'forms::protection_method_hidden_input',
-			'ipCheck' => 'forms::protection_method_ip_check',
+			'altcha' => 'Forms::protection_method_altcha',
+			'dummy' => 'Forms::protection_method_dummy',
+			'dummyStopsFormEntry' => 'Forms::protection_method_dummy_stops_form_entry',
+			'duplicateCheck' => 'Forms::protection_method_duplicate_check',
+			'hiddenInput' => 'Forms::protection_method_hidden_input',
+			'ipCheck' => 'Forms::protection_method_ip_check',
 		], $configOptions['Frontend.protection.methods']->getValues(true));
 	}
 }

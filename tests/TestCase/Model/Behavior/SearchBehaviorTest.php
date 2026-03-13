@@ -344,7 +344,7 @@ class SearchBehaviorTest extends TestCase {
 			1 => 'awyiss',
 			2 => 'awyiss-undecided-access',
 			3 => 'awyiss-no-access',
-			4 => 'users::inactive awyiss-inactive',
+			4 => 'Users::inactive awyiss-inactive',
 		], $values);
 	}
 
@@ -361,7 +361,7 @@ class SearchBehaviorTest extends TestCase {
 			1 => 'awyiss',
 			2 => 'awyiss-undecided-access',
 			3 => 'awyiss-no-access',
-			4 => 'users::inactive awyiss-inactive',
+			4 => 'Users::inactive awyiss-inactive',
 		], $values);
 	}
 
@@ -388,10 +388,10 @@ class SearchBehaviorTest extends TestCase {
 		$values = $table->getPossibleFieldValues('type');
 
 		$this->assertSame([
-			'singleChoice' => 'survey_questions::question_type_single_choice',
-			'multipleChoice' => 'survey_questions::question_type_multiple_choice',
-			'freeText' => 'survey_questions::question_type_free_text',
-			'infoText' => 'survey_questions::question_type_info_text',
+			'singleChoice' => 'SurveyQuestions::question_type_single_choice',
+			'multipleChoice' => 'SurveyQuestions::question_type_multiple_choice',
+			'freeText' => 'SurveyQuestions::question_type_free_text',
+			'infoText' => 'SurveyQuestions::question_type_info_text',
 		], $values);
 	}
 

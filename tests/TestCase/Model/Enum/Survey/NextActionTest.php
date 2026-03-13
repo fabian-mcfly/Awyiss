@@ -102,14 +102,14 @@ class NextActionTest extends TestCase {
 	public function testLabel(): void {
 		$label = NextAction::NextQuestion->label();
 		$this->assertIsString($label);
-		$this->assertSame('surveys::next_action_next_question', $label);
+		$this->assertSame('Surveys::next_action_next_question', $label);
 
 		$label = NextAction::SaveAndEnd->label();
 		$this->assertIsString($label);
-		$this->assertSame('surveys::next_action_save_and_end', $label);
+		$this->assertSame('Surveys::next_action_save_and_end', $label);
 
 		$label = NextAction::Abort->label();
 		$this->assertIsString($label);
-		$this->assertSame('surveys::next_action_abort', $label);
+		$this->assertSame('Surveys::next_action_abort', $label);
 	}
 }

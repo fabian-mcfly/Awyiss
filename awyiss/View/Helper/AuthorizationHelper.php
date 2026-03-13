@@ -114,8 +114,8 @@ class AuthorizationHelper extends Helper {
 		$scope = $this->getConfig('scope');
 
 		if (!$scope) {
-			$scope = Inflector::underscore($this->getView()->getName());
-			$this->setConfig('scope', $scope);
+			$this->setScope($this->getView()->getName());
+			$scope = $this->getConfig('scope');
 		}
 
 
@@ -130,9 +130,8 @@ class AuthorizationHelper extends Helper {
 	 * @return $this
 	 */
 	public function setScope(string $scope): static {
-		$scope = Inflector::underscore($scope);
-		$scope = Inflector::singularize($scope);
 		$scope = Inflector::pluralize($scope);
+		$scope = Inflector::camelize($scope);
 
 		$this->setConfig('scope', $scope);
 
