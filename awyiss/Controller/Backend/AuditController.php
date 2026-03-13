@@ -372,7 +372,7 @@ class AuditController extends Controller {
 				$foreignKey = $association->getProperty();
 			}
 			else {
-				$foreignKey = (array)$association->getForeignKey()[0];
+				$foreignKey = ((array)$association->getForeignKey())[0];
 			}
 
 			// If the key of the association is in the history fields, add it to the associations using the key as the key
