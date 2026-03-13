@@ -92,5 +92,8 @@ msgstr "Inhalte"
 msgid "permission_analyze"
 msgstr "Analyse"
 
+msgid "usergroup_permissions"
+msgstr "Berechtigungen"
+
 msgid "users"
 msgstr "Benutzer"

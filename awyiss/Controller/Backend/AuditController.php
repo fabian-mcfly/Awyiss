@@ -196,7 +196,6 @@ class AuditController extends Controller {
 		$this->set([
 			'entity' => $entity,
 			'audits' => $audits->compile(),
-			'schema' => $table->getSchema(),
 			'scope' => $scope,
 			'historyFields' => $historyFields,
 			'attributes' => $attributes,

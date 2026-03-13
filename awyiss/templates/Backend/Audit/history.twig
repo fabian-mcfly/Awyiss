@@ -2,11 +2,8 @@
 @var entity \Awyiss\Model\Entity
 @var audits \Awyiss\Model\Entity\Audit[]
 @var historyFields array<string>
-@var schema \Cake\Database\Schema\TableSchemaInterface
-@var scope string
 @var attributes array<string, \Awyiss\Model\Entity\Attribute>
 @var attributeOptionsCollection \Awyiss\Attribute\AttributeOptionsCollection
-@var attributesSchema \Cake\Database\Schema\TableSchemaInterface
 @var associations array<string, array{name: string, property: string}>
 @var media Awyiss\Model\Entity\Media[]
 @var mediaElements Awyiss\Model\Entity\MediaElement[]
@@ -44,9 +41,9 @@
 	@var settings array
 	#}
 
-	{% set oldData = audit.dataOld %}
-	{% set newData = audit.dataNew %}
-	{% set identifier = mediaElement.identifier|variable %}
+	{% set oldData = audit.dataOld ?? [] %}
+	{% set newData = audit.dataNew ?? [] %}
+	{% set identifier = mediaElement.identifier %}
 
 	<tr>
 		<td colspan="3" class="TableCell-MediaElement-Label">
@@ -54,17 +51,17 @@
 		</td>
 	</tr>
 	{% for mediaSelector in mediaElement.mediaElementSelectors %}
-		{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
-		{% set newValue = newData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
-		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
+		{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier ].mediaId %}
+		{% set newValue = newData.mediaAssignments[ identifier ][ mediaSelector.identifier ].mediaId %}
+		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier ].mediaId %}
 		{% set inputName = 'mediaAssignments[' ~ mediaElement.id ~ '][' ~ mediaSelector.identifier ~ ']' %}
 
 		{% if mediaSelector.mediaSelector.identifier == 'multiFile' %}
 			{% set inputName = inputName ~ '[]' %}
-			{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
+			{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier ] %}
 			{% set currentValue = currentValue ? currentValue|column('mediaId') : null %}
 
-			{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
+			{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier ] %}
 			{% set oldValue = oldValue ? oldValue|column('mediaId') : null %}
 		{% else %}
 			{% set inputName = inputName ~ '[mediaId]' %}
@@ -90,7 +87,7 @@
 					{% for mediaId in oldValue %}
 						{% if settings.media[ mediaId ] is defined %}
 							{% set revertable = true %}
-							<a href="{{ baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
+							<a href="{{ settings.baseUrl ?? baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
 
 							<input type="text" value="{{ mediaId }}" name="mediaAssignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][]">
 						{% else %}
@@ -107,7 +104,7 @@
 					{% set revertable = true %}
 					{% if oldValue is not null %}
 						{% if settings.media[ oldValue ] is defined %}
-							<a href="{{ baseUrl }}{{ settings.media[ oldValue ].path }}" target="_blank">{{ settings.media[ oldValue ].path }}</a> (ID: {{ oldValue }})
+							<a href="{{ settings.baseUrl ?? baseUrl }}{{ settings.media[ oldValue ].path }}" target="_blank">{{ settings.media[ oldValue ].path }}</a> (ID: {{ oldValue }})
 						{% else %}
 							{% set revertable = false %}
 							{{ __('unknown_file') }} (ID: {{ oldValue }})
@@ -124,76 +121,19 @@
 				{% endif %}
 			</td>
 			<td class="TableCell-NewValue">
-				{{ _self.formatMediaEntities(newValue, settings) }}
+				{{ AuditHelper.formatMediaEntities(newValue, settings) }}
 			</td>
 			<td class="TableCell-CurrentValue">
-				{{ _self.formatMediaEntities(currentValue, settings) }}
+				{{ AuditHelper.formatMediaEntities(currentValue, settings) }}
 			</td>
 		</tr>
 	{% endfor %}
 {% endmacro %}
 
-{% macro formatMediaEntities(value, settings) %}
-	{% if value is array %}
-		{% for mediaId in value %}
-			{% if settings.media[ mediaId ] is defined %}
-				<a href="{{ baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
-			{% else %}
-				{{ __('unknown_file') }} (ID: {{ mediaId }})<br>
-			{% endif %}
-		{% endfor %}
-	{% elseif value is not null %}
-		{% if settings.media[ value ] is defined %}
-			<a href="{{ baseUrl }}{{ settings.media[ value ].path }}" target="_blank">{{ settings.media[ value ].path }}</a> (ID: {{ value }})
-		{% else %}
-			{{ __('unknown_file') }} (ID: {{ value }})
-		{% endif %}
-	{% endif %}
-{% endmacro %}
-
-{% macro formatUsergroupPermissions(entities, settings) %}
-	{#
-	Macro to format usergroup permissions grouped by scope.
-	@var entities array<\Awyiss\Model\Entity>
-	@var settings array
-	#}
-	{%- set entitiesGroupedByScope = {} %}
-	{%- for entity in entities %}
-		{%- set labelData = entity.labelData %}
-		{%- set entityScope = labelData.scope %}
-		{%- if entitiesGroupedByScope[ entityScope ] is not defined %}
-			{%- set entitiesGroupedByScope = entitiesGroupedByScope|merge({ (entityScope): [] }) %}
-		{%- endif %}
-		{%- set entitiesGroupedByScope = entitiesGroupedByScope|merge({ (entityScope): entitiesGroupedByScope[ entityScope ]|merge([entity]) }) %}
-	{%- endfor %}
-
-	{%- set entitiesGroupedByScope = naturalSort(entitiesGroupedByScope, true) %}
-
-	{%- for scopeTitle, groupEntities in entitiesGroupedByScope %}
-		{%- set groupEntities = naturalSort(groupEntities, 'label') %}
-
-		{%- if loop.index > 1 %}
-			<br><hr><br>
-		{%- endif %}
-
-		<strong>{{ scopeTitle }}:</strong>
-		<ul>
-			{%- for entity in groupEntities %}
-				{%- set labelData = entity.labelData %}
-				<li class="PermissionAccess-{{ entity.access.name }}">
-					{{ labelData.identifier }} (ID: {{ entity.id }})
-				</li>
-			{%- endfor %}
-		</ul>
-	{%- endfor %}
-{% endmacro %}
-
-{% macro tableHistoryBodyRow(entity, schema, scope, field, audit, associations, attribute, language, settings) %}
+{% macro tableHistoryBodyRow(entity, field, audit, associations, attribute, language, settings) %}
 	{#
 	Macro to render a table row for history data.
 	@var entity \Awyiss\Model\Entity
-	@var schema \Cake\Database\Schema\TableSchemaInterface
-	@var scope string
 	@var field string
 	@var audit \Awyiss\Model\Entity\Audit
 	@var associations array<string, array{name: string, property: string}>
@@ -202,22 +142,22 @@
 	@var settings array
 	#}
 
+	{% set baseEntity = entity %}
 	{% set isAttribute = attribute != null %}
-	{% set columnType = schema.columnType(field) %}
 	{% set isLanguage = language is not empty %}
 
-	{% set field = field|variable %}
-	{% set inputName = field|underscore %}
+	{% set inputName = field %}
 	{% if isAttribute %}
+		{% set baseEntity = entity.get('attributes') %}
 		{% set inputName = 'attributes[' ~ inputName ~ ']' %}
 	{% endif %}
 
-	{% set oldData = isAttribute ? (audit.dataOld['attributes'] ?? []) : audit.dataOld %}
-	{% set newData = isAttribute ? (audit.dataNew['attributes'] ?? []) : audit.dataNew %}
+	{% set oldData = isAttribute ? (audit.dataOld['attributes'] ?: []) : (audit.dataOld ?: []) %}
+	{% set newData = isAttribute ? (audit.dataNew['attributes'] ?: []) : (audit.dataNew ?: []) %}
 
 	{% if isLanguage %}
-		{% set oldData = oldData['_translations'][ language.shortcode ] %}
-		{% set newData = newData['_translations'][ language.shortcode ] %}
+		{% set oldData = oldData['_translations'][ language.shortcode ] ?: [] %}
+		{% set newData = newData['_translations'][ language.shortcode ] ?: [] %}
 		{% set entity = isAttribute ? (entity.get('attributes').get('_translations')[ language.shortcode ] ?? null) : (entity.get('_translations')[ language.shortcode ] ?? null) %}
 
 		{% set inputName = '_translations[' ~ language.shortcode ~ '][' ~ inputName ~']' %}
@@ -229,104 +169,29 @@
 
 	{%- set isHtml = (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
 
-	{%- set oldDiffersFromCurrent = oldData[ field ] != entity.get(field) %}
-	{%- set oldDiffersFromNew = oldData[ field ] != newData[ field ] %}
-	{%- set newDiffersFromCurrent = newData[ field ] != entity.get(field) %}
+	{%- set oldDiffersFromCurrent = AuditHelper.valuesDiffer(oldData[ field ], entity.get(field), field, baseEntity, associations) %}
+	{%- set oldDiffersFromNew = AuditHelper.valuesDiffer(oldData[ field ], newData[ field ], field, baseEntity, associations) %}
+	{%- set newDiffersFromCurrent = AuditHelper.valuesDiffer(newData[ field ], entity.get(field), field, baseEntity, associations) %}
 
-	{%- if entity.get(field) is enum %}
-		{%- set oldDiffersFromCurrent = oldData[ field ] != entity.get(field).value %}
-		{%- set newDiffersFromCurrent = newData[ field ] != entity.get(field).value %}
-	{%- elseif columnType == 'date' %}
-		{%- set oldDiffersFromCurrent = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '') %}
-		{%- set oldDiffersFromNew = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '') != (newData[ field ] ? TimeHelper.i18nFormat(newData[ field ], dateFormat) : '') %}
-		{%- set newDiffersFromCurrent = (newData[ field ] ? TimeHelper.i18nFormat(newData[ field ], dateFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '') %}
-	{%- elseif columnType == 'datetime' %}
-		{%- set oldDiffersFromCurrent = (oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '') != (entity.get(field) ? TimeHelper.nice(entity.get(field)) : '') %}
-		{%- set oldDiffersFromNew = (oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '') != (newData[ field ] ? TimeHelper.nice(newData[ field ]) : '') %}
-		{%- set newDiffersFromCurrent = (newData[ field ] ? TimeHelper.nice(newData[ field ]) : '') != (entity.get(field) ? TimeHelper.nice(entity.get(field)) : '') %}
-	{%- elseif columnType == 'time' %}
-		{%- set oldDiffersFromCurrent = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '') %}
-		{%- set oldDiffersFromNew = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '') != (newData[ field ] ? TimeHelper.i18nFormat(newData[ field ], timeFormat) : '') %}
-		{%- set newDiffersFromCurrent = (newData[ field ] ? TimeHelper.i18nFormat(newData[ field ], timeFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '') %}
-	{%- elseif associations[ field ] is defined and associations[ field ].type == 'manyToMany' %}
-		{%- set oldIds = oldData[ field ] is not empty ? oldData[ field ]|column('id') : [] %}
-		{%- set newIds = newData[ field ] is not empty ? newData[ field ]|column('id') : [] %}
-		{%- set currentIds = entity.get(associations[ field ]['property']) is not empty ? entity.get(associations[ field ]['property'])|column('id') : [] %}
-
-		{%- set oldDiffersFromCurrent = oldIds|sort != currentIds|sort %}
-		{%- set oldDiffersFromNew = oldIds|sort != newIds|sort %}
-		{%- set newDiffersFromCurrent = newIds|sort != currentIds|sort %}
-	{%- elseif isAttribute %}
-		{% if oldData[ field ] is empty and entity.get(field) is empty %}
+	{%- if isAttribute %}
+		{% if not AuditHelper.attributeValuesDiffer(oldData[ field ], entity.get(field), true) %}
 			{% set oldDiffersFromCurrent = false %}
 		{% endif %}
 
-		{% if newData[ field ] is empty and entity.get(field) is empty %}
+		{% if not AuditHelper.attributeValuesDiffer(newData[ field ], entity.get(field), true) %}
 			{% set newDiffersFromCurrent = false %}
 		{% endif %}
 	{%- endif %}
 
 	{% set attributeOptions = isAttribute ? (settings.attributeOptionsCollection.getAttributeOption(field).getOptions(field) ?? []) : null %}
 
-	{%- set oldValue = _self.formatOldValue(field, oldData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
-	{%- set newValue = _self.formatOldValue(field, newData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
+	{%- set oldValue = AuditHelper.formatOldValue(field, oldData, baseEntity, associations, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
+	{%- set newValue = AuditHelper.formatOldValue(field, newData, baseEntity, associations, newDiffersFromCurrent, attribute, attributeOptions, settings) %}
 
 	{% set realOldValue = oldData[ field ] %}
 	{% set realNewValue = newData[ field ] %}
 
-	{%- set currentValue %}
-		{%- if associations[ field ] is defined %}
-			{%- set associationField = associations[ field ]['property'] %}
-			{%- if associations[ field ].type in ['oneToMany', 'manyToMany'] %}
-				{%- if entity.get(associationField) is not empty %}
-					{%- if associations[ field ].name == 'UsergroupPermissions' %}
-						{{- _self.formatUsergroupPermissions(entity.get(associationField), settings) }}
-					{%- else %}
-						<ul>
-							{%- set associatedEntities = naturalSort(entity.get(associationField), 'label')  %}
-							{%- for associatedEntity in associatedEntities %}
-								<li>
-									{{- associatedEntity ? associatedEntity.label|raw : __('unknown_entity') }}
-									{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
-								</li>
-							{%- endfor %}
-						</ul>
-					{%- endif %}
-				{%- endif %}
-			{%- else %}
-				{{- entity.get(associationField).label }}
-				{%- if entity.get(associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
-			{%- endif %}
-		{%- elseif columnType == 'boolean' %}
-			{{- entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
-		{%- elseif columnType == 'date' %}
-			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '' }}
-		{%- elseif columnType == 'datetime' %}
-			{{- entity.get(field) ? TimeHelper.nice(entity.get(field)) : '' }}
-		{%- elseif columnType == 'time' %}
-			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '' }}
-		{%- elseif columnType == 'json' %}
-			{{- entity.get(field) is not empty ? entity.get(field)|jsonEncode : '' }}
-		{%- elseif field == 'fieldset' %}
-			{{- entity.get(field) is not empty ? __d(scope, 'fieldset_' ~ entity.get(field)|underscore) : '' }}
-		{%- elseif field == 'inputType' %}
-			{{- entity.get(field) is not empty ? __d(scope, 'input_type_' ~ entity.get(field)|underscore) : '' }}
-		{%- elseif field == 'columnWidth' %}
-			{{- entity.column.width.label }}
-		{%- elseif field == 'columnIndent' %}
-			{{- entity.column.indent.label }}
-		{%- elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') -%}
-			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(entity.get(field), settings.media)|escape }}</code>
-		{%- elseif (field == 'css') -%}
-			<textarea data-readonly="1" data-css-editor="1">{{ entity.get(field) }}</textarea>
-		{%- elseif attributeOptions != null %}
-			{{- attributeOptions[ entity.get(field) ] ?? '' }}
-		{%- elseif field == 'password' or (isAttribute and attribute.inputType == 'password') %}
-			{{- entity.get(field) ? '********' : '' }}
-		{%- else %}
-			{{- entity.get(field) }}
-		{%- endif %}
-	{%- endset %}
+	{%- set currentValue = AuditHelper.formatCurrentValue(field, baseEntity, associations, attribute, attributeOptions, settings) %}
 
 	<tr class="
 			{%- if oldDiffersFromCurrent %} OldValueDiffersFromCurrent{% endif -%}
@@ -344,13 +209,13 @@
 			{% elseif isAttribute %}
 				{{ attribute.label }}
 			{% elseif settings.isPageRole %}
-				{% set label = __df(scope, 'Pages', field|underscore) %}
+				{% set label = __df(settings.scope, 'Pages', field|underscore) %}
 				{% if '::' in label %}
 					{% set label = __d('Pages', field|underscore) %}
 				{% endif %}
 				{{ label }}
 			{% else %}
-				{{ __d(scope, field|underscore) }}
+				{{ __d(settings.scope, field|underscore) }}
 			{% endif %}
 		</td>
 		<td class="TableCell-OldValue">
@@ -377,82 +242,6 @@
 	</tr>
 {% endmacro %}
 
-{% macro formatOldValue(field, oldData, entity, scope, associations, columnType, oldDiffersFromCurrent, attribute, attributeOptions, settings) %}
-	{#
-	@var field string
-	@var oldData array
-	@var entity \Awyiss\Model\Entity
-	@var scope string
-	@var associations array<string, array{name: string, property: string}>
-	@var columnType string
-	@var oldDiffersFromCurrent bool
-	@var attribute \Awyiss\Model\Entity\Attribute|null
-	@var attributeOptions array
-	@var settings array
-	#}
-
-	{% set isAttribute = attribute != null %}
-
-	{%- if associations[ field ] is defined %}
-		{%- set associationField = associations[ field ]['property'] %}
-		{%- if associations[ field ].type in ['oneToMany', 'manyToMany'] %}
-			{%- if oldData[ field ] is not empty %}
-				{%- if associations[ field ].name == 'UsergroupPermissions' %}
-					{{ _self.formatUsergroupPermissions(oldData[ field ], settings) }}
-				{%- else %}
-					<ul>
-						{%- for associatedEntity in oldData[ field ] %}
-							<li>
-								{{- associatedEntity ? associatedEntity.label|raw : __('unknown_entity') }}
-								{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
-							</li>
-						{%- endfor %}
-					</ul>
-				{%- endif %}
-			{%- endif %}
-		{%- elseif oldData[ field ] is not empty and oldDiffersFromCurrent == false %}
-			{{- entity.get(associationField).label }}
-			{%- if entity.get( associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
-		{%- elseif oldData[ field ] %}
-			{%- if oldData[ associationField ] is defined %}
-				{{- oldData[ associationField ].label ?? __('unknown_entity') }}
-				{%- if oldData[ associationField ] %} (ID: {{ oldData[ associationField ].id }}){% endif %}
-			{%- else %}
-				{{- __('unknown_entity') }} (ID: {{ oldData[ field ] }})
-			{%- endif %}
-		{%- endif %}
-	{%- elseif columnType == 'boolean' %}
-		{{- oldData[ field ] ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
-	{%- elseif columnType == 'date' %}
-		{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '' }}
-	{%- elseif columnType == 'datetime' %}
-		{{- oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '' }}
-	{%- elseif columnType == 'time' %}
-		{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '' }}
-	{%- elseif columnType == 'json' %}
-		{{- oldData[ field ] is not empty ? oldData[ field ]|jsonEncode : '' }}
-	{%- elseif columnType == 'string' and field == 'languageShortcode' %}
-		{{- oldData[ field ] ? languages.Frontend[ oldData[ field ] ].title : '' }}
-	{%- elseif field == 'fieldset' %}
-		{{- oldData[ field ] is not empty ? __d(scope, 'fieldset_' ~ oldData[ field ]|underscore) : '' }}
-	{%- elseif field == 'inputType' %}
-		{{- oldData[ field ] is not empty ? __d(scope, 'input_type_' ~ oldData[ field ]|underscore) : '' }}
-	{%- elseif field == 'columnWidth' %}
-		{{- oldData['column'].width.label }}
-	{%- elseif field == 'columnIndent' %}
-		{{- oldData['column'].indent.label }}
-	{%- elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') -%}
-		<code>{{- MediaHelper.rebuildSimpleImageTagsInText(oldData[ field ], settings.media)|escape }}</code>
-	{%- elseif (field == 'css') -%}
-		<textarea data-readonly="1" data-css-editor="1">{{ oldData[ field ] }}</textarea>
-	{%- elseif attributeOptions != null %}
-		{{- attributeOptions[ oldData[ field ] ] ?? '' }}
-	{%- elseif field == 'password' or (isAttribute and attribute.inputType == 'password') %}
-		{{- oldData[ field ] ? '********' : '' }}
-	{%- else %}
-		{{- oldData[ field ] ?? '' }}
-	{%- endif %}
-{% endmacro %}
 
 <div class="Contents History">
 	{% block headlinesHistory %}
@@ -507,10 +296,10 @@
 									</td>
 								</tr>
 								{% for language in languages %}
-									{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, language, _context) }}
+									{{ _self.tableHistoryBodyRow(entity, field, audit, associations, null, language, _context) }}
 								{% endfor %}
 							{% else %}
-								{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, null, _context) }}
+								{{ _self.tableHistoryBodyRow(entity, field, audit, associations, null, null, _context) }}
 							{% endif %}
 						{% endfor %}
 
@@ -522,10 +311,10 @@
 									</td>
 								</tr>
 								{% for language in languages %}
-									{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, language, _context) }}
+									{{ _self.tableHistoryBodyRow(entity, field, audit, associations, attribute, language, _context) }}
 								{% endfor %}
 							{% else %}
-								{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, null, _context) }}
+								{{ _self.tableHistoryBodyRow(entity, field, audit, associations, attribute, null, _context) }}
 							{% endif %}
 						{% endfor %}
 
@@ -536,8 +325,8 @@
 								</td>
 							</tr>
 
-							{% set oldData = audit.dataOld %}
-							{% set newData = audit.dataNew %}
+							{% set oldData = audit.dataOld ?? [] %}
+							{% set newData = audit.dataNew ?? [] %}
 
 							{% set oldValue = oldData._publicationData.start.dateTime %}
 							{% set newValue = newData._publicationData.start.dateTime %}

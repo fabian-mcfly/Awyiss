@@ -7,6 +7,7 @@ namespace Awyiss\Model;
 use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity as BaseEntity;
@@ -30,6 +31,14 @@ class Entity extends BaseEntity {
 		EntityAttributesTrait::patch as patchOrPatchAttribute;
 	}
 	use TranslateTrait;
+
+
+	/**
+	 * Schema cache per table
+	 *
+	 * @var array<string, \Cake\Database\Schema\TableSchemaInterface>
+	 */
+	protected static array $schemaCache = [];
 
 
 	/**
@@ -265,7 +274,7 @@ class Entity extends BaseEntity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getLabel(): string {
-		$scope = Inflector::camelize($this->getSource()) ?: 'System';
+		$scope = $this->getSource() ?: 'System';
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$title = $this->title ?? $this->name;
@@ -287,5 +296,26 @@ class Entity extends BaseEntity {
 
 
 		return $inactive . $title;
+	}
+
+
+	/**
+	 * @param string $field The field name
+	 * @return string|null The column type
+	 */
+	public function getColumnType(string $field): ?string {
+		$source = $this->getSource();
+
+		// Use cached schema if available
+		if (!isset(static::$schemaCache[ $source ])) {
+			$table = FactoryLocator::get('Table')->get($source);
+			static::$schemaCache[ $source ] = $table->getSchema();
+		}
+
+
+		$schema = static::$schemaCache[ $source ];
+		$column = $schema->getColumn($field);
+
+		return $column['type'] ?? null;
 	}
 }
