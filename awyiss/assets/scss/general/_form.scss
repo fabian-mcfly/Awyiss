@@ -545,7 +545,8 @@ textarea {
 		}
 	}
 
-	&Type-Datetime {
+	&Type-Datetime,
+	&Type-DatetimeLocal {
 		input {
 			border-top-right-radius:0;
 		}
