@@ -40,8 +40,8 @@
 					{{ FormHelper.label(
 						'filter[' ~ scope ~ '][' ~ column ~ '][value]',
 						settings.title ?? (column in ['metaTitle', 'metaDescription', 'robotsIndex', 'robotsFollow'] ?
-							__d('Seo', column) :
-							(i18nDomain == 'GenericPages' ? __df(scope, 'GenericPages', column) : __d(i18nDomain ?? scope, column))
+							__d('Seo', column|underscore) :
+							(i18nDomain == 'GenericPages' ? __df(scope, 'GenericPages', column|underscore) : __d(i18nDomain ?? scope, column|underscore))
 						),
 					) }}
 
