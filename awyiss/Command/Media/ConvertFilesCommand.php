@@ -880,8 +880,11 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Creating preview for file `%s`', $file->path));
 
 		if (
-			!$this->cliMagickExists ||
-			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+			!in_array($file->mimeType, ['video/mp4', 'video/x-msvideo']) &&
+			(
+				!$this->cliMagickExists ||
+				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+			)
 		) {
 			return $this->convertNonImageIntervention($file, $io, $includeAvif, $includeWebp);
 		}
