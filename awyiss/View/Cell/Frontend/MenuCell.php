@@ -269,7 +269,7 @@ class MenuCell extends Cell {
 		DebugTimer::start('MenuCell::renderItem', sprintf('MenuCell::renderItem: Rendering menu item "%s" at level %d', $data['title'], $data['level']));
 
 		$data['id'] = $data['item']->identifier;
-		$data['identifier'] = Inflector::ucparts(Inflector::underscore(Text::slug($data['title'])), FALSE);
+		$data['identifier'] = Inflector::ucparts(Inflector::underscore(Text::slug($data['title'])), false);
 
 		if (!empty($data['children'])) {
 			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
