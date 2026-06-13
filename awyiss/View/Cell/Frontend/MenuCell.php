@@ -129,7 +129,7 @@ class MenuCell extends Cell {
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$menu = new $menuClass($menuEntries->toArray(), [
 			'active' => $active,
-			'identifier' => $menuRecord->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
+			'identifier' => $menuRecord->identifier ? Inflector::ucparts(Inflector::underscore($menuRecord->identifier), false) : null,
 			'menuClass' => $menuClass,
 			'menuItemClass' => $menuItemClass,
 		]);
@@ -140,7 +140,7 @@ class MenuCell extends Cell {
 		$renderer = new $menuRendererClass($menu, $this->rendererOptions);
 
 		$renderer->setCurrentRoute($options['currentRoute']);
-		$renderer->setConfig('identifier', Inflector::ucparts($identifier, false));
+		$renderer->setConfig('identifier', Inflector::ucparts(Inflector::underscore($identifier), false));
 
 		$this->set([
 			'identifier' => $identifier,
@@ -269,7 +269,7 @@ class MenuCell extends Cell {
 		DebugTimer::start('MenuCell::renderItem', sprintf('MenuCell::renderItem: Rendering menu item "%s" at level %d', $data['title'], $data['level']));
 
 		$data['id'] = $data['item']->identifier;
-		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
+		$data['identifier'] = Inflector::ucparts(Inflector::underscore(Text::slug($data['title'])), FALSE);
 
 		if (!empty($data['children'])) {
 			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
@@ -312,7 +312,7 @@ class MenuCell extends Cell {
 			}
 		}
 
-		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
+		$data['identifier'] = Inflector::ucparts(Inflector::underscore(Text::slug($data['title'])), false);
 
 		$content = $template->format($templateName, $data);
 
