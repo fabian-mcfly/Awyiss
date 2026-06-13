@@ -104,7 +104,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			$this->table()->hasMany('MediaElementAssignments', [
 				'bindingKey' => 'identifier',
 				'cascadeCallbacks' => true,
-				'dependent' => true,
+				'dependent' => false,
 				'foreignKey' => 'scope',
 				'propertyName' => 'mediaElementAssignments',
 				'saveStrategy' => 'replace',
@@ -133,7 +133,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 					'MediaElementAssignments.scope' => $this->getScope($this->table()),
 				],
 				'cascadeCallbacks' => true,
-				'dependent' => true,
+				'dependent' => false,
 				'foreignKey' => 'foreignKey',
 				'propertyName' => 'mediaElementAssignments',
 				'saveStrategy' => 'replace',

@@ -127,7 +127,7 @@ class ContentTemplatesTableTest extends TestCase {
 		$mediaElementAssignmentsAssociation = $this->contentTemplatesTable->getAssociation('MediaElementAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaElementAssignmentsAssociation);
 		$this->assertTrue($mediaElementAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($mediaElementAssignmentsAssociation->getDependent());
+		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
 
 		// Test user tracking associations
 		$this->assertTrue($this->contentTemplatesTable->hasAssociation('CreatedByUser'));

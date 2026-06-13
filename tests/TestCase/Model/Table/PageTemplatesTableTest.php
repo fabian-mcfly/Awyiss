@@ -155,7 +155,7 @@ class PageTemplatesTableTest extends TestCase {
 		$mediaElementAssignmentsAssociation = $this->pageTemplatesTable->getAssociation('MediaElementAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaElementAssignmentsAssociation);
 		$this->assertTrue($mediaElementAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($mediaElementAssignmentsAssociation->getDependent());
+		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
 
 		// 'PageTemplates_title_translation' must also exist
 		$this->assertTrue($this->pageTemplatesTable->hasAssociation('PageTemplates_title_translation'));

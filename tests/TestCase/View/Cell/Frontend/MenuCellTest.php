@@ -542,7 +542,7 @@ class MenuCellTest extends TestCase {
 			'level' => 1,
 			'title' => 'Test Content & ÖÄÜß <> & More',
 			'url' => '/test',
-			'identifier' => 'TestContentOeaeuessMore',
+			'identifier' => 'TestContentOEAEUessMore',
 			'tabindex' => '',
 		])->willReturn('Test Content & More');
 
