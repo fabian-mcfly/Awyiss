@@ -67,8 +67,8 @@ window.lightbox = new Lightbox({
 console.log(
 	'%cpowered by%cAW%cYISS%cVersion %s "%s"',
 	'padding-right:20px; color:#202C39; line-height:50px;',
-	'padding-left:20px; border-radius:5px 0 0 5px; background-color:#131a21; color:#FFFFFF; font-family:\'2f media\', Bebas Neue, Arial Display, Tahoma, Helvetica, sans-serif; font-size:30px; line-height:50px; text-transform:uppercase;',
-	'padding-right:20px; border-radius:0 5px 5px 0; background-color:#131a21; color:#63d1a5; font-family:\'2f media\', Bebas Neue, Arial Display, Tahoma, Helvetica, sans-serif; font-size:30px; line-height:50px; text-transform:uppercase;',
+	'padding-left:20px; border-radius:5px 0 0 5px; background-color:#131a21; color:#FFFFFF; font-family:\'2f media\', Bebas Neue, Impact, Arial Display, Tahoma, Helvetica, sans-serif; font-size:30px; line-height:50px; text-transform:uppercase;',
+	'padding-right:20px; border-radius:0 5px 5px 0; background-color:#131a21; color:#63d1a5; font-family:\'2f media\', Bebas Neue, Impact, Arial Display, Tahoma, Helvetica, sans-serif; font-size:30px; line-height:50px; text-transform:uppercase;',
 	'padding-left:20px; color:#202C39; line-height:50px;',
 	Awyiss.VERSION,
 	Awyiss.VERSION_NAME,
