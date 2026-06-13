@@ -51,7 +51,7 @@ trait AdminTrait {
 
 		$usergroupsTable->patchEntity($usergroup, $data, ['associated' => $associated]);
 
-		if ($usergroupsTable->save($usergroup)) {
+		if ($usergroupsTable->save($usergroup, ['audit' => ['skip' => true]])) {
 			$this->io->success('Admin usergroup created successfully.');
 		}
 		else {
@@ -110,7 +110,7 @@ trait AdminTrait {
 
 		$usersTable->patchEntity($user, $data, ['associated' => $associated, 'validate' => false]);
 
-		if ($usersTable->save($user)) {
+		if ($usersTable->save($user, ['audit' => ['skip' => true]])) {
 			$this->io->success('Admin user created successfully.', $this->adminPassword ? 1 : 0);
 			if (!$this->adminPassword) {
 				$this->io->info(' The password for the admin user is: ' . $password);

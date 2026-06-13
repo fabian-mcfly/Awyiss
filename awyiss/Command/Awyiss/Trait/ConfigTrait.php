@@ -11,6 +11,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
+use Cake\Utility\Security;
 
 
 /**
@@ -83,10 +84,13 @@ trait ConfigTrait {
 			return;
 		}
 
+		$securitySalt = bin2hex(random_bytes(32));
+		Security::setSalt($securitySalt);
+
 		if (!file_exists($envExampleFilePath)) {
 			$envContents = 'export CONFIG_ENV=\'' . $this->installEnvironment . '\'' . PHP_EOL;
 			$envContents .= 'export CUSTOM_DIR=\'' . $this->customerName . '\'' . PHP_EOL;
-			$envContents .= 'export SECURITY_SALT=\'' . bin2hex(random_bytes(32)) . '\'' . PHP_EOL;
+			$envContents .= 'export SECURITY_SALT=\'' . $securitySalt . '\'' . PHP_EOL;
 			$envContents .= 'export SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'' . PHP_EOL;
 		}
 		else {
@@ -97,7 +101,7 @@ trait ConfigTrait {
 			// Replace the placeholders with the user inputs
 			$envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $envExampleContents);
 			$envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $envContents);
-			$envContents = str_replace('SECURITY_SALT=\'random_salt\'', 'SECURITY_SALT=\'' . bin2hex(random_bytes(32)) . '\'', $envContents);
+			$envContents = str_replace('SECURITY_SALT=\'random_salt\'', 'SECURITY_SALT=\'' . $securitySalt . '\'', $envContents);
 			$envContents = str_replace('SESSION_COOKIE_NAME=\'awyiss_session\'', 'SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'', $envContents);
 		}
 

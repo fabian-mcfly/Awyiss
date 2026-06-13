@@ -429,7 +429,7 @@ return [
 
 
 	'Security' => [
-		'prehashPassword' => false,
+		'prehashPassword' => true,
 		'salt' => env('SECURITY_SALT', 'dummy-salt'),
 	],
 
