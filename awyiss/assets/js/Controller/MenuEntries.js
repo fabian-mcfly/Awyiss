@@ -182,7 +182,7 @@ export default class MenuEntriesController {
 
 			return {
 				order: order,
-				new_entries: newEntries,
+				newEntries: newEntries,
 			};
 		}
 
