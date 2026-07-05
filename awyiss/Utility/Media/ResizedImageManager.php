@@ -501,6 +501,10 @@ class ResizedImageManager {
 			elseif ($height && !$width) {
 				$width = round($height * $aspectRatio);
 			}
+			else {
+				// If width and height is set while aspect ratio is set, use the height as min-height.
+				$height = max($height, $width * $aspectRatio);
+			}
 		}
 
 		return [
