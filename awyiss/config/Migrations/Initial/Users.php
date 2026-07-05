@@ -48,15 +48,15 @@ class Users {
 			'null' => true,
 		])->addColumn('firstname', 'string', [
 			'default' => null,
-			'limit' => 50,
+			'limit' => 255,
 			'null' => true,
 		])->addColumn('lastname', 'string', [
 			'default' => null,
-			'limit' => 50,
+			'limit' => 255,
 			'null' => true,
 		])->addColumn('email', 'string', [
 			'default' => null,
-			'limit' => 50,
+			'limit' => 255,
 			'null' => true,
 		])->addColumn('last_login', 'datetime', [
 			'default' => null,
