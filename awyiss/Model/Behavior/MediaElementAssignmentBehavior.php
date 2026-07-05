@@ -215,13 +215,22 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 						$mediaElementAssignment = array_filter($entity->mediaElementAssignments ?? [], fn(MediaElementAssignment $entity) => $entity->id === (int)$data['id'])[0] ?? null;
 					}
 
-					if (!$mediaElementAssignment) {
-						$mediaElementAssignment = $this->assignmentsTable->newEmptyEntity();
-					}
+					// If no existing entity was found, create a new one
+					$mediaElementAssignment ??= $this->assignmentsTable->newEmptyEntity();
 
 					$data['scope'] = $this->getConfig('referenceName');
 
-					$marshaller->merge($mediaElementAssignment, $data, $options);
+					$marshaller->merge(
+						$mediaElementAssignment,
+						$data,
+						[
+							'fields' => [
+								'id',
+								'mediaElementId',
+								'scope',
+							],
+						] + $options
+					);
 
 					$dataErrors = $mediaElementAssignment->getErrors();
 					if ($dataErrors) {

@@ -279,7 +279,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(2, $entity->mediaElementAssignments[1]->mediaElementId);
 		$this->assertSame('ContentTemplates', $entity->mediaElementAssignments[1]->scope);
 		$this->assertTrue($entity->mediaElementAssignments[1]->isNew());
-		$this->assertNull($entity->mediaElementAssignments[1]->id);
+		$this->assertSame(4, $entity->mediaElementAssignments[1]->id);
 	}
 
 
