@@ -6,9 +6,7 @@ namespace Awyiss\View\Cell\Frontend;
 
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\GlobalContent;
-use Awyiss\Routing\Router;
 use Awyiss\Utility\DebugTimer;
-use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -44,7 +42,6 @@ class GlobalContentsCell extends Cell {
 		$this->View = $view;
 
 		$options = $this->initCellOptions($options);
-		$identifier = Inflector::variable($identifier);
 		$options['viewVars']['identifier'] = $identifier;
 
 		$globalContents = $this->getThreadedGlobalContents($identifier, $this->isPreview());
@@ -57,10 +54,10 @@ class GlobalContentsCell extends Cell {
 
 		$renderedGlobalContents = $this->buildContents($globalContents->toArray());
 
-		$currentRoute = Router::url($this->request->getRequestTarget());
+		$currentRoute = $this->request->getRequestTarget();
 		if ($renderedGlobalContents && $currentRoute !== '/' && str_contains($renderedGlobalContents, 'href="#')) {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$renderedGlobalContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($currentRoute, '/') . '$1"', $renderedGlobalContents);
+			$renderedGlobalContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . trim($currentRoute, '/') . '/$1"', $renderedGlobalContents);
 		}
 
 		// Set the view variables
