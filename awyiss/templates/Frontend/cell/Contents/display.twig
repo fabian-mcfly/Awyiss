@@ -1,5 +1,7 @@
 {#
 @var _view \Awyiss\View\FrontendView
+@var threadedContents \Cake\Collection\CollectionInterface
+@var renderedContents string
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var FormHelper \Awyiss\View\Helper\FormHelper
 @var HtmlHelper \Cake\View\Helper\HtmlHelper
@@ -8,10 +10,10 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
-{% if contents and includeWrapper %}
+{% if renderedContents and includeWrapper %}
 	<div id="{{ identifier }}">
-		{{ contents|raw }}
+		{{ renderedContents|raw }}
 	</div>
 {% else %}
-	{{ contents|raw }}
+	{{ renderedContents|raw }}
 {% endif %}

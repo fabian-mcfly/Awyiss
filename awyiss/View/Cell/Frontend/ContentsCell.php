@@ -7,15 +7,17 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
-use Awyiss\Routing\Router;
 use Awyiss\Utility\DebugTimer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
-use Awyiss\View\FrontendView;
+use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
+use Cake\Event\EventManagerInterface;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\Cell;
 
@@ -33,19 +35,42 @@ class ContentsCell extends Cell {
 
 
 	/**
-	 * @param string $contentArea
-	 * @param \Awyiss\Model\Entity\Page $page
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param array $options
-	 * @return void
-	 * @throws \ReflectionException
+	 * @var array The options passed to the cell constructor
 	 */
-	public function display(string $contentArea, Page $page, FrontendView $view, array $options = []): void {
-		DebugTimer::start('ContentsCell::display', sprintf('ContentsCell::display: Rendering content area "%s" on page %d', $contentArea, $page->id));
+	protected array $options = [];
+	/**
+	 * @var \Cake\Collection\CollectionInterface
+	 */
+	protected CollectionInterface $threadedContents;
 
-		$this->View = $view;
 
-		$options = $this->initCellOptions($options);
+	/**
+	 * @inheritDoc
+	 */
+	public function __construct(
+		ServerRequest $request,
+		Response $response,
+		?EventManagerInterface $eventManager = null,
+		array $cellOptions = []
+	) {
+		$this->options = $cellOptions['args'] ?? [];
+
+		parent::__construct($request, $response, $eventManager, $cellOptions);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		DebugTimer::start('ContentsCell::initialize', 'ContentsCell::initialize: Initializing ContentsCell');
+
+		$contentArea = $this->args['contentArea'] ?? null;
+		$page = $this->args['page'] ?? null;
+		$this->options['options'] ??= [];
+		$this->View = $this->args['view'];
+		$options = $this->initCellOptions($this->options['options']);
+		unset($this->args['view']);
 
 		if ($options['pageId'] ?? null) {
 			/**
@@ -54,29 +79,49 @@ class ContentsCell extends Cell {
 			$page = $this->fetchTable('Pages')->find($this->isPreview() ? 'all' : 'active')->where(['id' => $options['pageId']])->firstOrFail();
 		}
 
-		$contents = $this->getThreadedContents($page, $contentArea, $this->isPreview());
+		$this->threadedContents = $page && $contentArea ? $this->fetchThreadedContents($page, $contentArea, $this->isPreview()) : new Collection([]);
 
-		$this->cacheAssignedMediaItems($contents, 'contents');
+		$this->cacheAssignedMediaItems($this->threadedContents, 'contents');
 
-		$this->addDuplicates($contents, $this->isPreview());
+		$this->addDuplicates($this->threadedContents, $this->isPreview());
 
-		$this->prepareEntities($contents, (float)$options['columnWidth']);
+		$this->prepareEntities($this->threadedContents, (float)$options['columnWidth']);
 
-		$this->addDynamicCss($contents);
+		$this->addDynamicCss($this->threadedContents);
 
 		$this->setViewVars($options);
 
+		$this->args['page'] = $page;
+		$this->args['contents'] = $this->threadedContents;
+		$this->args['options'] = $options;
+
+		DebugTimer::stop('ContentsCell::initialize');
+	}
+
+
+	/**
+	 * @param string $contentArea
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Cake\Collection\CollectionInterface $contents
+	 * @param array $options
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	public function display(string $contentArea, Page $page, CollectionInterface $contents, array $options = []): void {
+		DebugTimer::start('ContentsCell::display', sprintf('ContentsCell::display: Rendering content area "%s" on page %d', $contentArea, $page->id));
+
 		$renderedContents = $this->buildContents($contents->toArray(), false, $options['autoSection'] ?? true);
 
-		$currentRoute = Router::url($this->request->getRequestTarget());
+		$currentRoute = $this->request->getRequestTarget();
 		if ($renderedContents && $currentRoute !== '/') {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$renderedContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($currentRoute, '/') . '$1"', $renderedContents);
+			$renderedContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . trim($currentRoute, '/') . '/$1"', $renderedContents);
 		}
 
 		// Set the view variables
 		$this->set([
-			'contents' => $renderedContents,
+			'threadedContents' => $contents,
+			'renderedContents' => $renderedContents,
 			'fullWidth' => $options['fullWidth'],
 			'identifier' => $contentArea,
 			'includeWrapper' => $options['includeWrapper'],
@@ -89,6 +134,14 @@ class ContentsCell extends Cell {
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Contents');
 
 		DebugTimer::stop('ContentsCell::display');
+	}
+
+
+	/**
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	public function getThreadedContents(): CollectionInterface {
+		return $this->threadedContents;
 	}
 
 
@@ -266,7 +319,7 @@ class ContentsCell extends Cell {
 	 * @param bool $isPreview
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function getThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
+	protected function fetchThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
 		DebugTimer::start('ContentsCell::getThreadedContents', sprintf('ContentsCell::getThreadedContents: Fetching threaded contents for content area "%s" on page %d', $contentArea, $page->id));
 		/** @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible() */
 		$query = $this->getContentsQuery($isPreview)->find('accessible');

@@ -81,7 +81,9 @@ class ContentsCellTest extends TestCase {
 		$this->view = new FrontendView($this->request);
 		$this->cell = new ContentsCell($this->request, $this->response, null, [
 			'action' => 'display',
-			'args' => [],
+			'args' => [
+				'view' => $this->view,
+			],
 		]);
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->view->helpers()->get('Asset')->clearAssets();
@@ -134,7 +136,14 @@ class ContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testFindFullWidthIfNotSet(): void {
-		$this->cell = $this->getMockBuilder(ContentsCell::class)->disableOriginalConstructor()->onlyMethods(['findFullWidth'])->getMock();
+		$this->cell = $this->getMockBuilder(ContentsCell::class)
+			->setConstructorArgs([$this->request, $this->response, null, [
+				'action' => 'display',
+				'args' => [
+					'view' => $this->view,
+				],
+			]])
+			->onlyMethods(['findFullWidth'])->getMock();
 
 		$this->cell->expects($this->once())->method('findFullWidth')->willReturn(123.00);
 
@@ -156,7 +165,19 @@ class ContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testNotFindFullWidthIfSet(): void {
-		$this->cell = $this->getMockBuilder(ContentsCell::class)->disableOriginalConstructor()->onlyMethods(['findFullWidth'])->getMock();
+		$this->cell = $this
+			->getMockBuilder(ContentsCell::class)->setConstructorArgs([
+				$this->request,
+				$this->response,
+				null,
+				[
+					'action' => 'display',
+					'args' => [
+						'view' => $this->view,
+					],
+				],
+			])
+			->onlyMethods(['findFullWidth'])->getMock();
 
 		$this->cell->expects($this->never())->method('findFullWidth');
 
@@ -180,7 +201,19 @@ class ContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testFindSingleColumnBreakpointIfNotSet(): void {
-		$this->cell = $this->getMockBuilder(ContentsCell::class)->disableOriginalConstructor()->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
+		$this->cell = $this
+			->getMockBuilder(ContentsCell::class)->setConstructorArgs([
+				$this->request,
+				$this->response,
+				null,
+				[
+					'action' => 'display',
+					'args' => [
+						'view' => $this->view,
+					],
+				],
+			])
+			->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
 
 		$this->cell->expects($this->once())->method('findSingleColumnBreakpoint')->willReturn(1234.00);
 
@@ -202,7 +235,19 @@ class ContentsCellTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testNotFindSingleColumnBreakpointIfSet(): void {
-		$this->cell = $this->getMockBuilder(ContentsCell::class)->disableOriginalConstructor()->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
+		$this->cell = $this
+			->getMockBuilder(ContentsCell::class)->setConstructorArgs([
+				$this->request,
+				$this->response,
+				null,
+				[
+					'action' => 'display',
+					'args' => [
+						'view' => $this->view,
+					],
+				],
+			])
+			->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
 
 		$this->cell->expects($this->never())->method('findSingleColumnBreakpoint');
 
@@ -238,13 +283,13 @@ class ContentsCellTest extends TestCase {
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContents(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
+	public function testFetchThreadedContents(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->assertInstanceOf(CollectionInterface::class, $contents);
 		$this->assertCount($expectedFirstLevelCount, $contents);
@@ -289,13 +334,13 @@ class ContentsCellTest extends TestCase {
 	 * @dataProvider dataThreadedContentsForUnknownContentAreaDataProvider
 	 * @param int $pageId
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsForUnknownContentArea(int $pageId): void {
+	public function testFetchThreadedContentsForUnknownContentArea(int $pageId): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'UnknownArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'UnknownArea');
 
 		$this->assertInstanceOf(CollectionInterface::class, $contents);
 		$this->assertCount(0, $contents);
@@ -320,13 +365,13 @@ class ContentsCellTest extends TestCase {
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsContainsInactiveElementsWhenPreviewIsEnabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
+	public function testFetchThreadedContentsContainsInactiveElementsWhenPreviewIsEnabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->assertInstanceOf(CollectionInterface::class, $contents);
 		$this->assertCount($expectedFirstLevelCount, $contents);
@@ -358,13 +403,13 @@ class ContentsCellTest extends TestCase {
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsNotContainsInactiveElementsWhenPreviewIsDisabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
+	public function testFetchThreadedContentsNotContainsInactiveElementsWhenPreviewIsDisabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', false);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', false);
 
 		$this->assertInstanceOf(CollectionInterface::class, $contents);
 		$this->assertCount($expectedFirstLevelCount, $contents);
@@ -392,14 +437,14 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsContainsUnpublishedElementsWhenPreviewIsEnabled(): void {
+	public function testFetchThreadedContentsContainsUnpublishedElementsWhenPreviewIsEnabled(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(7);
 
 		/** @var \Cake\Collection\CollectionInterface $contents */
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$contents = $contents->listNested()->compile(false);
 
@@ -409,14 +454,14 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsNotContainsUnpublishedElementsWhenPreviewIsDisabled(): void {
+	public function testFetchThreadedContentsNotContainsUnpublishedElementsWhenPreviewIsDisabled(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(7);
 
 		/** @var \Cake\Collection\CollectionInterface $contents */
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', false);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', false);
 
 		$contents = $contents->listNested()->compile(false);
 
@@ -426,14 +471,14 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::getThreadedContents()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
-	public function testGetThreadedContentsLoadsContentsOfDuplicatedPage(): void {
+	public function testFetchThreadedContentsLoadsContentsOfDuplicatedPage(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(15);
 
 		/** @var \Cake\Collection\CollectionInterface $contents */
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', false);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', false);
 		$contents = $contents->listNested()->compile(false);
 
 		$this->assertCount(21, $contents);
@@ -450,7 +495,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$files = $this->callProtectedMethod($this->cell, 'cacheAssignedMediaItems', $contents, 'contents');
 		$this->assertCount(2, $files);
@@ -475,7 +520,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$files = $this->callProtectedMethod($this->cell, 'cacheAssignedMediaItems', $contents, 'contents');
 		$this->assertCount(3, $files);
@@ -627,7 +672,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetsLevel(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -659,7 +704,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetsParentContents(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -693,7 +738,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetCssClasses(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -733,7 +778,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetCssClassesForInactiveElements(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents, 100.0, true);
 
@@ -776,7 +821,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetsRealColumnWidth(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(3);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -803,7 +848,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetsRealColumnWidthWithDifferentBaseWidth(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(3);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents, 75);
 
@@ -830,7 +875,7 @@ class ContentsCellTest extends TestCase {
 	public function testPrepareEntitiesSetsTemplate(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(3);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -889,7 +934,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(3);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -916,7 +961,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(3);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -943,7 +988,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(20);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $contents->toArray());
@@ -967,7 +1012,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(20);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea', true);
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
 		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $contents->toArray());
@@ -987,10 +1032,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(20);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 			],
@@ -1015,10 +1060,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(20);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 				'columnWidth' => 50,
@@ -1134,7 +1179,7 @@ class ContentsCellTest extends TestCase {
 
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -1156,7 +1201,7 @@ class ContentsCellTest extends TestCase {
 		/** @var \Cake\Collection\Collection $contents */
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -1177,7 +1222,7 @@ class ContentsCellTest extends TestCase {
 		/** @var \Cake\Collection\Collection $contents */
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
@@ -1208,7 +1253,7 @@ class ContentsCellTest extends TestCase {
 		/** @var \Cake\Collection\Collection $contents */
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
-		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea');
+		$contents = $this->callProtectedMethod($this->cell, 'fetchThreadedContents', $page, 'ContentArea');
 		$contents = $contents->listNested()->compile(false);
 
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
@@ -1244,10 +1289,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'includeWrapper' => true,
 				'singleColumnBreakpoint' => 768.00,
@@ -1268,10 +1313,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'includeWrapper' => false,
 				'singleColumnBreakpoint' => 768.00,
@@ -1290,10 +1335,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 				'columnWidth' => 60,
@@ -1315,10 +1360,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(29);
 
 		$output = (string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 			],
@@ -1338,10 +1383,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(29);
 
 		(string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 			],
@@ -1354,10 +1399,10 @@ class ContentsCellTest extends TestCase {
 		$page = $this->getTableLocator()->get('Pages')->get(50);
 
 		(string)$this->cell('Frontend/Contents', [
-			'ContentArea',
-			$page,
-			$this->view,
-			[
+			'contentArea' => 'ContentArea',
+			'page' => $page,
+			'view' => $this->view,
+			'options' => [
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
 			],
