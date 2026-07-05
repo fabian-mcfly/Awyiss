@@ -430,18 +430,23 @@ class MediaHelper extends Helper {
 
 		$sources = $subtitles = '';
 
+		$srcAttribute = 'src';
+		if ($mediaRenderOptions->getLazyload()) {
+			$srcAttribute = 'data-src';
+		}
+
 		/** @var \Awyiss\Model\Entity\Media $alternative */
 		foreach (($media->findAlternatives() ?? []) as $alternative) {
 			// If the mimetype of the alternative is a video, set the source
 			if ($alternative->isVideo()) {
-				$sources .= PHP_EOL . '<source src="' . $alternative->path . '" type="' . $alternative->mimeType . '">';
+				$sources .= PHP_EOL . '<source ' . $srcAttribute . '="' . $alternative->path . '" type="' . $alternative->mimeType . '">';
 				continue;
 			}
 
 			$subtitles = $this->getSubtitles($alternative, $subtitles);
 		}
 
-		return '<video' . $attributesString . '><source src="' . $path . '" type="' . $media->mimeType . '">' . $sources . $subtitles . '</video>';
+		return '<video' . $attributesString . '><source ' . $srcAttribute . '="' . $path . '" type="' . $media->mimeType . '">' . $sources . $subtitles . '</video>';
 	}
 
 

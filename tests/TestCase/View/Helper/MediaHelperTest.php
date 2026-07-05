@@ -711,15 +711,17 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<video', $result);
-		/** @noinspection HtmlUnknownTarget */
-		$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
 
 		if ($lazyload) {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source data-src="/path/to/video.mp4" type="video/mp4">', $result);
 			$this->assertStringContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('data-poster="/path/to/_mp4_preview/video.jpg"', $result);
 			$this->assertStringNotContainsString(' poster="', $result);
 		}
 		else {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
 			$this->assertStringNotContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('poster="/path/to/_mp4_preview/video.jpg"', $result);
 			$this->assertStringNotContainsString('data-poster=', $result);
@@ -1723,15 +1725,17 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<video', $result);
-		/** @noinspection HtmlUnknownTarget */
-		$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
 
 		if ($lazyload) {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source data-src="/path/to/video.mp4" type="video/mp4">', $result);
 			$this->assertStringContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('data-poster="/path/to/_mp4_preview/video.jpg"', $result);
 			$this->assertStringNotContainsString(' poster="', $result);
 		}
 		else {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
 			$this->assertStringNotContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('poster="/path/to/_mp4_preview/video.jpg"', $result);
 			$this->assertStringNotContainsString('data-poster=', $result);
@@ -1757,17 +1761,22 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
 
-		/** @noinspection HtmlUnknownTarget */
-		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.mp4" type="video/mp4">', $result);
-		/** @noinspection HtmlUnknownTarget */
-		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.webm" type="video/webm">', $result);
-
 		if ($lazyload) {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source data-src="../awyiss/Command/Media/TestFiles/multimedia-test.mp4" type="video/mp4">', $result);
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source data-src="../awyiss/Command/Media/TestFiles/multimedia-test.webm" type="video/webm">', $result);
+
 			$this->assertStringContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('data-poster="../awyiss/Command/Media/TestFiles/_mp4_preview/multimedia-test.jpg"', $result);
 			$this->assertStringNotContainsString(' poster="', $result);
 		}
 		else {
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.mp4" type="video/mp4">', $result);
+			/** @noinspection HtmlUnknownTarget */
+			$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.webm" type="video/webm">', $result);
+
 			$this->assertStringNotContainsString('class="Lazyload"', $result);
 			$this->assertStringContainsString('poster="../awyiss/Command/Media/TestFiles/_mp4_preview/multimedia-test.jpg"', $result);
 			$this->assertStringNotContainsString('data-poster=', $result);
