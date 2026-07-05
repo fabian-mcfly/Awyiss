@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
+use Awyiss\View\Cell\Frontend\ContentsCell;
 use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -99,6 +100,41 @@ class AwyissExtension extends AbstractExtension {
 							'view' => $context['_view'],
 							'options' => $options,
 						])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
+			new TwigFunction(
+				'contentsCell',
+				function (array $context, string $name, array $options = []): ContentsCell {
+					if (empty($context['page']) || !$context['page'] instanceof Page) {
+						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
+					}
+
+					$options = Hash::merge(['viewVars' => $context], $options);
+
+					return $context['_view']->cell('Frontend/Contents', [
+						'contentArea' => $name,
+						'page' => $context['page'],
+						'view' => $context['_view'],
+						'options' => $options,
+					]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
+
+			new TwigFunction(
+				'renderContentsCell',
+				function (array $context, ContentsCell $contentsCell): ?string {
+					try {
+						return $contentsCell->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
