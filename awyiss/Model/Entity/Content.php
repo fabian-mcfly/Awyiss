@@ -32,7 +32,7 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $cssClass
  * @property string|null $css
  * @property int|null $duplicateOf
- * @property string|null $data
+ * @property array|null $data
  * @property int|null $formId
  * @property int|null $surveyId
  * @property int $systemOrder

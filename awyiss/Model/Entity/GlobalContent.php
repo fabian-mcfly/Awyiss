@@ -30,7 +30,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $columnRtl
  * @property string|null $cssClass
  * @property string|null $css
- * @property string|null $data
+ * @property array|null $data
  * @property int|null $formId
  * @property int|null $surveyId
  * @property int $systemOrder
