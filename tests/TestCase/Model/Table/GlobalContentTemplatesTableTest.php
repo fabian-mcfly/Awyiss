@@ -133,7 +133,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$mediaElementAssignmentsAssociation = $this->globalContentTemplatesTable->getAssociation('MediaElementAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaElementAssignmentsAssociation);
 		$this->assertTrue($mediaElementAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
+		$this->assertTrue($mediaElementAssignmentsAssociation->getDependent());
 
 		// 'GlobalContentTemplates_title_translation' must also exist
 		$this->assertTrue($this->globalContentTemplatesTable->hasAssociation('GlobalContentTemplates_title_translation'));

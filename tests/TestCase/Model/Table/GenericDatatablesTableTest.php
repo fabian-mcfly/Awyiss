@@ -136,7 +136,7 @@ class GenericDatatablesTableTest extends TestCase {
 		$mediaElementAssignmentsAssociation = $this->carsTable->getAssociation('MediaElementAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaElementAssignmentsAssociation);
 		$this->assertTrue($mediaElementAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
+		$this->assertTrue($mediaElementAssignmentsAssociation->getDependent());
 
 		// 'ParentCars' must also exist (from parent table implementation)
 		$this->assertTrue($this->carsTable->hasAssociation('ParentCars'));

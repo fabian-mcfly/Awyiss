@@ -75,7 +75,7 @@ class DatatablesTableTest extends TestCase {
 		$mediaElementAssignmentsAssociation = $this->datatablesTable->getAssociation('MediaElementAssignments');
 		$this->assertInstanceOf(HasMany::class, $mediaElementAssignmentsAssociation);
 		$this->assertTrue($mediaElementAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertFalse($mediaElementAssignmentsAssociation->getDependent());
+		$this->assertTrue($mediaElementAssignmentsAssociation->getDependent());
 
 		// Test user tracking associations
 		$this->assertTrue($this->datatablesTable->hasAssociation('CreatedByUser'));

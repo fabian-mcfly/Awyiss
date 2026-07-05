@@ -167,7 +167,7 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 		$this->assertSame('id', $association->getBindingKey());
 		$this->assertSame('foreignKey', $association->getForeignKey());
 		$this->assertTrue($association->getCascadeCallbacks());
-		$this->assertFalse($association->getDependent());
+		$this->assertTrue($association->getDependent());
 		$this->assertSame('replace', $association->getSaveStrategy());
 	}
 
