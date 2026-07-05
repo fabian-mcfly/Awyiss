@@ -50,7 +50,7 @@ class Editor {
 	 * 		selector: string,
 	 * 		uri: string,
 	 * 	},
-	 * 	global_contents: {
+	 * 	globalContents: {
 	 * 		enabled: boolean,
 	 * 		overlayForm: boolean,
 	 * 		selector: string,
@@ -77,7 +77,7 @@ class Editor {
 			selector: 'ul.Level1[class*="Menu-"]',
 			uri: 'menu-entries/overview/menu-identifier:'
 		},
-		global_contents: {
+		globalContents: {
 			enabled: false,
 			overlayForm: true,
 			selector: '.GlobalContentElement[id^="GlobalContent"]',
