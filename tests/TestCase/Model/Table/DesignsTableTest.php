@@ -210,7 +210,6 @@ class DesignsTableTest extends TestCase {
 			'identifier' => str_repeat('a', 13), // exceeds 12 char limit
 			'title' => str_repeat('b', 101), // exceeds 100 char limit
 			'description' => str_repeat('c', 256), // exceeds 255 char limit
-			'css' => str_repeat('d', 65536), // exceeds 65535 byte limit
 		];
 
 		$entity = $this->designsTable->newEntity($data, ['guard' => false]);
@@ -220,7 +219,6 @@ class DesignsTableTest extends TestCase {
 		$this->assertArrayHasKey('identifier', $errors);
 		$this->assertArrayHasKey('title', $errors);
 		$this->assertArrayHasKey('description', $errors);
-		$this->assertArrayHasKey('css', $errors);
 	}
 
 

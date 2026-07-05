@@ -81,7 +81,7 @@ class DesignsTable extends Table {
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
-					return strlen(json_encode($value)) <= 65535;
+					return strlen(json_encode($value)) <= 65_535;
 				},
 			],
 		]);
@@ -89,7 +89,7 @@ class DesignsTable extends Table {
 		$validator->add('css', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 16_777_215]],
 		]);
 
 		$validator->add('inUse', [
