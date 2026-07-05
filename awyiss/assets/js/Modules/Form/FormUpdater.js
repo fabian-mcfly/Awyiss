@@ -143,13 +143,13 @@ export default class FormUpdater {
 		) {
 			this.timeoutId = setTimeout(() => {
 				// noinspection JSIgnoredPromiseFromCall
-				this.sendRequest(form);
+				this.sendRequest(form, event.target.name);
 			}, 1000);
 		}
 		else {
 			// For other input types, send the request immediately
 			// noinspection JSIgnoredPromiseFromCall
-			this.sendRequest(form);
+			this.sendRequest(form, event.target.name);
 		}
 	}
 
@@ -287,16 +287,17 @@ export default class FormUpdater {
 	 * Sends a request with the form data, then replaces the form with the new form from the server response.
 	 * Re-attaches event listeners to the new form and re-enables the form inputs.
 	 * @param {HTMLFormElement} form - The form to send the request from.
+	 * @param {string} initiator - The name of the input that initiated the request.
 	 * @return {Promise<void>} A Promise that resolves to true if the request was sent, false if the form is locked.
 	 */
-	sendRequest(form) {
+	sendRequest(form, initiator) {
 		if (form.dataset.locked === 'true') {
 			return Promise.resolve(void(0)); // Always return a Promise
 		}
 
 		const formData = new FormData(form);
-		// append "reloadForm" key with value "1"
-		formData.append('reloadForm', '1');
+		// append "reloadForm" key with value of initiator or '1' if initiator is undefined
+		formData.append('reloadForm', initiator || '1');
 
 		form.dispatchEvent(new CustomEvent('beforeUpdate', {
 			bubbles: false,

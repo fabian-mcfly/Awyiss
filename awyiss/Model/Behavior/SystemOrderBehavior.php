@@ -711,14 +711,19 @@ class SystemOrderBehavior extends Behavior {
 	 * Dirty requires the column to be an original as well.
 	 *
 	 * @param \Awyiss\Model\Entity $entity
+	 * @param string|null $initiator
 	 * @return bool
 	 */
-	public function hasDirtyRelatedColumns(EntityInterface $entity): bool {
+	public function hasDirtyRelatedColumns(EntityInterface $entity, ?string $initiator = null): bool {
 		if (!$this->getConfig('enabled')) {
 			return false;
 		}
 
 		$relatedColumns = $this->getDirtyRelatedColumns($entity);
+
+		if ($initiator && in_array($initiator, $relatedColumns)) {
+			return true;
+		}
 
 		foreach ($relatedColumns as $column) {
 			if (

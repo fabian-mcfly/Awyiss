@@ -213,7 +213,11 @@ class SystemOrderComponent extends Component {
 		$systemOrder = $entity->get('systemOrder');
 
 		if ($requestData['reloadForm'] ?? false) {
-			if ($table->hasDirtySystemOrderRelatedColumns($entity)) {
+			if ($requestData['reloadForm'] === '1') {
+				$requestData['reloadForm'] = null;
+			}
+
+			if ($table->hasDirtySystemOrderRelatedColumns($entity, $requestData['reloadForm'])) {
 				unset($requestData['systemOrder']);
 				$entity->set('systemOrder');
 			}

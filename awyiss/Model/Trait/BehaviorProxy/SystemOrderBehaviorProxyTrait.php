@@ -53,10 +53,11 @@ trait SystemOrderBehaviorProxyTrait {
 	 * Returns whether the entity has dirty related columns.
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param string|null $initiator
 	 * @return bool
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::hasDirtyRelatedColumns()
 	 */
-	public function hasDirtySystemOrderRelatedColumns(EntityInterface $entity): bool {
-		return $this->getBehavior('SystemOrder')->hasDirtyRelatedColumns($entity);
+	public function hasDirtySystemOrderRelatedColumns(EntityInterface $entity, ?string $initiator = null): bool {
+		return $this->getBehavior('SystemOrder')->hasDirtyRelatedColumns($entity, $initiator);
 	}
 }
