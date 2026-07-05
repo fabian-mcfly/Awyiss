@@ -21,6 +21,8 @@
 	<div class="{{ class }}"{% if id is defined %} id="{{ id }}"{% endif %}>
 		{% if mediaItem.preview == enum(ProcessStatus).Fail %}
 			<span class="FileType-Icon FileType-Icon-{{ mediaItem.extension|camelize('/') }}" data-extension="{{ mediaItem.extension }}"></span>
+		{% elseif mediaItem.mimeType == 'image/svg+xml' %}
+			<img src="{{ baseUrl }}{{ mediaItem.path }}?t={{ mediaItem.filemtime }}" alt="{{ mediaItem.name }}">
 		{% else %}
 			{% if resize.width is defined or resize.height is defined %}
 				{% set resizedMediaItem = MediaHelper.resize(mediaItem, null, resize.width, resize.height, null, resize.strategy) %}
