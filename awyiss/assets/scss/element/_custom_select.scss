@@ -34,8 +34,15 @@
 	}
 
 	.FormInput:has(> &) {
-		transition:z-index 0s linear var(--transitionDelay);
-		z-index:1;
+		> :not(.FormInput, .InFieldButton) {
+			position:relative;
+			z-index:1;
+			transition:z-index 0s linear var(--transitionDelay);
+
+			&:has(+ select[data-options-for]) {
+				z-index:2;
+			}
+		}
 
 		> select:not([disabled]) {
 			&:has(+ .CustomSelect) {
@@ -152,8 +159,14 @@
 		}
 
 		.FormInput:has(> &) {
-			z-index:11;
-			transition-delay:0s;
+			> :not(.FormInput, .InFieldButton) {
+				z-index:11;
+				transition-delay:0s;
+
+				&:has(+ select[data-options-for]) {
+					z-index:12;
+				}
+			}
 		}
 
 		.CustomSelect-Button {

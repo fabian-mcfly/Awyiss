@@ -1773,6 +1773,7 @@ textarea {
 		~ form {
 			.FormInputName-LanguageShortcode {
 				display:block;
+				grid-column:auto / span 6;
 
 				+ .FormInputName-PageId {
 					grid-column:auto / span 6;
@@ -1996,6 +1997,24 @@ textarea {
 			&:focus-visible {
 				box-shadow:none;
 			}
+		}
+
+		.codecup--has-line-numbers {
+			.codecup__flatten {
+				&.codecup__pre {
+					overflow:visible;
+				}
+			}
+		}
+
+		.codecup__code {
+			overflow:visible;
+		}
+
+		.codecup__lines {
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+			z-index:5;
 		}
 	}
 

@@ -56,7 +56,11 @@
 					height:40px;
 
 					&.NestedList-Compact {
-						margin-left:0;
+						margin-inline:15px;
+
+						@media screen and (width <= 1280px) {
+							margin-inline:5px;
+						}
 					}
 				}
 			}
