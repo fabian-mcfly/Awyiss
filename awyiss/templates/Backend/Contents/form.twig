@@ -37,7 +37,11 @@
 	{% for contentTemplateElement in assignedContentTemplateElements %}
 		{% if contentTemplateElement.identifier[:11] == 'attributes.' %}
 			{% if settings.allowedKeys is empty %}
-				{{ AttributesHelper.control(contentTemplateElement.identifier[11:], {columnSpan: contentTemplateElement.column.span.numerator, required: contentTemplateElement.required}) }}
+				{{ AttributesHelper.control(contentTemplateElement.identifier[11:], {
+					columnSpan: contentTemplateElement.column.span.numerator,
+					required: contentTemplateElement.required,
+					label: contentTemplateElement.title,
+				}) }}
 			{% endif %}
 		{% else %}
 			{% if settings.allowedKeys is empty or contentTemplateElement.identifier|variable in settings.allowedKeys %}

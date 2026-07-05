@@ -217,6 +217,16 @@
 					type: 'select',
 					val: contentTemplateElement ? contentTemplateElement.columnSpan : false,
 				}) }}
+
+				{{ FormHelper.control('contentTemplateElements.' ~ (loop.index0 + availableContentElements|length) ~ '.title', {
+					label: __('title'),
+					id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-Title',
+					type: 'translatableText',
+					templateVars: {
+						dialogTitle: __d('System', 'translations_dialog_title', __('title')),
+					},
+					values: contentTemplateElement['_translations'] ?? [],
+				}) }}
 			</li>
 		{% endblock %}
 

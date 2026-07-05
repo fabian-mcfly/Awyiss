@@ -30,7 +30,11 @@
 {% macro renderFormControls(assignedGlobalContentTemplateElements = [], settings) %}
 	{% for globalContentTemplateElement in assignedGlobalContentTemplateElements %}
 		{% if globalContentTemplateElement.identifier[:11] == 'attributes.' %}
-			{{ AttributesHelper.control(globalContentTemplateElement.identifier[11:], {columnSpan: globalContentTemplateElement.column.span.numerator, required: globalContentTemplateElement.required}) }}
+			{{ AttributesHelper.control(globalContentTemplateElement.identifier[11:], {
+				columnSpan: globalContentTemplateElement.column.span.numerator,
+				required: globalContentTemplateElement.required,
+				label: globalContentTemplateElement.title,
+			}) }}
 		{% else %}
 			{{ block('formControl' ~ globalContentTemplateElement.identifier|camelize) }}
 		{% endif %}

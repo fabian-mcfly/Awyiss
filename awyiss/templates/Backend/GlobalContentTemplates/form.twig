@@ -207,6 +207,16 @@
 					type: 'select',
 					val: globalContentTemplateElement ? globalContentTemplateElement.columnSpan : false,
 				}) }}
+
+				{{ FormHelper.control('globalContentTemplateElements.' ~ (loop.index0 + availableGlobalContentElements|length) ~ '.title', {
+					label: __('title'),
+					id: 'GlobalContentTemplate-GlobalContentAttribute-' ~ globalContentAttribute.identifier|camelize ~ '-Title',
+					type: 'translatableText',
+					templateVars: {
+						dialogTitle: __d('System', 'translations_dialog_title', __('title')),
+					},
+					values: globalContentTemplateElement['_translations'] ?? [],
+				}) }}
 			</li>
 		{% endblock %}
 
