@@ -78,7 +78,7 @@
 								{% for contentTemplate in contentTemplates %}
 									{% block contentAreasContentTemplatesListItem %}
 										<li class="ListItem ContentTemplates-ListItem">
-											{{ FormHelper.control('contentTemplateContentAreas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_template_id]', {
+											{{ FormHelper.control('contentTemplateContentAreas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][contentTemplateId]', {
 												checked: contentArea.contentTemplates[ contentTemplate.id ] is defined,
 												escape: false,
 												hiddenField: false,
