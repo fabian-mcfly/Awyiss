@@ -46,7 +46,7 @@ export default class GlobalContentTemplatesController {
 				return;
 			}
 
-			const selector = '.GlobalContentTemplates.Form';
+			const selector = '.Fieldset-GlobalContentElements';
 			if (node.matches(selector)) {
 				new AssignableTemplateElements('.GlobalContentElements-List', node);
 			}

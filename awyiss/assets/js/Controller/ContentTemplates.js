@@ -44,7 +44,7 @@ export default class ContentTemplatesController {
 				return;
 			}
 
-			const selector = '.ContentTemplates.Form';
+			const selector = '.Fieldset-ContentElements';
 			if (node.matches(selector)) {
 				new AssignableTemplateElements('.ContentElements-List', node);
 			}
