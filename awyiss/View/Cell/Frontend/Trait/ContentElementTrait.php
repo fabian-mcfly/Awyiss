@@ -213,8 +213,25 @@ trait ContentElementTrait {
 			// If the row class is set, add it to the content row class
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if ($this->getView()->getRowClass()) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$contentRowClasses[] = $this->getView()->getRowClass();
+				$contentRowClasses = array_merge(
+					$contentRowClasses,
+					preg_split('/\s+/', trim((string)$this->getView()->getRowClass())) ?: [],
+				);
+			}
+
+			if (
+				trim($renderedContent) &&
+				(
+					$entity instanceof Content ||
+					$entity instanceof GlobalContent
+				) &&
+				$entity->data &&
+				array_key_exists('contentrow-class', $entity->data)
+			) {
+				$contentRowClasses = array_merge(
+					$contentRowClasses,
+					preg_split('/\s+/', trim((string)$entity->data['contentrow-class'])) ?: [],
+				);
 			}
 
 			// Add the content to the row contents
