@@ -43,8 +43,15 @@ class FormOptions implements FormOptionsInterface {
 		$className = App::className('Mailer', 'Mailer');
 		$mailer = new $className('default');
 
+		// Make sure to only use the main domain (e.g. example.com instead of sub.example.com or www.example.com)
+		$domain = $mailer->getDomain();
+		if (substr_count($domain, '.') > 1) {
+			$domainParts = explode('.', $domain);
+			$domain = implode('.', array_slice($domainParts, -2));
+		}
+
 		$this->form = $form;
-		$this->safeRealSender = 'noreply@' . $mailer->getMessage()->getDomain();
+		$this->safeRealSender = 'noreply@' . $domain;
 		$this->page = $page;
 	}
 

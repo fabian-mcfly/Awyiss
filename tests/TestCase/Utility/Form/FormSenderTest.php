@@ -1805,7 +1805,7 @@ class FormSenderTest extends TestCase {
 
 			$safeRealSender = 'noreply@' . $mailer->getMessage()->getDomain();
 
-			$this->assertEquals([$safeRealSender => 'Max Mustermann'], $mailer->getSender());
+			$this->assertEquals([$safeRealSender => 'Awyiss CMS'], $mailer->getSender());
 			$this->assertEquals(['awyiss@cms.de' => 'Awyiss CMS'], $mailer->getReplyTo());
 		};
 

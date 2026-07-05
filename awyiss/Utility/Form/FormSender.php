@@ -327,7 +327,7 @@ class FormSender {
 
 		$this->setSafeSender(
 			$mailer,
-			$this->form->userName,
+			$this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'),
 			$this->form->ownerEmail,
 			$this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')
 		);
@@ -977,6 +977,18 @@ class FormSender {
 			$mailer
 				->setSender($safeRealSender, html_entity_decode($senderName))
 				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName));
+		}
+
+		// Ensure a valid return-path is set
+		if (!$mailer->getReturnPath()) {
+			// Make sure to only use the main domain (e.g. example.com instead of sub.example.com or www.example.com)
+			$domain = $mailer->getDomain();
+			if (substr_count($domain, '.') > 1) {
+				$domainParts = explode('.', $domain);
+				$domain = implode('.', array_slice($domainParts, -2));
+			}
+
+			$mailer->setReturnPath('noreply@' . $domain);
 		}
 
 		return $this;
