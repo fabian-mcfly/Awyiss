@@ -24,6 +24,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Dom\HTMLDocument;
 use Imagick;
 
 
@@ -224,6 +225,8 @@ class MediaListener implements EventListenerInterface {
 
 			$entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $entity->path));
 
+			$this->ensureSvgId(WWW_ROOT . str_replace('/', DS, $entity->path));
+
 			if ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
 				$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
 
@@ -240,6 +243,8 @@ class MediaListener implements EventListenerInterface {
 				WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')),
 				WWW_ROOT . str_replace('/', DS, $entity->get('path'))
 			);
+
+			$this->ensureSvgId(WWW_ROOT . str_replace('/', DS, $entity->get('path')));
 		}
 
 		if (!$entity->isNew() && $entity->hasOriginal('focusPoint') && $entity->getOriginal('focusPoint') !== $entity->get('focusPoint')) {
@@ -481,6 +486,56 @@ class MediaListener implements EventListenerInterface {
 				$entity->attributes = $currentMedia->attributes;
 			}
 		}
+	}
+
+
+	/**
+	 * Make sure the contents of the <svg> tag are wrapped inside an AWYISS_SVG_ID
+	 *
+	 * @param string $path
+	 * @return void
+	 */
+	protected function ensureSvgId(string $path): void {
+		if (!str_ends_with($path, '.svg')) {
+			return;
+		}
+
+		$contents = file_get_contents($path);
+
+		$dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
+		$svg = $dom->getElementsByTagName('svg')->item(0);
+		if (!$svg) {
+			return;
+		}
+
+		// If there is no first level child with id="AWYISS_SVG_ID", add it
+		foreach ($svg->childNodes as $child) {
+			if ($child->nodeType === XML_ELEMENT_NODE && $child->getAttribute('id') === 'AWYISS_SVG_ID') {
+				return;
+			}
+		}
+
+		// Create a <g> element with id="AWYISS_SVG_ID" and move all children of <svg> into it
+		$g = $dom->createElement('g');
+		$g->setAttribute('id', 'AWYISS_SVG_ID');
+
+		// Move all children of <svg> into the new <g> element
+		while ($child = $svg->firstChild) {
+			$g->appendChild($child);
+		}
+
+		$svg->appendChild($g);
+
+		$content = '';
+		// Remove the opening and closing `<body>`-tags
+		$body = $dom->querySelector('body');
+
+		while ($body->firstChild) {
+			$content .= $dom->saveHTML($body->firstChild);
+			$body->removeChild($body->firstChild);
+		}
+
+		file_put_contents($path, $content);
 	}
 
 
