@@ -1129,6 +1129,12 @@ class FrontendController extends AppController {
 			$lastPart .= $part . '/';
 		}
 
+		if (!$slugs) {
+			// If the slug has no paths, checking the parents is not possible, so assume "active" to be safe
+			// This allows redirects from the url history to happen
+			return true;
+		}
+
 		$query->where([
 			'slug IN' => $slugs,
 			'languageShortcode' => $page->languageShortcode,
