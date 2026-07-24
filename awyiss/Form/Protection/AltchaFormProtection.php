@@ -95,7 +95,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 		}
 
 		if ($templatePosition === static::POSITION_BEFORE_SUBMIT) {
-			/** @var \Cake\View\Helper\HtmlHelper $htmlHelper */
+			/** @var \Awyiss\View\Helper\HtmlHelper $htmlHelper */
 			$htmlHelper = $this->view->helpers()->get('Html');
 
 			if (empty($this->options['htmlAttributes']['challengejson'])) {

@@ -22,7 +22,7 @@ use RuntimeException;
 /**
  * @inheritDoc
  * @property \Awyiss\View\Helper\AttributesHelper $Attributes
- * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Awyiss\View\Helper\HtmlHelper $Html
  * @property \Awyiss\View\Helper\MediaHelper $Media
  * @property LocaleHelper $Locale
  * @property UrlHelper $Url

@@ -25,7 +25,7 @@ use InvalidArgumentException;
 /**
  * Helper class that provides methods related to the Media-logic in the views
  *
- * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Awyiss\View\Helper\HtmlHelper $Html
  */
 class MediaHelper extends Helper {
 	/**
