@@ -160,7 +160,7 @@ class PagesListener implements EventListenerInterface {
 
 		if (empty($entity->slug)) {
 			//Make sure the slug is set. Use the title if it's empty.
-			$entity->set('slug', $entity->title);
+			$entity->set('slug', str_replace('/', '-', $entity->title));
 		}
 
 		if (
