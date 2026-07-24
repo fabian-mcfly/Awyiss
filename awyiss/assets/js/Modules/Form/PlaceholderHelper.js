@@ -85,7 +85,8 @@ export default class PlaceholderHelper {
 
 		if (
 			!input.placeholder ||
-			input.closest('.jodit-ui-input__wrapper')
+			input.closest('.jodit-ui-input__wrapper') ||
+			input.closest('.tox-dialog')
 		) {
 			return;
 		}
