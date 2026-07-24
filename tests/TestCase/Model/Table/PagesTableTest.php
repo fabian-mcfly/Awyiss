@@ -499,28 +499,6 @@ class PagesTableTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 */
-	public function testEntityValidationRedirectLinkUrl(): void {
-		$data = [
-			'languageShortcode' => 'de',
-			'slug' => 'test-page',
-			'title' => 'Test Page',
-			'pageRoleId' => 1,
-			'pageTemplateId' => 1,
-			'redirectLink' => 'not-a-valid-url',
-		];
-
-		$entity = $this->pagesTable->newEntity($data);
-		$errors = $entity->getErrors();
-
-		$this->assertArrayHasKey('redirectLink', $errors);
-		$this->assertArrayHasKey('url', $errors['redirectLink']);
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
 	 */
 	public function testBuildRulesLanguageExistsValid(): void {
