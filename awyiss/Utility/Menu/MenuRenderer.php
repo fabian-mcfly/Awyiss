@@ -203,7 +203,7 @@ class MenuRenderer {
 		}
 
 		$data = [
-			'active' => $item->isCurrentRoute($this->currentRoute) || $item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
+			'active' => $item->hasCurrentRoute($this->currentRoute) || $item->isCurrentRoute($this->currentRoute) ? ' Active' : '',
 			'children' => $childrenContent,
 			'identifier' => !is_string($identifier) ? $identifier : Inflector::camelize(Text::slug($identifier, '_')),
 			'level' => $level,

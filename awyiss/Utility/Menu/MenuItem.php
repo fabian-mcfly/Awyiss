@@ -11,6 +11,7 @@ use Awyiss\Core\App;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Menu\Exception\MenuValidationException;
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Generator;
 use RuntimeException;
@@ -183,20 +184,39 @@ abstract class MenuItem implements ArrayAccess {
 		if (str_contains($currentRoute, ':')) {
 			$segments = explode('/', trim($currentRoute, '/'));
 			$segments = array_filter($segments, function (string $segment) {
-				$this->isCurrentRoute = !str_contains($segment, ':');
-				return $this->isCurrentRoute;
+				return !str_contains($segment, ':');
 			});
 
-			$cleanRoute = implode('/', $segments) . '/';
+			$currentRoute = implode('/', $segments) . '/';
 
-			$this->isCurrentRoute = $testUrl === $cleanRoute;
+			$this->isCurrentRoute = $testUrl === $currentRoute;
 
-			return $this->isCurrentRoute;
+			if ($this->isCurrentRoute) {
+				return $this->isCurrentRoute;
+			}
 		}
 
-		$this->isCurrentRoute = false;
+		$baseUrl = ltrim(Router::url('/'), '/') ?: null;
+		if ($baseUrl && str_starts_with($currentRoute, $baseUrl)) {
+			$currentRoute = substr($currentRoute, strlen($baseUrl));
+		}
+		if ($baseUrl && str_starts_with($testUrl, $baseUrl)) {
+			$testUrl = substr($testUrl, strlen($baseUrl));
+		}
 
-		return false;
+		$minSegments = Configure::read('Route.includeLanguageShortcode') ? 2 : 1;
+		// As long as the $currentRoute has more than the minimum segments, remove the last segment and try again
+		while (substr_count($currentRoute, '/') > $minSegments) {
+			$currentRoute = substr($currentRoute, 0, strrpos(rtrim($currentRoute, '/'), '/') + 1);
+			if ($testUrl === $currentRoute) {
+				$this->isCurrentRoute = true;
+				return true;
+			}
+		}
+
+		$this->isCurrentRoute = $testUrl === $currentRoute;
+
+		return $this->isCurrentRoute;
 	}
 
 
@@ -212,7 +232,6 @@ abstract class MenuItem implements ArrayAccess {
 				return true;
 			}
 		}
-
 
 		return false;
 	}
