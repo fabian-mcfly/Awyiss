@@ -1038,6 +1038,23 @@ class ConvertFilesCommand extends Command {
 			$image->setResolution(150, 150);
 			$image->readImage($file->pathAbsolute . '[' . 0 . ']');
 			$image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+
+			$iccProfiles = $image->getImageProfiles('*', false);
+			$hasIccProfile = (bool)array_search('icc', $iccProfiles);
+
+			if ($hasIccProfile === false) {
+				$image->stripImage();
+				$cmykProfile = file_get_contents(ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'icc_profiles' . DS . 'cmyk.icc');
+				$image->profileImage('icc', $cmykProfile);
+				$image->stripImage();
+				$srgbProfile = file_get_contents(ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'icc_profiles' . DS . 'srgb.icc');
+				$image->profileImage('icc', $srgbProfile);
+			}
+
+			if ($image->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
+				$image->negateImage(false);
+			}
+
 			$image->stripImage();
 			$image->setImageColorspace(Imagick::COLORSPACE_SRGB);
 			$image->setImageBackgroundColor('#FFFFFF');
