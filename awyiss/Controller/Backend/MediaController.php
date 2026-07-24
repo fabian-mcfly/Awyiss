@@ -819,7 +819,16 @@ class MediaController extends Controller {
 		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 			$options = [];
 
-			if ($isAjax) {
+			if (
+				$isAjax &&
+				(
+					!$media->isDirty('mediaFolderId') ||
+					(
+						$media->hasOriginal('mediaFolderId') &&
+						$media->mediaFolderId == $media->getOriginal('mediaFolderId')
+					)
+				)
+			) {
 				$options['systemOrder'] = ['skip' => true];
 			}
 
