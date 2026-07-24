@@ -1,0 +1,21 @@
+# Cake translations of Awyiss CMS
+# Copyright 2026 Awyiss / 2F Media <awyiss@2f.media>
+#
+
+msgid "{0,number,integer} Byte"
+msgstr "{0,number,integer} Byte"
+
+msgid "{0,number,integer} Bytes"
+msgstr "{0,number,integer} Bytes"
+
+msgid "{0,number,#,###.##} KB"
+msgstr "{0,number,#,###.##} KB"
+
+msgid "{0,number,#,###.##} MB"
+msgstr "{0,number,#,###.##} MB"
+
+msgid "{0,number,#,###.##} GB"
+msgstr "{0,number,#,###.##} GB"
+
+msgid "{0,number,#,###.##} TB"
+msgstr "{0,number,#,###.##} TB"

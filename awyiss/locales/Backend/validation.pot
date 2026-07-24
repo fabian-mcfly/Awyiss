@@ -265,3 +265,6 @@ msgstr "The value must be a valid email address"
 
 msgid "error_deleted_not_modified"
 msgstr "Can't modify deleted item"
+
+msgid "error_url"
+msgstr "The value must be a valid URL"

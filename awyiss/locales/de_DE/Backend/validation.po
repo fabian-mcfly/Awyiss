@@ -265,3 +265,6 @@ msgstr "Der Wert muss eine gültige E-Mail-Adresse sein"
 
 msgid "error_deleted_not_modified"
 msgstr "Gelöschte Einträge können nicht bearbeitet werden"
+
+msgid "error_url"
+msgstr "Der Wert muss eine gültige URL sein"
