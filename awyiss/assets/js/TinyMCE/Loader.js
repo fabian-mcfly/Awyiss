@@ -223,7 +223,20 @@ export default class Loader {
 	 */
 	initInstanceCallback(editor) {
 		editor.on('blur', function () {
-			editor.targetElm.innerHTML = editor.getContent();
+			// Unwrap all contents of span.mce-nbsp-wrap and remove the span itself
+			const content = editor.getContent();
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+
+			const spans = tempDiv.querySelectorAll('span.mce-nbsp-wrap');
+			spans.forEach((span) => {
+				// Replace the span with its contents
+				span.replaceWith(...span.childNodes);
+			});
+
+			editor.setContent(tempDiv.innerHTML);
+
+			editor.targetElm.innerHTML = tempDiv.innerHTML;
 		});
 
 		editor.once('focus', () => {
