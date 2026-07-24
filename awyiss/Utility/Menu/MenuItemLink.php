@@ -136,8 +136,14 @@ class MenuItemLink {
 
 			$url = Router::url($url);
 
-			// Always ensure the URL ends with a slash if it doesn't contain a query string
-			if (!str_contains($url, '?') && !str_contains($url, '#') && !str_ends_with($url, '/')) {
+			$lastSegment = substr($url, strrpos($url, '/'));
+			// Always ensure the URL ends with a slash if it doesn't contain a query string, unless it ends in a file extension
+			if (
+				!str_contains($url, '?') &&
+				!str_contains($url, '#') &&
+				!str_ends_with($url, '/') &&
+				!str_contains($lastSegment, '.')
+			) {
 				$url .= '/';
 			}
 		}
