@@ -372,7 +372,7 @@ class MenuEntriesController extends Controller {
 			$pages = $table->listNested($query);
 		}
 		else {
-			$pages = $query->all();
+			$pages = $query->find('threaded')->all();
 		}
 
 		return $pages;
