@@ -209,7 +209,7 @@
 										{% set counter = 0 %}
 										{% set formConditionalRecipientTypes = combine(
 											formConditionalRecipientTypes,
-											formConditionalRecipientTypes|map(formConditionalRecipientType => __d('FormConditionalRecipients', 'type_' ~ formConditionalRecipientType))
+											formConditionalRecipientTypes|map(formConditionalRecipientType => __d('FormConditionalRecipients', 'type_' ~ formConditionalRecipientType|underscore))
 										) %}
 
 										{% set formConditionalRecipientOperators = combine(
@@ -313,7 +313,7 @@
 								{% block formControlFormConditionalRecipientsStrategy %}
 									{% set conditionalRecipientsStrategies = combine(
 										conditionalRecipientsStrategies,
-										conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy))
+										conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy|underscore))
 									) %}
 									{{ FormHelper.control('conditionalRecipientsStrategy', {
 										empty: false,
