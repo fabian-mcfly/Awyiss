@@ -34,7 +34,7 @@
 				{% if field starts with 'attributes.' %}
 					{% set field = field|slice(11) %}
 					{% block tableOverviewBodyCellDisplayedFieldAttributeValue %}
-						{{ HtmlHelper.formatFieldValue(entity.get('attributes'), field)|raw }}
+						{{ HtmlHelper.formatFieldValue(entity, field, isAttribute: true)|raw }}
 					{% endblock %}
 				{% else %}
 					{% block tableOverviewBodyCellDisplayedFieldValue %}

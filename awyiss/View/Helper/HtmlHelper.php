@@ -4,6 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Attribute\AttributeOption;
 use Awyiss\Model\Entity;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
@@ -18,8 +19,10 @@ use UnitEnum;
  * HtmlHelper
  * Extends CakePHP HtmlHelper with custom functionality
  *
+ * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  * @property \Awyiss\View\Helper\AuditHelper $Audit
  * @property \Cake\View\Helper\TimeHelper $Time
+ * @property \Awyiss\View\Helper\UrlHelper $Url
  * @method \Awyiss\View\BackendView|\Awyiss\View\FrontendView getView()
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
@@ -27,7 +30,7 @@ class HtmlHelper extends BaseHtmlHelper {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $helpers = ['Audit', 'Time', 'Url'];
+	protected array $helpers = ['Attributes', 'Audit', 'Time', 'Url'];
 
 
 	/**
@@ -81,12 +84,27 @@ class HtmlHelper extends BaseHtmlHelper {
 	 * @param \Cake\Datasource\EntityInterface $entity The entity
 	 * @param string $field The field name
 	 * @param array<string, mixed> $options Additional options
+	 * @param bool $isAttribute Whether this is an attribute field
 	 * @return string The formatted value
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
-	public function formatFieldValue(EntityInterface $entity, string $field, array $options = []): string {
+	public function formatFieldValue(EntityInterface $entity, string $field, array $options = [], bool $isAttribute = false): string {
+		$attributeOptions = null;
+		if ($isAttribute) {
+			$baseEntity = $entity;
+			$entity = $entity->get('attributes');
+			$attributeOptions = $this->Attributes->getAttributeOptions($baseEntity);
+		}
+
 		$value = $entity->has($field) ? $entity->get($field) : null;
+
+		if (
+			$attributeOptions &&
+			$attributeOptions->getAttributeOption($field)
+		) {
+			return $this->formatAttributeOptionValue($value, $attributeOptions->getAttributeOption($field), $baseEntity);
+		}
 
 		return $this->formatValue($value, $entity, $field, $options);
 	}
@@ -278,5 +296,24 @@ class HtmlHelper extends BaseHtmlHelper {
 
 		// Default: cast to string
 		return strip_tags((string)$value);
+	}
+
+
+	/**
+	 * Format attribute option value based on its readable option
+	 *
+	 * @param mixed $value
+	 * @param \Awyiss\Attribute\AttributeOption $attributeOption
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return string
+	 */
+	protected function formatAttributeOptionValue(mixed $value, AttributeOption $attributeOption, Entity $entity): string {
+		$options = $attributeOption->getOptions(true, $entity);
+
+		if (!$value && array_key_exists('', $options)) {
+			return $options[''];
+		}
+
+		return $options[ $value ] ?? '-';
 	}
 }

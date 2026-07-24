@@ -113,7 +113,7 @@
 												{% if field starts with 'attributes.' %}
 													{% set field = field|slice(11) %}
 													{% block tableOverviewCellDisplayedFieldAttributeValue %}
-														{{ HtmlHelper.formatFieldValue(customerGroup.get('attributes'), field)|raw }}
+														{{ HtmlHelper.formatFieldValue(customerGroup, field, isAttribute: true)|raw }}
 													{% endblock %}
 												{% else %}
 													{% block tableOverviewCellDisplayedFieldDefaultValue %}

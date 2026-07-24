@@ -13,6 +13,7 @@ use Awyiss\Model\Entity\Language;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Hash;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Form\NullContext;
@@ -26,6 +27,9 @@ use RuntimeException;
  * @property \Awyiss\View\Helper\FormHelper $Form
  */
 class AttributesHelper extends Helper {
+	use LocatorAwareTrait;
+
+
 	/**
 	 * Default config for this helper.
 	 *
@@ -198,6 +202,34 @@ class AttributesHelper extends Helper {
 
 
 	/**
+	 * Get attribute options for a source.
+	 *
+	 * @param object|string|null $source Entity-like object with getSource() or a source string.
+	 * @return \Awyiss\Attribute\AttributeOptionsCollectionInterface|null
+	 * @throws \ReflectionException
+	 */
+	public function getAttributeOptions(object|string|null $source = null): ?AttributeOptionsCollectionInterface {
+		if ($source === null) {
+			$source = $this->getSource();
+		}
+		elseif (method_exists($source, 'getSource')) {
+			$source = (string)$source->getSource();
+		}
+		elseif (!is_string($source)) {
+			throw new RuntimeException('Expected source as string or entity-like object with getSource().');
+		}
+
+		if ($source === '') {
+			throw new RuntimeException('No source provided.');
+		}
+
+		$this->initializeSource($source);
+
+		return static::$attributeOptions[ $source ] ?? null;
+	}
+
+
+	/**
 	 * @param string $fieldName
 	 * @param array $options
 	 * @param array $attributeFields
@@ -210,6 +242,7 @@ class AttributesHelper extends Helper {
 			return [];
 		}
 
+		$originalOptions = $options;
 		$options = $this->buildOptions($options, $attributeFields, $fieldName);
 
 		/**
@@ -229,6 +262,10 @@ class AttributesHelper extends Helper {
 			in_array($options['type'], ['checkbox', 'multicheckbox', 'select', 'selectMultiple'])
 		) {
 			$options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $options, $this->getContext());
+
+			if (!isset($originalOptions['empty']) && array_key_exists('', $options['options'] ?? [])) {
+				$options['empty'] = false;
+			}
 		}
 
 		$fieldName = $this->prepareTranslationField($fieldName, $options);
@@ -367,14 +404,15 @@ class AttributesHelper extends Helper {
 
 
 	/**
+	 * @param string $source
 	 * @return void
 	 */
-	protected function initializeTranslate(): void {
+	protected function initializeTranslate(string $source): void {
 		/**
 		 * @var \Awyiss\Model\Table $table
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$table = $this->getContext()->fetchTable($this->getContext()->entity()->getSource());
+		$table = $this->fetchTable($source);
 
 		$associationAlias = $table->getAttributesTableName(true);
 		if (!$table->hasAssociation($associationAlias)) {
@@ -382,7 +420,7 @@ class AttributesHelper extends Helper {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$attributesTable = $this->getContext()->fetchTable($associationAlias);
+		$attributesTable = $this->fetchTable($associationAlias);
 		if (!$attributesTable->hasBehavior('Translate')) {
 			return;
 		}
@@ -548,7 +586,7 @@ class AttributesHelper extends Helper {
 		$attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
 		static::$attributeOptions[ $source ] = $attributeOptionsProvider::getAttributeOptionsFile($source, true);
 
-		$this->initializeTranslate();
+		$this->initializeTranslate($source);
 	}
 
 
