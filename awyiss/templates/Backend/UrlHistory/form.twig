@@ -51,13 +51,13 @@
 			{% endblock %}
 
 			{% block formControlForeignKey %}
-				{% if urlHistory.scope == 'pages' %}
+				{% if urlHistory.scope == 'Pages' %}
 					{{ FormHelper.control('foreignKey', {
 						columnSpan: 4,
 						options: hashPrinter(threadedPages, 'label', 'id', '- '),
 						label: __('target'),
 					}) }}
-				{% elseif urlHistory.scope == 'media' %}
+				{% elseif urlHistory.scope == 'Media' %}
 					<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile ColumnSpan-4">
 						<label class="Label">{{ __('target') }}</label>
 
