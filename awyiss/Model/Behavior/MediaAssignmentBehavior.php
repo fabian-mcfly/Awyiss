@@ -423,7 +423,8 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							$mediaAssignment = $this->assignmentsTable->newDefaultEntity();
 
 							if (!empty($elementData['id'])) {
-								$mediaAssignment->id = $elementData['id'];
+								$mediaAssignment->id = (int)$elementData['id'];
+								$mediaAssignment->setNew(false);
 							}
 
 							$mediaAssignmentData = [
