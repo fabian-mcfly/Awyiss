@@ -48,7 +48,8 @@ export default class Loader {
 		document_base_url: baseUrl,
 		extended_valid_elements: 'widget[class]',
 		external_plugins: {
-			awyissWidget: '../AwyissWidget.js'
+			awyissWidget: '../plugins/AwyissWidget.js',
+			narrownonbreaking: '../plugins/narrownonbreaking/plugin.js',
 		},
 		fix_list_elements: true,
 		branding: false,
@@ -74,7 +75,7 @@ export default class Loader {
 		paste_as_text: true,
 		paste_block_drop: false,
 		paste_data_images: false,
-		plugins: 'anchor autolink autoresize awyissWidget charmap code fullscreen image link lists nonbreaking table visualblocks visualchars wordcount',
+		plugins: 'anchor autolink autoresize awyissWidget charmap code fullscreen image link lists narrownonbreaking table visualblocks visualchars wordcount',
 		preview_styles: 'font-family font-size font-weight font-style line-height text-decoration text-transform color background-color border border-radius outline text-shadow',
 		relative_urls: true,
 		setup: (editor) => this.setup(editor),
@@ -95,7 +96,7 @@ export default class Loader {
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
 		toolbar: 'bold italic underline strikethrough styles removeformat | undo redo | link unlink anchor | blockquote bullist numlist'
-		+ ' | image | awyissWidget | hr subscript superscript nonbreaking charmap | table | aligncenter alignright alignjustify outdent indent'
+		+ ' | image | awyissWidget | hr subscript superscript nonbreaking narrownonbreaking charmap | table | aligncenter alignright alignjustify outdent indent'
 		+ ' | copy cut paste pastetext | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀')

@@ -241,6 +241,7 @@ tinymce.addI18n("de_DE", {
 	"No alignment": "Keine Ausrichtung",
 	"No color": "Keine Farbe",
 	"Nonbreaking space": "Gesch\xfctztes Leerzeichen",
+	"Narrow nonbreaking space": "Schmal gesch\xfctztes Leerzeichen",
 	"None": "Keine",
 	"Numbered list": "Nummerierte Liste",
 	"OR": "ODER",

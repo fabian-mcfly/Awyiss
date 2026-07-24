@@ -241,6 +241,7 @@ tinymce.addI18n("fr_FR", {
 	"No alignment": "Aucun alignement",
 	"No color": "Aucune couleur",
 	"Nonbreaking space": "Espace ins\xe9cable",
+	"Narrow nonbreaking space": "Espace ins\xe9cable \xe9troit",
 	"None": "Aucun",
 	"Numbered list": "Liste num\xe9rot\xe9e",
 	"OR": "OU",
