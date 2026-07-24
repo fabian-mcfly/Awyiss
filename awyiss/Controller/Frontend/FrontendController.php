@@ -501,7 +501,8 @@ class FrontendController extends AppController {
 			if ($page->redirectLink) {
 				$url = $page->redirectLink;
 				if (!str_contains($url, '//')) {
-					$url = Router::url($url, true);
+					$url = ltrim($url, '/');
+					$url = Router::url('/' . $url, true);
 				}
 
 				throw new RedirectException($url, 303);
@@ -573,6 +574,19 @@ class FrontendController extends AppController {
 		}
 
 		$this->loadFrontendPreview($page);
+
+		$templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
+		$fileName = 'Page' . $page->id;
+		$filePath = implode(DS, [
+			$templatePath,
+			'Frontend',
+			'page',
+			$fileName . '.twig',
+		]);
+
+		if (file_exists($filePath)) {
+			$page->pageTemplate->set('fileName', $fileName, ['setter' => false]);
+		}
 
 		$this->viewBuilder()
 			->setTemplate($page->pageTemplate->fileName)
