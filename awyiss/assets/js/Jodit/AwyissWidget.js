@@ -61,7 +61,7 @@ class AwyissWidget {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
 			body: JSON.stringify({
-				widget_identifier: identifier,
+				widgetIdentifier: identifier,
 				settings: settings,
 			}),
 		});
