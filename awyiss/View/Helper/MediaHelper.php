@@ -478,7 +478,7 @@ class MediaHelper extends Helper {
 	 */
 	public function contents(Media $media): ?string {
 		if ($media->mimeType == 'image/svg+xml') {
-			return file_get_contents($media->pathAbsolute);
+			return file_exists($media->pathAbsolute) ? file_get_contents($media->pathAbsolute) : null;
 		}
 
 		return null;
