@@ -126,7 +126,7 @@ class HtmlCleaner {
 		$dom = static::getDom($value);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
-		static::convertLeadingAndTrailingBrTags($dom);
+		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
 
 		// Remove leading and trailing `<br>`-tags inside any tag
 		static::removeLeadingAndTrailingBrTags($dom);
@@ -157,7 +157,7 @@ class HtmlCleaner {
 		$dom = static::getDom($value);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
-		static::convertLeadingAndTrailingBrTags($dom);
+		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
 
 		// Remove leading and trailing `<br>`-tags inside any tag
 		static::removeLeadingAndTrailingBrTags($dom);
@@ -413,58 +413,26 @@ class HtmlCleaner {
 
 
 	/**
-	 * Converts all leading and trailing `<br>`-tags inside `<p>`-tags to `<p>`-tags
+	 * Removes all leading and trailing `<br>`-tags inside `<p>`-tags
 	 *
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function convertLeadingAndTrailingBrTags(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingBrTagsInParagraphs(HtmlDocument $dom): void {
 		$pTags = $dom->querySelectorAll('p');
 
 		/** @var \Dom\Node $pTag */
 		foreach ($pTags as $pTag) {
-			// As long as the first child of the <p>-tag is a <br>-tag, remove it and prepend a <p>-tag
+			// As long as the first child of the <p>-tag is a <br>-tag, remove it
 			while ($pTag->firstChild && $pTag->firstChild->nodeName === 'BR') {
 				$brTag = $pTag->firstChild;
 				$pTag->removeChild($brTag);
-
-				$newPTag = $dom->createElement('p');
-				$newPTag->textContent = "\xC2\xA0";
-
-				$pTag->parentNode->insertBefore($newPTag, $pTag);
-
-				// Create a new newline text node
-				$newTextNode = $dom->createTextNode("\n");
-				// and insert it between the new <p>-tag and the old <p>-tag
-				$pTag->parentNode->insertBefore($newTextNode, $pTag);
 			}
 
-			// As long as the last child of the <p>-tag is a <br>-tag, remove it and append a <p>-tag
+			// As long as the last child of the <p>-tag is a <br>-tag, remove it
 			while ($pTag->lastChild && $pTag->lastChild->nodeName === 'BR') {
 				$brTag = $pTag->lastChild;
 				$pTag->removeChild($brTag);
-
-				$newPTag = $dom->createElement('p');
-				$newPTag->textContent = "\xC2\xA0";
-
-				if ($pTag->nextSibling === null) {
-					// Create a new \n text node
-					$newTextNode = $dom->createTextNode("\n");
-					// and append it to the parent node
-					$pTag->parentNode->appendChild($newTextNode);
-
-					// Now append the new <p>-tag
-					$pTag->parentNode->appendChild($newPTag);
-				}
-				else {
-					// Insert the new <p>-tag after the current <p>-tag
-					$pTag->parentNode->insertBefore($newPTag, $pTag->nextSibling);
-
-					// Create a new \n text node
-					$newTextNode = $dom->createTextNode("\n");
-					// and insert it before the new <p>-tag
-					$pTag->parentNode->insertBefore($newTextNode, $newPTag);
-				}
 			}
 		}
 	}

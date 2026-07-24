@@ -112,7 +112,6 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>After starting empty p-tags</p>
-<p>&nbsp;</p>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -120,7 +119,6 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>Before ending empty p-tags</p>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -153,7 +151,6 @@ HTML;
 <p>&nbsp;</p>
 <p>At vero and then there is a ndash with a follow-up non-breaking space –&nbsp;just like this.</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
 <p><span>Spaces before span</span></p>
 <p><span><span>&nbsp;</span></span></p>
 <p>&nbsp;</p>
@@ -185,7 +182,6 @@ HTML,
 		$this->assertSame(
 			<<<'HTML'
 <p>After starting empty p-tags</p>
-<p>&nbsp;</p>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>

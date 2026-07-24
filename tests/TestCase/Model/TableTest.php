@@ -2859,7 +2859,6 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>After starting empty p-tags</p>
-<p>&nbsp;</p>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -2867,7 +2866,6 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>Before ending empty p-tags</p>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -2899,7 +2897,6 @@ HTML;
 <p>Space after. asdf</p>
 <p>&nbsp;</p>
 <p>At vero</p>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p><span>Spaces before span</span></p>
 <p><span><span>&nbsp;</span></span></p>
@@ -2937,7 +2934,6 @@ HTML,
 		$this->assertSame(
 			<<<'HTML'
 <p>After starting empty p-tags</p>
-<p>&nbsp;</p>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>
