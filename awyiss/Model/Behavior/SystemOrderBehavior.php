@@ -957,7 +957,7 @@ class SystemOrderBehavior extends Behavior {
 		$records = $query->all()->append([$entity])->sortBy(
 			$sortField,
 			$this->getConfig('direction'),
-			in_array($fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+			in_array($fieldType, ['string', 'text', 'mediumtext', 'longtext', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 		)->toList();
 
 		// Loop through all records (including the entity being saved) to determine its position in the sorted list

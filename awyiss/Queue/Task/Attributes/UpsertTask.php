@@ -151,6 +151,8 @@ class UpsertTask extends Task {
 			$typeMatches[1] = match ($typeMatches[1]) {
 				'int' => 'integer',
 				'tinyint' => 'tinyinteger',
+				'mediumtext' => 'mediumtext',
+				'longtext' => 'longtext',
 				default => 'string',
 			};
 		}

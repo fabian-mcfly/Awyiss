@@ -123,7 +123,12 @@ class ColumnParser extends BaseColumnParser {
 		}
 
 		/** @var string $fieldType */
-		$fieldType = $this->getType($field, $type);
+		$fieldType = match ($type) {
+			'mediumtext' => 'mediumtext',
+			'longtext' => 'longtext',
+			default => $this->getType($field, $type)
+		};
+
 		$length ??= $this->getLength($fieldType);
 
 		return [$fieldType, $length, $default];
