@@ -18,6 +18,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ResultSetInterface;
+use Cake\Log\Log;
 use Exception;
 use Imagick;
 use Intervention\Image\ImageManager;
@@ -44,6 +45,10 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected bool $cliMagickExists = false;
 	/**
+	 * @var string
+	 */
+	protected string $driver;
+	/**
 	 * The quality of the generated images.
 	 * For Avif files, the quality can be lower while
 	 * getting a similar or even better result.
@@ -51,6 +56,33 @@ class ConvertFilesCommand extends Command {
 	 * @var int
 	 */
 	protected int $quality;
+	/**
+	 * Whether to output debug information to the log.
+	 *
+	 * @var bool
+	 */
+	protected bool $verbose = false;
+
+
+	/**
+	 * @param string $message
+	 * @param array<string, mixed> $context
+	 * @return void
+	 */
+	protected function debug(string $message, array $context = []): void {
+		if (!$this->verbose) {
+			return;
+		}
+
+		$logMessage = '[ConvertFilesCommand] ' . $message;
+
+		if ($context) {
+			$jsonContext = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+			$logMessage .= ' | ' . ($jsonContext === false ? '[context-encode-failed]' : $jsonContext);
+		}
+
+		Log::debug($logMessage);
+	}
 
 
 	/**
@@ -72,19 +104,29 @@ class ConvertFilesCommand extends Command {
 			// Ignore exception.
 		}
 
-		$driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
-		if ($driver === 'imagick' && !extension_loaded('Imagick')) {
+		$this->driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
+		if ($this->driver === 'imagick' && !extension_loaded('Imagick')) {
 			// Try to fall back to GD if Imagick is not available
-			$driver = 'gd';
+			$this->driver = 'gd';
 		}
 
-		if ($driver === 'gd' && !extension_loaded('gd')) {
+		if ($this->driver === 'gd' && !extension_loaded('gd')) {
 			throw new Exception('The GD extension is not loaded. Please install the GD extension to use this command.');
 		}
 
-		$this->imageManager = $driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
+		$this->createImageManager();
 
 		$this->quality = Configure::read('Awyiss.Media.Frontend.resizing.quality', 70);
+	}
+
+
+	/**
+	 * Creates an instance of the Intervention ImageManager
+	 *
+	 * @return void
+	 */
+	protected function createImageManager(): void {
+		$this->imageManager = $this->driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
 	}
 
 
@@ -133,26 +175,42 @@ class ConvertFilesCommand extends Command {
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
+		$this->verbose = (bool)$args->getOption('verbose');
+
 		$startTime = time();
 		$errorOccurred = false;
+		$this->debug('Execute started', [
+			'includeAvif' => (bool)$args->getOption('include-avif'),
+			'includeWebp' => (bool)$args->getOption('include-webp'),
+			'limit' => (int)$args->getOption('limit'),
+			'retryFailed' => (bool)$args->getOption('retry-failed'),
+			'quiet' => (bool)$args->getOption('quiet'),
+		]);
 
-		$driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
-		$io->out(sprintf('Starting media processing using %s with %u%% quality...', $this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $driver . ')', $this->quality));
+		$io->out(sprintf('Starting media processing using %s with %u%% quality...', $this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $this->driver . ')', $this->quality));
 
+		/**
+		 * @see self::processCropFiles()
+		 * @see self::processNonImageFiles()
+		 */
 		$processMethods = [
 			'processCropFiles',
 			'processNonImageFiles',
 		];
 
 		if ($args->getOption('include-avif')) {
+			/** @see self::processAvifConversion() */
 			$processMethods[] = 'processAvifConversion';
 		}
 
 		if ($args->getOption('include-webp')) {
+			/** @see self::processWebpConversion() */
 			$processMethods[] = 'processWebpConversion';
 		}
 
+		/** @see self::processResizing() */
 		$processMethods[] = 'processResizing';
+		/** @see self::processAverageColorCalculation() */
 		$processMethods[] = 'processAverageColorCalculation';
 
 		// Keep this job running for 60 seconds to process as many files as possible
@@ -161,14 +219,18 @@ class ConvertFilesCommand extends Command {
 
 			foreach ($processMethods as $method) {
 				$files = $this->$method($args, $io);
+
 				if ($files === false) {
 					$errorOccurred = true;
+					$this->debug('Execution aborted after failed process method', ['method' => $method]);
 					break 2;
 				}
 				else {
 					$totalFiles += $files;
 				}
 			}
+
+			$this->debug('Execution loop finished', ['totalFiles' => $totalFiles]);
 
 			// If the script is not running in quiet mode, break the loop if no files were found
 			// This is just an assumption that the script was called manually and should not run indefinitely
@@ -207,6 +269,8 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchCropFiles((int)$args->getOption('limit'));
 
 		if ($files->count()) {
+			$this->debug('Fetched crop files', ['count' => $files->count()]);
+
 			$result = $this->cropImages($files, $io);
 
 			if ($result !== static::CODE_SUCCESS) {
@@ -234,6 +298,13 @@ class ConvertFilesCommand extends Command {
 		);
 
 		if ($files->count()) {
+			$this->debug('Fetched non-image files', [
+				'count' => $files->count(),
+				'includeAvif' => (bool)$args->getOption('include-avif'),
+				'includeWebp' => (bool)$args->getOption('include-webp'),
+				'retryFailed' => (bool)$args->getOption('retry-failed'),
+			]);
+
 			$result = $this->convertNonImages($files, $io, $args->getOption('include-avif'), $args->getOption('include-webp'));
 			if ($result !== static::CODE_SUCCESS) {
 				return false;
@@ -255,6 +326,8 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForAvifConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 		if ($files->count()) {
+			$this->debug('Fetched avif conversion files', ['count' => $files->count(), 'retryFailed' => (bool)$args->getOption('retry-failed')]);
+
 			$result = $this->convertImagesToAvif($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
 				return false;
@@ -276,6 +349,8 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForWebpConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 		if ($files->count()) {
+			$this->debug('Fetched webp conversion files', ['count' => $files->count(), 'retryFailed' => (bool)$args->getOption('retry-failed')]);
+
 			$result = $this->convertImagesToWebp($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
 				return false;
@@ -297,6 +372,8 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForResizing((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 		if ($files->count()) {
+			$this->debug('Fetched resize files', ['count' => $files->count(), 'retryFailed' => (bool)$args->getOption('retry-failed')]);
+
 			$result = $this->resizeImages($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
 				return false;
@@ -318,6 +395,8 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForAverageColorCalculation((int)$args->getOption('limit'));
 
 		if ($files->count()) {
+			$this->debug('Fetched average-color files', ['count' => $files->count()]);
+
 			$result = $this->calculateAverageColors($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
 				return false;
@@ -341,6 +420,13 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Entity\Media $file */
 		foreach ($files as $file) {
 			$path = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
+			$this->debug('Average-color file processing started', [
+				'mediaId' => $file->id,
+				'path' => $file->path,
+				'absolutePath' => $path,
+				'isImage' => $file->isImage(),
+				'mimeType' => $file->mimeType,
+			]);
 
 			$io->out(sprintf('Calculating average color for file `%s`', $file->path));
 
@@ -350,6 +436,10 @@ class ConvertFilesCommand extends Command {
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$file->averageColor = '00000000';
+				$this->debug('Average-color file skipped because source does not exist', [
+					'mediaId' => $file->id,
+					'assignedColor' => $file->averageColor,
+				]);
 				continue;
 			}
 
@@ -359,6 +449,10 @@ class ConvertFilesCommand extends Command {
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$file->averageColor = '00000000';
+				$this->debug('Average-color file skipped because mime type is png', [
+					'mediaId' => $file->id,
+					'assignedColor' => $file->averageColor,
+				]);
 				continue;
 			}
 
@@ -369,13 +463,28 @@ class ConvertFilesCommand extends Command {
 				$io->hr();
 
 				$file->averageColor = '00000000';
+				$this->debug('Average-color calculation returned no color values', [
+					'mediaId' => $file->id,
+					'assignedColor' => $file->averageColor,
+				]);
 				continue;
 			}
 
+			$this->debug('Average-color raw values', [
+				'mediaId' => $file->id,
+				'colors' => $colors,
+			]);
+
 			// If alpha is fully transparent, set it to FF
+			$alphaWasTransparent = $colors['alpha'] === 0;
 			$colors['alpha'] = $colors['alpha'] === 0 ? 255 : $colors['alpha'];
 
 			$file->averageColor = sprintf('%02X%02X%02X%02X', $colors['red'], $colors['green'], $colors['blue'], $colors['alpha']);
+			$this->debug('Average-color file processing finished', [
+				'mediaId' => $file->id,
+				'alphaWasTransparent' => $alphaWasTransparent,
+				'assignedColor' => $file->averageColor,
+			]);
 
 			$io->success('Status: Average color calculated successfully (#' . $file->averageColor . ')');
 			$io->hr();
@@ -409,6 +518,8 @@ class ConvertFilesCommand extends Command {
 	 * @return array|false
 	 */
 	protected function calculateAverageColor(string $path, ConsoleIo $io): array|false {
+		$this->debug('Calculating average color', ['path' => $path, 'usesCli' => $this->cliMagickExists]);
+
 		// If magick is not available, use Intervention
 		if (!$this->cliMagickExists) {
 			return $this->calculateAverageColorIntervention($path, $io);
@@ -470,11 +581,13 @@ class ConvertFilesCommand extends Command {
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
+			$this->debug('Average-color Intervention failed', ['path' => $filePath, 'error' => $ex->getMessage()]);
 
 			return false;
 		}
 
 		$colorParts = $color->toArray();
+		$this->debug('Average-color Intervention raw output', ['path' => $filePath, 'output' => $colorParts]);
 
 		return [
 			'red' => $colorParts[0],
@@ -615,7 +728,7 @@ class ConvertFilesCommand extends Command {
 
 		$io->out(sprintf('Creating Avif file for file `%s`', $file->path));
 
-		// If magick is not available or cannot convert web, use the Intervention library
+		// If magick is not available or cannot convert to AVIF, use the Intervention library
 		if (
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.avif', false) === false
@@ -661,7 +774,7 @@ class ConvertFilesCommand extends Command {
 
 		$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
 
-		// If magick is not available or cannot convert web, use the Intervention library
+		// If magick is not available or cannot convert to WebP, use the Intervention library
 		if (
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.webp', false) === false
@@ -855,6 +968,15 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function convertNonImage(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
+		$this->debug('Converting non-image', [
+			'mediaId' => $file->id,
+			'path' => $file->path,
+			'mimeType' => $file->mimeType,
+			'extension' => $file->extension,
+			'includeAvif' => $includeAvif,
+			'includeWebp' => $includeWebp,
+		]);
+
 		if (!$file->previewPathAbsolute) {
 			$io->out(sprintf('Creating preview for file `%s`', $file->path));
 			$io->error('Status: Cannot convert file without a path');
@@ -886,9 +1008,11 @@ class ConvertFilesCommand extends Command {
 				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
 			)
 		) {
+			$this->debug('Using Intervention pipeline for non-image conversion', ['mediaId' => $file->id]);
 			return $this->convertNonImageIntervention($file, $io, $includeAvif, $includeWebp);
 		}
 
+		$this->debug('Using CLI pipeline for non-image conversion', ['mediaId' => $file->id]);
 		return $this->convertNonImageCli($file, $io, $includeAvif, $includeWebp);
 	}
 
@@ -1061,13 +1185,24 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function cropImage(Media $file, ConsoleIo $io): bool {
+		$this->debug('Cropping media', [
+			'mediaId' => $file->id,
+			'path' => $file->path,
+			'extension' => $file->extension,
+		]);
+
 		if (
 			!$this->cliMagickExists ||
-			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+			(
+				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false &&
+				!in_array(strtolower($file->extension), ['gif', 'png', 'jpg', 'jpeg'], true)
+			)
 		) {
+			$this->debug('Crop via Intervention', ['mediaId' => $file->id]);
 			$cropped = $this->cropImageIntervention($file, $io);
 		}
 		else {
+			$this->debug('Crop via CLI', ['mediaId' => $file->id]);
 			$cropped = $this->cropImageCli($file, $io);
 		}
 
@@ -1137,6 +1272,12 @@ class ConvertFilesCommand extends Command {
 		try {
 			$image = $this->imageManager->read($inputPath);
 
+			$this->debug('Cropping file with Intervention', [
+				'mediaId' => $file->id,
+				'path' => $file->path,
+				'crop' => $file->crop,
+			]);
+
 			if ($file->width !== (float)$file->crop['width'] || $file->height !== (float)$file->crop['height']) {
 				$crop = [(int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']];
 
@@ -1194,6 +1335,12 @@ class ConvertFilesCommand extends Command {
 	protected function cropImageCli(Media $file, ConsoleIo $io): bool {
 		$commands = $this->getCropCommand($file);
 
+		if (empty($commands['original'])) {
+			$this->debug('Skipping CLI crop because no crop/resize operation is required', ['mediaId' => $file->id]);
+			return true;
+		}
+
+		$this->debug('Cropping file with CLI command', ['mediaId' => $file->id, 'command' => $commands['original']]);
 		$process = $this->getProcess($commands['original']);
 
 		$result = $this->runProcess($process, $io);
@@ -1204,12 +1351,14 @@ class ConvertFilesCommand extends Command {
 
 		// If there's an avif command, run it and crop the avif file as well
 		if ($commands['avif']) {
+			$this->debug('Cropping AVIF derivative', ['mediaId' => $file->id, 'command' => $commands['avif']]);
 			$process = $this->getProcess($commands['avif']);
 			$process->run();
 		}
 
 		// If there's a webp command, run it and crop the webp file as well
 		if ($commands['webp']) {
+			$this->debug('Cropping WebP derivative', ['mediaId' => $file->id, 'command' => $commands['webp']]);
 			$process = $this->getProcess($commands['webp']);
 			$process->run();
 		}
@@ -1281,6 +1430,14 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function resizeImage(MediaResizedImage $file, ConsoleIo $io): bool {
+		$this->debug('Resizing media', [
+			'resizedImageId' => $file->id,
+			'mediaId' => $file->media->id,
+			'path' => $file->path,
+			'strategy' => $file->strategy->value,
+			'extension' => $file->extension,
+		]);
+
 		if (!$file->media->isImage() && $file->media->preview === ProcessStatus::Fail) {
 			$io->out(sprintf('Resizing file `%s` to `%s', $file->media->path, $file->path));
 			$io->error('Status: Cannot resize non-image file without a preview');
@@ -1309,11 +1466,16 @@ class ConvertFilesCommand extends Command {
 
 		if (
 			!$this->cliMagickExists ||
-			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+			(
+				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false &&
+				!in_array(strtolower($file->extension), ['gif', 'png', 'jpg', 'jpeg'], true)
+			)
 		) {
+			$this->debug('Resize via Intervention', ['resizedImageId' => $file->id]);
 			$resized = $this->resizeImageIntervention($file, $io);
 		}
 		else {
+			$this->debug('Resize via CLI', ['resizedImageId' => $file->id]);
 			$resized = $this->resizeImageCli($file, $io);
 		}
 
@@ -1576,6 +1738,8 @@ class ConvertFilesCommand extends Command {
 		$records = $mediaTable->find()->where($where)->limit($limit)->all();
 
 		if ($records->count()) {
+			$this->debug('Fetched media records', ['count' => $records->count()]);
+
 			$updatedProcessStatusColumns = [];
 			foreach ($processStatusColumns as $column) {
 				$updatedProcessStatusColumns[ $column ] = ProcessStatus::InProgress;
@@ -1792,6 +1956,15 @@ class ConvertFilesCommand extends Command {
 			$commandOriginal = $commandAvif = $commandWebp = null;
 		}
 
+		$this->debug('Built crop commands', [
+			'mediaId' => $file->id,
+			'hasCrop' => (bool)$crop,
+			'hasResize' => (bool)$resize,
+			'hasOriginal' => $commandOriginal !== null,
+			'hasAvif' => $commandAvif !== null,
+			'hasWebp' => $commandWebp !== null,
+		]);
+
 		return [
 			'original' => $commandOriginal,
 			'avif' => $commandAvif,
@@ -1954,9 +2127,17 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function runProcess(Process $process, ConsoleIo $io): bool {
+		$this->debug('Running process', ['command' => $process->getCommandLine()]);
+
 		$process->run();
 
 		if (!$process->isSuccessful()) {
+			$this->debug('Process failed', [
+				'exitCode' => $process->getExitCode(),
+				'exitCodeText' => $process->getExitCodeText(),
+				'stderr' => $process->getErrorOutput(),
+			]);
+
 			$io->error('Status: ' . $process->getExitCodeText());
 			$io->out('Command: ' . str_replace('\' \'', ' ', $process->getCommandLine()));
 			$io->out('Message: ' . $process->getErrorOutput(), 0);
@@ -1965,6 +2146,10 @@ class ConvertFilesCommand extends Command {
 		}
 
 		$io->success('Status: ' . $process->getExitCodeText());
+		$this->debug('Process succeeded', [
+			'exitCode' => $process->getExitCode(),
+			'exitCodeText' => $process->getExitCodeText(),
+		]);
 
 		return true;
 	}
