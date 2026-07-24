@@ -1323,7 +1323,7 @@ class ConvertFilesCommand extends Command {
 		// If an avif file exists, crop it as well
 		if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
 			try {
-				$this->cropAndResizeIntervention($file->avifPathAbsolute, $crop, $resize, $inputPath);
+				$this->cropAndResizeIntervention($file->avifPathAbsolute, $crop, $resize, $file->avifPathAbsolute);
 			}
 			catch (Exception) {
 				// Ignore the exception for avif cropping
@@ -1333,7 +1333,7 @@ class ConvertFilesCommand extends Command {
 		// If a webp file exists, crop it as well
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 			try {
-				$this->cropAndResizeIntervention($file->webpPathAbsolute, $crop, $resize, $inputPath);
+				$this->cropAndResizeIntervention($file->webpPathAbsolute, $crop, $resize, $file->webpPathAbsolute);
 			}
 			catch (Exception) {
 				// Ignore the exception for webp cropping
