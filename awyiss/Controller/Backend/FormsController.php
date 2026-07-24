@@ -322,7 +322,7 @@ class FormsController extends Controller {
 		$pageProperties = array_combine($pageProperties, $pageProperties);
 		$pageProperties = array_diff($pageProperties, ['metaTitle', 'metaDescription', 'robotsFollow', 'robotsIndex', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn']);
 		foreach ($pageProperties as $value) {
-			$pageProperties[ $value ] = __d('Pages', $value) . ' (' . $value . ')';
+			$pageProperties[ $value ] = __d('Pages', Inflector::underscore($value)) . ' (' . $value . ')';
 		}
 
 		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
