@@ -106,7 +106,7 @@ class UrlHistoryTableTest extends TestCase {
 		$scopes = $this->urlHistoryTable->getAvailableScopes();
 
 		$this->assertIsArray($scopes);
-		$this->assertSame(['pages', 'media'], $scopes);
+		$this->assertSame(['Pages', 'Media'], $scopes);
 	}
 
 

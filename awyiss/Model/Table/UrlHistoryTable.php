@@ -30,8 +30,8 @@ class UrlHistoryTable extends Table {
 	 * @var array
 	 */
 	protected array $availableScopes = [
-		'pages',
-		'media',
+		'Pages',
+		'Media',
 	];
 
 
@@ -139,6 +139,7 @@ class UrlHistoryTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (UrlHistory $entity, array $options) use ($rules) {
 			$tableLocator = FactoryLocator::get('Table');
+
 			if ($entity->scope === 'Pages') {
 				/** @var \Awyiss\Model\Table\PagesTable $table */
 				$table = $tableLocator->get('Pages');
