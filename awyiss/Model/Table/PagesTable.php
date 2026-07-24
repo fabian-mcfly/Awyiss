@@ -249,7 +249,6 @@ class PagesTable extends Table {
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
-			'url' => ['rule' => ['url', true]],
 		]);
 
 
