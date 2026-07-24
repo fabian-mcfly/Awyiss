@@ -126,6 +126,7 @@ class NestBehavior extends Behavior {
 		$this->setConfig('implementedEvents', [
 			'Configuration.' . $this->getConfig('alias') . '.Backend.nest.enabled.afterSaveCommit' => 'unnestEntriesAfterSave',
 			'Configuration.' . $this->getConfig('alias') . '.Backend.nest.enabled.afterDeleteCommit' => 'unnestEntriesAfterDelete',
+			'Model.' . $this->getConfig('alias') . '.beforeSaveAssociations' => 'beforeSaveAssociations',
 		]);
 
 		$this->buildAssociations();
@@ -606,6 +607,65 @@ class NestBehavior extends Behavior {
 			$entity->extractOriginalChanged($relatedColumns),
 			$entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($relatedColumns), true) ?? []
 		);
+	}
+
+
+	/**
+	 * Before saving associations, check whether the 'associated' in the options contains the child association
+	 * and if the entity has children set in the property of the child association.
+	 * If both are true, the children must have all related columns set to the same values as the entity,
+	 * otherwise the children will be moved to a new scope.
+	 *
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSaveAssociations(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		$relatedColumns = $this->getConfig('relatedColumns');
+
+		// No related columns set means nothing to do
+		if (!$relatedColumns) {
+			return;
+		}
+
+		$relatedColumnValues = $entity->extract($relatedColumns);
+
+		// No related columns set means nothing to do
+		if (!$relatedColumnValues) {
+			return;
+		}
+
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'nest'));
+
+		// If the skip option is set, don't update the children
+		if ($queryOptions['skip'] === true) {
+			return;
+		}
+
+		$associationName = $this->getConfig('children.associationName');
+
+		// If the association is not set in the options, don't update the children
+		if (!isset($options['associated'][ $associationName ])) {
+			return;
+		}
+
+		$association = $this->table()->getAssociation($associationName);
+		$associationProperty = $association->getProperty();
+
+		// If the entity doesn't have children set in the property of the child association, don't update the children
+		if (!$entity->get($associationProperty)) {
+			return;
+		}
+
+		/**
+		 * Patch all children with the related column values of the entity, without guarding the fields
+		 * @var EntityInterface $child
+		 */
+		foreach ($entity->get($associationProperty) as $child) {
+			$child->patch($relatedColumnValues, ['guard' => false]);
+		}
 	}
 
 
