@@ -40,13 +40,18 @@ export default class UserConfigurationController {
 	 */
 	handleColorChange(event) {
 		const value = event.target.value;
+		const scopeInput = document.querySelector('#Configuration-Scope');
+		const identifierInput = document.querySelector('#Configuration-Identifier');
 
-		if (value) {
+		if (
+			value &&
+			scopeInput?.value === 'System' &&
+			identifierInput?.value === 'interface.highlightColor'
+		) {
 			// Add the value as a custom property to the html
 			document.documentElement.style.setProperty('--colorSuccess', value);
 		}
 		else {
-			// Remove the custom property from the html
 			document.documentElement.style.removeProperty('--colorSuccess');
 		}
 	}

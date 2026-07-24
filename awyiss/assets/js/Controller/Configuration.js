@@ -45,22 +45,18 @@ export default class ConfigurationController {
 		const identifierInput = document.querySelector('#Configuration-Identifier');
 
 		if (
-			!realmInput || realmInput.value !== 'Backend' ||
-			!scopeInput || scopeInput.value !== 'system' ||
-			!identifierInput || identifierInput.value !== 'interface.highlightColor'
+			value &&
+			realmInput?.value === 'Backend' &&
+			scopeInput?.value === 'System' &&
+			identifierInput?.value === 'interface.highlightColor'
 		) {
-			document.documentElement.style.removeProperty('--colorSuccess');
-			return;
-		}
-
-		if (value) {
 			// Add the value as a custom property to the html
 			document.documentElement.style.setProperty('--colorSuccess', value);
 		}
 		else {
-			// Remove the custom property from the html
 			document.documentElement.style.removeProperty('--colorSuccess');
 		}
+
 	}
 
 	/**
