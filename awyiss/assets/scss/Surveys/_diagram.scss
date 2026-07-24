@@ -227,6 +227,9 @@
 
 		li {
 			text-align:left;
+			hyphens:auto;
+			hyphenate-limit-chars:10 4 4;
+			overflow-wrap:break-word;
 		}
 	}
 
