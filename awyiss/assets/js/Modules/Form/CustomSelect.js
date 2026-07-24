@@ -339,9 +339,21 @@ export default class CustomSelect {
 		if (selectElement) {
 			this.highlightedOptionMap.delete(selectElement);
 		}
+
+		// Clear filter input
+		const filterInput = openWrapper.querySelector(`.${this.filterClass}`);
+		if (filterInput) {
+			filterInput.value = '';
+		}
+
 		const optionsList = openWrapper.querySelector(`.${this.optionsClass}`);
 		optionsList.querySelectorAll(`.${this.optionClass}`).forEach((option) => {
 			option.classList.remove(this.highlightedClass, 'Hidden', 'Disabled');
+		});
+
+		// Also remove Hidden class from optgroups
+		optionsList.querySelectorAll(`.${this.optgroupClass}`).forEach((optgroup) => {
+			optgroup.classList.remove('Hidden');
 		});
 	}
 
@@ -663,6 +675,15 @@ export default class CustomSelect {
 			return;
 		}
 
+		// Handle Escape key first, regardless of highlighted option
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			this.closeWrapper(wrapper);
+			const button = wrapper.querySelector(`.${this.buttonClass}`);
+			button.focus();
+			return;
+		}
+
 		const optionsList = wrapper.querySelector(`.${this.optionsClass}`);
 		let currentOption = this.highlightedOptionMap.get(selectElement);
 
@@ -723,23 +744,6 @@ export default class CustomSelect {
 			case 'Enter': {
 				event.preventDefault();
 				this.useOption(currentOption);
-				break;
-			}
-
-			case 'Escape': {
-				event.preventDefault();
-				wrapper.classList.remove(this.openClass);
-				const button = wrapper.querySelector(`.${this.buttonClass}`);
-				button.setAttribute('aria-expanded', 'false');
-				button.focus();
-
-				wrapper.customSelectData.dropdown.inert = true;
-
-				// Clear highlighted option
-				this.highlightedOptionMap.delete(selectElement);
-				optionsList.querySelectorAll(`.${this.optionClass}`).forEach((option) => {
-					option.classList.remove(this.highlightedClass, 'Hidden', 'Disabled');
-				});
 				break;
 			}
 		}
