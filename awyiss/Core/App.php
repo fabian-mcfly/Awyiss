@@ -127,28 +127,36 @@ class App extends BaseApp {
 		}
 
 		$namespaceType = str_replace('/', '\\', $folder);
-		$folders = explode('/', $folder);
+		$baseFolders = explode('/', $folder);
+		$folders = $baseFolders;
 
-		$subfolderNames = [];
 		if ($subfolders) {
-			$subfolderNames = explode('/', $subfolders);
-			$folders = array_merge($folders, $subfolderNames);
+			if ($subfolders === '*') {
+				// Add {/*,} to the last element of $folders
+				$folders[ count($folders) - 1 ] .= '{/*,}';
+			}
+			else {
+				$subfolderNames = explode('/', $subfolders);
+				$folders = array_merge($folders, $subfolderNames);
+			}
 		}
+
 
 		if (defined('CUSTOM_NAMESPACE')) {
-			$paths[ '\\' . CUSTOM_NAMESPACE . '\\' . $namespaceType . '\\' ] = implode(DS, [ROOT, CUSTOM_DIR, ...$folders, $name . $suffix . '.php']);
+			$paths[ '\\' . CUSTOM_NAMESPACE . '\\' . $namespaceType . '\\' ] = [
+				'pattern' => implode(DS, [ROOT, CUSTOM_DIR, ...$folders, $name . $suffix . '.php']),
+				'basePath' => implode(DS, [ROOT, CUSTOM_DIR, ...$baseFolders]),
+			];
 		}
 
-		$paths[ '\Awyiss\\' . $namespaceType . '\\' ] = implode(DS, [ROOT, APP_DIR, ...$folders, $name . $suffix . '.php']);
+		$paths[ '\\Awyiss\\' . $namespaceType . '\\' ] = [
+			'pattern' => implode(DS, [ROOT, APP_DIR, ...$folders, $name . $suffix . '.php']),
+			'basePath' => implode(DS, [ROOT, APP_DIR, ...$baseFolders]),
+		];
 
-		foreach ($paths as $namespace => $filePaths) {
-			foreach (glob($filePaths) as $filePath) {
-				$offset = 0;
-				if ($subfolderNames) {
-					$offset = strlen($filePath) - strrpos($filePath, DS) + 1;
-				}
-
-				$className = substr($filePath, strrpos($filePath, DS, -$offset) + 1, -4);
+		foreach ($paths as $namespace => $pathConfig) {
+			foreach (glob($pathConfig['pattern'], GLOB_BRACE) as $filePath) {
+				$className = substr($filePath, strlen($pathConfig['basePath']) + 1, -4);
 				$className = str_replace(DS, '\\', $className);
 
 				if (

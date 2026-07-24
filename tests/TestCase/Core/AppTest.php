@@ -202,6 +202,7 @@ class AppTest extends TestCase {
 
 		$result = App::classes('*', 'Command', 'Command', null, '*');
 		$this->assertSame([
+			'TestCommand' => '\Customer\Command\TestCommand',
 			'Awyiss\BackupCommand' => '\Awyiss\Command\Awyiss\BackupCommand',
 			'Awyiss\InstallCommand' => '\Awyiss\Command\Awyiss\InstallCommand',
 			'Awyiss\ResetPasswordCommand' => '\Awyiss\Command\Awyiss\ResetPasswordCommand',
@@ -219,6 +220,8 @@ class AppTest extends TestCase {
 			'Media\DetectAvailableCommandsCommand' => '\Awyiss\Command\Media\DetectAvailableCommandsCommand',
 			'Scss\CompileCommand' => '\Awyiss\Command\Scss\CompileCommand',
 			'Twig\ClearCacheCommand' => '\Awyiss\Command\Twig\ClearCacheCommand',
+			'I18nExtractCommand' => '\Awyiss\Command\I18nExtractCommand',
+			'IntegrityCheckCommand' => '\Awyiss\Command\IntegrityCheckCommand',
 		], $result);
 	}
 }
