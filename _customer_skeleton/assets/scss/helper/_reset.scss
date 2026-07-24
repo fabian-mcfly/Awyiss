@@ -219,7 +219,7 @@
 			}
 		}
 
-		&:where([data-src]) {
+		&:where([data-src]:not([data-src$='.svg'])) {
 			&.Loaded {
 				width:auto;
 			}

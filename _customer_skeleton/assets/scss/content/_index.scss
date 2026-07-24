@@ -1,6 +1,12 @@
 .ContentRow {
 	margin-top:var(--contentRowGap);
 
+	&.SmallColumnGap {
+		--elementMargin:1%;
+
+		@include Columns(1%);
+	}
+
 	&:where(:nth-child(1 of .ContentRow)) {
 		margin-top:0;
 	}
@@ -20,45 +26,69 @@
 	.FormElement,
 	.GlobalContentElement
 ) {
-	&.BackgroundColor {
-		padding:var(--elementPadding);
-		background-color:var(--backgroundColor, transparent);
-		color:var(--textColor);
+	@scope (#{&}.BackgroundColor) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			padding:var(--elementPadding);
+			background-color:var(--backgroundColor, transparent);
+			color:var(--textColor);
+
+			@media screen and (width <= 1024px) {
+				padding:calc(var(--elementPadding) * .5);
+			}
+		}
 	}
 
-	&.BackgroundColor-Text {
-		--backgroundColor:var(--colorText);
-		--textColor:var(--colorBright);
+	@scope (#{&}.BackgroundColor-Text) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorText);
+			--textColor:var(--colorBright);
+		}
 	}
 
-	&.BackgroundColor-Dark {
-		--backgroundColor:var(--colorDark);
-		--textColor:var(--colorBright);
+	@scope (#{&}.BackgroundColor-Dark) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorDark);
+			--textColor:var(--colorBright);
+
+			:is(h1, h2, h3, h4, h5, h6) {
+				color:var(--colorBright);
+			}
+		}
 	}
 
-	&.BackgroundColor-Medium {
-		--backgroundColor:var(--colorMedium);
-		--textColor:var(--colorBright);
+	@scope (#{&}.BackgroundColor-Medium) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorMedium);
+			--textColor:var(--colorBright);
+		}
 	}
 
-	&.BackgroundColor-Light {
-		--backgroundColor:var(--colorLight);
-		--textColor:var(--colorText);
+	@scope (#{&}.BackgroundColor-Light) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorLight);
+			--textColor:var(--colorText);
+		}
 	}
 
-	&.BackgroundColor-Bright {
-		--backgroundColor:var(--colorBright);
-		--textColor:var(--colorText);
+	@scope (#{&}.BackgroundColor-Bright) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorBright);
+			--textColor:var(--colorText);
+		}
 	}
 
-	&.BackgroundColor-Main {
-		--backgroundColor:var(--colorMain);
-		--textColor:var(--colorBright);
+	@scope (#{&}.BackgroundColor-Main) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorMain);
+			--textColor:var(--colorText);
+		}
 	}
 
-	&.BackgroundColor-Contrast {
-		--backgroundColor:var(--colorContrast);
-		--textColor:var(--colorBright);
+	@scope (#{&}.BackgroundColor-Contrast) to (#{&}.BackgroundColor) {
+		@at-root :scope {
+			--backgroundColor:var(--colorContrast);
+			--textColor:var(--colorBright);
+		}
 	}
 
 	&:where(

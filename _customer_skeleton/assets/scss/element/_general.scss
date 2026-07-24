@@ -43,8 +43,26 @@ blockquote {
 	@extend %FontAlternative;
 
 	font-style:italic;
-	font-size:1.5rem;
-	line-height:1.4;
+	//font-weight:700;
+	line-height:1.5;
+
+	> * {
+		&:first-child {
+			&::before {
+				content:'\201e';
+				font-size:1.25em;
+				line-height:1;
+			}
+		}
+
+		&:last-child {
+			&::after {
+				content:'\201c';
+				font-size:1.25em;
+				line-height:1;
+			}
+		}
+	}
 }
 
 a {
