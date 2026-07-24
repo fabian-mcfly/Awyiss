@@ -33,6 +33,10 @@ export default class GlobalContentsController {
 			// Find the close buttons and send an event to the parent window
 			const closeButtons = frontendEditor.querySelectorAll('.Button-Close');
 			closeButtons.forEach(closeButton => {
+				if (closeButton.closest('dialog')) {
+					return;
+				}
+
 				closeButton.addEventListener('click', () => {
 					window.parent.postMessage('closeFrontendEditor', '*');
 				});
