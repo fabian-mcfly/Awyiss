@@ -9,6 +9,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Entity\UrlHistory;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
@@ -291,7 +292,7 @@ class UrlHistoryController extends Controller {
 
 		$scopes = [];
 		foreach ($this->UrlHistory->getAvailableScopes() as $scope) {
-			$scopes[ $scope ] = __('scope_' . $scope);
+			$scopes[ $scope ] = __('scope_' . Inflector::underscore($scope));
 		}
 
 		if ($urlHistory->scope === 'Media' && !$this->request->getData('foreignKey')) {
