@@ -429,8 +429,8 @@ class ResizedImageManager {
 
 	/**
 	 * Check if the file can be resized
-	 * If the width and height are the same as the original, return null
-	 * If the image is not allowed to be upscaled, check if the requested size is larger than the original
+	 * If the width and height are the same as the original, return false
+	 * If upscaling is disallowed, prevent requests that would only upscale
 	 *
 	 * If the width or height is not set, check if the strategy is "contain", otherwise throw an error
 	 *
@@ -443,35 +443,59 @@ class ResizedImageManager {
 	 */
 	protected static function fileCanBeResized(
 		Media $media,
-		float|int|null $width,
-		float|int|null $height,
+		float|int|null &$width,
+		float|int|null &$height,
 		ResizeStrategy|string|int $strategy,
 		bool $allowUpscale
 	): bool {
+		$strategy = ResizeStrategy::normalize($strategy);
+
 		/**
 		 * If the width or height is not set, check if the strategy is "contain",
 		 * otherwise throw an error
 		 */
 		if (!$width || !$height) {
 			// If the strategy isn't contain, throw an error
-			if (ResizeStrategy::normalize($strategy) !== ResizeStrategy::Contain) {
+			if ($strategy !== ResizeStrategy::Contain) {
 				throw new InvalidArgumentException('Both width and height must be set if the resize strategy is not "contain".');
 			}
 		}
 
-		// If the width and height are the same as the original, return null
+		// No resize needed when requested dimensions match the original image.
 		if (
-			(!$width || $width == $media->width) && (!$height || $height == $media->height)
+			(
+				!$width ||
+				$width == $media->width
+			) &&
+			(
+				!$height ||
+				$height == $media->height
+			)
 		) {
 			return false;
 		}
 
-		// If the image is not allowed to be upscaled, check if the requested size is larger than the original
+		// When upscaling is disabled, allow contain/crop only for mixed requests
+		// where at least one dimension still shrinks.
 		if (!$allowUpscale) {
-			// If that's the case, return null
-			if (
-				($width && $width > $media->width) || ($height && $height > $media->height)
-			) {
+			$widthWouldUpscale = $width && $width > $media->width;
+			$heightWouldUpscale = $height && $height > $media->height;
+
+			if ($widthWouldUpscale || $heightWouldUpscale) {
+				// For contain/crop, clamp overshooting dimensions to original size.
+				if ($strategy === ResizeStrategy::Contain || $strategy === ResizeStrategy::Crop) {
+					if ($widthWouldUpscale) {
+						$width = (int)$media->width;
+					}
+
+					if ($heightWouldUpscale) {
+						$height = (int)$media->height;
+					}
+
+					// If clamping removes all effective resize changes, skip creating a resized image.
+					return !(($width === null || $width == $media->width) && ($height === null || $height == $media->height));
+				}
+
 				return false;
 			}
 		}
