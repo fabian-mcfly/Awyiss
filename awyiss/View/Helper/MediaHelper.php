@@ -295,10 +295,42 @@ class MediaHelper extends Helper {
 		}
 
 		if ($media->mimeType === 'image/svg+xml') {
+			// If the <svg> tag has a `data-force-inline="true"` attribute, the svg will be inlined instead of using an <img> tag
+			$contents = $this->contents($media);
+			if (
+				$contents &&
+				preg_match('/<svg\\b[^>]*\\bdata-force-inline\\s*=\\s*(["\'])true\\1/i', $contents)
+			) {
+				return $contents;
+			}
+
 			$attributes += [
 				'width' => $media->width,
 				'height' => $media->height,
 			];
+
+			// If there's a g#AWYISS_SVG_ID in the SVG, return an <svg> tag with a use statement
+			if (
+				$contents &&
+				preg_match('/<g\\b[^>]*\\bid\\s*=\\s*(["\'])AWYISS_SVG_ID\\1/i', $contents)
+			) {
+				// Take the viewbox from the SVG, if it exists
+				$attributes['viewBox'] = preg_match('/<svg\\b[^>]*\\bviewBox\\s*=\\s*(["\'])([^"\']+)\\1/i', $contents, $matches) ? $matches[2] : '0 0 ' . $media->width . ' ' . $media->height;
+				$attributes['xmlns'] = 'http://www.w3.org/2000/svg';
+				$attributes['preserveAspectRatio'] = 'xMidYMid meet';
+				$attributes['id'] ??= 'Image-' . substr(hash('xxh64', $media->name . serialize($mediaRenderOptions)), 0, 15);
+
+				$placeholderStyleTag = $this->getPlaceholderStyleTag(
+					$attributes['id'],
+					$attributes['width'],
+					$attributes['height'],
+					null,
+					$mediaRenderOptions
+				);
+
+				return '<svg' . $this->Html->templater()->formatAttributes($attributes) . '><use xlink:href="' . $media->path . '#AWYISS_SVG_ID"></use></svg>' . PHP_EOL .
+					$placeholderStyleTag . PHP_EOL;
+			}
 
 			return $this->simpleImageTag($media->path, $attributes, $media, $mediaRenderOptions);
 		}
