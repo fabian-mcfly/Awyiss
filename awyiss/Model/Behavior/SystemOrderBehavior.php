@@ -721,7 +721,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$relatedColumns = $this->getDirtyRelatedColumns($entity);
 
-		if ($initiator && in_array($initiator, $relatedColumns)) {
+		if ($initiator && in_array($initiator, $this->getConfig('relatedColumns'))) {
 			return true;
 		}
 
@@ -941,7 +941,9 @@ class SystemOrderBehavior extends Behavior {
 			$field = substr($field, 11);
 		}
 
+		$sortField = $field;
 		if ($table->fieldIsAttribute($field)) {
+			$sortField = 'attributes.' . $field;
 			$attributesTableName = $table->getAttributesTableName(true);
 			$field = $attributesTableName . '.' . $field;
 		}
@@ -953,23 +955,33 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$records = $query->all()->append([$entity])->sortBy(
-			$field,
+			$sortField,
 			$this->getConfig('direction'),
 			in_array($fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 		)->toList();
 
-		foreach ($records as $key => $existingEntities) {
+		// Loop through all records (including the entity being saved) to determine its position in the sorted list
+		foreach ($records as $key => $existingEntity) {
+			// Case 1: The entity is new (not yet persisted, has no id)
 			if ($entity->isNew()) {
-				if (!$existingEntities->id) {
-					$entity->set('systemOrder', $key + 1);
+				// The new entity appears in $records with no id.
+				// When we find it, its position in the sorted list (+1) determines its systemOrder.
+				if (!$existingEntity->id) {
+					$entity->set('systemOrder', $key + 1); // Position is 1-based
+					// Position of the new entity found, exit loop
 					break;
 				}
 
+				// Not the new entity yet, continue searching
 				continue;
 			}
 
-			if ($existingEntities->id === $entity->get('id')) {
+			// Case 2: The entity already exists (has an id).
+			// Find the matching record in the sorted list by comparing ids.
+			if ($existingEntity->id === $entity->get('id')) {
+				// Position in sorted list (+1) = new systemOrder
 				$entity->set('systemOrder', $key + 1);
+				// Match found, exit loop
 				break;
 			}
 		}
