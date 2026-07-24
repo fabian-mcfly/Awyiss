@@ -14,7 +14,7 @@
 @var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
 @var FlashHelper \Awyiss\View\Helper\FlashHelper
 @var FormHelper \Awyiss\View\Helper\FormHelper
-@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var HtmlHelper \Awyiss\View\Helper\HtmlHelper
 @var LocaleHelper \Awyiss\View\Helper\LocaleHelper
 @var MediaHelper \Awyiss\View\Helper\MediaHelper
 @var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
@@ -157,22 +157,6 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 							{%~ set linkLabel = inheritingAnswers ? '"' ~ SurveyHelper.linkLabel(inheritingAnswers) ~ '"' : null %}
 							{%~ set link = (linkLabel ? '--' ~ linkLabel : '') ~ '-->' %}
 							{%~ if question.nextAction == enum(nextActionEnum).SpecificQuestion and question.nextActionTarget %}
-								{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, question.identifier) %}
-								{%~ if realNextQuestion and question.nextActionTarget != realNextQuestion.identifier %}
-									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ realNextQuestion.identifier }}
-									{%~ set lines = lines + 1 %}
-									{%~ set linkLabels = [] %}
-									{%~ for answerLabel in inheritingAnswers %}
-										{%~ if answerLabel and answerLabel not in inheritingAnswersWithOwnNextAction %}
-											{%~ set linkLabels = linkLabels|merge([answerLabel]) %}
-										{%~ endif %}
-									{%~ endfor %}
-									{%~ if question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice and question.allowCustomAnswer == true %}
-										{%~ set linkLabels = linkLabels|merge({custom: ''}) %}
-									{%~ endif %}
-									{%~ set linkLabel = linkLabels ? '"' ~ SurveyHelper.linkLabel(linkLabels) ~ '"' : null %}
-									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
-								{%~ endif %}
 								{%~ if inactive and questionsByIdentifier[ question.nextActionTarget ].onlyReachableFromUnused != true %}
 									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
 								{%~ endif %}
