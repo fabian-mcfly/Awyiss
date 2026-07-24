@@ -286,7 +286,7 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testUcpartsFilterr(): void {
+	public function testUcpartsFilter(): void {
 		$filters = $this->extension->getFilters();
 		$ucpartsFilter = $filters[6];
 		$callable = $ucpartsFilter->getCallable();

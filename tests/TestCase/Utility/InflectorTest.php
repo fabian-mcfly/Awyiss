@@ -19,11 +19,11 @@ class InflectorTest extends TestCase {
 	 * @see \Awyiss\Utility\Inflector::ucparts()
 	 */
 	public function testUcpartsCapitalizesEachPartWithDefaultDelimiter(): void {
-		$this->assertSame('Foo-Bar', Inflector::ucparts('foo-bar'));
+		$this->assertSame('Foo_Bar', Inflector::ucparts('foo-bar'));
 		$this->assertSame('Foo_Bar', Inflector::ucparts('foo_bar'));
-		$this->assertSame('Foo Bar', Inflector::ucparts('foo bar'));
-		$this->assertSame('Foobar', Inflector::ucparts('fooBar'));
-		$this->assertSame('Foo\'Bar', Inflector::ucparts('foo\'bar'));
+		$this->assertSame('Foo_Bar', Inflector::ucparts('foo bar'));
+		$this->assertSame('Foo_Bar', Inflector::ucparts('fooBar'));
+		$this->assertSame('Foo_Bar', Inflector::ucparts('foo\'bar'));
 	}
 
 
@@ -72,7 +72,7 @@ class InflectorTest extends TestCase {
 	 * @see \Awyiss\Utility\Inflector::ucparts()
 	 */
 	public function testUcpartsHandlesMultipleDelimiters(): void {
-		$this->assertSame('Foo-Bar_Baz', Inflector::ucparts('foo-bar_baz'));
+		$this->assertSame('Foo_Bar_Baz', Inflector::ucparts('foo-bar_baz'));
 		$this->assertSame('FooBarBaz', Inflector::ucparts('foo-bar_baz', false));
 	}
 

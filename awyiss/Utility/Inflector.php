@@ -5,6 +5,7 @@ namespace Awyiss\Utility;
 
 
 use Cake\Utility\Inflector as CakeInflector;
+use Cake\Utility\Text;
 
 
 /**
@@ -32,10 +33,10 @@ class Inflector extends CakeInflector {
 	 * ```
 	 *
 	 * @param string $string
-	 * @param string|bool $delimiter
+	 * @param string|false $delimiter
 	 * @return string
 	 */
-	public static function ucparts(string $string, string|bool $delimiter = true): string {
+	public static function ucparts(string $string, string|false $delimiter = '_'): string {
 		$cacheKey = __FUNCTION__ . '__' . (is_bool($delimiter) ? (int)$delimiter : $delimiter);
 
 		$result = static::_cache($cacheKey, $string);
@@ -44,9 +45,14 @@ class Inflector extends CakeInflector {
 			return $result;
 		}
 
-		$result = ucwords(strtolower($string));
+		// Replace all inner uppercase characters that follow lowercase alphanumeric ones with itself, prepended with a space
+		$result = preg_replace('/(?<=[a-z0-9])([A-Z])/', ' $1', $string);
+		$result = ucwords(strtolower($result));
+		$result = Text::slug($result, [
+			'replacement' => '|',
+		]);
 
-		foreach (['-', '\'', '_', ' '] as $currentDelimiter) {
+		foreach (['|'] as $currentDelimiter) {
 			if (!str_contains($result, $currentDelimiter)) {
 				continue;
 			}

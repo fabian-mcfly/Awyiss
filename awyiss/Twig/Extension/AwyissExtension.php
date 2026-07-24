@@ -66,7 +66,7 @@ class AwyissExtension extends AbstractExtension {
 				return str_repeat($string, $times);
 			}),
 
-			new TwigFilter('ucparts', function (string $string, string|bool $delimiter = true): string {
+			new TwigFilter('ucparts', function (string $string, string|false $delimiter = '_'): string {
 				return Inflector::ucparts($string, $delimiter);
 			}),
 		];
