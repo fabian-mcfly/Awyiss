@@ -70,6 +70,14 @@ export default class Loader {
 					editor.s.insertHTML('&nbsp;');
 				}
 			},
+			{
+				icon: 'insertNbsp',
+				name: 'insertNbsp',
+				tooltip: 'Insert narrow non-breaking space',
+				exec: (editor) => {
+					editor.s.insertHTML('&#8239;');
+				}
+			},
 			'symbols', '|', 'table', '|', 'source', '|', 'fullsize'
 		],
 		controls: {
