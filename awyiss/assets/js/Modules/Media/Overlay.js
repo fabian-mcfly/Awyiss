@@ -905,7 +905,7 @@ export default class Overlay {
 			const mediaId = item.id.replace(/^\D+/g, '');
 
 			try {
-				const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/edit/id:${mediaId}`, {
+				const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/edit/id:${mediaId}/`, {
 					method: 'PATCH',
 					headers: {
 						'Accept': 'application/json',
