@@ -144,7 +144,7 @@ export default class MediaController {
 			// Initialize the rebuilding of the system order
 			// Make a POST request to the '/save-order' URL with the current order and the controller name
 			// noinspection JSIgnoredPromiseFromCall
-			fetch(`${baseUrl}backend/${languageShortcode}/media/rebuild-system-order/media-folder-id:${overviewTable.dataset.mediaFolderId}`, {
+			fetch(`${baseUrl}backend/${languageShortcode}/media/rebuild-system-order/media-folder-id:${overviewTable.dataset.mediaFolderId}/`, {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',

@@ -57,7 +57,7 @@ export default class MenuEntriesController {
 					this.saveSystemOrder(document.querySelector(selector)).then(() => {
 						const list = document.querySelector(selector);
 						const menuId = list.dataset.menuId;
-						const url = `${baseUrl}backend/${languageShortcode}/menu-entries/overview/menu-id:${menuId}`;
+						const url = `${baseUrl}backend/${languageShortcode}/menu-entries/overview/menu-id:${menuId}/`;
 
 						list.classList.add('FetchInProgress');
 
