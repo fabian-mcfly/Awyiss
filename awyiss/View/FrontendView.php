@@ -623,4 +623,16 @@ class FrontendView extends AppView {
 	public static function setPreviewModeElementClass(string $class): void {
 		self::$previewModeElementClass = $class;
 	}
+
+
+	/**
+	 * Don't inflect template file names, as we want to use the exact name provided.
+	 * It is not the FrontendView's but the programmer's job to decide which template file to use
+	 *
+	 * @param string $name
+	 * @return string
+	 */
+	protected function _inflectTemplateFileName(string $name): string {
+		return $name;
+	}
 }
