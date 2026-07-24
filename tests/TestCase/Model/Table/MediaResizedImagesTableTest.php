@@ -289,7 +289,7 @@ class MediaResizedImagesTableTest extends TestCase {
 		$data = [
 			'id' => 123456789123, // exceeds 11 char limit
 			'mediaId' => 123456789123, // exceeds 11 char limit
-			'name' => str_repeat('a', 101), // exceeds 100 char limit
+			'name' => str_repeat('a', 201), // exceeds 200 char limit
 		];
 
 		$entity = $this->mediaResizedImagesTable->newDefaultEntity();
