@@ -237,7 +237,9 @@
 				{% elseif formElement.type == 'freeText' %}
 
 					{% block formElementFreeText %}
-						<div class="FormInputType-FreeText">{{ formElement.text|raw }}</div>
+						{% if formElement.text %}
+							<div class="FormInputType-FreeText">{{ formElement.text|raw }}</div>
+						{% endif %}
 					{% endblock %}
 
 				{% elseif formElement.type == 'submit' %}
