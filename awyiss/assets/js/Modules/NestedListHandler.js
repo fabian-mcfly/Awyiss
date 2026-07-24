@@ -967,10 +967,12 @@ export default class NestedListHandler {
 
 			if (node.matches(this.selector)) {
 				this.initList(node);
+				// Don't init children of added nodes as initList should work on the children as well
+				return;
 			}
 
-			const availableQuestionsLists = node.querySelectorAll(this.selector);
-			availableQuestionsLists.forEach(availableQuestionsList => {
+			const subNodes = node.querySelectorAll(this.selector);
+			subNodes.forEach(availableQuestionsList => {
 				this.initList(availableQuestionsList);
 			});
 		})
