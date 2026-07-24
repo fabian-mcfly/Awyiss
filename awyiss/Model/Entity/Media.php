@@ -7,6 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Table\MediaResizedImagesTable;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\Number;
 use Cake\Utility\Text;
 
 
@@ -69,6 +70,7 @@ use Cake\Utility\Text;
  * @property bool $isVideo
  * @property int|null $filemtime
  * @property int|null $previewFilemtime
+ * @property string $readableSize
  */
 class Media extends Entity {
 	/**
@@ -820,6 +822,17 @@ class Media extends Entity {
 		}
 
 		return filemtime($path);
+	}
+
+
+	/**
+	 * @return string
+	 * @noinspection PhpUnused
+	 */
+	protected function _getReadableSize(): string {
+		$filesize = filesize($this->path);
+
+		return Number::toReadableSize($filesize);
 	}
 
 
