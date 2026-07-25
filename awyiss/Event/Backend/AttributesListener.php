@@ -152,13 +152,14 @@ class AttributesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\ContentTemplateElementsTable|\Awyiss\Model\Table\GlobalContentTemplateElementsTable $templateElementsTable */
 		$templateElementsTable = $tableLocator->get($tableName);
 
-		// Build the old and new attribute identifiers (format: attributes.<identifier>)
-		$oldAttributeIdentifier = 'attributes.' . Inflector::variable($oldIdentifier);
-		$newAttributeIdentifier = 'attributes.' . Inflector::variable($newIdentifier);
-
 		// Update all template elements that reference the old attribute identifier
 		$templateElementsTable->updateAll(
-			['identifier' => $newAttributeIdentifier], ['identifier' => $oldAttributeIdentifier]
+			[
+				'identifier' => 'attributes.' . Inflector::variable($newIdentifier),
+			],
+			[
+				'identifier' => 'attributes.' . Inflector::variable($oldIdentifier),
+			]
 		);
 	}
 }
