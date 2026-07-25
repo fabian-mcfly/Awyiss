@@ -83,6 +83,21 @@ export default class AssignableTemplateElements {
 		// Set the selected option to the target fieldset
 		select.value = targetFieldset;
 
+		// Update the add/remove button based on the target fieldset
+		const addRemoveButton = item.querySelector('.Button-AddRemove');
+		if (addRemoveButton) {
+			const shouldBeAddButton = targetFieldset === 'unused';
+
+			if (shouldBeAddButton) {
+				addRemoveButton.classList.add('Button-Add');
+				addRemoveButton.classList.remove('Button-Delete');
+			}
+			else {
+				addRemoveButton.classList.add('Button-Delete');
+				addRemoveButton.classList.remove('Button-Add');
+			}
+		}
+
 		this.lists.forEach(item => {
 			item.classList.remove('SortableDragging');
 		});

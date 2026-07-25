@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import AssignableTemplateElements from 'AssignableTemplateElements';
+import AssignableTemplateElements from 'Form/AssignableTemplateElements';
 
 export default class ContentTemplatesController {
 	/**
