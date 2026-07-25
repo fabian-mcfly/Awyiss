@@ -53,7 +53,7 @@ class Awyiss extends BaseApplication {
 	/**
 	 * The version of Awyiss
 	 */
-	final public const string VERSION = '0.2.5';
+	final public const string VERSION = '0.2.6';
 	/**
 	 * The name of the version
 	 */
