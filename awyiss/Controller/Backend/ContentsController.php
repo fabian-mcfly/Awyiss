@@ -112,7 +112,6 @@ class ContentsController extends Controller {
 		$contents = $query->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $content */
 			foreach ($result as $content) {
-				/** @noinspection PhpUndefinedFieldInspection */
 				$content->class = $content->column['width']->getCssClass();
 
 				if ($content->column['indent']) {
@@ -414,7 +413,6 @@ class ContentsController extends Controller {
 			$contents = $query->formatResults(function (Collection $result): Collection {
 				/** @var \Awyiss\Model\Entity\Content $content */
 				foreach ($result as $content) {
-					/** @noinspection PhpUndefinedFieldInspection */
 					$content->class = $content->column['width']->getCssClass();
 
 					if ($content->column['indent']) {
@@ -1155,6 +1153,7 @@ class ContentsController extends Controller {
 			'columnIndents' => $columnIndents,
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
+			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Contents->Surveys->find('active')->orderByAsc('title')->all(),
 			'allowedKeys' => $allowedKeys,
@@ -1200,5 +1199,26 @@ class ContentsController extends Controller {
 		$this->setRequest($request);
 
 		return $data;
+	}
+
+
+	/**
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function findLinkablePages(): CollectionInterface {
+		// Get all page roles that can be included in the link list
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+
+		/**
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 * @uses \Awyiss\Model\Table::findActive()
+		 */
+		$pagesTable = $this->fetchTable('Pages');
+		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
+			'pageRoleId IN' => array_keys($pageRoles),
+		]);
+
+		return $pagesTable->listNested($query);
 	}
 }

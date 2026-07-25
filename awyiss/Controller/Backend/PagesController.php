@@ -613,7 +613,7 @@ class PagesController extends Controller {
 			 * - is disabled or
 			 * - not using the parentId field
 			 */
-			unset($categoryQueryConditions['parentId'], $categoryQueryConditions['parentId']);
+			unset($categoryQueryConditions['parentId']);
 
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
@@ -804,6 +804,7 @@ class PagesController extends Controller {
 			'sortable' => $this->sortable,
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Pages->Forms->find('active')->orderByAsc('title')->all(),
+			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Pages->Surveys->find('active')->orderByAsc('title')->all(),
 			'menus' => $menus,
@@ -979,5 +980,26 @@ class PagesController extends Controller {
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}
+	}
+
+
+	/**
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function findLinkablePages(): CollectionInterface {
+		// Get all page roles that can be included in the link list
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+
+		/**
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 * @uses \Awyiss\Model\Table::findActive()
+		 */
+		$pagesTable = $this->fetchTable('Pages');
+		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
+			'pageRoleId IN' => array_keys($pageRoles),
+		]);
+
+		return $pagesTable->listNested($query);
 	}
 }

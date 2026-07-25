@@ -61,7 +61,18 @@
 					{% endblock %}
 
 					{% block formControlRedirectLink %}
-						{{ FormHelper.control('redirectLink', {columnSpan: 6}) }}
+						{% set helperFormControl %}
+							{{ FormHelper.select('linkHelperOptions', linkTargets.printer('label', 'link', '- ') ?? [], {
+								'data-options-for': 'GlobalContent-Link',
+							}) }}
+						{% endset %}
+
+						{{ FormHelper.control('redirectLink', {
+							columnSpan: 6,
+							templateVars: {
+								additionalContent: helperFormControl
+							},
+						}) }}
 					{% endblock %}
 
 					{% block formControlFormId %}

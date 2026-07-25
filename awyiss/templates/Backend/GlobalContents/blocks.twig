@@ -218,10 +218,19 @@
 
 
 {% block formControlLink %}
+	{% set helperFormControl %}
+		{{ FormHelper.select('linkHelperOptions', settings.linkTargets.printer('label', 'link', '- ') ?? [], {
+			'data-options-for': 'GlobalContent-Link',
+		}) }}
+	{% endset %}
+
 	{{ FormHelper.control('link', {
 		columnSpan: globalContentTemplateElement.column.span.numerator,
 		label: globalContentTemplateElement.title,
 		required: globalContentTemplateElement.required,
+		templateVars: {
+			additionalContent: helperFormControl
+		},
 	}) }}
 {% endblock %}
 

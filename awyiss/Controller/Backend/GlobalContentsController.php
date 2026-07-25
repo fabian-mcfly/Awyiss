@@ -82,7 +82,6 @@ class GlobalContentsController extends Controller {
 		$globalContents = $query->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 			foreach ($result as $globalContent) {
-				/** @noinspection PhpUndefinedFieldInspection */
 				$globalContent->class = $globalContent->column['width']->getCssClass();
 
 				if ($globalContent->column['indent']) {
@@ -182,7 +181,6 @@ class GlobalContentsController extends Controller {
 
 		$this->setViewVars($globalContent);
 
-		/** @noinspection PhpUndefinedMethodInspection */
 		$this->set('auditDataCount', $this->GlobalContents->countAuditData($globalContent));
 	}
 
@@ -643,6 +641,7 @@ class GlobalContentsController extends Controller {
 			'columnIndents' => $columnIndents,
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->GlobalContents->Forms->find('active')->orderByAsc('title')->all(),
+			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->GlobalContents->Surveys->find('active')->orderByAsc('title')->all(),
 			'expertMode' => $this->request->getParam('expertMode'),
@@ -686,5 +685,26 @@ class GlobalContentsController extends Controller {
 		$this->setRequest($request);
 
 		return $data;
+	}
+
+
+	/**
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function findLinkablePages(): CollectionInterface {
+		// Get all page roles that can be included in the link list
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+
+		/**
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 * @uses \Awyiss\Model\Table::findActive()
+		 */
+		$pagesTable = $this->fetchTable('Pages');
+		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
+			'pageRoleId IN' => array_keys($pageRoles),
+		]);
+
+		return $pagesTable->listNested($query);
 	}
 }

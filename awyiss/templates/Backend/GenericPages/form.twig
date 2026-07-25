@@ -70,9 +70,18 @@
 					{% endblock %}
 
 					{% block formControlRedirectLink %}
+						{% set helperFormControl %}
+							{{ FormHelper.select('linkHelperOptions', linkTargets.printer('label', 'link', '- ') ?? [], {
+								'data-options-for': 'GlobalContent-Link',
+							}) }}
+						{% endset %}
+
 						{{ FormHelper.control('redirectLink', {
 							columnSpan: 6,
 							label: __df(pageRoleName, 'GenericPages', 'redirect_link'),
+							templateVars: {
+								additionalContent: helperFormControl
+							},
 						}) }}
 					{% endblock %}
 
