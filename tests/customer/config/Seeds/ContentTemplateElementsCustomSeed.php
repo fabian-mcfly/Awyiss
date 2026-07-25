@@ -95,6 +95,23 @@ class ContentTemplateElementsCustomSeed extends AbstractSeed {
 				'required' => 0,
 				'systemOrder' => 16,
 			],
+			// Test data for updateTemplateElementIdentifiers - using fake template IDs
+			[
+				'id' => 200,
+				'contentTemplateId' => 999,
+				'identifier' => 'attributes.oldIdentifier',
+				'fieldset' => 'content',
+				'required' => 0,
+				'systemOrder' => 1,
+			],
+			[
+				'id' => 201,
+				'contentTemplateId' => 999,
+				'identifier' => 'attributes.anotherAttribute',
+				'fieldset' => 'content',
+				'required' => 0,
+				'systemOrder' => 2,
+			],
 		];
 
 		$table = $this->table('content_template_elements');

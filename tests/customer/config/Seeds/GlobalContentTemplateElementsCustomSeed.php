@@ -131,6 +131,27 @@ class GlobalContentTemplateElementsCustomSeed extends AbstractSeed {
 				'required' => false,
 				'systemOrder' => 11,
 			],
+			// Test data for updateTemplateElementIdentifiers - using fake template IDs
+			[
+				'id' => 200,
+				'globalContentTemplateId' => 998,
+				'identifier' => 'attributes.oldGlobalIdentifier',
+				'title' => null,
+				'fieldset' => 'content',
+				'columnSpan' => '12/12',
+				'required' => false,
+				'systemOrder' => 1,
+			],
+			[
+				'id' => 201,
+				'globalContentTemplateId' => 998,
+				'identifier' => 'attributes.anotherGlobalAttribute',
+				'title' => null,
+				'fieldset' => 'content',
+				'columnSpan' => '12/12',
+				'required' => false,
+				'systemOrder' => 2,
+			],
 		];
 
 		$table = $this->table('global_content_template_elements');

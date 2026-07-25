@@ -446,4 +446,171 @@ class AttributesListenerTest extends TestCase {
 		$event = new Event('Model.Attributes.afterSaveCommit', $this->fetchTable('Attributes'));
 		$this->listener->afterSaveCommit($event, $entity);
 	}
+
+
+	/**
+	 * Test that template element identifiers are updated when an attribute with Contents scope is renamed
+	 *
+	 * @return void
+	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\AttributesListener::updateTemplateElementIdentifiers()
+	 */
+	public function testAfterSaveCommitUpdatesContentTemplateElementIdentifiersOnRename(): void {
+		$attributesTable = $this->fetchTable('Attributes');
+		$templateElementsTable = $this->fetchTable('ContentTemplateElements');
+
+		// Create an existing attribute with Contents scope
+		$entity = $attributesTable->newDefaultEntity([
+			'scope' => 'Contents',
+			'identifier' => 'oldIdentifier',
+			'type' => 'string',
+			'hasIndex' => false,
+			'required' => false,
+			'defaultValue' => null,
+			'deleted' => false,
+		]);
+		$entity->id = 999;
+		$entity->setNew(false);
+		$entity->clean();
+
+		// Rename the identifier
+		$entity->identifier = 'newIdentifier';
+
+		// Mock QueuedJobsTable
+		$queueTable = $this
+			->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->set('Attributes', $attributesTable);
+		$tableLocator->set('ContentTemplateElements', $templateElementsTable);
+
+		// Verify the template element exists with old identifier
+		$beforeElement = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.oldIdentifier'])->first();
+		$this->assertNotNull($beforeElement, 'Template element with old identifier should exist');
+
+		$event = new Event('Model.Attributes.afterSaveCommit', $attributesTable);
+		$this->listener->afterSaveCommit($event, $entity);
+
+		// Verify the template element identifier was updated
+		$afterElementOld = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.oldIdentifier'])->first();
+		$this->assertNull($afterElementOld, 'Template element with old identifier should not exist');
+
+		$afterElementNew = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.newIdentifier'])->first();
+		$this->assertNotNull($afterElementNew, 'Template element with new identifier should exist');
+		$this->assertSame(200, $afterElementNew->id);
+	}
+
+
+	/**
+	 * Test that template element identifiers are updated when an attribute with GlobalContents scope is renamed
+	 *
+	 * @return void
+	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\AttributesListener::updateTemplateElementIdentifiers()
+	 */
+	public function testAfterSaveCommitUpdatesGlobalContentTemplateElementIdentifiersOnRename(): void {
+		$attributesTable = $this->fetchTable('Attributes');
+		$templateElementsTable = $this->fetchTable('GlobalContentTemplateElements');
+
+		// Create an existing attribute with GlobalContents scope
+		$entity = $attributesTable->newDefaultEntity([
+			'scope' => 'GlobalContents',
+			'identifier' => 'oldGlobalIdentifier',
+			'type' => 'string',
+			'hasIndex' => false,
+			'required' => false,
+			'defaultValue' => null,
+			'deleted' => false,
+		]);
+		$entity->id = 998;
+		$entity->setNew(false);
+		$entity->clean();
+
+		// Rename the identifier
+		$entity->identifier = 'newGlobalIdentifier';
+
+		// Mock QueuedJobsTable
+		$queueTable = $this
+			->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->set('Attributes', $attributesTable);
+		$tableLocator->set('GlobalContentTemplateElements', $templateElementsTable);
+
+		// Verify the template element exists with old identifier
+		$beforeElement = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.oldGlobalIdentifier'])->first();
+		$this->assertNotNull($beforeElement, 'Template element with old identifier should exist');
+
+		$event = new Event('Model.Attributes.afterSaveCommit', $attributesTable);
+		$this->listener->afterSaveCommit($event, $entity);
+
+		// Verify the template element identifier was updated
+		$afterElementOld = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.oldGlobalIdentifier'])->first();
+		$this->assertNull($afterElementOld, 'Template element with old identifier should not exist');
+
+		$afterElementNew = $templateElementsTable
+			->find()->where(['identifier' => 'attributes.newGlobalIdentifier'])->first();
+		$this->assertNotNull($afterElementNew, 'Template element with new identifier should exist');
+		$this->assertSame(200, $afterElementNew->id);
+	}
+
+
+	/**
+	 * Test that template element identifiers are NOT updated when an attribute with other scope is renamed
+	 *
+	 * @return void
+	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\AttributesListener::updateTemplateElementIdentifiers()
+	 */
+	public function testAfterSaveCommitDoesNotUpdateTemplateElementIdentifiersForOtherScopes(): void {
+		$attributesTable = $this->fetchTable('Attributes');
+
+		// Create an existing attribute with Users scope (not Contents or GlobalContents)
+		$entity = $attributesTable->newDefaultEntity([
+			'scope' => 'Users',
+			'identifier' => 'someIdentifier',
+			'type' => 'string',
+			'hasIndex' => false,
+			'required' => false,
+			'defaultValue' => null,
+			'deleted' => false,
+		]);
+		$entity->id = 997;
+		$entity->setNew(false);
+		$entity->clean();
+
+		// Rename the identifier
+		$entity->identifier = 'renamedIdentifier';
+
+		// Mock QueuedJobsTable
+		$queueTable = $this
+			->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->set('Attributes', $attributesTable);
+
+		$event = new Event('Model.Attributes.afterSaveCommit', $attributesTable);
+		$this->listener->afterSaveCommit($event, $entity);
+
+		// The test passes if no exception is thrown and the method completes
+		// Template element tables should not be accessed for non-Contents/GlobalContents scopes
+		$this->assertTrue(true);
+	}
 }

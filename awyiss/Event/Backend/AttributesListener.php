@@ -6,6 +6,7 @@ namespace Awyiss\Event\Backend;
 
 use ArrayObject;
 use Awyiss\Model\Entity\Attribute;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -106,6 +107,11 @@ class AttributesListener implements EventListenerInterface {
 			return;
 		}
 
+		// When an attribute in Contents or GlobalContents scope is renamed, update the identifier in template elements
+		if (!$entity->isNew() && isset($diff['identifier']) && in_array($entity->scope, ['Contents', 'GlobalContents'])) {
+			$this->updateTemplateElementIdentifiers($entity, $oldData['identifier'], $newData['identifier']);
+		}
+
 		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		$queuedJobsTable->createJob('Attributes/Upsert', [
@@ -117,5 +123,42 @@ class AttributesListener implements EventListenerInterface {
 			'priority' => 1,
 			'reference' => 'Attributes::tableChanges',
 		]);
+	}
+
+
+	/**
+	 * Update template element identifiers when an attribute is renamed.
+	 * This ensures the mapping between attributes and template elements is not lost.
+	 *
+	 * @param \Awyiss\Model\Entity\Attribute $entity
+	 * @param string $oldIdentifier
+	 * @param string $newIdentifier
+	 * @return void
+	 */
+	protected function updateTemplateElementIdentifiers(Attribute $entity, string $oldIdentifier, string $newIdentifier): void {
+		$tableLocator = FactoryLocator::get('Table');
+
+		// Determine which table to update based on the scope
+		if ($entity->scope === 'Contents') {
+			$tableName = 'ContentTemplateElements';
+		}
+		elseif ($entity->scope === 'GlobalContents') {
+			$tableName = 'GlobalContentTemplateElements';
+		}
+		else {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\ContentTemplateElementsTable|\Awyiss\Model\Table\GlobalContentTemplateElementsTable $templateElementsTable */
+		$templateElementsTable = $tableLocator->get($tableName);
+
+		// Build the old and new attribute identifiers (format: attributes.<identifier>)
+		$oldAttributeIdentifier = 'attributes.' . Inflector::variable($oldIdentifier);
+		$newAttributeIdentifier = 'attributes.' . Inflector::variable($newIdentifier);
+
+		// Update all template elements that reference the old attribute identifier
+		$templateElementsTable->updateAll(
+			['identifier' => $newAttributeIdentifier], ['identifier' => $oldAttributeIdentifier]
+		);
 	}
 }
