@@ -208,10 +208,10 @@ class FormOptions implements FormOptionsInterface {
 		}
 		elseif ($formElement->type === 'checkbox') {
 			if ($formElement->options && count($formElement->options) > 1) {
-				$validator->notEmptyArray($formElement->identifier);
+				$validator->notEmptyArray($formElement->identifier, __d('validation', 'error_required_multicheckbox'));
 			}
 			else {
-				$validator->notEmptyString($formElement->identifier);
+				$validator->notEmptyString($formElement->identifier, __d('validation', 'error_required'));
 			}
 		}
 		elseif ($formElement->type === 'date') {
