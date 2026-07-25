@@ -72,6 +72,8 @@ class FormController extends AppController {
 		elseif ($this->request->getParam('formEntry')) {
 			$this->handleFormEntry($this->request->getParam('formEntry'));
 		}
+
+		$this->viewBuilder()->setTemplate('anti_spam');
 	}
 
 
