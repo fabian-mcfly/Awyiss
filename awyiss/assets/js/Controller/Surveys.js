@@ -280,7 +280,7 @@ export default class SurveysController {
 				return;
 			}
 
-			this.cancelPickQuestionMode(target.closest('.AssignedQuestions-ListItem'));
+			this.endPickQuestionMode(target.closest('.AssignedQuestions-ListItem'));
 		}
 	}
 
@@ -328,7 +328,7 @@ export default class SurveysController {
 	 * Cancel the pick question mode.
 	 * @param {HTMLElement|null} target - The target element that triggered the cancel action.
 	 */
-	cancelPickQuestionMode(target = null) {
+	endPickQuestionMode(target = null) {
 		const activeButton = document.querySelector('.Button-PickQuestion.Active');
 		if (activeButton) {
 			document.documentElement.classList.remove('PickQuestionMode');
@@ -350,6 +350,7 @@ export default class SurveysController {
 				if (nextActionSelect) {
 					nextActionSelect.value = targetIdentifier;
 					nextActionSelect.dispatchEvent(new Event('input', { bubbles: true }));
+					nextActionSelect.dispatchEvent(new Event('change', { bubbles: true }));
 				}
 
 				setTimeout(() => {
@@ -375,7 +376,7 @@ export default class SurveysController {
 	 */
 	handleKeyDown(event) {
 		if (event.key === 'Escape') {
-			this.cancelPickQuestionMode();
+			this.endPickQuestionMode();
 		}
 	}
 
@@ -409,7 +410,7 @@ export default class SurveysController {
 			target.closest('.AssignedQuestions-ListItem').classList.add('Disabled');
 		}
 		else {
-			this.cancelPickQuestionMode();
+			this.endPickQuestionMode();
 		}
 	}
 
