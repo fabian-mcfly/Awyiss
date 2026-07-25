@@ -35,58 +35,62 @@
 				<form method="post" action="{{ UrlHelper.build() }}#Survey-{{ survey.identifier|camelize }}">
 			{% endblock %}
 
-			{% block surveyFailureEnding %}
-				{% if currentAction == false %}
-					<div class="Survey-FailureMessage">
-						{{- survey.failureMessage|raw -}}
+				{% block surveyFailureEnding %}
+					{% if currentAction == false %}
+						<div class="Survey-FailureMessage">
+							{{- survey.failureMessage|raw -}}
+						</div>
+					{% endif %}
+				{% endblock %}
+
+				{% block surveyErrorMessage %}
+					{% if survey.error('_general') %}
+						<div class="Survey-FailureMessage">
+							{% for error in survey.error('_general') %}
+								<p>{{- error -}}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				{% endblock %}
+
+				{% block surveyPreviousAnswers %}
+					{% include '@Frontend/element/survey/progress.twig' %}
+				{% endblock %}
+
+				{% block surveyBody %}
+					{{ currentQuestion|raw }}
+				{% endblock %}
+
+				{% block surveyActions %}
+					<div class="Survey-Actions">
+						{% block surveyActionProceed %}
+							{% if hasNextAction %}
+								<div class="SurveyAction-Proceed">
+									<button type="submit" name="survey[{{ survey.identifier }}][action]" value="proceed" class="Button Survey-NextAction">{{ __d('Surveys', 'next') }}</button>
+								</div>
+							{% endif %}
+						{% endblock %}
+
+						{% block surveyActionGoBack %}
+							{% if progress is not empty %}
+								<div class="SurveyAction-GoBack">
+									<input type="hidden" name="survey[{{ survey.identifier }}][lastAction]" value="{{ progress|keys|last }}">
+									<button type="submit" name="survey[{{ survey.identifier }}][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>{{ __d('Surveys', 'back') }}</button>
+								</div>
+							{% endif %}
+						{% endblock %}
 					</div>
-				{% endif %}
-			{% endblock %}
+				{% endblock %}
 
-			{% block surveyErrorMessage %}
-				{% if survey.error('_general') %}
-					<div class="Survey-FailureMessage">
-						{% for error in survey.error('_general') %}
-							<p>{{- error -}}</p>
-						{% endfor %}
-					</div>
-				{% endif %}
-			{% endblock %}
+				{% block surveyIdentifier %}
+					{% if hasNextAction %}
+						<input type="hidden" name="_surveyIdentifier" value="{{ survey.identifier }}">
+					{% endif %}
+				{% endblock %}
 
-			{% block surveyPreviousAnswers %}
-				{% include '@Frontend/element/survey/progress.twig' %}
-			{% endblock %}
-
-			{% block surveyBody %}
-				{{ currentQuestion|raw }}
-			{% endblock %}
-
-			{% block surveyActions %}
-				<div class="Survey-Actions">
-					{% block surveyActionProceed %}
-						{% if hasNextAction %}
-							<div class="SurveyAction-Proceed">
-								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="proceed" class="Button Survey-NextAction">{{ __d('Surveys', 'next') }}</button>
-							</div>
-						{% endif %}
-					{% endblock %}
-
-					{% block surveyActionGoBack %}
-						{% if progress is not empty %}
-							<div class="SurveyAction-GoBack">
-								<input type="hidden" name="survey[{{ survey.identifier }}][lastAction]" value="{{ progress|keys|last }}">
-								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>{{ __d('Surveys', 'back') }}</button>
-							</div>
-						{% endif %}
-					{% endblock %}
-				</div>
-			{% endblock %}
-
-			{% block surveyIdentifier %}
-				{% if hasNextAction %}
-					<input type="hidden" name="_surveyIdentifier" value="{{ survey.identifier }}">
-				{% endif %}
-			{% endblock %}
+				{% block surveyHash %}
+					<input type="hidden" name="_surveyHash" value="{{ surveyHash }}">
+				{% endblock %}
 
 			{% block surveyFormEnd %}
 				</form>

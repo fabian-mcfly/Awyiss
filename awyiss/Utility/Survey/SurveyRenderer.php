@@ -404,6 +404,7 @@ class SurveyRenderer {
 
 		return $this->getView()->element('survey/survey', [
 			'survey' => $this->survey,
+			'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
 			'currentQuestion' => $currentQuestion,
 			'currentAction' => $this->currentAction,
 			'hasNextAction' => $hasNextAction,
@@ -533,6 +534,7 @@ class SurveyRenderer {
 			'formElements' => $formElements,
 			'formSent' => $this->formSent,
 			'survey' => $this->survey,
+			'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
 			'currentAction' => $this->currentAction,
 			'customAnswers' => $this->survey->getCustomAnswers(),
 			'progress' => $this->survey->getProgress(),

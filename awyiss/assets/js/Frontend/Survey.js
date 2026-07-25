@@ -29,6 +29,54 @@ export default class Survey {
 		}
 
 		survey.addEventListener('click', this.handleClick.bind(this));
+
+		// Extract and store survey data as dataset attributes
+		this.extractSurveyData(survey);
+	}
+
+
+	/**
+	 * Extract surveyIdentifier and surveyHash from the form and store as data attributes
+	 * @param {HTMLElement} survey
+	 */
+	extractSurveyData(survey) {
+		const form = survey.querySelector('form');
+		if (!form) {
+			return;
+		}
+
+		// Get surveyIdentifier from hidden input
+		const identifierInput = form.querySelector('input[name="_surveyIdentifier"]');
+		if (identifierInput && identifierInput.value) {
+			survey.dataset.surveyIdentifier = identifierInput.value;
+		}
+
+		// Get surveyHash from hidden input
+		const hashInput = form.querySelector('input[name="_surveyHash"]');
+		if (hashInput && hashInput.value) {
+			survey.dataset.surveyHash = hashInput.value;
+		}
+	}
+
+
+	/**
+	 * Build the POST endpoint URL
+	 * @param {HTMLElement} survey
+	 * @returns {string|null} The complete endpoint URL or null if data is missing
+	 */
+	buildEndpointUrl(survey) {
+		const identifier = survey.dataset.surveyIdentifier;
+		const hash = survey.dataset.surveyHash;
+
+		if (!identifier || !hash) {
+			return null;
+		}
+
+		// Use global languageShortcode and baseUrl
+		const langCode = languageShortcode || 'de';
+		const base = baseUrl || '/';
+
+		return `${base}${langCode}/_survey/${identifier}/${hash}/`;
 	}
 
 
@@ -53,8 +101,12 @@ export default class Survey {
 
 		const surveyId = survey.getAttribute('id');
 
-		fetch(form.action, {
-			method: form.method,
+		// Try to build the endpoint URL from stored data
+		const endpointUrl = this.buildEndpointUrl(survey);
+		const fetchUrl = endpointUrl || form.action;
+
+		fetch(fetchUrl, {
+			method: 'POST',
 			body: formData,
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',

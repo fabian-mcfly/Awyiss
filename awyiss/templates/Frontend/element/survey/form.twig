@@ -41,52 +41,56 @@
 					<form method="post" action="{{ UrlHelper.build() }}#Survey-{{ survey.identifier|camelize }}"{% if form.enctype %} enctype="{{ form.enctype }}"{% endif %} id="Form-{{ form.identifier|camelize }}">
 				{% endblock %}
 
-				<div class="Form Form-{{ form.identifier|camelize }}">
-					{% block formErrorMessage %}
-						{% if form.errors %}
-							{% include '@Frontend/element/form/error.twig' %}
-						{% endif %}
-					{% endblock %}
+					<div class="Form Form-{{ form.identifier|camelize }}">
+						{% block formErrorMessage %}
+							{% if form.errors %}
+								{% include '@Frontend/element/form/error.twig' %}
+							{% endif %}
+						{% endblock %}
 
-					{% block formProtectionBefore %}
-						{{ FormHelper.renderFormProtection(form, 'before') }}
-					{% endblock %}
+						{% block formProtectionBefore %}
+							{{ FormHelper.renderFormProtection(form, 'before') }}
+						{% endblock %}
 
-					{% block surveyPreviousAnswers %}
-						{% include '@Frontend/element/survey/progress.twig' %}
-					{% endblock %}
+						{% block surveyPreviousAnswers %}
+							{% include '@Frontend/element/survey/progress.twig' %}
+						{% endblock %}
 
-					{{ formBody|raw }}
+						{{ formBody|raw }}
 
-					{% block formProtectionAfter %}
-						{{ FormHelper.renderFormProtection(form, 'after') }}
-					{% endblock %}
+						{% block formProtectionAfter %}
+							{{ FormHelper.renderFormProtection(form, 'after') }}
+						{% endblock %}
 
-					<input type="hidden" name="_formIdentifier" value="{{ form.identifier }}">
-					<input type="hidden" name="_pageId" value="{{ page.id }}">
+						<input type="hidden" name="_formIdentifier" value="{{ form.identifier }}">
+						<input type="hidden" name="_pageId" value="{{ page.id }}">
 
-					{% block surveyIdentifier %}
-						{% if hasNextAction %}
-							<input type="hidden" name="_surveyIdentifier" value="{{ survey.identifier }}">
-						{% endif %}
-					{% endblock %}
-				</div>
-
-				{% block surveyActions %}
-					<div class="Survey-Actions">
-						{% block surveyActionGoBack %}
-							{% if currentAction in [
-								enum(nextActionEnum).ShowForm,
-								enum(nextActionEnum).ShowFormAndSave,
-							] %}
-								<div class="SurveyAction-GoBack">
-									<input type="hidden" name="survey[{{ survey.identifier }}][lastAction]" value="{{ progress|keys|last }}">
-									<button type="submit" name="survey[{{ survey.identifier }}][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>{{ __d('Surveys', 'back') }}</button>
-								</div>
+						{% block surveyIdentifier %}
+							{% if hasNextAction %}
+								<input type="hidden" name="_surveyIdentifier" value="{{ survey.identifier }}">
 							{% endif %}
 						{% endblock %}
 					</div>
-				{% endblock %}
+
+					{% block surveyActions %}
+						<div class="Survey-Actions">
+							{% block surveyActionGoBack %}
+								{% if currentAction in [
+									enum(nextActionEnum).ShowForm,
+									enum(nextActionEnum).ShowFormAndSave,
+								] %}
+									<div class="SurveyAction-GoBack">
+										<input type="hidden" name="survey[{{ survey.identifier }}][lastAction]" value="{{ progress|keys|last }}">
+										<button type="submit" name="survey[{{ survey.identifier }}][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>{{ __d('Surveys', 'back') }}</button>
+									</div>
+								{% endif %}
+							{% endblock %}
+						</div>
+					{% endblock %}
+
+					{% block surveyHash %}
+						<input type="hidden" name="_surveyHash" value="{{ surveyHash }}">
+					{% endblock %}
 
 				{% block surveyFormEnd %}
 					</form>

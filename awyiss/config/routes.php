@@ -247,6 +247,25 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 
 
 	/**
+	 * Survey route always
+	 * include the language shortcode as it is
+	 * the only way to identify the language
+	 */
+	$routeBuilder->connect(
+		'/{lang}/_survey/{identifier}/{hash}',
+		['prefix' => 'Frontend', 'controller' => 'Survey', 'action' => 'ajaxStep'],
+		//['_name' => Awyiss::REALM_FRONTEND . 'SurveyAjaxStep']
+	)->setMethods([
+		'POST',
+	])->setPass([
+		'identifier',
+		'hash',
+	])->setPatterns([
+		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+
+	/**
 	 * Load customer center routes from separate file
 	 */
 	$file = ROOT . DS . APP_DIR . DS . 'config' . DS . 'routes_customer_center.php';
