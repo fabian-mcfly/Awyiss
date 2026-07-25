@@ -644,7 +644,6 @@
 		transition:background-color .3s ease-in-out;
 		hyphens:auto;
 		hyphenate-limit-chars:10 4 4;
-		overflow-wrap:break-word;
 
 		@media screen and (width <= 1024px) {
 			padding-inline:10px;
