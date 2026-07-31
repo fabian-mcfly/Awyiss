@@ -146,6 +146,16 @@ class ContentsCell extends Cell {
 
 
 	/**
+	 * @param \Awyiss\Model\Entity\Content $content
+	 * @return string
+	 * @throws \ReflectionException
+	 */
+	public function renderContent(Content $content): string {
+		return $this->renderElement($content);
+	}
+
+
+	/**
 	 * @inheritDoc
 	 * @param \Awyiss\Model\Entity\Content $entity
 	 * @param string $children
