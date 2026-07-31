@@ -35,10 +35,10 @@
 
 	{% for scope, label in usedScopes %}
 		{% set scopeIsAccessible = AuthorizationHelper.scopeIsAccessible(scope, [], 'update') %}
-		{% if scope != 'contents' %}
+		{% if scope != 'Contents' %}
 			{% block scopeFieldset %}
 				<fieldset class="Fieldset Fieldset-{{ scope|camelize }} Collapsible">
-					<legend>{{ label }} ({{ mediaAssignments[scope]|length + mediaAssignments.contents[scope]|length }}x)</legend>
+					<legend>{{ label }} ({{ mediaAssignments[scope]|length + mediaAssignments.Contents[scope]|length }}x)</legend>
 
 					{% block scopeFieldsetInner %}
 						<ul class="Usages-List NestedList Level1" data-nestable="false" data-sortable="false">
@@ -88,8 +88,8 @@
 								{% endblock %}
 							{% endfor %}
 
-							{% if mediaAssignments.contents[scope] is defined %}
-								{% for assignment in mediaAssignments.contents[scope] %}
+							{% if mediaAssignments.Contents[scope] is defined %}
+								{% for assignment in mediaAssignments.Contents[scope] %}
 									{% block nestedListContentItem %}
 										<li id="MediaAssignment-ListItem{{ assignment.id }}" class="MediaAssignment-ListItem ListItem"
 											title="{{ assignment.entity.label ?? assignment.entity.title ?? assignment.entity.name ?? assignment.entity.id }}">

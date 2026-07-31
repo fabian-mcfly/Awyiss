@@ -782,7 +782,7 @@ class MediaController extends Controller {
 			->groupBy('scope')
 			->toArray();
 
-		if (isset($mediaAssignments['contents'])) {
+		if (isset($mediaAssignments['Contents'])) {
 			$this->groupAssignmentsByPageRole($mediaAssignments, $usedScopes, $inaccessibleAssignments, $pageRoles);
 		}
 
@@ -1115,7 +1115,7 @@ class MediaController extends Controller {
 	 */
 	protected function groupAssignmentsByPageRole(array &$mediaAssignments, array &$usedScopes, array &$inaccessibleAssignments, array $pageRoles): void {
 		// Contents need to be grouped by their page's role
-		$contentIds = array_column($mediaAssignments['contents'], 'foreignKey');
+		$contentIds = array_column($mediaAssignments['Contents'], 'foreignKey');
 
 		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
 		$contentsTable = $this->fetchTable('Contents');
@@ -1139,11 +1139,11 @@ class MediaController extends Controller {
 		 *
 		 * @var \Awyiss\Model\Entity\MediaAssignment $assignment
 		 */
-		foreach ($mediaAssignments['contents'] as $assignment) {
+		foreach ($mediaAssignments['Contents'] as $assignment) {
 			/** @var \Awyiss\Model\Entity\Content $content */
 			$content = $contents[ $assignment->foreignKey ];
 			$pageRole = $content->page->pageRoleId;
-			$pageRole = Inflector::underscore(Inflector::pluralize($pageRole->name));
+			$pageRole = Inflector::camelize(Inflector::pluralize($pageRole->name));
 
 			if (!isset($usedScopes[ $pageRole ])) {
 				$translation = __d($pageRole, 'headline_overview');
@@ -1157,7 +1157,7 @@ class MediaController extends Controller {
 		}
 
 		foreach ($groupedAssignments as $scope => $assignments) {
-			$isAccessible = $this->Authorization->scopeIsAccessible($scope, [], ['contents']);
+			$isAccessible = $this->Authorization->scopeIsAccessible($scope, [], ['Contents']);
 
 			if ($isAccessible) {
 				continue;
@@ -1173,11 +1173,11 @@ class MediaController extends Controller {
 		}
 
 		if (!$groupedAssignments) {
-			unset($usedScopes['contents'], $mediaAssignments['contents']);
+			unset($usedScopes['Contents'], $mediaAssignments['Contents']);
 			return;
 		}
 
-		$mediaAssignments['contents'] = $groupedAssignments;
+		$mediaAssignments['Contents'] = $groupedAssignments;
 	}
 
 
@@ -1239,9 +1239,9 @@ class MediaController extends Controller {
 				$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments[ $scope ]);
 				unset($usedScopes[ $scope ], $mediaAssignments[ $scope ]);
 
-				if (isset($mediaAssignments['contents'][ $scope ])) {
-					$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments['contents'][ $scope ]);
-					unset($mediaAssignments['contents'][ $scope ]);
+				if (isset($mediaAssignments['Contents'][ $scope ])) {
+					$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments['Contents'][ $scope ]);
+					unset($mediaAssignments['Contents'][ $scope ]);
 				}
 
 				continue;
