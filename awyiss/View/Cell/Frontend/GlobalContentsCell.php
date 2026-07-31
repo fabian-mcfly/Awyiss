@@ -83,7 +83,7 @@ class GlobalContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	protected function renderElement(Entity $entity, string $children): string {
+	protected function renderElement(Entity $entity, string $children = ''): string {
 		DebugTimer::start('GlobalContentsCell::renderElement' . $entity->id, sprintf('GlobalContentsCell::renderElement: Rendering global content #%d with template "%s"', $entity->id, $entity->globalContentTemplate->fileName));
 
 		/**

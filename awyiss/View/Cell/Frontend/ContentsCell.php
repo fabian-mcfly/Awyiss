@@ -153,7 +153,7 @@ class ContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	protected function renderElement(Entity $entity, string $children): string {
+	protected function renderElement(Entity $entity, string $children = ''): string {
 		DebugTimer::start('ContentsCell::renderElement' . $entity->id, sprintf('ContentsCell::renderElement: Rendering content #%d with template "%s"', $entity->id, $entity->contentTemplate->fileName));
 
 		/**

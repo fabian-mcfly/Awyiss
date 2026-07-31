@@ -280,7 +280,7 @@ trait ContentElementTrait {
 	 * @param string $children
 	 * @return string
 	 */
-	abstract protected function renderElement(Entity $entity, string $children): string;
+	abstract protected function renderElement(Entity $entity, string $children = ''): string;
 
 
 	/**

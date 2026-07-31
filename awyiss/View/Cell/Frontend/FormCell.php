@@ -94,7 +94,7 @@ class FormCell extends Cell {
 	/**
 	 * @inheritDoc
 	 */
-	protected function renderElement(Entity $entity, string $children): string {
+	protected function renderElement(Entity $entity, string $children = ''): string {
 		// Not used in here.
 		return '';
 	}

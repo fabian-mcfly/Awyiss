@@ -321,7 +321,7 @@ class FormRenderer {
 	 * @return string
 	 * @throws \Exception
 	 */
-	protected function renderElement(Entity $entity, string $children): string {
+	protected function renderElement(Entity $entity, string $children = ''): string {
 		DebugTimer::start('FormRenderer::renderElement' . $entity->id, sprintf('FormRenderer::renderElement: Rendering form element #%d type "%s"', $entity->id, $entity->type));
 
 		/**
