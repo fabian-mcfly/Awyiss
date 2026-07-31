@@ -1,8 +1,9 @@
 <nav id="Menu-Main">
 <ul class="Level1 Menu-Main">
 <li class="Level1 HasSubmenu Dienstleistungen" id="MenuItem25">
-<input type="checkbox" id="SubmenuTrigger-25" class="SubmenuTrigger" />
-<label for="SubmenuTrigger-25" class="SubmenuTrigger-Label" tabindex="0">submenu_trigger</label><a href="/de/dienstleistungen/" class="Level1 Dienstleistungen">Dienstleistungen</a>
+<a href="/de/dienstleistungen/" class="Level1 Dienstleistungen">Dienstleistungen</a>
+<input type="checkbox" id="SubmenuTrigger-25" class="SubmenuTrigger Level1" />
+<label for="SubmenuTrigger-25" class="SubmenuTrigger-Label Level1">submenu_trigger</label>
 <ul class="Level2">
 <li class="Level2 Seefracht" id="MenuItem26">
 <a href="/de/dienstleistungen/seefracht/" class="Level2 Seefracht">Seefracht</a>
@@ -19,8 +20,9 @@
 </ul>
 </li>
 <li class="Level1 HasSubmenu UeberUns" id="MenuItem19">
-<input type="checkbox" id="SubmenuTrigger-19" class="SubmenuTrigger" />
-<label for="SubmenuTrigger-19" class="SubmenuTrigger-Label" tabindex="0">submenu_trigger</label><a href="/de/ueber-uns/" class="Level1 UeberUns">Über uns</a>
+<a href="/de/ueber-uns/" class="Level1 UeberUns">Über uns</a>
+<input type="checkbox" id="SubmenuTrigger-19" class="SubmenuTrigger Level1" />
+<label for="SubmenuTrigger-19" class="SubmenuTrigger-Label Level1">submenu_trigger</label>
 <ul class="Level2">
 <li class="Level2 Unternehmensgeschichte" id="MenuItem20">
 <a href="/de/ueber-uns/unternehmensgeschichte/" class="Level2 Unternehmensgeschichte">Unternehmensgeschichte</a>
@@ -37,8 +39,9 @@
 </ul>
 </li>
 <li class="Level1 HasSubmenu Kundenbereich" id="MenuItem36">
-<input type="checkbox" id="SubmenuTrigger-36" class="SubmenuTrigger" />
-<label for="SubmenuTrigger-36" class="SubmenuTrigger-Label" tabindex="0">submenu_trigger</label><a href="/de/kundenbereich/" class="Level1 Kundenbereich">Kundenbereich</a>
+<a href="/de/kundenbereich/" class="Level1 Kundenbereich">Kundenbereich</a>
+<input type="checkbox" id="SubmenuTrigger-36" class="SubmenuTrigger Level1" />
+<label for="SubmenuTrigger-36" class="SubmenuTrigger-Label Level1">submenu_trigger</label>
 <ul class="Level2">
 <li class="Level2 AnmeldungRegistrierung" id="MenuItem37">
 <a href="/de/kundenbereich/registrierung/" class="Level2 AnmeldungRegistrierung">Anmeldung/Registrierung</a>
@@ -55,8 +58,9 @@
 </ul>
 </li>
 <li class="Level1 HasSubmenu Karriere" id="MenuItem41">
-<input type="checkbox" id="SubmenuTrigger-41" class="SubmenuTrigger" />
-<label for="SubmenuTrigger-41" class="SubmenuTrigger-Label" tabindex="0">submenu_trigger</label><a href="/de/karriere/" class="Level1 Karriere">Karriere</a>
+<a href="/de/karriere/" class="Level1 Karriere">Karriere</a>
+<input type="checkbox" id="SubmenuTrigger-41" class="SubmenuTrigger Level1" />
+<label for="SubmenuTrigger-41" class="SubmenuTrigger-Label Level1">submenu_trigger</label>
 <ul class="Level2">
 <li class="Level2 OffeneStellen" id="MenuItem42">
 <a href="/de/karriere/offene-stellen/" class="Level2 OffeneStellen">Offene Stellen</a>

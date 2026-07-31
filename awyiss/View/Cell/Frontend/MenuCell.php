@@ -38,7 +38,7 @@ class MenuCell extends Cell {
 		'formatters' => [],
 		'templates' => [
 			'list' => '<ul class="Level{{level}}{{identifier}}{{isPreview}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
-			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
+			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{link}}{{submenuTrigger}}{{children}}</li>' . PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
 			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
 		],
@@ -271,8 +271,8 @@ class MenuCell extends Cell {
 		$data['identifier'] = Inflector::ucparts($data['title'], false);
 
 		if (!empty($data['children'])) {
-			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
-				'<label for="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger-Label" tabindex="0">' . __('submenu_trigger') . '</label>';
+			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger Level' . $data['level'] . '" />' . PHP_EOL .
+				'<label for="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger-Label Level' . $data['level'] . '">' . __('submenu_trigger') . '</label>' . PHP_EOL;
 		}
 
 		$data['isPreview'] = '';
