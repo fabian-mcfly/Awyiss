@@ -191,7 +191,7 @@ class PagesController extends Controller {
 		]);
 
 		$requestData = $this->request->getData();
-		if ($this->request->is('post') && !empty($requestData['pages'])) {
+		if ($this->request->is('post')) {
 			$associated = [];
 			if ($this->Pages->hasAttributes()) {
 				$associated[] = $this->Pages->getAttributesTableName(true);
@@ -216,9 +216,11 @@ class PagesController extends Controller {
 				],
 			]);
 
-			$entities = $this->buildEntitiesFromIndentedRows($requestData['pages'], $requestData);
+			if (!empty($requestData['pages'])) {
+				$entities = $this->buildEntitiesFromIndentedRows($requestData['pages'], $requestData);
+			}
 
-			if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+			if (!$this->request->getData('reloadForm') && $entities?->count()) { //reloadForm is set when we need to reload options based on current values
 				$success = false;
 
 				if ($entities->count()) {
