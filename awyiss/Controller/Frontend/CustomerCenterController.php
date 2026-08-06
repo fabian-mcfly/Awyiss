@@ -425,6 +425,8 @@ class CustomerCenterController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function editProfile(): void {
+		$this->viewBuilder()->setTemplate('edit_profile');
+
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
 		$customer = $this->Authentication->getIdentity()?->getOriginalData();
 
@@ -514,6 +516,8 @@ class CustomerCenterController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function changePassword(): void {
+		$this->viewBuilder()->setTemplate('change_password');
+
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
 		$customer = $this->Authentication->getIdentity()?->getOriginalData();
 
@@ -575,6 +579,8 @@ class CustomerCenterController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function forgotPassword(): void {
+		$this->viewBuilder()->setTemplate('forgot_password');
+
 		// Check if password reset is enabled
 		$passwordResetEnabled = Configure::read('Awyiss.Customers.Frontend.passwordReset.enabled', true);
 
@@ -648,6 +654,8 @@ class CustomerCenterController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function resetPassword(): void {
+		$this->viewBuilder()->setTemplate('reset_password');
+
 		if (!$this->request->is('post')) {
 			$this->set([
 				'code' => $this->request->getParam('code'),
@@ -763,6 +771,8 @@ class CustomerCenterController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function verifyAccount(): void {
+		$this->viewBuilder()->setTemplate('verify_account');
+
 		if (!$this->request->is('post')) {
 			$this->set([
 				'code' => $this->request->getParam('code'),
