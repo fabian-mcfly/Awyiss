@@ -10,6 +10,7 @@ use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\SessionAuthenticator as BaseSessionAuthenticator;
 use Authentication\Identifier\IdentifierInterface;
+use Authentication\Identifier\PasswordIdentifier;
 use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,9 +23,9 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 	/**
 	 * Identifier or identifiers collection.
 	 *
-	 * @var \Awyiss\Authentication\Identifier\IdentifierCollection
+	 * @var \Authentication\Identifier\IdentifierInterface|null
 	 */
-	protected IdentifierInterface $_identifier; // phpcs:ignore
+	protected ?IdentifierInterface $_identifier; // phpcs:ignore
 
 
 	/**
@@ -60,8 +61,12 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 				}, $this->getConfig('fields'));
 			}
 
-			/** @var \Awyiss\Model\Entity\User $reidentifiedUser */
-			$reidentifiedUser = $this->_identifier->reidentify($credentials);
+			$identifier = $this->getIdentifier();
+			$reidentifiedUser = null;
+			if ($identifier instanceof PasswordIdentifier) {
+				/** @var \Authentication\IdentityInterface $reidentifiedUser */
+				$reidentifiedUser = $identifier->identify($credentials);
+			}
 
 			if (!$reidentifiedUser) {
 				// If the user is not found, redirect to the login

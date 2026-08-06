@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestCase\Event\Frontend;
 
 
 use Authentication\Authenticator\SessionAuthenticator;
-use Authentication\Identifier\IdentifierCollection;
 use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
@@ -117,7 +116,7 @@ class AuthenticationListenerTest extends TestCase {
 	public function testAuthenticationAfterAuthenticateSetsIdentity(): void {
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);
@@ -137,7 +136,7 @@ class AuthenticationListenerTest extends TestCase {
 	public function testAuthenticationRequestIdentitySetsIdentityAsResult(): void {
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);
@@ -156,7 +155,7 @@ class AuthenticationListenerTest extends TestCase {
 	public function testAuthenticationRequestIdentitySetsIdentityOnRequestingClassesWhenMethodSetIdentityExists(): void {
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);
@@ -191,7 +190,7 @@ class AuthenticationListenerTest extends TestCase {
 	public function testAuthenticationRequestIdentityDoesNotFailWhenSubjectHasNoSetIdentityMethod(): void {
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);
@@ -234,7 +233,7 @@ class AuthenticationListenerTest extends TestCase {
 
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);
@@ -273,7 +272,7 @@ class AuthenticationListenerTest extends TestCase {
 	public function testAuthenticationRequestIdentityHandlesExceptionGracefully(): void {
 		$identity = $this->createMockIdentity(456);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $identity);

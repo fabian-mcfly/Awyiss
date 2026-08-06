@@ -6,11 +6,10 @@ namespace Awyiss\Test\TestCase\Authentication;
 
 use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Authenticator\Result;
-use Authentication\Identifier\AbstractIdentifier;
+use Authentication\Identifier\PasswordIdentifier;
 use Authentication\Identifier\Resolver\OrmResolver;
 use Awyiss\Authentication\AuthenticationService;
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
@@ -36,19 +35,6 @@ class AuthenticationServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->loadRoutes();
-	}
-
-
-	/**
-	 * Test that the authenticators method returns an instance of AuthenticatorCollection
-	 *
-	 * @return void
-	 */
-	public function testIdentifiersReturnsIdentifierCollection(): void {
-		$service = new AuthenticationService();
-		$result = $service->identifiers();
-		/** @noinspection PhpConditionAlreadyCheckedInspection */
-		$this->assertInstanceOf(IdentifierCollection::class, $result);
 	}
 
 
@@ -97,17 +83,16 @@ class AuthenticationServiceTest extends TestCase {
 
 		$service->loadAuthenticator(FormAuthenticator::class, [
 			'fields' => [
-				AbstractIdentifier::CREDENTIAL_USERNAME => 'username',
-				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+				PasswordIdentifier::CREDENTIAL_USERNAME => 'username',
+				PasswordIdentifier::CREDENTIAL_PASSWORD => 'password',
 			],
 			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
 			'identifier' => [
-				'Authentication.Password' => [
-					'resolver' => [
-						'className' => OrmResolver::class,
-						/** @see \Awyiss\Model\Table\UsersTable::findActive() */
-						'finder' => 'active',
-					],
+				'className' => 'Authentication.Password',
+				'resolver' => [
+					'className' => OrmResolver::class,
+					/** @see \Awyiss\Model\Table\UsersTable::findActive() */
+					'finder' => 'active',
 				],
 			],
 		]);

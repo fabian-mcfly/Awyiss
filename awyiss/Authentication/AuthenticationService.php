@@ -7,8 +7,6 @@ namespace Awyiss\Authentication;
 use Authentication\AuthenticationService as BaseAuthenticationService;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\StatelessInterface;
-use Awyiss\Authentication\Authenticator\AuthenticatorCollection;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Awyiss;
 use Awyiss\Event\EventDispatcherTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,21 +18,6 @@ use RuntimeException;
  */
 class AuthenticationService extends BaseAuthenticationService {
 	use EventDispatcherTrait;
-
-
-	/**
-	 * @inheritDoc
-	 * @uses IdentifierCollection
-	 * @noinspection PhpMissingParentCallCommonInspection
-	 */
-	public function identifiers(): IdentifierCollection {
-		if ($this->_identifiers === null) {
-			$this->_identifiers = new IdentifierCollection($this->getConfig('identifiers'));
-		}
-
-
-		return $this->_identifiers;
-	}
 
 
 	/**
@@ -116,22 +99,6 @@ class AuthenticationService extends BaseAuthenticationService {
 
 
 		return $session->read(Awyiss::getRealm() . '.unauthenticatedRedirectUrl');
-	}
-
-
-	/**
-	 * Reimplemented 1:1 to use \Awyiss\Authentication\Authenticator\AuthenticatorCollection
-	 *
-	 * @inheritDoc
-	 */
-	public function authenticators(): AuthenticatorCollection {
-		if ($this->_authenticators === null) {
-			$identifiers = $this->identifiers();
-			$authenticators = $this->getConfig('authenticators');
-			$this->_authenticators = new AuthenticatorCollection($identifiers, $authenticators);
-		}
-
-		return $this->_authenticators;
 	}
 
 

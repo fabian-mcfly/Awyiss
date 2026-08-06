@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestCase\Event\Backend;
 
 
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Event\Backend\UsergroupsListener;
 use Awyiss\Event\EventListenersProvider;
@@ -83,7 +82,7 @@ class UsergroupsListenerTest extends TestCase {
 		$user->setNew(false);
 
 		$this->dispatchEvent('Authentication.afterAuthenticate', [
-			'authenticator' => new SessionAuthenticator(new IdentifierCollection()),
+			'authenticator' => new SessionAuthenticator(null),
 			'identity' => $user,
 		], $this);
 
@@ -125,7 +124,7 @@ class UsergroupsListenerTest extends TestCase {
 		$user->setNew(false);
 
 		$this->dispatchEvent('Authentication.afterAuthenticate', [
-			'authenticator' => new SessionAuthenticator(new IdentifierCollection()),
+			'authenticator' => new SessionAuthenticator(null),
 			'identity' => $user,
 		], $this);
 
@@ -167,7 +166,7 @@ class UsergroupsListenerTest extends TestCase {
 		$user->setNew(false);
 
 		$this->dispatchEvent('Authentication.afterAuthenticate', [
-			'authenticator' => new SessionAuthenticator(new IdentifierCollection()),
+			'authenticator' => new SessionAuthenticator(null),
 			'identity' => $user,
 		], $this);
 

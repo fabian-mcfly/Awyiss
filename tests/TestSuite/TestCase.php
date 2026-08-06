@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestSuite;
 
 
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Awyiss;
 use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -119,7 +118,7 @@ class TestCase extends BaseTestCase {
 		$user = $users->get($userId);
 
 		$this->dispatchEvent('Authentication.afterAuthenticate', [
-			'authenticator' => new SessionAuthenticator(new IdentifierCollection()),
+			'authenticator' => new SessionAuthenticator(null),
 			'identity' => $user,
 		], $this);
 

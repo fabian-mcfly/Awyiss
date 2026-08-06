@@ -17,7 +17,7 @@
 		"ext-zip": "*",
 		"ext-zlib": "*",
 		"altcha-org/altcha": "^1.1",
-		"cakephp/authentication": "^3.0.2",
+		"cakephp/authentication": "^4.0",
 		"cakephp/bake": "^3.0.0",
 		"cakephp/cakephp": "^5.0.1",
 		"cakephp/migrations": "^5.0",

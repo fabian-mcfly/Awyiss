@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestCase\Event\Backend;
 
 
 use Authentication\Authenticator\SessionAuthenticator;
-use Authentication\Identifier\IdentifierCollection;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Event\Backend\AuthenticationListener;
 use Awyiss\Event\Backend\MediaFoldersListener;
@@ -88,7 +87,7 @@ class AuthenticationListenerTest extends TestCase {
 		$user->setSource('Users');
 		$user->setNew(false);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $user);
@@ -116,7 +115,7 @@ class AuthenticationListenerTest extends TestCase {
 		$user->setSource('Users');
 		$user->setNew(false);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $user);
@@ -136,7 +135,7 @@ class AuthenticationListenerTest extends TestCase {
 		$user->setSource('Users');
 		$user->setNew(false);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $user);
@@ -158,7 +157,7 @@ class AuthenticationListenerTest extends TestCase {
 		$user->setSource('Users');
 		$user->setNew(false);
 
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(null);
 
 		$event = new Event('Authentication.afterAuthenticate');
 		$this->listener->authenticationAfterAuthenticate($event, $authenticator, $user);

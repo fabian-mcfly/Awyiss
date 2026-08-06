@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestCase\Authentication\Authenticator;
 
 
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Model\Entity\User;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Datasource\FactoryLocator;
@@ -21,7 +20,7 @@ class SessionAuthenticatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testCallableAuthentication(): void {
-		$authenticator = new SessionAuthenticator(new IdentifierCollection(), [
+		$authenticator = new SessionAuthenticator(null, [
 			'sessionKey' => 'Backend.Auth',
 		]);
 

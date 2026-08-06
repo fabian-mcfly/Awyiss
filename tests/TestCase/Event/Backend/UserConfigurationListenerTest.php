@@ -5,7 +5,6 @@ namespace Awyiss\Test\TestCase\Event\Backend;
 
 
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Event\Backend\UserConfigurationListener;
 use Awyiss\Event\EventListenersProvider;
@@ -51,7 +50,7 @@ class UserConfigurationListenerTest extends TestCase {
 		$this->user->getUsergroups();
 
 		$this->dispatchEvent('Authentication.afterAuthenticate', [
-			'authenticator' => new SessionAuthenticator(new IdentifierCollection()),
+			'authenticator' => new SessionAuthenticator(null),
 			'identity' => $this->user,
 		], $this);
 	}

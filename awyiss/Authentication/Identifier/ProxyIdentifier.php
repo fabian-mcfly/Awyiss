@@ -17,6 +17,20 @@ class ProxyIdentifier extends AbstractIdentifier {
 
 
 	/**
+	 * Field name for the username credential
+	 *
+	 * @var string
+	 */
+	public const string CREDENTIAL_USERNAME = 'username';
+	/**
+	 * Field name for the password credential
+	 *
+	 * @var string
+	 */
+	public const string CREDENTIAL_PASSWORD = 'password';
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
