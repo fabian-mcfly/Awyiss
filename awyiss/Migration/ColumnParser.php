@@ -74,7 +74,7 @@ class ColumnParser extends BaseColumnParser {
 				$type = str_contains($type, '?') ? 'integer?' : 'integer';
 			}
 
-            $nullable = str_contains($type, '?');
+			$nullable = str_contains($type, '?');
 			$type = $nullable ? str_replace('?', '', $type) : $type;
 
 			[$type, $length, $default] = $this->getTypeAndLengthAndDefault($field, $type);
@@ -86,7 +86,7 @@ class ColumnParser extends BaseColumnParser {
 				],
 			];
 
-            if ($length !== null) {
+			if ($length !== null) {
 				if (is_array($length)) {
 					[$fields[ $field ]['options']['precision'], $fields[ $field ]['options']['scale']] = $length;
 				}
