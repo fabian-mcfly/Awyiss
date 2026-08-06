@@ -71,3 +71,7 @@ $pages->find('published',
 location ~* /ProgressCheckerWorker\.js$ {
     add_header Service-Worker-Allowed "/";
 }
+
+// When updating from 0.2.6 or below, run migration update to switch to the cake_migrations table after the removal of phinx
+bin/cake migrations upgrade --dry-run
+bin/cake migrations upgrade --drop-tables

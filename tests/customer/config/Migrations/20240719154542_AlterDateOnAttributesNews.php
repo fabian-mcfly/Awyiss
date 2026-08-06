@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class AlterDateOnAttributesNews
  */
-class AlterDateOnAttributesNews extends AbstractMigration {
+class AlterDateOnAttributesNews extends BaseMigration {
 	/**
 	 * Migrate Up.
 	 *

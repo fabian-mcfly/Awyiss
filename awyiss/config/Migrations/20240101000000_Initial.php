@@ -1,7 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
 
 
-use Migrations\AbstractMigration;
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseMigration;
 
 
 /**
@@ -9,7 +14,7 @@ use Migrations\AbstractMigration;
  * This class extends the AbstractMigration class and is used to manage the migrations for the application.
  * It contains methods to apply and revert migrations, as well as a method to initialize the migrations.
  */
-class Initial extends AbstractMigration {
+class Initial extends BaseMigration {
 	/**
 	 * @var bool $autoId A flag to indicate whether to automatically generate an ID for the migration.
 	 */

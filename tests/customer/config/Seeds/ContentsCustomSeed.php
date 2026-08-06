@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * Contents seed.
  */
-class ContentsCustomSeed extends AbstractSeed {
+class ContentsCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

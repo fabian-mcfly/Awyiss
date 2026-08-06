@@ -30,6 +30,7 @@ class ColumnParser extends BaseColumnParser {
 				(?:,(?:[0-9]|[1-9][0-9]+))?
 			\])?(?:\(.*?\))?
 		))?
+		(?::default\[([^\]]+)\])?
 		(?::(\w+))?
 		(?::(\w+))?
 		$
@@ -73,7 +74,7 @@ class ColumnParser extends BaseColumnParser {
 				$type = str_contains($type, '?') ? 'integer?' : 'integer';
 			}
 
-			$nullable = (bool)strpos($type, '?');
+            $nullable = str_contains($type, '?');
 			$type = $nullable ? str_replace('?', '', $type) : $type;
 
 			[$type, $length, $default] = $this->getTypeAndLengthAndDefault($field, $type);
@@ -85,7 +86,7 @@ class ColumnParser extends BaseColumnParser {
 				],
 			];
 
-			if (!empty($length)) {
+            if ($length !== null) {
 				if (is_array($length)) {
 					[$fields[ $field ]['options']['precision'], $fields[ $field ]['options']['scale']] = $length;
 				}

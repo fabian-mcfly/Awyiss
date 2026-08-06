@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class CreateEmployees
  */
-class CreateEmployees extends AbstractMigration {
+class CreateEmployees extends BaseMigration {
 	/**
 	 * Migrate Up.
 	 *

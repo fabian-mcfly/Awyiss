@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * CustomerGroupAccessSettings seed.
  */
-class CustomerGroupAccessSettingsCustomSeed extends AbstractSeed {
+class CustomerGroupAccessSettingsCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

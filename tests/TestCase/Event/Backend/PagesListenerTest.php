@@ -2162,7 +2162,9 @@ class PagesListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, $options);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2240,7 +2242,9 @@ class PagesListenerTest extends TestCase {
 		}
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2322,7 +2326,9 @@ class PagesListenerTest extends TestCase {
 		$this->listener->afterSave($event, $news, $options);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2406,7 +2412,9 @@ class PagesListenerTest extends TestCase {
 		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2450,7 +2458,9 @@ class PagesListenerTest extends TestCase {
 		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2496,7 +2506,9 @@ class PagesListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, $options);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2536,7 +2548,9 @@ class PagesListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, $options);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 
@@ -2574,7 +2588,9 @@ class PagesListenerTest extends TestCase {
 		$this->listener->afterSave($event, $entity, $options);
 
 		// Mock Queue and Locks tables
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+				['table' => 'queued_jobs'],
+			])
 			->onlyMethods(['createJob'])
 			->getMock();
 

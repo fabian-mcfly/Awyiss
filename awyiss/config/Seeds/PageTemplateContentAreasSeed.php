@@ -1,13 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
 
 
-use Migrations\AbstractSeed;
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseSeed;
 
 
 /**
  * PageTemplateContentAreas seed.
  */
-class PageTemplateContentAreasSeed extends AbstractSeed {
+class PageTemplateContentAreasSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * Form Conditional Recipients seed.
  */
-class FormConditionalRecipientsCustomSeed extends AbstractSeed {
+class FormConditionalRecipientsCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

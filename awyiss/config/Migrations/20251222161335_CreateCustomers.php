@@ -1,9 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Migrations\BaseMigration;
 
 
+/**
+ * Create customers table
+ */
 class CreateCustomers extends BaseMigration {
 	public function change(): void {
 		$this->table('customers')->addPrimaryKey(['id'])->addColumn('email', 'string', [

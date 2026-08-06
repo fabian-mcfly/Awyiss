@@ -1,11 +1,18 @@
-<?php declare(strict_types=1);
+<?php
 
-use Migrations\AbstractSeed;
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseSeed;
+
 
 /**
  * MediaElementSelectors seed.
  */
-class MediaElementSelectorsSeed extends AbstractSeed {
+class MediaElementSelectorsSeed extends BaseSeed {
 	/**
 	 * {@inheritDoc}
 	 */

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class CreateDummyUsers
  */
-class CreateDummyUsers extends AbstractMigration {
+class CreateDummyUsers extends BaseMigration {
 	/**
 	 * @var bool $autoId A flag to indicate whether to automatically generate an ID for the migration.
 	 */

@@ -1,4 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Awyiss\Utility\Inflector;
@@ -8,7 +13,13 @@ use Cake\Datasource\FactoryLocator;
 use Migrations\BaseMigration;
 
 
+/**
+ * This migration renames all scopes and identifiers in the database to use camelCase instead of underscores.
+ */
 class RenameScopesAndIdentifiers extends BaseMigration {
+	/**
+	 * @var array[]
+	 */
 	protected static $tableFields = [
 		'Attributes' => [
 			'scope' => 'camelize',
@@ -209,6 +220,7 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		}
 
 		// In Configuration, set `overview.displayedFields` to camelCased values
+		/** @noinspection DuplicatedCode */
 		$records = $configurationTable->find()->where(['identifier' => 'overview.displayedFields']);
 		if ($records->count()) {
 			foreach ($records as $record) {
@@ -230,6 +242,7 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 
 		// In UserConfiguration, set `overview.displayedFields` to camelCased values
 		$userConfigurationTable = $tableLocator->get('UserConfiguration');
+		/** @noinspection DuplicatedCode */
 		$records = $userConfigurationTable->find()->where(['identifier' => 'overview.displayedFields']);
 		if ($records->count()) {
 			foreach ($records as $record) {

@@ -1,14 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Migrations\BaseMigration;
 
 
+/**
+ * Add subject fields to audit table
+ */
 class AddSubjectFieldsToAudit extends BaseMigration {
 	/**
 	 * Change Method.
 	 * More information on this method is available here:
-	 * https://book.cakephp.org/migrations/4/en/migrations.html#the-change-method
+	 * https://book.cakephp.org/migrations/5/guides/writing-migrations/migration-methods.html#the-change-method
 	 *
 	 * @return void
 	 */

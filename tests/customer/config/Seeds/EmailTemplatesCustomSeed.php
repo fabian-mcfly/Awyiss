@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * Email Templates seed.
  */
-class EmailTemplatesCustomSeed extends AbstractSeed {
+class EmailTemplatesCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

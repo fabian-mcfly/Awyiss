@@ -1,13 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
 
 
-use Migrations\AbstractSeed;
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseSeed;
 
 
 /**
  * I18n seed - Consolidated translations from all seed files.
  */
-class I18nSeed extends AbstractSeed {
+class I18nSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

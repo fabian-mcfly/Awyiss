@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * Datatables seed.
  */
-class DatatablesCustomSeed extends AbstractSeed {
+class DatatablesCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

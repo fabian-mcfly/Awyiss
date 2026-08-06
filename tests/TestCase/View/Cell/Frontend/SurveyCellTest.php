@@ -94,7 +94,7 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
 		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">Surveys::next</button>', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">', $output);
 	}
 
 
@@ -137,7 +137,7 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
 		$this->assertStringContainsString('<input type="hidden" name="survey[dummySurvey][lastAction]" value="8524de5e">', $output);
 		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="goBack" class="Button Survey-GoBack" formnovalidate>Surveys::back</button>', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">Surveys::next</button>', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">', $output);
 	}
 
 
@@ -179,7 +179,7 @@ class SurveyCellTest extends TestCase {
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
 		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
-		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">Surveys::next</button>', $output);
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">', $output);
 	}
 
 

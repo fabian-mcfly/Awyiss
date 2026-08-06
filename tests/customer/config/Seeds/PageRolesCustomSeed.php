@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * PageRoles seed.
  */
-class PageRolesCustomSeed extends AbstractSeed {
+class PageRolesCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

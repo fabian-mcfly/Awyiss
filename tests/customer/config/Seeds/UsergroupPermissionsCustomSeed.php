@@ -4,13 +4,13 @@
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
 use Awyiss\Utility\Inflector;
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * UsergroupPermissions seed.
  */
-class UsergroupPermissionsCustomSeed extends AbstractSeed {
+class UsergroupPermissionsCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 * @throws \ReflectionException

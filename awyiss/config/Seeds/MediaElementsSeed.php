@@ -1,11 +1,18 @@
-<?php declare(strict_types=1);
+<?php
 
-use Migrations\AbstractSeed;
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseSeed;
+
 
 /**
  * MediaElements seed.
  */
-class MediaElementsSeed extends AbstractSeed {
+class MediaElementsSeed extends BaseSeed {
 	/**
 	 * {@inheritDoc}
 	 */
@@ -21,7 +28,7 @@ class MediaElementsSeed extends AbstractSeed {
                 'active' => 1,
                 'deleted' => 0,
                 'createdBy' => 1,
-                'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
                 'changedBy' => NULL,
                 'changedOn' => NULL,
                 'deletedBy' => NULL,
@@ -37,7 +44,7 @@ class MediaElementsSeed extends AbstractSeed {
                 'active' => 1,
                 'deleted' => 0,
                 'createdBy' => 1,
-                'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
                 'changedBy' => NULL,
                 'changedOn' => NULL,
                 'deletedBy' => NULL,
@@ -53,7 +60,7 @@ class MediaElementsSeed extends AbstractSeed {
                 'active' => 1,
                 'deleted' => 0,
                 'createdBy' => 1,
-                'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
                 'changedBy' => NULL,
                 'changedOn' => NULL,
                 'deletedBy' => NULL,
@@ -69,7 +76,7 @@ class MediaElementsSeed extends AbstractSeed {
                 'active' => 1,
                 'deleted' => 0,
                 'createdBy' => 1,
-                'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
                 'changedBy' => NULL,
                 'changedOn' => NULL,
                 'deletedBy' => NULL,
@@ -85,7 +92,7 @@ class MediaElementsSeed extends AbstractSeed {
                 'active' => 1,
                 'deleted' => 0,
                 'createdBy' => 1,
-                'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
                 'changedBy' => NULL,
                 'changedOn' => NULL,
                 'deletedBy' => NULL,

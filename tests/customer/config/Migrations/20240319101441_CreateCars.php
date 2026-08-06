@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class CreateCars
  */
-class CreateCars extends AbstractMigration {
+class CreateCars extends BaseMigration {
 	/**
 	 * Migrate Up.
 	 *

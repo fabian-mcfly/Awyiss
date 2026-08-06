@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class AddDropdownSelectToAttributesCars
  */
-class AddDropdownSelectToAttributesCars extends AbstractMigration {
+class AddDropdownSelectToAttributesCars extends BaseMigration {
 	/**
 	 * Migrate Up.
 	 *

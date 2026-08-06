@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * FormEntries seed.
  */
-class FormEntriesCustomSeed extends AbstractSeed {
+class FormEntriesCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

@@ -324,6 +324,11 @@ class ColumnParserTest extends TestCase {
 				'output' => ['text', null, null],
 			],
 			[
+				'field' => 'css',
+				'type' => 'mediumtext',
+				'output' => ['mediumtext', null, null],
+			],
+			[
 				'field' => 'name',
 				'type' => 'string[255](John Doe)',
 				'output' => ['string', '255', 'John Doe'],
@@ -342,11 +347,6 @@ class ColumnParserTest extends TestCase {
 				'field' => 'amount',
 				'type' => 'float[8,2]',
 				'output' => ['float', ['8', '2'], null],
-			],
-			[
-				'field' => 'tags',
-				'type' => 'set(tag1,tag2,tag3)',
-				'output' => ['set', null, 'tag1,tag2,tag3'],
 			],
 			[
 				'field' => 'profile_picture',

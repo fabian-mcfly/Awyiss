@@ -8,7 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Test\TestSuite\Bake\BakeTestTrait;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Phinx\Util\Util;
+use Migrations\Util\Util;
 
 
 /**

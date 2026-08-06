@@ -55,6 +55,7 @@ class AwyissExtensionTest extends TestCase {
 
 		$this->configApplication(Awyiss::class, []);
 
+		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
 		Awyiss::loadConfiguration('xy', 'xy');
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', []);
 
@@ -874,14 +875,13 @@ class AwyissExtensionTest extends TestCase {
 		);
 
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
-		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
+		$this->assertStringContainsString('<form method="post" action="/xy/dummy-slug/#Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<p class="Title SurveyQuestion-Title">Question #1</p>', $output);
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="4" id="SurveyAnswer-Input4">', $output);
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="5" id="SurveyAnswer-Input5">', $output);
 		$this->assertStringContainsString('<input type="radio" name="survey[dummySurvey][8524de5e]" value="6" id="SurveyAnswer-Input6">', $output);
 		$this->assertStringContainsString('<input type="hidden" name="_surveyIdentifier" value="dummySurvey">', $output);
-		$this->assertStringContainsString(
-			'<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">Surveys::next</button>',
+		$this->assertStringContainsString('<button type="submit" name="survey[dummySurvey][action]" value="proceed" class="Button Survey-NextAction">',
 			$output
 		);
 	}

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * User Configuration seed.
  */
-class UserConfigurationCustomSeed extends AbstractSeed {
+class UserConfigurationCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

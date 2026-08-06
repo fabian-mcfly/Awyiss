@@ -1,4 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Awyiss\Utility\Inflector;
@@ -27,7 +32,7 @@ class RenameUnderscoredColumns extends BaseMigration {
 			'callback' => function (ProgressHelper $progressHelper) use (&$tables) {
 				$tableName = array_shift($tables);
 
-				if (in_array($tableName, ['phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
+				if (in_array($tableName, ['cake_migrations', 'phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
 					$progressHelper->increment();
 					return;
 				}
@@ -75,7 +80,7 @@ class RenameUnderscoredColumns extends BaseMigration {
 			'callback' => function (ProgressHelper $progressHelper) use (&$tables) {
 				$tableName = array_shift($tables);
 
-				if (in_array($tableName, ['phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
+				if (in_array($tableName, ['cake_migrations', 'phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
 					$progressHelper->increment();
 					return;
 				}

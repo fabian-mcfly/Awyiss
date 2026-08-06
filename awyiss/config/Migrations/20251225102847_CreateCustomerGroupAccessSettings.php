@@ -1,9 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Migrations\BaseMigration;
 
 
+/**
+ * Create customer_group_access_settings table
+ */
 class CreateCustomerGroupAccessSettings extends BaseMigration {
 	public function change(): void {
 		$this->table('customer_group_access_settings')->addPrimaryKey(['id'])->addColumn('scope', 'string', [

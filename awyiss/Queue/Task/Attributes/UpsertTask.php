@@ -10,7 +10,7 @@ use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Hash;
-use Phinx\Db\Adapter\AdapterInterface;
+use Migrations\Db\Adapter\AdapterInterface;
 use Queue\Model\QueueException;
 use Queue\Queue\Task;
 use ReflectionClass;
@@ -144,7 +144,7 @@ class UpsertTask extends Task {
 		$collection = new Collection($reflector->getConstants());
 
 		$validTypes = $collection->filter(function ($value, $constant) {
-			return str_starts_with($constant, 'PHINX_TYPE_');
+			return str_starts_with($constant, 'TYPE_');
 		})->toArray();
 
 		if (empty($typeMatches[1]) || !in_array($typeMatches[1], $validTypes)) {

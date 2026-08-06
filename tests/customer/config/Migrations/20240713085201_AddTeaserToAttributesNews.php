@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
 /**
  * Class AddTeaserToAttributesNews
  */
-class AddTeaserToAttributesNews extends AbstractMigration {
+class AddTeaserToAttributesNews extends BaseMigration {
 	/**
 	 * Migrate Up.
 	 *

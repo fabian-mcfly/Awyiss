@@ -1,13 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
 
 
-use Migrations\AbstractSeed;
+declare(strict_types=1); // phpcs:ignore
+
+
+use Migrations\BaseSeed;
 
 
 /**
  * ContentAreas seed.
  */
-class ContentAreasSeed extends AbstractSeed {
+class ContentAreasSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */
@@ -20,7 +25,7 @@ class ContentAreasSeed extends AbstractSeed {
 				'active' => 1,
 				'deleted' => 0,
 				'createdBy' => 1,
-				'createdOn' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'createdOn' => new \Cake\I18n\DateTime('now')->format('Y-m-d H:i:s'),
 				'changedBy' => null,
 				'changedOn' => null,
 				'deletedBy' => null,

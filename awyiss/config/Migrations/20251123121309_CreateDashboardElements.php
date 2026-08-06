@@ -1,9 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 use Migrations\BaseMigration;
 
 
+/**
+ * Create dashboard_elements table
+ */
 class CreateDashboardElements extends BaseMigration {
 	public function change(): void {
 		$this->table('dashboard_elements')->addPrimaryKey(['id'])->addColumn('scope', 'string', [

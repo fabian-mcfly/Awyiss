@@ -191,7 +191,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$task->expects($this->once())->method('getTranslationService')->willReturn($mockService);
 
 		// Mock Queue table to verify new job is created
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+			['table' => 'queued_jobs'],
+		])->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'AutoTranslate',
@@ -252,7 +254,9 @@ class AutoTranslateTaskTest extends TestCase {
 		$task->expects($this->once())->method('getTranslationService')->willReturn($mockService);
 
 		// Mock Queue table
-		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->setConstructorArgs([
+			['table' => 'queued_jobs'],
+		])->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'AutoTranslate',

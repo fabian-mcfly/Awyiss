@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * AttributesNews seed.
  */
-class I18nCustomSeed extends AbstractSeed {
+class I18nCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

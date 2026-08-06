@@ -72,6 +72,11 @@ session_id('cli');
 // Otherwise, table objects inside migrations would use the default datasource
 ConnectionHelper::addTestAliases();
 
+// Make sure the awyiss_test.sqlite is gone
+if (file_exists(TMP . 'awyiss_test.sqlite')) {
+	unlink(TMP . 'awyiss_test.sqlite');
+}
+
 // Run the migrations
 new Migrator()->runMany([
 	['source' => 'Migrations'],

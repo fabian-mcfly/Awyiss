@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * MenuEntries seed.
  */
-class MenuEntriesCustomSeed extends AbstractSeed {
+class MenuEntriesCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */

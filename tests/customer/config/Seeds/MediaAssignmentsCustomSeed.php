@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 
 /**
  * MediaAssignmentsCustomSeed seed.
  */
-class MediaAssignmentsCustomSeed extends AbstractSeed {
+class MediaAssignmentsCustomSeed extends BaseSeed {
 	/**
 	 * @inheritDoc
 	 */
