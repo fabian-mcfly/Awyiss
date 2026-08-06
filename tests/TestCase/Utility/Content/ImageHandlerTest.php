@@ -976,7 +976,8 @@ class ImageHandlerTest extends TestCase {
 		);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }' . PHP_EOL, $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; } }</style>', $globalContent->text);
 		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
@@ -1195,7 +1196,8 @@ class ImageHandlerTest extends TestCase {
 		);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; } }</style>', $globalContent->text);
 		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 

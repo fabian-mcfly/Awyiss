@@ -269,9 +269,10 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
 	 * @param bool $allowPreview
+	 * @param array $breakpointFiles
 	 * @return string
 	 */
-	public function imageTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true): string {
+	public function imageTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true, array $breakpointFiles = []): string {
 		if (
 			!$media->isImage() &&
 			$media->mimeType !== 'image/svg+xml' &&
@@ -372,7 +373,7 @@ class MediaHelper extends Helper {
 			}
 		}
 
-		return $this->simpleImageTag($path, $attributes, $media, $mediaRenderOptions);
+		return $this->simpleImageTag($path, $attributes, $media, $mediaRenderOptions, $breakpointFiles);
 	}
 
 
@@ -393,10 +394,10 @@ class MediaHelper extends Helper {
 
 		$mediaRenderOptions ??= $this->getMediaRenderOptions();
 
-		$imageTag = $this->imageTag($media, $mediaRenderOptions);
-
 		$breakpointFiles = $this->getResponsiveImages($media, $mediaRenderOptions, true);
 		$breakpointFiles = array_reverse($breakpointFiles, true);
+
+		$imageTag = $this->imageTag($media, $mediaRenderOptions, breakpointFiles: $breakpointFiles);
 
 		$sources = PHP_EOL;
 		$sourceAttribute = $mediaRenderOptions->getLazyload() ? 'data-srcset' : 'srcset';
@@ -533,7 +534,8 @@ class MediaHelper extends Helper {
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
-	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
+	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy:
+	 *     \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 * @param float|int $columnWidth
 	 * @param bool $lazyload
 	 * @param float|int|null $height
@@ -851,7 +853,7 @@ class MediaHelper extends Helper {
 
 		$baseMediaRenderOptions = $mediaRenderOptions;
 		foreach ($breakpoints as $breakpoint) {
-			if ($breakpoint['breakpoint'] >= $baseMediaRenderOptions->getBaseWidth()) {
+			if ($baseMediaRenderOptions->getBaseWidth() && $breakpoint['breakpoint'] > $baseMediaRenderOptions->getBaseWidth()) {
 				// Even if the breakpoint is too large to be considered, we need to remember the override options for the next iteration
 				$overrideOptions = $this->getOverrideOptions($overrideOptions, $breakpoint);
 
@@ -877,10 +879,7 @@ class MediaHelper extends Helper {
 				$mediaRenderOptions = $mediaRenderOptions->with($with);
 			}
 
-			$resizedImage = $this->resize(
-				$media,
-				renderOptions: $mediaRenderOptions,
-			);
+			$resizedImage = $this->resize($media, $mediaRenderOptions);
 
 			if ($resizedImage && $resizedImage->status === ProcessStatus::Success) {
 				$path = $resizedImage->path;
@@ -987,10 +986,7 @@ class MediaHelper extends Helper {
 
 		$mediaRenderOptions = $mediaRenderOptions->with($options);
 
-		if (
-			($breakpointOptions['width'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE &&
-			($breakpointOptions['height'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE
-		) {
+		if (($breakpointOptions['width'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE) {
 			$options['width'] = $this->getPixelColumnWidth($mediaRenderOptions);
 			$mediaRenderOptions = $mediaRenderOptions->withWidth($options['width']);
 		}
@@ -1006,6 +1002,7 @@ class MediaHelper extends Helper {
 	 * @param string|null $averageColor
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array|string|null $focusPoint
+	 * @param array $breakpointFiles
 	 * @return string
 	 */
 	protected function getPlaceholderStyleTag(
@@ -1014,7 +1011,8 @@ class MediaHelper extends Helper {
 		float $height,
 		?string $averageColor,
 		MediaRenderOptions $mediaRenderOptions,
-		string|array|null $focusPoint = null
+		string|array|null $focusPoint = null,
+		array $breakpointFiles = []
 	): string {
 		$backgroundColor = null;
 		if ($mediaRenderOptions->getBackgroundColor() !== false) {
@@ -1038,8 +1036,31 @@ class MediaHelper extends Helper {
 			$nonce = ' nonce="' . $nonce . '"';
 		}
 
+		$breakpointStyles = '';
+		krsort($breakpointFiles);
+		$previousAspectRatio = null;
+		/** @var MediaResizedImage $breakpointFile */
+		foreach ($breakpointFiles as $breakpoint => $breakpointFile) {
+			if (!$breakpointFile instanceof MediaResizedImage || !$breakpointFile->realWidth || !$breakpointFile->realHeight) {
+				continue;
+			}
+
+			$aspectRatio = round($breakpointFile->realWidth / $breakpointFile->realHeight, 2);
+			if ($aspectRatio === $previousAspectRatio) {
+				continue;
+			}
+
+			// For each breakpoint file, include the aspect ratio property inside a media query
+			$breakpointStyles .= PHP_EOL;
+			$breakpointStyles .= '@media screen and (width <= ' . $breakpoint . 'px) { ';
+			$breakpointStyles .= '#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . $aspectRatio . '; }';
+			$breakpointStyles .= ' }';
+
+			$previousAspectRatio = $aspectRatio;
+		}
+
 		/** @noinspection CssInvalidHtmlTagReference, CssUnresolvedCustomProperty */
-		return '<style' . $nonce . '>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $backgroundColorStyle . ' }</style>';
+		return '<style' . $nonce . '>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $backgroundColorStyle . ' }' . $breakpointStyles . '</style>';
 	}
 
 
@@ -1048,9 +1069,10 @@ class MediaHelper extends Helper {
 	 * @param array $attributes
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $breakpointFiles
 	 * @return string
 	 */
-	protected function simpleImageTag(string $path, array $attributes, Media $media, MediaRenderOptions $mediaRenderOptions): string {
+	protected function simpleImageTag(string $path, array $attributes, Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpointFiles = []): string {
 		$noScriptAttributes = $attributes;
 
 		$attributes['class'] = trim(($mediaRenderOptions->getLazyload() ? $this->lazyLoadClass : '') . ' ' . ($attributes['class'] ?? ''));
@@ -1077,7 +1099,8 @@ class MediaHelper extends Helper {
 			$height,
 			$media->averageColor,
 			$mediaRenderOptions,
-			$media->focusPoint
+			$media->focusPoint,
+			$breakpointFiles
 		);
 
 		$srcSet = $noScriptSrcSet = '';
@@ -1105,7 +1128,7 @@ class MediaHelper extends Helper {
 	protected function getMediaResizedImage(Media $media, ?MediaRenderOptions $mediaRenderOptions): ?MediaResizedImage {
 		// If responsive is set, use the column width
 		if ($mediaRenderOptions->getResponsive()) {
-			$width = $this->getPixelColumnWidth($mediaRenderOptions);
+			$width = $mediaRenderOptions->getWidth() ?? $this->getPixelColumnWidth($mediaRenderOptions);
 
 			return $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($width));
 		}
