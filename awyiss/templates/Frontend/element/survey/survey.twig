@@ -32,7 +32,8 @@
 			{% endblock %}
 		{% else %}
 			{% block surveyForm %}
-				<form method="post" action="{{ UrlHelper.build() }}#Survey-{{ survey.identifier|camelize }}">
+				{% set url = UrlHelper.build() %}
+				<form method="post" action="{{ url != '/' ? url : '' }}#Survey-{{ survey.identifier|camelize }}">
 			{% endblock %}
 
 				{% block surveyFailureEnding %}
