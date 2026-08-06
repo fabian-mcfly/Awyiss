@@ -3,7 +3,6 @@
 return [
 	'FileHashes' => [
 		'\\Authentication\\AuthenticationService::authenticate' => 'adddbb6f7347520819015c62c8e9351d',
-		'\\Authentication\\AuthenticationService::identifiers' => '8c4de1c5f9c18fcf438145d6d34ec9ee',
 		'\\Authentication\\Authenticator\\SessionAuthenticator::authenticate' => 'ad7a4638f85f4383043c93f4625deced',
 		'\\Authentication\\Identifier\\PasswordIdentifier::_checkPassword' => '1186152f8da1feb4d1bf4b41c83c7088',
 		'\\Bake\\Command\\ControllerCommand::bake' => '77437bd426a869dd7fc5ea540ce01e31',
@@ -77,6 +76,6 @@ return [
 		'vendor/cakephp/migrations/src/Util/UtilTrait.php' => '23749ae1cf2091d9102ecb3844cdd221',
 		'vendor/cakephp/migrations/templates/bake/Seed/seed.twig' => '1092449dedf5ee0cb6df684abae3e022',
 		'vendor/cakephp/migrations/templates/bake/config/skeleton.twig' => 'a807976eb38c7b086a5e44b782900991',
-		'vendor/cakephp/twig-view/src/Twig/FileLoader.php' => 'c888841dd4dd394f57c7870f38c35e5f',
+		'vendor/cakephp/twig-view/src/Twig/FileLoader.php' => 'e7a83d115d04ebdab12b638717595ff8',
 	],
 ];

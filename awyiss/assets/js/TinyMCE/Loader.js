@@ -44,6 +44,7 @@ export default class Loader {
 		charmap_append: [
 			[173, 'soft hyphen']
 		],
+		content_language: languageShortcode,
 		custom_elements: 'widget',
 		document_base_url: baseUrl,
 		extended_valid_elements: 'widget[class]',

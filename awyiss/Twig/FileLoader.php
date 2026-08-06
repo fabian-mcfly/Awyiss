@@ -139,8 +139,30 @@ class FileLoader extends BaseFileLoader {
 	 * @throws LoaderError
 	 */
 	public function findTemplate(string $name): string {
+		$templatePaths = App::path('templates');
+
 		if (file_exists($name)) {
-			return $name;
+			$name = str_replace('//', '/', $name);
+			// Make sure the given filename is valid and inside the set paths
+			$this->validateName($name);
+
+			// Check both app template paths and all plugins,
+			// as template from element() end up here too.
+			// We also need to protect against `{% include var_name %}`
+			// where var_name is request data.
+			foreach ($templatePaths as $templatePath) {
+				if (str_starts_with($name, $templatePath)) {
+					return $name;
+				}
+			}
+			foreach (Plugin::loaded() as $pluginName) {
+				$pluginPath = Plugin::templatePath($pluginName);
+				if (str_starts_with($name, $pluginPath)) {
+					return $name;
+				}
+			}
+
+			throw $this->loaderError($name, $templatePaths);
 		}
 
 		$originalName = $name;
@@ -162,7 +184,7 @@ class FileLoader extends BaseFileLoader {
 			throw new LoaderError(sprintf("Could not find template `%s` in plugin `%s` in these paths:\n\n" . "- `%s`\n", $originalName, $plugin, $templatePath));
 		}
 
-		//Make sure the given filename is valid and inside the set paths
+		// Make sure the given filename is valid and inside the set paths
 		$this->validateName($name);
 
 		[$namespace, $shortname] = $this->parseName($name);
@@ -229,6 +251,7 @@ class FileLoader extends BaseFileLoader {
 
 		$originalName = $name;
 		$name = ltrim($name, '/');
+		$name = str_replace('//', '/', $name);
 		$parts = explode('/', $name);
 		$level = 0;
 		foreach ($parts as $part) {

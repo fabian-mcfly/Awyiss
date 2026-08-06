@@ -296,7 +296,7 @@ class FileLoaderTest extends TestCase {
 		file_put_contents(TMP . $templateName, 'Test content');
 
 		$path = $loader->findTemplate($templateName);
-		$this->assertSame(TMP . $templateName, $path, 'Template should be found in the main namespace');
+		$this->assertSame(TMP . $templateName, $path);
 	}
 
 
@@ -311,9 +311,8 @@ class FileLoaderTest extends TestCase {
 		$templateName = TMP . 'test_template.twig';
 		file_put_contents($templateName, 'Test content');
 
-		// Test finding a template with an absolute path
-		$path = $loader->findTemplate($templateName);
-		$this->assertSame($templateName, $path, 'Template should be found without any additional checks when a absolute path was provided');
+		$this->expectException(LoaderError::class);
+		$loader->findTemplate($templateName);
 	}
 
 
