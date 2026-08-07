@@ -247,6 +247,7 @@ class IntegrityCheckCommand extends Command {
 		];
 
 		$forceUpdate = false;
+		$shouldQuit = false;
 		$updatedData = [];
 		foreach ($files as $file => $storedHash) {
 			if (str_contains($file, '::')) {
@@ -301,8 +302,13 @@ class IntegrityCheckCommand extends Command {
 					$currentHash,
 					$updatedData,
 					$interactive,
-					$forceUpdate
+					$forceUpdate,
+					$shouldQuit
 				);
+			}
+
+			if ($shouldQuit) {
+				break;
 			}
 		}
 
@@ -389,17 +395,24 @@ class IntegrityCheckCommand extends Command {
 	 * @param array $updatedData
 	 * @param bool $interactive
 	 * @param bool $forceUpdate
+	 * @param bool $shouldQuit
 	 * @return void
 	 */
-	protected function askForUpdate(ConsoleIo $io, string $file, mixed $currentHash, array &$updatedData, bool $interactive, bool &$forceUpdate): void {
+	protected function askForUpdate(ConsoleIo $io, string $file, mixed $currentHash, array &$updatedData, bool $interactive, bool &$forceUpdate, bool &$shouldQuit): void {
 		$update = $forceUpdate;
 		if ($interactive && !$forceUpdate) {
-			$key = $io->askChoice('Update hash?', ['y', 'n', 'a', 'q'], 'n');
+			$key = $io->askChoice('Update hash?', ['y', 'n', 'a', 'q', 'c'], 'n');
 			$key = strtolower($key);
 
+			if ($key === 'c') {
+				$io->error('Cancelled.', 2);
+				throw new StopException('Not creating file. Cancelled.');
+			}
+
 			if ($key === 'q') {
-				$io->error('Quitting.', 2);
-				throw new StopException('Not creating file. Quitting.');
+				$io->info('Saving and quitting.', 2);
+				$shouldQuit = true;
+				return;
 			}
 
 			if ($key === 'a') {
