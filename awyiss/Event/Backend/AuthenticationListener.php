@@ -122,6 +122,7 @@ class AuthenticationListener implements EventListenerInterface {
 	public function authenticationRequestLoginUrl(Event $event): void {
 		$event->setResult(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
+			'_base' => false,
 			'lang' => LocaleMiddleware::getLanguage()->shortcode,
 			'controller' => 'Users',
 			'action' => 'login',
