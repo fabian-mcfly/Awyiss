@@ -17,6 +17,7 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RulesChecker;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -473,13 +474,13 @@ class SurveysTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["showForm"]
-	 *           ["saveAndShowForm"]
-	 *           ["showFormAndSave"]
 	 * @param string $finalAction
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveysTable::buildRules()
 	 */
+	#[TestWith(['showForm'])]
+	#[TestWith(['saveAndShowForm'])]
+	#[TestWith(['showFormAndSave'])]
 	public function testBuildRulesNullFormIdWhenRequired(string $finalAction): void {
 		$data = [
 			'title' => 'Survey without Form',

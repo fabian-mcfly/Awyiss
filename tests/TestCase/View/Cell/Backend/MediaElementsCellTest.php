@@ -15,6 +15,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -69,7 +70,7 @@ class MediaElementsCellTest extends TestCase {
 
 		Router::setRequest($this->request);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 
 		Configure::write('Awyiss.News.Backend.mediaFolders.autoCreate', true);
 	}
@@ -103,13 +104,13 @@ class MediaElementsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider displayDataProvider
 	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpUnusedParameterInspection
 	 */
+	#[DataProvider('displayDataProvider')]
 	public function testDisplayWithUnauthorizedUser(callable $entityProvider, string|false $type): void {
 		$entity = $entityProvider();
 
@@ -126,12 +127,12 @@ class MediaElementsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider displayDataProvider
 	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 */
+	#[DataProvider('displayDataProvider')]
 	public function testDisplayWithAuthorizedUser(callable $entityProvider, string|false $type): void {
 		$entity = $entityProvider();
 
@@ -164,13 +165,13 @@ class MediaElementsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider displayDataProvider
 	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpUnusedParameterInspection
 	 */
+	#[DataProvider('displayDataProvider')]
 	public function testDisplayWithAccessDeniedUser(callable $entityProvider, string|false $type): void {
 		$entity = $entityProvider();
 
@@ -242,12 +243,12 @@ class MediaElementsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider elementAssignmentsDataProvider
 	 * @param callable $entityProvider
 	 * @param bool $assignmentsAvailable
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments()
 	 */
+	#[DataProvider('elementAssignmentsDataProvider')]
 	public function testElementAssignments(callable $entityProvider, bool $assignmentsAvailable) {
 		$entity = $entityProvider();
 

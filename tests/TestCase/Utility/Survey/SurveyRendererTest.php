@@ -16,6 +16,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\TestSuite\IntegrationTestTrait;
 use Customer\Utility\Form\FormRenderer as CustomFormRenderer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use RuntimeException;
 
@@ -145,10 +146,10 @@ class SurveyRendererTest extends TestCase {
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
 	 */
 	public function testGetSurveyByIdentifierReturnsSurveyInPreviewModeIfInactive(): void {
-		// Mock the preview mode inside the SurveyRenderer
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])
+		/** @var \Awyiss\Utility\Survey\SurveyRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])
 			->setConstructorArgs([$this->view])
-			->getMock();
+			->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$result = $renderer->getSurveyByIdentifier('dummySurvey2');
@@ -231,7 +232,8 @@ class SurveyRendererTest extends TestCase {
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
 	 */
 	public function testInitSurveyWithInactiveSurveyInPreviewMode(): void {
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		/** @var \Awyiss\Utility\Survey\SurveyRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$result = $renderer->initSurvey('dummySurvey2', []);
@@ -250,7 +252,8 @@ class SurveyRendererTest extends TestCase {
 	#[TestWith([false, 4])]
 	#[TestWith([true, 6])]
 	public function testInitSurveyPassesPreviewMode(bool $previewMode, int $expectedQuestions): void {
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		/** @var \Awyiss\Utility\Survey\SurveyRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn($previewMode);
 
 		$renderer->initSurvey('dummySurvey', []);
@@ -336,13 +339,13 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider saveEntryAndRedirectActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('saveEntryAndRedirectActionsProvider')]
 	public function testProcessSavesAndRedirectsWhenConditionsMet(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -374,7 +377,6 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider saveEntryAndRedirectActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
@@ -382,6 +384,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
+	#[DataProvider('saveEntryAndRedirectActionsProvider')]
 	public function testProcessNotSavesAndRedirectsWhenDifferentSurvey(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -411,7 +414,6 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider saveEntryAndRedirectActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
@@ -419,6 +421,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
+	#[DataProvider('saveEntryAndRedirectActionsProvider')]
 	public function testProcessNotSavesAndRedirectsWhenFormIdentifierIsSet(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -451,7 +454,6 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider showFormActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
@@ -459,6 +461,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
+	#[DataProvider('showFormActionsProvider')]
 	public function testProcessDoesNotSavesAndRedirectsForOtherActions(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -664,13 +667,13 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider showFormActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('showFormActionsProvider')]
 	public function testProcessShowsForm(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -710,13 +713,13 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider showFormActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('showFormActionsProvider')]
 	public function testProcessShowsFormWithInvalidDataContainsError(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -759,13 +762,13 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider showFormActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('showFormActionsProvider')]
 	public function testProcessShowsFormWithInvalidDataContainsNotErrorWithOtherFormIdentifier(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 
@@ -808,12 +811,12 @@ class SurveyRendererTest extends TestCase {
 
 
 	/**
-	 * @dataProvider showFormActionsProvider
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @throws \Exception
 	 */
+	#[DataProvider('showFormActionsProvider')]
 	public function testProcessSubmitsFormWithValidData(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -961,7 +964,7 @@ class SurveyRendererTest extends TestCase {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getMock();
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data
@@ -1077,7 +1080,7 @@ class SurveyRendererTest extends TestCase {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getMock();
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data
@@ -1146,7 +1149,7 @@ class SurveyRendererTest extends TestCase {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getMock();
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$renderer->initSurvey('dummySurvey4', [
@@ -1236,7 +1239,7 @@ class SurveyRendererTest extends TestCase {
 	 */
 	public function testGetSurveyBodyInfoText(): void {
 		// Mock the preview mode inside the SurveyRenderer
-		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		$renderer = $this->getStubBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		// Prepare request data to submit the form with valid data

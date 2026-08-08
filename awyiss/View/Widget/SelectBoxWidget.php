@@ -4,7 +4,6 @@
 namespace Awyiss\View\Widget;
 
 
-use ArrayAccess;
 use Awyiss\Model\Entity;
 use Cake\View\Widget\SelectBoxWidget as BaseSelectBoxWidget;
 
@@ -31,7 +30,7 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 		foreach ($options as $key => $val) {
 			// Option groups
 			$isIterable = is_iterable($val);
-			/** @var \ArrayAccess|array $val */
+			/** @var \ArrayAccess<string, mixed>|array $val */
 			if (
 				(
 					!is_int($key) &&
@@ -46,7 +45,7 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 					)
 				)
 			) {
-				/** @var \ArrayAccess<string, mixed>|array<string, mixed> $val */
+				/** @var iterable $val */
 				$out[] = $this->_renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
 				continue;
 			}
@@ -106,7 +105,7 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 	 */
 	protected function _renderOptgroup(
 		string $label,
-		ArrayAccess|array $optgroup,
+		iterable $optgroup,
 		?array $disabled,
 		mixed $selected,
 		array $templateVars,
@@ -114,10 +113,10 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 	): string {
 		$opts = $optgroup;
 		$attrs = [];
-		if (isset($optgroup['options'], $optgroup['text'])) {
+		if (is_array($optgroup) && isset($optgroup['options'], $optgroup['text'])) {
 			$opts = $optgroup['options'];
 			$label = $optgroup['text'];
-			$attrs = (array)$optgroup;
+			$attrs = $optgroup;
 		}
 		$groupOptions = $this->_renderOptions($opts, $disabled, $selected, $templateVars, $escape);
 

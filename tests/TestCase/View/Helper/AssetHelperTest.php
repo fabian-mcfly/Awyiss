@@ -2623,7 +2623,7 @@ CSS, $cssContent);
 		$this->helper->setRealm(Awyiss::REALM_FRONTEND);
 
 		$request = $this->helper->getView()->getRequest();
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([
 			'body-bg-color' => '#ffffff',
 		]);

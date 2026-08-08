@@ -40,7 +40,8 @@ class StringTypeTest extends TestCase {
 		parent::setUp();
 
 		$this->type = new StringType();
-		$this->driver = $this->getMockBuilder(Driver::class)->disableOriginalConstructor()->getMock();
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->driver = $this->getStubBuilder(Driver::class)->disableOriginalConstructor()->getStub();
 	}
 
 

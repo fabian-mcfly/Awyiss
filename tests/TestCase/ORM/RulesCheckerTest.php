@@ -21,6 +21,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\ValidCount;
 use Cake\ORM\Table;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use RuntimeException;
 
@@ -48,7 +49,7 @@ class RulesCheckerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockTable = $this->createMock(Table::class);
+		$this->mockTable = $this->createStub(Table::class);
 		$this->rulesChecker = new RulesChecker(['repository' => $this->mockTable]);
 	}
 
@@ -289,7 +290,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithStringField(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -326,7 +327,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithArrayField(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -363,9 +364,9 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithAssociation(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
-		$association = $this->createMock(Association::class);
+		$association = $this->createStub(Association::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -409,7 +410,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithTableString(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -446,7 +447,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithErrorField(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -473,7 +474,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInWithDefaultMessage(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -500,7 +501,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExistsInUnmapsFields(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 		$mockTargetTable->method('getEntityClass')->willReturn(PageRole::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
@@ -540,7 +541,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsUniqueWithErrorField(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -567,7 +568,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsUniqueWithDefaultMessage(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
 
@@ -594,7 +595,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsUniqueUnmapsFields(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 		$mockTargetTable->method('getEntityClass')->willReturn(PageRole::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
@@ -673,13 +674,13 @@ class RulesCheckerTest extends TestCase {
 	/**
 	 * Test validCount method with different operators
 	 *
-	 * @dataProvider validCountOperatorProvider
 	 * @param string $operator
 	 * @param int $count
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::validCount()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('validCountOperatorProvider')]
 	public function testValidCountWithDifferentOperators(string $operator, int $count): void {
 		$result = $this->rulesChecker->validCount('field', $count, $operator);
 
@@ -702,7 +703,7 @@ class RulesCheckerTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testValidCountUnmapsFields(): void {
-		$mockTargetTable = $this->createMock(Table::class);
+		$mockTargetTable = $this->createStub(Table::class);
 		$mockTargetTable->method('getEntityClass')->willReturn(PageRole::class);
 
 		$rulesChecker = $this->getMockBuilder(RulesChecker::class)->setConstructorArgs([['repository' => $mockTargetTable]])->onlyMethods(['_addError'])->getMock();
@@ -839,7 +840,7 @@ class RulesCheckerTest extends TestCase {
 	 */
 	public function testAddLinkConstraintRuleWithAssociation(): void {
 		$mockAssociation = $this->createMock(Association::class);
-		$mockAssociation->expects($this->any())->method('getName')->willReturn('Users');
+		$mockAssociation->expects($this->atLeastOnce())->method('getName')->willReturn('Users');
 
 		$result = $this->callProtectedMethod(
 			$this->rulesChecker,

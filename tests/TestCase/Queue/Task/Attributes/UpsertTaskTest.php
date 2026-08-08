@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\Queue\Task\Attributes;
 
 use Awyiss\Queue\Task\Attributes\UpsertTask;
 use Awyiss\Test\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Queue\Model\Table\QueuedJobsTable;
 
 
@@ -134,15 +135,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithNewAttributeOnNewAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
@@ -195,15 +196,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithNewAttributeOnExistingAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
@@ -256,15 +257,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithRenamedAttribute(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
@@ -317,15 +318,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithChangedScopeAndNewAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
@@ -385,15 +386,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithChangedScopeAndExistingAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
@@ -453,15 +454,15 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
 	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
 	 */
+	#[DataProvider('newDataProvider')]
 	public function testRunWithChangedScopeAndExistingAttributesTableForLastColumnInTable(
 		string $type,
 		bool $required,
@@ -541,15 +542,17 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
+	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function testRunWithDeletedAttribute(string $type, bool $required, ?string $defaultValue, bool $index): void {
+	#[DataProvider('newDataProvider')]
+	public function testRunWithDeletedAttribute(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
 				'scope' => 'Contents',
@@ -598,15 +601,17 @@ class UpsertTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider newDataProvider
 	 * @param string $type
 	 * @param bool $required
 	 * @param ?string $defaultValue
 	 * @param bool $index
+	 * @param string $colString
 	 * @return void
-	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run()
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function testRunWithDeletedAttributeForLastColumnInTable(string $type, bool $required, ?string $defaultValue, bool $index): void {
+	#[DataProvider('newDataProvider')]
+	public function testRunWithDeletedAttributeForLastColumnInTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
 			'old' => [
 				'scope' => 'Usergroups',
@@ -676,7 +681,7 @@ class UpsertTaskTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testCreateJobWithEmptyCommands(): void {
-		$task = $this->getMockBuilder(UpsertTask::class)->onlyMethods(['createJob'])->getMock();
+		$task = $this->getStubBuilder(UpsertTask::class)->onlyMethods(['createJob'])->getStub();
 
 		// Mock QueuedJobs to ensure it's never called
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);

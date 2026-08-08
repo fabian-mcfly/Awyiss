@@ -4,29 +4,11 @@
 
 	<file>./awyiss</file>
 
-	<exclude-pattern>./awyiss/assets/css/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/css/*.min.css</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/css/**/*.min.css</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/*.min.js</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/**/*.min.js</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/AirDatepicker/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/CodeCup/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Coloris/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Frontend/Captcha/altcha.i18n.js</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Frontend/MapLibre/*.js</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Frontend/CookieConsent/cookieconsent.js</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/SortableJS/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Jodit/jodit/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/Panzoom/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/TinyMCE/langs/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/TinyMCE/tinymce/*</exclude-pattern>
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./docs/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
 	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
-	<exclude-pattern>./tests/comparisons/output/test.css</exclude-pattern>
-	<exclude-pattern>./tests/customer/assets/js/main.min.js</exclude-pattern>
 	<exclude-pattern>./tests/customer/config/awyiss.php</exclude-pattern>
 	<exclude-pattern>./vendor/*</exclude-pattern>
 
@@ -44,7 +26,13 @@
 		<exclude name="PSR2.Classes.ClassDeclaration"/>
 		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
 
-		<exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterTagBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterDocblockBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterDeclareBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterNamespaceBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterUseBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterUseFunctionBlock"/>
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterUseConstBlock"/>
 		<exclude name="PSR12.Files.OpenTag.NotAlone"/>
 
 		<exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
@@ -53,14 +41,8 @@
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
 	</rule>
 
-	<!-- PSR12.Operators.OperatorSpacing.NoSpaceBefore does not like template literals in js -->
-	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceBefore">
-		<exclude-pattern>*.js</exclude-pattern>
-	</rule>
-	<!-- PSR12.Operators.OperatorSpacing.NoSpaceBefore does not like template literals in js -->
-	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceAfter">
-		<exclude-pattern>*.js</exclude-pattern>
-	</rule>
+	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceBefore"/>
+	<rule ref="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>
 
 	<rule ref="CakePHP.Commenting.FunctionComment"/>
 	<rule ref="CakePHP.Commenting.TypeHint"/>
@@ -106,9 +88,7 @@
 			<property name="tabIndent" value="true"/>
 		</properties>
 	</rule>
-	<rule ref="Generic.WhiteSpace.ScopeIndent.IncorrectExact">
-		<exclude-pattern>*.js</exclude-pattern>
-	</rule>
+	<rule ref="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>
 
 	<!-- phpcs Squiz sniffs -->
 	<rule ref="Squiz.Classes.ClassFileName"/>
@@ -141,9 +121,7 @@
 	<rule ref="Squiz.Scope.MemberVarScope"/>
 	<rule ref="Squiz.Scope.StaticThisUsage"/>
 	<rule ref="Squiz.WhiteSpace.CastSpacing"/>
-	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing">
-		<exclude-pattern>*.js</exclude-pattern>
-	</rule>
+	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
 	<rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/>
 	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
 	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">

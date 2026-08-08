@@ -33,7 +33,7 @@ class LocaleHelperTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$view = $this->getMockBuilder(BackendView::class)->disableOriginalConstructor()->enableAutoReturnValueGeneration()->getMock();
+		$view = $this->getStubBuilder(BackendView::class)->disableOriginalConstructor()->enableAutoReturnValueGeneration()->getStub();
 
 		$view->method('helpers')->willReturn(new HelperRegistry($view));
 

@@ -14,6 +14,7 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -82,10 +83,10 @@ class PaginatorHelperTest extends TestCase {
 	 */
 	public function testConstructorSetsConfig() {
 		// Mock the View object
-		$view = $this->createMock(View::class);
+		$view = $this->createStub(View::class);
 
 		// Mock the Request object and its getParam method
-		$request = $this->createMock(ServerRequest::class);
+		$request = $this->createStub(ServerRequest::class);
 		$request->method('getParam')->willReturnMap([
 			['parts', [], ['sort' => 'name', 'testparam' => 'testvalue']],
 			['pass', [], ['controller' => 'Users', 'action' => 'index']],
@@ -123,10 +124,10 @@ class PaginatorHelperTest extends TestCase {
 	 */
 	public function testMetaReturnsNullWhenNotPaginated() {
 		// Mock the View object
-		$view = $this->createMock(View::class);
+		$view = $this->createStub(View::class);
 
 		// Mock the Request object and its getParam method
-		$request = $this->createMock(ServerRequest::class);
+		$request = $this->createStub(ServerRequest::class);
 		$request->method('getParam')->willReturnMap([
 			['parts', [], []],
 			['pass', [], []],
@@ -144,10 +145,10 @@ class PaginatorHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataMetaProvider
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::meta()
 	 */
+	#[DataProvider('dataMetaProvider')]
 	public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected) {
 		$this->setPaginatedResult([
 			'currentPage' => $page,

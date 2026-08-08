@@ -108,8 +108,8 @@ class FormRendererTest extends TestCase {
 	 * @see\Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
 	 */
 	public function testGetFormByIdentifierReturnsFormInPreviewModeIfInactive(): void {
-		// Mock the preview mode inside the FormRenderer
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		/** @var \Awyiss\Utility\Form\FormRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$result = $renderer->getFormByIdentifier('contact3');
@@ -217,7 +217,8 @@ class FormRendererTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testInitFormWithInactiveFormInPreviewMode(): void {
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		/** @var \Awyiss\Utility\Form\FormRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$result = $renderer->initForm('contact3', []);
@@ -237,7 +238,8 @@ class FormRendererTest extends TestCase {
 	#[TestWith([false, 18])]
 	#[TestWith([true, 19])]
 	public function testInitFormPassesPreviewMode(bool $previewMode, int $expectedQuestions): void {
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		/** @var \Awyiss\Utility\Form\FormRenderer|\PHPUnit\Framework\MockObject\Stub $renderer */
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn($previewMode);
 
 		$renderer->initForm('contact', []);
@@ -610,7 +612,7 @@ class FormRendererTest extends TestCase {
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElement(): void {
 		// Free text in form 1 is inactive. So force preview mode
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$renderer->initForm(1, []);
@@ -636,7 +638,7 @@ class FormRendererTest extends TestCase {
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElementWithBaseWidth(): void {
 		// Free text in form 1 is inactive. So force preview mode
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$renderer->initForm(1, []);
@@ -668,7 +670,7 @@ class FormRendererTest extends TestCase {
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElementWithColumnWidth(): void {
 		// Free text in form 1 is inactive. So force preview mode
-		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
+		$renderer = $this->getStubBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getStub();
 		$renderer->method('isPreview')->willReturn(true);
 
 		$renderer->initForm(1, []);

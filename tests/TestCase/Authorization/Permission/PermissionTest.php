@@ -70,7 +70,7 @@ class PermissionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetPolicyClassReturnsNullWhenNotSet(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 		$authorizationService->method('getPolicy')->willReturn(null);
 
 		$permission = new Permission('scope', 'identifier');
@@ -85,9 +85,9 @@ class PermissionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetPolicyClassReturnsPolicyWhenSet(): void {
-		$policy = $this->createMock(AbstractGenericPolicy::class);
+		$policy = $this->createStub(AbstractGenericPolicy::class);
 
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 		$authorizationService->method('getPolicy')->willReturn($policy);
 
 		$permission = new Permission('scope', 'identifier');
@@ -113,13 +113,13 @@ class PermissionTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsDefaultPermissionWhenNoPolicy(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 		$authorizationService->method('getPolicy')->willReturn(null);
 
 		$permission = new Permission('scope', 'identifier');
 		$permission->setAuthorizationService($authorizationService);
 
-		$this->assertFalse($permission->isAccessible([], $this->createMock(PermissionCollection::class)));
+		$this->assertFalse($permission->isAccessible([], $this->createStub(PermissionCollection::class)));
 	}
 
 
@@ -129,16 +129,16 @@ class PermissionTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsDefaultPermissionWhenGetPermissionOptionReturnsNull(): void {
-		$policy = $this->createMock(AbstractGenericPolicy::class);
+		$policy = $this->createStub(AbstractGenericPolicy::class);
 		$policy->method('getPermissionOption')->willReturn(null);
 
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 		$authorizationService->method('getPolicy')->willReturn($policy);
 
 		$permission = new Permission('scope', 'identifier');
 		$permission->setAuthorizationService($authorizationService);
 
-		$this->assertFalse($permission->isAccessible([], $this->createMock(PermissionCollection::class)));
+		$this->assertFalse($permission->isAccessible([], $this->createStub(PermissionCollection::class)));
 	}
 
 
@@ -148,23 +148,23 @@ class PermissionTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsCorrectAccesssible(): void {
-		$permissionOptionDenied = $this->createMock(PermissionOptionInterface::class);
+		$permissionOptionDenied = $this->createStub(PermissionOptionInterface::class);
 		$permissionOptionDenied->method('isAccessible')->willReturn(false);
 
-		$permissionOptionAllowed = $this->createMock(PermissionOptionInterface::class);
+		$permissionOptionAllowed = $this->createStub(PermissionOptionInterface::class);
 		$permissionOptionAllowed->method('isAccessible')->willReturn(true);
 
-		$permissionOptionUndecided = $this->createMock(PermissionOptionInterface::class);
+		$permissionOptionUndecided = $this->createStub(PermissionOptionInterface::class);
 		$permissionOptionUndecided->method('isAccessible')->willReturn(null);
 
-		$policy = $this->createMock(AbstractGenericPolicy::class);
+		$policy = $this->createStub(AbstractGenericPolicy::class);
 		$policy->method('getPermissionOption')->willReturnOnConsecutiveCalls($permissionOptionDenied, $permissionOptionAllowed, $permissionOptionUndecided, null);
 
 		$permission = new Permission('scope', 'identifier');
-		$permission->setAuthorizationService($this->createMock(AuthorizationService::class));
+		$permission->setAuthorizationService($this->createStub(AuthorizationService::class));
 		$permission->setPolicyClass($policy);
 
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$this->assertFalse($permission->isAccessible([], $permissionCollection));
 		$this->assertTrue($permission->isAccessible([], $permissionCollection));
@@ -192,7 +192,7 @@ class PermissionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testCreateFromObjectCreatesPermissionCorrectly(): void {
-		$permissionInterface = $this->createMock(PermissionInterface::class);
+		$permissionInterface = $this->createStub(PermissionInterface::class);
 		$permissionInterface->method('getScope')->willReturn('FoobarScope');
 		$permissionInterface->method('getIdentifier')->willReturn('unknown identifier');
 		$permissionInterface->method('getAccess')->willReturn('access');

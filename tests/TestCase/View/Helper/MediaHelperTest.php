@@ -20,6 +20,8 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\View\Helper\HtmlHelper;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -45,10 +47,10 @@ class MediaHelperTest extends TestCase {
 
 		$this->view = $this->getMockBuilder(BackendView::class)->getMock();
 
-		$helperRegistry = $this->getMockBuilder(HelperRegistry::class)
+		$helperRegistry = $this->getStubBuilder(HelperRegistry::class)
 			->setConstructorArgs([$this->view])
 			->onlyMethods(['get'])
-			->getMock();
+			->getStub();
 		$this->view->method('helpers')->willReturn($helperRegistry);
 
 		$htmlHelper = new HtmlHelper($this->view);
@@ -58,7 +60,9 @@ class MediaHelperTest extends TestCase {
 		$this->mediaHelper = new MediaHelper($this->view);
 		$this->mediaHelper->initialize([]);
 
-		$helperRegistry->method('get')->with('Media')->willReturn($this->mediaHelper);
+		$helperRegistry->method('get')->willReturnCallback(
+			fn (string $name) => $name === 'Media' ? $this->mediaHelper : null
+		);
 	}
 
 
@@ -88,6 +92,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getMediaRenderOptions()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetMediaRenderOptions(): void {
 		$this->assertInstanceOf(MediaRenderOptions::class, $this->mediaHelper->getMediaRenderOptions());
 	}
@@ -126,6 +131,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackground(): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -136,7 +142,7 @@ class MediaHelperTest extends TestCase {
 
 		$resizeStrategory = ResizeStrategy::Contain;
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$mediaRenderOptions->method('getResizeStrategy')->willReturn($resizeStrategory);
 		$mediaRenderOptions->method('getSelector')->willReturn('.selector');
@@ -154,6 +160,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundWithNoAverageColor(): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -164,7 +171,7 @@ class MediaHelperTest extends TestCase {
 
 		$resizeStrategory = ResizeStrategy::Contain;
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$mediaRenderOptions->method('getResizeStrategy')->willReturn($resizeStrategory);
 		$mediaRenderOptions->method('getSelector')->willReturn('.selector');
@@ -182,10 +189,11 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundWithNoSelectorThrowsException(): void {
 		$media = new Media([]);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$mediaRenderOptions->method('getSelector')->willReturn(null);
 
@@ -198,6 +206,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundWithBreakpoints() {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -249,6 +258,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundWithBreakpointsHasNoCssBreakpointsWhenResizedImagesAreEmpty() {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -273,6 +283,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundForNonImageWithPreview() {
 		$media = new Media([
 			'name' => 'document.pdf',
@@ -302,6 +313,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundForNonImageWithoutPreview() {
 		$media = new Media([
 			'name' => 'audio.mp3',
@@ -311,7 +323,7 @@ class MediaHelperTest extends TestCase {
 
 		$resizeStrategory = ResizeStrategy::Contain;
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$mediaRenderOptions->method('getResizeStrategy')->willReturn($resizeStrategory);
 		$mediaRenderOptions->method('getSelector')->willReturn('.selector');
@@ -327,6 +339,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundForNonImageWithoutPreviewButAverageColor(): void {
 		$media = new Media([
 			'name' => 'audio.mp3',
@@ -337,7 +350,7 @@ class MediaHelperTest extends TestCase {
 
 		$resizeStrategory = ResizeStrategy::Contain;
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$mediaRenderOptions->method('getResizeStrategy')->willReturn($resizeStrategory);
 		$mediaRenderOptions->method('getSelector')->willReturn('.selector');
@@ -352,6 +365,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBackgroundCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -375,6 +389,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::getBackgroundStyleTag()
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetBackgroundStyleTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -399,6 +414,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -422,6 +438,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForImageWithAlt(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -443,6 +460,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForImageWithAltAttribute(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -470,6 +488,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForNonImageWithPreview(): void {
 		$media = new Media([
 			'name' => 'document.pdf',
@@ -494,6 +513,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForNonImageWithPreviewAndDisabledPreview(): void {
 		$media = new Media([
 			'name' => 'document.pdf',
@@ -516,6 +536,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForSvg(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(7);
@@ -551,6 +572,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForAudio(): void {
 		$media = new Media([
 			'id' => 0,
@@ -559,7 +581,7 @@ class MediaHelperTest extends TestCase {
 			'mimeType' => 'audio/mpeg',
 		]);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 		$mediaRenderOptions = $mediaRenderOptions->withResponsive(false);
 
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
@@ -583,6 +605,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHtmlTagForVideo(): void {
 		$media = new Media([
 			'id' => 0,
@@ -591,7 +614,7 @@ class MediaHelperTest extends TestCase {
 			'mimeType' => 'video/mp4',
 		]);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 		$mediaRenderOptions = $mediaRenderOptions->withResponsive(false);
 
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
@@ -610,12 +633,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testHtmlTagForImageWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -645,12 +669,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testHtmlTagForImageResponsiveWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -688,12 +713,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testHtmlTagForVideoWithLazyload(bool $lazyload): void {
 		$media = new Media([
 			'id' => 0,
@@ -730,12 +756,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testHtmlTagForImageResponsive(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -804,6 +831,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTag(): void {
 		$media = new Media([
 			'id' => 0,
@@ -812,7 +840,7 @@ class MediaHelperTest extends TestCase {
 			'mimeType' => 'audio/mpeg',
 		]);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
 		$this->assertStringContainsString('<audio', $result);
@@ -826,11 +854,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagWithSources(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(19);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
 
@@ -846,11 +875,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagWithSingleSource(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(17);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
 
@@ -866,11 +896,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagWithSubtitlesGeneratesVideoTag(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(15);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
 			'url' => '/de/no-slug/',
@@ -902,11 +933,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagWithSubtitlesGeneratesAudiTagIfForced(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(15);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions, false);
 
@@ -921,11 +953,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagWithSubtitlesAndNoDefault(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(15);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
 			'url' => '/es/no-slug/',
@@ -952,6 +985,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAudioTagForNonAudio(): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -969,6 +1003,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTag(): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -988,6 +1023,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTagWithAlt(): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -1008,6 +1044,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTagForSvg(): void {
 		$media = new Media([
 			'name' => 'image.svg',
@@ -1027,6 +1064,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTagForNonImageWithPreview(): void {
 		$media = new Media([
 			'name' => 'document.pdf',
@@ -1047,6 +1085,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTagForNonImageWithoutPreview(): void {
 		$media = new Media([
 			'name' => 'audio.mp3',
@@ -1064,6 +1103,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImageTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1076,11 +1116,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testImageTagWithLazyload(bool $lazyload): void {
 		$media = new Media([
 			'name' => 'image.jpg',
@@ -1110,11 +1151,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testImageTagForSvgWithLazyload(bool $lazyload): void {
 		$media = new Media([
 			'name' => 'image.svg',
@@ -1144,11 +1186,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testPictureTag(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1214,11 +1257,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testPictureTagWithWebpResizeFileType(bool $include2x): void {
 		Configure::write('Awyiss.Media.Frontend.resizing.fileType', 'webp');
 
@@ -1289,11 +1333,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testPictureTagWithWebpResizeFileTypePerConfig(bool $include2x): void {
 		$this->mediaHelper = new MediaHelper($this->view);
 		$this->mediaHelper->initialize([
@@ -1367,6 +1412,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testPictureTagNotContainsBackgroundColorVarIfEmpty(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1389,6 +1435,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testPictureTagWithAlt(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1442,11 +1489,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testPictureTagForSvg(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(7);
@@ -1471,11 +1519,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('include2xProvider')]
 	public function testPictureTagWithoutResize(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -1500,11 +1549,12 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testPictureTagWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1562,6 +1612,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTag(): void {
 		$media = new Media([
 			'id' => 0,
@@ -1570,7 +1621,7 @@ class MediaHelperTest extends TestCase {
 			'mimeType' => 'video/mp4',
 		]);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
 		$this->assertStringContainsString('<video', $result);
@@ -1586,11 +1637,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTagWithSources(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(11);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
 
@@ -1605,11 +1657,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTagWithSingleSource(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(18);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
 
@@ -1625,11 +1678,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTagWithSubtitles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(11);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
 			'url' => '/de/no-slug/',
@@ -1658,11 +1712,12 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTagWithSubtitlesAndNoDefault(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(11);
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
 			'url' => '/es/no-slug/',
@@ -1689,6 +1744,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testVideoTagForNonVideo(): void {
 		$media = new Media([
 			'name' => 'audio.mp3',
@@ -1703,12 +1759,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testVideoTagWithLazyload(bool $lazyload): void {
 		$media = new Media([
 			'id' => 0,
@@ -1744,12 +1801,13 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider lazyloadProvider
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
+	#[DataProvider('lazyloadProvider')]
 	public function testVideoTagWithSourcesWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(11);
@@ -1788,6 +1846,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::isVideoLink()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testIsVideoLink(): void {
 		$this->assertTrue($this->mediaHelper->isVideoLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ'));
 		$this->assertTrue($this->mediaHelper->isVideoLink('https://vimeo.com/123456'));
@@ -1799,6 +1858,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::contents()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testContents(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(7);
@@ -1813,6 +1873,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::storeItems()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testStoreItems(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(7);
@@ -1833,7 +1894,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testPreview(): void {
-		$media = $this->createMock(Media::class);
+		$media = $this->createStub(Media::class);
 
 		$this->view->expects($this->once())->method('element')->with('media/preview', $this->anything())->willReturn('<div>preview</div>');
 
@@ -1846,6 +1907,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::preview()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testPreviewForImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -1896,6 +1958,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResizeWithRenderOptions(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -1922,6 +1985,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResizeWithoutRenderOptions(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -1944,6 +2008,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResizeWithoutRenderOptionsSameFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -1966,6 +2031,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResizeWithoutRenderOptionsWebPFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -1988,6 +2054,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResizeWithoutRenderOptionsNullFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
@@ -2011,8 +2078,9 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetPixelColumnWidth(): void {
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 		$mediaRenderOptions->method('getBaseWidth')->willReturn(1920.0);
 		$mediaRenderOptions->method('getColumnWidth')->willReturn(50.0);
 
@@ -2027,11 +2095,12 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetPixelColumnWidthThrowsExceptionForMissingBaseWidth(): void {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Base width must be set to calculate the pixel width of a column.');
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 		$mediaRenderOptions->method('getBaseWidth')->willReturn(0.0);
 		$mediaRenderOptions->method('getColumnWidth')->willReturn(50.0);
 
@@ -2044,11 +2113,12 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetPixelColumnWidthThrowsExceptionForMissingColumnWidth(): void {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Column width must be set to calculate the pixel width of a column.');
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 		$mediaRenderOptions->method('getBaseWidth')->willReturn(1920.0);
 		$mediaRenderOptions->method('getColumnWidth')->willReturn(0.0);
 
@@ -2061,6 +2131,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTags()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTags(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->find('all')->find('mediaAssignments')->where(['id' => 44])->first();
@@ -2076,6 +2147,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTags()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->find('all')->find('mediaAssignments')->where(['id' => 44])->first();
@@ -2093,6 +2165,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInField()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->find('all')->find('mediaAssignments')->where(['id' => 44])->first();
@@ -2109,6 +2182,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInField()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsInFieldWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->find('all')->find('mediaAssignments')->where(['id' => 44])->first();
@@ -2126,6 +2200,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsInText(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->get(44);
@@ -2143,6 +2218,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsInTextWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->get(44);
@@ -2161,6 +2237,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRebuildSimpleImageTagsInTextWithNullValue(): void {
 		$media = $this->fetchTable('Media')->find('all')->all()->indexBy('id')->toArray();
 
@@ -2176,6 +2253,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTags(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2202,6 +2280,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2231,6 +2310,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTagsWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2256,6 +2336,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2284,6 +2365,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget,
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTagsInFieldWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2311,6 +2393,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testReplaceCustomImageTagsInFieldWithTagAttributes(): void {
 		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
 		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
@@ -2338,6 +2421,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetResponsiveImagesNotIgnoresBreakPointsOptionsOfTooLargeBreakpoints(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
@@ -2365,6 +2449,7 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
 	 * @see \Awyiss\View\Helper\MediaHelper::getBreakpointFiles()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetResponsiveImagesFiltersConsecutiveDuplicateFilePaths(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);

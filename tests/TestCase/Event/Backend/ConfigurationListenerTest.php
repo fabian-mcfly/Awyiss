@@ -128,9 +128,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$callCount = 0;
@@ -178,9 +179,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$callCount = 0;
@@ -228,9 +230,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$designMiddlewareMock->expects($this->never())->method('compileScss');
@@ -1143,9 +1146,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$callCount = 0;
@@ -1193,9 +1197,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$callCount = 0;
@@ -1243,9 +1248,10 @@ class ConfigurationListenerTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterDeleteCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
-		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(ConfigurationListener::class)->onlyMethods([
 			'createCustomConfiguration',
-		])->getMock();
+		])->getStub();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
 		$designMiddlewareMock->expects($this->never())->method('compileScss');

@@ -118,11 +118,11 @@ class AuditHelperTest extends TestCase {
 		$user1 = new User(['id' => 123, 'username' => 'testuser1']);
 		$user2 = new User(['id' => 124, 'username' => 'testuser2']);
 
-		$resultSet = $this->createMock(ResultSetInterface::class);
+		$resultSet = $this->createStub(ResultSetInterface::class);
 		$resultSet->method('indexBy')->willReturnSelf();
 		$resultSet->method('toArray')->willReturn([123 => $user1, 124 => $user2]);
 
-		$query = $this->createMock(SelectQuery::class);
+		$query = $this->createStub(SelectQuery::class);
 		$query->method('all')->willReturn($resultSet);
 
 		$usersTable = $this->getMockBuilder(UsersTable::class)->disableOriginalConstructor()->onlyMethods(['find'])->getMock();

@@ -17,6 +17,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\View\CellTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -74,7 +75,7 @@ class GlobalContentsCellTest extends TestCase {
 			],
 		]);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 
 		$this->view = new FrontendView($this->request);
 		$this->cell = new GlobalContentsCell($this->request, $this->response, null, [
@@ -230,13 +231,13 @@ class GlobalContentsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataThreadedGlobalContentsDataProvider
 	 * @param string $identifier
 	 * @param int $expectedCount
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::getThreadedGlobalContents()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('dataThreadedGlobalContentsDataProvider')]
 	public function testGetThreadedGlobalContents(string $identifier, int $expectedCount): void {
 		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', $identifier);
 
@@ -872,7 +873,7 @@ class GlobalContentsCellTest extends TestCase {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -890,7 +891,7 @@ class GlobalContentsCellTest extends TestCase {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -908,7 +909,7 @@ class GlobalContentsCellTest extends TestCase {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -926,7 +927,7 @@ class GlobalContentsCellTest extends TestCase {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div><widget data-identifier="empty">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -944,7 +945,7 @@ class GlobalContentsCellTest extends TestCase {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div><p><widget data-identifier="test">{"key":"other_value"}</widget>e other content</p>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 

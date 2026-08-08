@@ -10,6 +10,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use RuntimeException;
 
 
@@ -61,6 +62,7 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeReturnsTrueWhenSourceAndTargetAreSame(): void {
 		$options = [
 			'repository' => $this->mockTable,
@@ -82,9 +84,10 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeWithAllowNullableNullsFiltersNullableFields(): void {
-		$schema = $this->createMock(TableSchema::class);
-		$sourceTable = $this->createMock(Table::class);
+		$schema = $this->createStub(TableSchema::class);
+		$sourceTable = $this->createStub(Table::class);
 
 		$existsInRule = new ExistsIn(['userId', 'roleId'], $this->mockTable, [
 			'allowNullableNulls' => true,
@@ -92,7 +95,7 @@ class ExistsInTest extends TestCase {
 
 		$options = [
 			'repository' => $sourceTable,
-			'_sourceTable' => $this->createMock(Table::class),
+			'_sourceTable' => $this->createStub(Table::class),
 		];
 
 		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'roleId']);
@@ -122,7 +125,7 @@ class ExistsInTest extends TestCase {
 		$this->mockTable->method('aliasField')->willReturnCallback(function ($field) {
 			return 'Users.' . $field;
 		});
-		$this->mockTable->method('exists')->with(['Users.id IS' => 1], [])->willReturn(true);
+		$this->mockTable->expects($this->atLeastOnce())->method('exists')->with(['Users.id IS' => 1], [])->willReturn(true);
 
 		$result = $existsInRule->__invoke($this->mockEntity, $options);
 
@@ -137,9 +140,10 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeWithoutAllowNullableNullsFiltersNullableFields(): void {
-		$schema = $this->createMock(TableSchema::class);
-		$sourceTable = $this->createMock(Table::class);
+		$schema = $this->createStub(TableSchema::class);
+		$sourceTable = $this->createStub(Table::class);
 
 		$existsInRule = new ExistsIn(['userId', 'roleId'], $this->mockTable, [
 			'allowNullableNulls' => false,
@@ -147,7 +151,7 @@ class ExistsInTest extends TestCase {
 
 		$options = [
 			'repository' => $sourceTable,
-			'_sourceTable' => $this->createMock(Table::class),
+			'_sourceTable' => $this->createStub(Table::class),
 		];
 
 		$this->mockTable->method('getPrimaryKey')->willReturn(['id', 'roleId']);
@@ -189,6 +193,7 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeCallsAttributeFieldsAreDirtyWhenEntityFieldsAreNotDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
 			setConstructorArgs([['userId'], $this->mockAssociation])
@@ -218,6 +223,7 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeNotCallsAttributeFieldsAreDirtyWhenEntityFieldsAreDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
 			setConstructorArgs([['userId'], $this->mockAssociation])
@@ -247,6 +253,7 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testInvokeSetsFinderFromAssociation(): void {
 		$existsInRule = new ExistsIn(['userId'], $this->mockAssociation, ['something' => 'else']);
 
@@ -285,12 +292,15 @@ class ExistsInTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAttributeFieldsAreDirtyWithMatchingAttributes(): void {
 		$attributesEntity = $this->createMock(EntityInterface::class);
 		$mainEntity = $this->createMock(EntityInterface::class);
 
 		// Mock the get method instead of __get
-		$mainEntity->method('get')
+		$mainEntity
+			->expects($this->atLeastOnce())
+			->method('get')
 			->with('attributes')
 			->willReturn($attributesEntity);
 
@@ -317,7 +327,9 @@ class ExistsInTest extends TestCase {
 		$this->mockAssociation->method('getTarget')->willReturn($targetTable);
 
 		// Mock the extract method to return dirty fields
-		$attributesEntity->method('extract')
+		$attributesEntity
+			->expects($this->atLeastOnce())
+			->method('extract')
 			->with(['key2'], true)
 			->willReturn(['key2']); // Has dirty attributes
 
@@ -335,12 +347,15 @@ class ExistsInTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testAttributeFieldsAreNotDirtyWithMatchingAttributes(): void {
 		$attributesEntity = $this->createMock(EntityInterface::class);
 		$mainEntity = $this->createMock(EntityInterface::class);
 
 		// Mock the get method instead of __get
-		$mainEntity->method('get')
+		$mainEntity
+			->expects($this->atLeastOnce())
+			->method('get')
 			->with('attributes')
 			->willReturn($attributesEntity);
 
@@ -366,7 +381,9 @@ class ExistsInTest extends TestCase {
 		$this->mockAssociation->method('getTarget')->willReturn($targetTable);
 
 		// Mock the extract method to return non-dirty fields
-		$attributesEntity->method('extract')
+		$attributesEntity
+			->expects($this->atLeastOnce())
+			->method('extract')
 			->with(['key2'], true)
 			->willReturn([]); // No dirty attributes
 
@@ -384,11 +401,12 @@ class ExistsInTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testSetRepositoryThrowsExceptionWhenAssociationDoesNotExist(): void {
 		$associationName = 'NonExistentAssociation';
 		$existsInRule = new ExistsIn(['userId'], $associationName);
 
-		$this->mockTable->method('hasAssociation')->with($associationName)->willReturn(false);
+		$this->mockTable->expects($this->atLeastOnce())->method('hasAssociation')->with($associationName)->willReturn(false);
 
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage("ExistsIn rule for 'userId' is invalid. 'NonExistentAssociation' is not associated with");

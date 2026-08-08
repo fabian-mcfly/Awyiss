@@ -14,6 +14,7 @@ use Awyiss\Utility\Content\BootstrapColumn;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RulesChecker;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -155,12 +156,6 @@ class MediaElementsTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["Cars", false, true]
-	 *           ["ContentTemplates", true, false]
-	 *           ["Employees", false, true]
-	 *           ["Employers", false, true]
-	 *           ["PageTemplates", true, false]
-	 *           ["GlobalContentTemplates", true, false]
 	 * @param string $model
 	 * @param bool $entityLevel
 	 * @param bool $modelLevel
@@ -168,6 +163,12 @@ class MediaElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\MediaElementsTable::getAssignableModels()
 	 * @throws \ReflectionException
 	 */
+	#[TestWith(['Cars', false, true])]
+	#[TestWith(['ContentTemplates', true, false])]
+	#[TestWith(['Employees', false, true])]
+	#[TestWith(['Employers', false, true])]
+	#[TestWith(['PageTemplates', true, false])]
+	#[TestWith(['GlobalContentTemplates', true, false])]
 	public function testGetAssignableModels(string $model, bool $entityLevel, bool $modelLevel): void {
 		$models = $this->mediaElementsTable->getAssignableModels();
 
@@ -190,18 +191,18 @@ class MediaElementsTableTest extends TestCase {
 
 
 	/**
-	 * @testWith ["Cars", false]
-	 *           ["ContentTemplates", true]
-	 *           ["Employees", false]
-	 *           ["Employers", false]
-	 *           ["PageTemplates", true]
-	 *           ["GlobalContentTemplates", true]
 	 * @param string $model
 	 * @param bool $hasEntities
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::getAssignableModels()
 	 * @throws \ReflectionException
 	 */
+	#[TestWith(['Cars', false])]
+	#[TestWith(['ContentTemplates', true])]
+	#[TestWith(['Employees', false])]
+	#[TestWith(['Employers', false])]
+	#[TestWith(['PageTemplates', true])]
+	#[TestWith(['GlobalContentTemplates', true])]
 	public function testGetAssignableModelsWithEntities(string $model, bool $hasEntities): void {
 		$modelsWithEntities = $this->mediaElementsTable->getAssignableModels(true);
 

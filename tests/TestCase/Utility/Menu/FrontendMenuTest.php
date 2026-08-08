@@ -507,7 +507,7 @@ class FrontendMenuTest extends TestCase {
 
 		// Create customer with the required group
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		// Set identity should propagate to all menu items

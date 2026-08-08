@@ -8,6 +8,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\ORM\Query;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -41,7 +42,7 @@ class HasManyTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockSourceTable = $this->createMock(Table::class);
+		$this->mockSourceTable = $this->createStub(Table::class);
 		$this->mockTargetTable = $this->createMock(Table::class);
 		$this->mockQuery = $this->createMock(Query::class);
 
@@ -53,12 +54,12 @@ class HasManyTest extends TestCase {
 
 
 	/**
-	 * @testWith [true]
-	 *           [false]
 	 * @param bool $exists
 	 * @return void
 	 * @see \Awyiss\ORM\Association\HasMany::exists()
 	 */
+	#[TestWith([true])]
+	#[TestWith([false])]
 	public function testExistsPassesOptionsToTargetTable(bool $exists): void {
 		$conditions = ['dummy' => 123];
 		$options = [

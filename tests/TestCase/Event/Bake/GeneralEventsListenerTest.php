@@ -74,7 +74,7 @@ class GeneralEventsListenerTest extends TestCase {
 			$eventDispatched = true;
 		});
 
-		$command = $this->createMock(EnumCommand::class);
+		$command = $this->createStub(EnumCommand::class);
 		$args = $this->createMock(Arguments::class);
 
 		$args->expects($this->once())->method('getOption')->with('is-pagerole')->willReturn(true);
@@ -99,7 +99,7 @@ class GeneralEventsListenerTest extends TestCase {
 			$eventDispatched = true;
 		});
 
-		$command = $this->createMock(EnumCommand::class);
+		$command = $this->createStub(EnumCommand::class);
 		$args = $this->createMock(Arguments::class);
 
 		$args->expects($this->once())->method('getOption')->with('is-pagerole')->willReturn(false);
@@ -124,7 +124,7 @@ class GeneralEventsListenerTest extends TestCase {
 			$eventDispatched = true;
 		});
 
-		$command = $this->createMock(EnumCommand::class);
+		$command = $this->createStub(EnumCommand::class);
 		$args = $this->createMock(Arguments::class);
 
 		$args->expects($this->once())->method('getOption')->with('is-pagerole')->willReturn(null);
@@ -149,7 +149,7 @@ class GeneralEventsListenerTest extends TestCase {
 			$eventDispatched = true;
 		});
 
-		$command = $this->createMock(Command::class);
+		$command = $this->createStub(Command::class);
 		$args = $this->createMock(Arguments::class);
 
 		$args->expects($this->never())->method('getOption');

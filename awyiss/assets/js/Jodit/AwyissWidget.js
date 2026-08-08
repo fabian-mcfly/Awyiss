@@ -289,7 +289,7 @@ Jodit.plugins.add('awyissWidgetConfig', (editor) => {
 	const awyissWidget = new AwyissWidget(editor);
 
 	// noinspection JSUnresolvedReference
-	Jodit.widgets.Icon.set('widget', `
+	Jodit.modules.Icon.set('widget', `
 		<svg width="21" height="24" viewBox="0 0 21 24">
 			<path d="M10.5,0l10.5,6.083v11.835l-10.5,6.083L0,17.917V6.083L10.5,0ZM2.25,8.685l7.125,4.128v7.933l-7.125-4.128v-7.933h0ZM11.625,20.746l7.125-4.128v-7.933l-7.125,4.128v7.933h0ZM10.5,10.862l7.129-4.13-7.129-4.13L3.371,6.732l7.129,4.13Z" fill-rule="evenodd" stroke-width="0"/>
 		</svg>

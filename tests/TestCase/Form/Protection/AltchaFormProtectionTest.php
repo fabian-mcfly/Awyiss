@@ -4,8 +4,12 @@
 namespace Awyiss\Test\TestCase\Form\Protection;
 
 
+use AltchaOrg\Altcha\Algorithm\Pbkdf2;
 use AltchaOrg\Altcha\Altcha;
-use AltchaOrg\Altcha\Hasher\Algorithm;
+use AltchaOrg\Altcha\Challenge;
+use AltchaOrg\Altcha\ChallengeParameters;
+use AltchaOrg\Altcha\Payload;
+use AltchaOrg\Altcha\SolveChallengeOptions;
 use Awyiss\Form\FormOptions;
 use Awyiss\Form\Protection\AltchaFormProtection;
 use Awyiss\Form\Protection\FormProtectionInterface;
@@ -113,8 +117,8 @@ class AltchaFormProtectionTest extends TestCase {
 
 		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 		$this->assertStringContainsString('<altcha-widget', $result);
-		$this->assertStringContainsString('auto="onfocus" delay="0" hidefooter="1" name="_altcha"', $result);
-		$this->assertStringContainsString('?expires=', $result);
+		$this->assertStringContainsString('auto="onfocus" delay="0" hideFooter="1" hideLogo="1" type="checkbox" name="_altcha"', $result);
+		$this->assertStringContainsString('&quot;expiresAt&quot;:', $result);
 		$this->assertStringContainsString('</altcha-widget>', $result);
 
 		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_AFTER);
@@ -164,11 +168,12 @@ class AltchaFormProtectionTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::getHtml()
 	 */
-	public function testGetHtmlWithCustomComplexityAndMaxNumber(): void {
-		// Mock form options with custom complexity and maxNumber
+	public function testGetHtmlWithChallengeCost(): void {
+		// Mock form options with custom cost value
+		// This test verifies the custom cost appears in the challenge
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')->with('altcha')->willReturn([
-			'maxNumber' => 123456,
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('altcha')->willReturn([
+			'cost' => 123456,
 		]);
 
 		$this->altchaFormProtection->initialize(
@@ -180,7 +185,7 @@ class AltchaFormProtectionTest extends TestCase {
 
 		$result = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 
-		$this->assertStringContainsString('&quot;maxNumber&quot;:123456', $result);
+		$this->assertStringContainsString('&quot;cost&quot;:123456', $result);
 	}
 
 
@@ -190,40 +195,52 @@ class AltchaFormProtectionTest extends TestCase {
 	 * @throws \JsonException
 	 */
 	public function testValidateDataWithValidAltchaResponse(): void {
-		$this->altchaFormProtection->initialize(
-			$this->form,
-			$this->formElements,
-			$this->formOptions,
-			$this->view
-		);
+		// Mock form options with lower cost for faster test execution
+		$mockFormOptions = $this->createMock(FormOptions::class);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('altcha')->willReturn([
+			'cost' => 100,
+		]);
 
 		$this->altchaFormProtection->initialize(
 			$this->form,
 			$this->formElements,
-			$this->formOptions,
+			$mockFormOptions,
 			$this->view
 		);
 
-		$altcha = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
+		$altchaHtml = $this->altchaFormProtection->getHtml(FormProtectionInterface::POSITION_BEFORE_SUBMIT);
 
-		$dom = HTMLDocument::createFromString($altcha, LIBXML_NOERROR, 'UTF-8');
+		$dom = HTMLDocument::createFromString($altchaHtml, LIBXML_NOERROR, 'UTF-8');
 		$widget = $dom->querySelector('altcha-widget');
-		$challenge = json_decode($widget->getAttribute('challengejson'), true, 512, JSON_THROW_ON_ERROR);
+		$challengeJson = json_decode($widget->getAttribute('challenge'), true, 512, JSON_THROW_ON_ERROR);
 
-		$altcha = new Altcha(Security::getSalt());
-		$solution = $altcha->solveChallenge($challenge['challenge'], $challenge['salt'], Algorithm::SHA256, $challenge['maxNumber']);
+		// Reconstruct Challenge object from the JSON
+		$challengeParams = ChallengeParameters::fromArray($challengeJson['parameters']);
+		$challenge = new Challenge($challengeParams, $challengeJson['signature'] ?? null);
+
+		$altchaInstance = new Altcha(Security::getSalt());
+
+		// Solve the challenge using the new API
+		$solveChallengeOptions = new SolveChallengeOptions(
+			challenge: $challenge,
+			algorithm: new Pbkdf2(),
+			timeout: 30.0,
+		);
+
+		$solution = $altchaInstance->solveChallenge($solveChallengeOptions);
+
+		$this->assertNotNull($solution, 'Solution should not be null');
+
+		// Create Payload with Challenge and Solution
+		$payload = new Payload(
+			challenge: $challenge,
+			solution: $solution,
+		);
 
 		$data = [
 			'name' => 'Test User',
 			'email' => 'test@example.com',
-			'_altcha' => base64_encode(json_encode([
-				'algorithm' => 'SHA-256',
-				'challenge' => $challenge['challenge'],
-				'number' => $solution->number,
-				'salt' => $challenge['salt'],
-				'signature' => $challenge['signature'],
-				'took' => 1234,
-			])),
+			'_altcha' => $payload->toBase64(),
 		];
 
 		$result = $this->altchaFormProtection->validateData($data);
@@ -237,10 +254,16 @@ class AltchaFormProtectionTest extends TestCase {
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::validateData()
 	 */
 	public function testValidateDataWithInvalidAltchaResponse(): void {
+		// Mock form options with lower cost for faster test execution
+		$mockFormOptions = $this->createMock(FormOptions::class);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('altcha')->willReturn([
+			'cost' => 100,
+		]);
+
 		$this->altchaFormProtection->initialize(
 			$this->form,
 			$this->formElements,
-			$this->formOptions,
+			$mockFormOptions,
 			$this->view
 		);
 
@@ -249,13 +272,6 @@ class AltchaFormProtectionTest extends TestCase {
 			'email' => 'test@example.com',
 			'_altcha' => 'invalid_altcha_response_token',
 		];
-
-		$this->altchaFormProtection->initialize(
-			$this->form,
-			$this->formElements,
-			$this->formOptions,
-			$this->view
-		);
 
 		$result = $this->altchaFormProtection->validateData($data);
 
@@ -269,10 +285,16 @@ class AltchaFormProtectionTest extends TestCase {
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::validateData()
 	 */
 	public function testValidateDataWithMissingAltchaResponse(): void {
+		// Mock form options with lower cost for faster test execution
+		$mockFormOptions = $this->createMock(FormOptions::class);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('altcha')->willReturn([
+			'cost' => 100,
+		]);
+
 		$this->altchaFormProtection->initialize(
 			$this->form,
 			$this->formElements,
-			$this->formOptions,
+			$mockFormOptions,
 			$this->view
 		);
 

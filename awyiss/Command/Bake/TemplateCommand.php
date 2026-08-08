@@ -130,6 +130,10 @@ class TemplateCommand extends BaseTemplateCommand {
 
 		$renderer->set('indexColumns', $indexColumns);
 
+		// Always use domain translations when in plugin context
+		$useDomain = (bool)$this->plugin;
+		$renderer->set('useDomain', $useDomain);
+
 		// If the template to bake is a page template,
 		if ($args->getOption('prefix') === 'Frontend' && $args->getOption('controller') === 'page') {
 			$renderer->set('action', $args->getArgument('action'));

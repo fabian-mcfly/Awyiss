@@ -93,6 +93,7 @@ class EavStrategy extends BaseEavStrategy {
 		}
 
 		$this->bundleTranslatedFields($entity);
+		/** @var array $bundled */
 		$bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
 		$noBundled = count($bundled) === 0;
 

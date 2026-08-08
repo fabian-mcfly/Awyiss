@@ -2143,9 +2143,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitCreatesAutoTranslationJobWhenLanguageChanges(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 
@@ -2219,9 +2220,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitBundlesMultiplePagesIntoOneJob(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 
@@ -2298,9 +2300,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitGroupsPagesbyPageRole(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 
@@ -2398,9 +2401,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateDisabled(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'disabled');
 
@@ -2444,9 +2448,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateManual(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'manual');
 
@@ -2489,9 +2494,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 */
 	public function testAfterSaveNotDetectsLanguageChangeWhenNoTransactionId(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 
@@ -2529,9 +2535,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 */
 	public function testAfterSaveNotDetectsLanguageChangeWhenLanguageNotChanged(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 
@@ -2571,9 +2578,10 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
 	 */
 	public function testAfterSaveCommitIgnoresExceptionWhenLockSaveFails(): void {
-		$this->listener = $this->getMockBuilder(PagesListener::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->listener = $this->getStubBuilder(PagesListener::class)
 			->onlyMethods(['updateMenuEntries'])
-			->getMock();
+			->getStub();
 
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
 

@@ -19,6 +19,7 @@ use Cake\View\CellTrait;
 use Cake\View\StringTemplate;
 use Customer\Utility\Menu\FrontendMenu as CustomFrontendMenu;
 use Customer\Utility\Menu\FrontendMenuItem as CustomFrontendMenuItem;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -72,7 +73,7 @@ class MenuCellTest extends TestCase {
 			],
 		]);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 
 		$this->view = new FrontendView($this->request);
 		$this->cell = new MenuCell($this->request, $this->response);
@@ -119,7 +120,6 @@ class MenuCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider menuPreviewDataProvider
 	 * @param string $identifier
 	 * @param bool $isPreview
 	 * @param bool $expectedAvailability
@@ -127,11 +127,12 @@ class MenuCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenu()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('menuPreviewDataProvider')]
 	public function testGetMenuWithPreview(string $identifier, bool $isPreview, bool $expectedAvailability): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn($isPreview);
 
@@ -165,7 +166,6 @@ class MenuCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider menuEntriesDataProvider
 	 * @param string $identifier
 	 * @param bool $isPreview
 	 * @param bool $expectedAvailability
@@ -175,8 +175,9 @@ class MenuCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenuEntries()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('menuEntriesDataProvider')]
 	public function testGetMenuEntries(string $identifier, bool $isPreview, bool $expectedAvailability, int $firstLevelEntries, int $totalEntries): void {
-		$cell = $this->getMockBuilder(MenuCell::class)->onlyMethods(['isPreview'])->disableOriginalConstructor()->getMock();
+		$cell = $this->getStubBuilder(MenuCell::class)->onlyMethods(['isPreview'])->disableOriginalConstructor()->getStub();
 
 		$cell->method('isPreview')->willReturnOnConsecutiveCalls($isPreview, $isPreview);
 
@@ -212,10 +213,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderList(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 
@@ -244,10 +245,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderListWithPreview(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(true);
 
@@ -276,10 +277,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderListWithPreviewNotSetsPreviewForNotLevel1(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(true);
 
@@ -308,10 +309,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderItem(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 
@@ -346,10 +347,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderItemWithInactiveItem(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(true);
 
@@ -384,10 +385,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderItemWithUnpublishedItem(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(true);
 
@@ -422,10 +423,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderItemWithChildren(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 
@@ -464,10 +465,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderContentNoLink(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 
@@ -497,10 +498,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderContentWithLink(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 
@@ -530,10 +531,10 @@ class MenuCellTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testRenderContentWithSpecialCharacters(): void {
-		$cell = $this->getMockBuilder(MenuCell::class)
+		$cell = $this->getStubBuilder(MenuCell::class)
 			->onlyMethods(['isPreview'])
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 
 		$cell->method('isPreview')->willReturn(false);
 

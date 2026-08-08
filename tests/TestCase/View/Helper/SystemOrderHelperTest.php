@@ -11,6 +11,7 @@ use Awyiss\View\Helper\SystemOrderHelper;
 use Awyiss\View\HelperRegistry;
 use Customer\Model\Entity\News;
 use Error;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use RuntimeException;
 use stdClass;
 use TypeError;
@@ -72,6 +73,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithDefaultConfig(): void {
 		$entity = new News(['systemOrder' => 1]);
 		$entity->setSource('News');
@@ -86,6 +88,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithCustomFieldName(): void {
 		$entity = new News(['systemOrder' => 1]);
 		$entity->setSource('News');
@@ -100,6 +103,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithMissingEntity(): void {
 		$this->expectException(Error::class);
 		$this->expectExceptionMessage('Call to undefined method Cake\View\Form\NullContext::entity()');
@@ -113,6 +117,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithInvalidEntity(): void {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Entity provided must be an instance of `Awyiss\Model\Entity`, `stdClass` given.');
@@ -126,6 +131,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithOptions(): void {
 		$entity = new News(['systemOrder' => 2]);
 
@@ -149,6 +155,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithOptionsWithoutFirst(): void {
 		$entity = new News(['systemOrder' => 2]);
 
@@ -172,6 +179,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithCollectionAsOptions(): void {
 		$entity = new News(['systemOrder' => 2]);
 
@@ -194,6 +202,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithExistingEntity(): void {
 		$entity = new News(['systemOrder' => 2]);
 		$entity->setNew(false);
@@ -217,6 +226,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithNewEntity(): void {
 		$entity = new News(['systemOrder' => 2]);
 		$entity->setNew(true);
@@ -240,6 +250,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlForDatabaseRecords(): void {
 		$table = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
@@ -264,6 +275,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlForDatabaseRecordsAndChangedSystemOrder(): void {
 		$table = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
@@ -290,6 +302,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlForDatabaseRecordsAndChangedSystemOrderAndDirtyRelatedColumn(): void {
 		$table = $this->fetchTable('MediaFolders');
 		$entity = $table->newDefaultEntity(['languageShortcode' => 'de', 'systemOrder' => 3, 'title' => 'Testfolder New']);
@@ -313,6 +326,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithIncludeFirstOption(): void {
 		$entity = new News(['systemOrder' => 2]);
 
@@ -334,6 +348,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithCustomTemplates(): void {
 		$entity = new News(['systemOrder' => 3]);
 
@@ -359,6 +374,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithDisabledOption(): void {
 		$entity = new News(['systemOrder' => 1]);
 
@@ -372,6 +388,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithMergedAttributes(): void {
 		$entity = new News(['systemOrder' => 1]);
 
@@ -392,6 +409,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithEmptyOptions(): void {
 		$entity = new News(['systemOrder' => 1]);
 
@@ -405,6 +423,7 @@ class SystemOrderHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testControlWithNonArrayOptions(): void {
 		$entity = new News(['systemOrder' => 1]);
 

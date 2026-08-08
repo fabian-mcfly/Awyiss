@@ -402,6 +402,7 @@ class ModelCommand extends BaseModelCommand {
 				continue;
 			}
 
+			$className = null;
 			if ($fieldName === 'parent_id' || $fieldName === 'parentId') {
 				$className = $this->plugin ? $this->plugin . '.' . $model->getAlias() : $model->getAlias();
 				$assoc = [
@@ -413,6 +414,15 @@ class ModelCommand extends BaseModelCommand {
 			}
 			else {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
+				// A key that resolves to the table itself (e.g. a `system_id`
+				// column on `systems`) is only a real self-reference when it is
+				// actually constrained as a foreign key to this table. Otherwise
+				// (e.g. an external id that merely follows the `<table>_id`
+				// naming) skip it to avoid generating an invalid self-association
+				// that collides with the table's own alias.
+				if ($tmpModelName === $model->getAlias() && !$this->findTableReferencedBy($schema, $fieldName)) {
+					continue;
+				}
 				if (!$this->getTableLocator()->exists($tmpModelName)) {
 					$this->getTableLocator()->get(
 						$tmpModelName,
@@ -424,13 +434,13 @@ class ModelCommand extends BaseModelCommand {
 				$tables = $this->listAll();
 				// Check if association model could not be instantiated as a subclass but a generic Table instance instead
 				if (
-					get_class($associationTable) === Table::class &&
+					$associationTable::class === Table::class &&
 					!in_array(Inflector::tableize($tmpModelName), $tables, true)
 				) {
-					$allowAliasRelations = $args && $args->getOption('skip-relation-check');
+					$allowAliasRelations = $args instanceof Arguments && $args->getOption('skip-relation-check');
 					$found = $this->findTableReferencedBy($schema, $fieldName);
 					if ($found) {
-						$tmpModelName = Inflector::camelize($found);
+						$className = ($this->plugin ? $this->plugin . '.' : '') . Inflector::camelize($found);
 					}
 					elseif (!$allowAliasRelations) {
 						continue;
@@ -440,7 +450,11 @@ class ModelCommand extends BaseModelCommand {
 					'alias' => $tmpModelName,
 					'foreignKey' => $fieldName,
 				];
-				if ($schema->getColumn($fieldName)['null'] === false) {
+				if ($className && $className !== $tmpModelName) {
+					$assoc['className'] = $className;
+				}
+				$columnInfo = $schema->getColumn($fieldName);
+				if ($columnInfo !== null && ($columnInfo['null'] ?? true) === false) {
 					$assoc['joinType'] = 'INNER';
 				}
 			}
@@ -448,6 +462,7 @@ class ModelCommand extends BaseModelCommand {
 			if ($this->plugin && empty($assoc['className'])) {
 				$assoc['className'] = $this->plugin . '.' . $assoc['alias'];
 			}
+
 			$associations['belongsTo'][] = $assoc;
 		}
 
@@ -478,7 +493,10 @@ class ModelCommand extends BaseModelCommand {
 			foreach ($otherSchema->columns() as $fieldName) {
 				$assoc = false;
 				if (
-					!in_array($fieldName, $primaryKey) && $fieldName === $foreignKey && !$this->hasUniqueConstraintFor($otherSchema, $fieldName)
+					$otherTableName !== $tableName &&
+					!in_array($fieldName, $primaryKey) &&
+					$fieldName === $foreignKey &&
+					!$this->hasUniqueConstraintFor($otherSchema, $fieldName)
 				) {
 					$assoc = [
 						'alias' => $otherModel->getAlias(),

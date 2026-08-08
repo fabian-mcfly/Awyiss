@@ -15,8 +15,8 @@
 		'Awyiss\\Model\\Trait\\PageRoleEnumTrait',
 		'Cake\\Database\\Type\\EnumLabelInterface',
 	] : [
-		'Awyiss\\Utility\\Inflector',
 		'Cake\\Database\\Type\\EnumLabelInterface',
+		'Cake\\Database\\Type\\EnumLabelTrait',
 	],
 }) }}
 
@@ -24,20 +24,12 @@
 enum {{ name }}: {{ backingType }} implements EnumLabelInterface{% if isPageRole %}, PageRoleEnumInterface{% endif %} {
 {% if isPageRole %}
 	use PageRoleEnumTrait;
-
-
+{% else %}
+	use EnumLabelTrait;
 {% endif %}
 {% if cases %}
+
+
 	{{ Bake.concat('\n	', cases) }}
-{% endif %}
-{% if isPageRole == false %}
-
-
-	/**
-	 * @return string
-	 */
-	public function label(): string {
-		return Inflector::humanize(Inflector::underscore($this->name));
-	}
 {% endif %}
 }

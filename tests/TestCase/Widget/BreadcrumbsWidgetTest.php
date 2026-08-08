@@ -10,19 +10,18 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\PagesTable;
-use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\Widget\BreadcrumbsWidget;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\IntegrationTestTrait;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use ReflectionClass;
 
 
@@ -55,10 +54,6 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @var \Cake\ORM\Query
 	 */
 	protected Query $mockQuery;
-	/**
-	 * @var \Awyiss\ORM\Locator\TableLocator
-	 */
-	protected TableLocator $tableLocator;
 
 
 	/**
@@ -68,20 +63,14 @@ class BreadcrumbsWidgetTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockBackendView = $this->createMock(BackendView::class);
+		$this->mockBackendView = $this->createStub(BackendView::class);
 		$this->mockFrontendView = $this->createMock(FrontendView::class);
-		$this->mockLanguage = $this->createMock(Language::class);
+		$this->mockLanguage = $this->createStub(Language::class);
+
 		$this->mockPagesTable = $this->createMock(PagesTable::class);
+		$this->getTableLocator()->set('Pages', $this->mockPagesTable);
+
 		$this->mockQuery = $this->createMock(Query::class);
-
-		// Set up the table locator
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->tableLocator = FactoryLocator::get('Table');
-
-		// Mock the FactoryLocator to return our mock table
-		$mockTableLocator = $this->createMock(TableLocator::class);
-		$mockTableLocator->method('get')->with('Pages')->willReturn($this->mockPagesTable);
-		FactoryLocator::add('Table', $mockTableLocator);
 	}
 
 
@@ -89,8 +78,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @inheritDoc
 	 */
 	protected function tearDown(): void {
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
+		$this->getTableLocator()->clear();
 
 		parent::tearDown();
 
@@ -111,6 +99,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::getTitle()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetTitle(): void {
 		$result = BreadcrumbsWidget::getTitle();
 
@@ -125,11 +114,12 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::getFormFields()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithDefaults(): void {
-		// Mock the query chain for getHomepageOptions
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		// Stub the query chain for getHomepageOptions
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
 		// Test the structure without trying to mock static methods
 		$result = BreadcrumbsWidget::getFormFields($this->mockBackendView);
@@ -166,6 +156,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
 			'includeHomepage' => true,
@@ -192,29 +183,30 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithDefaultSettings(): void {
 		$settings = [];
-		$entity = $this->createMock(Entity::class);
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$entity = $this->createStub(Entity::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
-		// Mock homepage entity
-		$mockHomepage = $this->createMock(Page::class);
+		// Stub homepage entity
+		$mockHomepage = $this->createStub(Page::class);
 		$mockHomepage->id = 1;
 
-		// Mock request and path
-		$mockRequest = $this->createMock(ServerRequest::class);
+		// Stub request and path
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/about/team');
 		Router::setRequest($mockRequest);
 
-		// Mock pages table query chain
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('where')->willReturn($this->mockQuery);
-		$this->mockQuery->method('first')->willReturn($mockHomepage);
-		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
+		// Stub pages table query chain
+		$this->mockQuery->expects($this->atLeastOnce())->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('where')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('first')->willReturn($mockHomepage);
+		$this->mockQuery->expects($this->atLeastOnce())->method('all')->willReturn($this->createStub(ResultSet::class));
 
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
-		$this->mockPagesTable->method('get')->willReturn($mockHomepage);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockPagesTable->expects($this->never())->method('get');
 
 		$this->mockFrontendView->expects($this->once())->method('element')->willReturn('<nav class="breadcrumbs">Rendered breadcrumbs</nav>');
 
@@ -248,18 +240,16 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$mockHomepage = new Page();
 		$mockHomepage->id = 5;
 
-		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/products/global_contents');
 		Router::setRequest($mockRequest);
 
-		$this->mockPagesTable->method('get')->with(5)->willReturn($mockHomepage);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('get')->with(5)->willReturn($mockHomepage);
 
-		// Mock the query chain for path pages
-		$this->mockQuery->method('where')->willReturn($this->mockQuery);
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
+		// Stub the query chain for path pages
+		$this->mockQuery->expects($this->never())->method('where');
 
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/breadcrumbs',
@@ -299,30 +289,37 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderInPreviewMode(): void {
 		$settings = [];
 
-		// Mock session to simulate preview mode
-		$mockSession = $this->createMock(Session::class);
-		$mockSession->method('read')->with('previewMode.enabled', false)->willReturn(true);
+		$reflection = new ReflectionClass(BreadcrumbsWidget::class);
+		$property = $reflection->getProperty('isPreview');
+		/** @noinspection PhpExpressionResultUnusedInspection */
+		$property->setAccessible(true);
+		// Reset the static property to null
+		$property->setValue(null, null);
 
-		$mockRequest = $this->createMock(ServerRequest::class);
+		// Stub session to simulate preview mode
+		$mockSession = $this->createMock(Session::class);
+		$mockSession->expects($this->atLeastOnce())->method('read')->with('previewMode.enabled', false)->willReturn(true);
+
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/news');
 		$mockRequest->method('getSession')->willReturn($mockSession);
 		Router::setRequest($mockRequest);
 
-		$mockHomepage = $this->createMock(Page::class);
+		$mockHomepage = $this->createStub(Page::class);
 		$mockHomepage->id = 1;
 
 		// In preview mode, the query should NOT call find('published')
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('first')->willReturn($mockHomepage);
-		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
+		$this->mockQuery->expects($this->atLeastOnce())->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('first')->willReturn($mockHomepage);
 
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
-		$this->mockFrontendView->method('element')->willReturn('<nav>Preview breadcrumbs</nav>');
+		$this->mockFrontendView->expects($this->atLeastOnce())->method('element')->willReturn('<nav>Preview breadcrumbs</nav>');
 
 		$result = BreadcrumbsWidget::render(
 			$settings,
@@ -341,10 +338,10 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::getHomepageOptions()
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetHomepageOptions(): void {
 		// Use the real table locator in this test
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
+		$this->getTableLocator()->clear();
 
 		$result = $this->callProtectedMethod(
 			BreadcrumbsWidget::class,
@@ -416,22 +413,23 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithEmptyPath(): void {
 		$settings = ['includeHomepage' => true];
 
 		$mockHomepage = new Page();
 		$mockHomepage->id = 1;
 
-		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/');
 		Router::setRequest($mockRequest);
 
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('where')->willReturn($this->mockQuery);
-		$this->mockQuery->method('first')->willReturn($mockHomepage);
+		$this->mockQuery->expects($this->atLeastOnce())->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('where')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('first')->willReturn($mockHomepage);
 
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/breadcrumbs',
@@ -458,6 +456,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderExcludingHomepageAndCurrentPage(): void {
 		$settings = [
 			'includeHomepage' => false,
@@ -467,17 +466,17 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$mockHomepage = new Page();
 		$mockHomepage->id = 1;
 
-		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/about/team/john');
 		Router::setRequest($mockRequest);
 
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('where')->willReturn($this->mockQuery);
-		$this->mockQuery->method('first')->willReturn($mockHomepage);
-		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
+		$this->mockQuery->expects($this->atLeastOnce())->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('where')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('first')->willReturn($mockHomepage);
+		$this->mockQuery->expects($this->atLeastOnce())->method('all')->willReturn($this->createStub(ResultSet::class));
 
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/breadcrumbs',
@@ -502,10 +501,10 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRender(): void {
 		// Use the real table locator in this test
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
+		$this->getTableLocator()->clear();
 
 		$this->configApplication(Awyiss::class, []);
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -557,6 +556,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::registerCrumb()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRegisterCrumb(): void {
 		BreadcrumbsWidget::registerCrumb(
 			'Dashboard',
@@ -577,6 +577,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::clearCrumbs()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testClearCrumbs(): void {
 		BreadcrumbsWidget::registerCrumb('Title 1', '/url1');
 		BreadcrumbsWidget::registerCrumb('Title 2', '/url2');
@@ -596,6 +597,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithAdditionalCrumbs(): void {
 		// Register a custom crumb for customer center
 		BreadcrumbsWidget::registerCrumb(
@@ -612,27 +614,27 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$mockHomepage->id = 1;
 		$mockHomepage->slug = '';
 
-		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getPath')->willReturn('/de/kundenbereich/dashboard');
 		Router::setRequest($mockRequest);
 
-		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->willReturn($this->mockQuery);
-		$this->mockQuery->method('where')->willReturn($this->mockQuery);
-		$this->mockQuery->method('first')->willReturn($mockHomepage);
+		$this->mockQuery->expects($this->atLeastOnce())->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('where')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('first')->willReturn($mockHomepage);
 
-		// Mock the kundenbereich page
+		// Stub the kundenbereich page
 		$mockKundenbereich = new Page();
 		$mockKundenbereich->id = 19;
 		$mockKundenbereich->slug = 'kundenbereich';
 		$mockKundenbereich->title = 'Kundenbereich';
 
-		$mockResultSet = $this->createMock(ResultSet::class);
+		$mockResultSet = $this->createStub(ResultSet::class);
 		$mockResultSet->method('indexBy')->willReturn($mockResultSet);
 		$mockResultSet->method('toArray')->willReturn([19 => $mockKundenbereich]);
 
-		$this->mockQuery->method('all')->willReturn($mockResultSet);
-		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->expects($this->atLeastOnce())->method('all')->willReturn($mockResultSet);
+		$this->mockPagesTable->expects($this->atLeastOnce())->method('find')->willReturn($this->mockQuery);
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/breadcrumbs',

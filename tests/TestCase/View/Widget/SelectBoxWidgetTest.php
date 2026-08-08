@@ -24,7 +24,7 @@ class SelectBoxWidgetTest extends TestCase {
 		$stringTemplate = new StringTemplate();
 		$stringTemplate->load('form_templates_backend');
 
-		$context = $this->createMock(ContextInterface::class);
+		$context = $this->createStub(ContextInterface::class);
 		$widget = new SelectBoxWidget($stringTemplate);
 
 		// Create a long text that exceeds 100 characters
@@ -57,7 +57,7 @@ class SelectBoxWidgetTest extends TestCase {
 		$stringTemplate = new StringTemplate();
 		$stringTemplate->load('form_templates_backend');
 
-		$context = $this->createMock(ContextInterface::class);
+		$context = $this->createStub(ContextInterface::class);
 		$widget = new SelectBoxWidget($stringTemplate);
 
 		$longGroup = trim(str_repeat('Long Option Group Text ', 10));
@@ -103,7 +103,7 @@ class SelectBoxWidgetTest extends TestCase {
 		$stringTemplate = new StringTemplate();
 		$stringTemplate->load('form_templates_backend');
 
-		$context = $this->createMock(ContextInterface::class);
+		$context = $this->createStub(ContextInterface::class);
 		$widget = new SelectBoxWidget($stringTemplate);
 
 		$data = [

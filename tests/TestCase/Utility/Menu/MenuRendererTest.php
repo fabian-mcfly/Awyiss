@@ -75,7 +75,7 @@ class MenuRendererTest extends TestCase {
 		Router::setRequest($request);
 
 		// Mock dependencies
-		$this->identity = $this->createMock(IdentityPermissionsInterface::class);
+		$this->identity = $this->createStub(IdentityPermissionsInterface::class);
 	}
 
 

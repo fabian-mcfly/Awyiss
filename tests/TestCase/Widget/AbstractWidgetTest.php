@@ -15,6 +15,7 @@ use Awyiss\View\HelperRegistry;
 use Awyiss\Widget\AbstractWidget;
 use Awyiss\Widget\BreadcrumbsWidget;
 use Customer\Widget\NewsListingWidget;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 
 /**
@@ -111,6 +112,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\AbstractWidget::isAvailable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testIsAvailableReturnsTrueByDefault(): void {
 		$result = $this->testWidget::isAvailable();
 
@@ -124,6 +126,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\AbstractWidget::isAvailable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testIsAvailableCanBeOverridden(): void {
 		$customWidget = new class extends AbstractWidget {
 			/**
@@ -164,6 +167,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderFormWithFormFields(): void {
 		$frontendLanguage = $this->mockLanguage;
 		$userLanguage = $this->mockLanguage;
@@ -171,9 +175,9 @@ class AbstractWidgetTest extends TestCase {
 
 		// Mock the helpers collection
 		$helpersCollection = $this->createMock(HelperRegistry::class);
-		$helpersCollection->method('get')->with('Form')->willReturn($this->mockFormHelper);
+		$helpersCollection->expects($this->atLeastOnce())->method('get')->with('Form')->willReturn($this->mockFormHelper);
 
-		$this->mockBackendView->method('helpers')->willReturn($helpersCollection);
+		$this->mockBackendView->expects($this->atLeastOnce())->method('helpers')->willReturn($helpersCollection);
 
 		// Set up expectations for form helper calls
 		$this->mockFormHelper->expects($this->exactly(3))->method('control')->willReturnOnConsecutiveCalls(
@@ -200,6 +204,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\AbstractWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderCallsViewElement(): void {
 		$settings = ['title' => 'Test Title', 'content' => 'Test Content'];
 		$entity = $this->createMock(Entity::class);
@@ -237,6 +242,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\AbstractWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderConvertsIdentifierToUnderscore(): void {
 		$camelCaseWidget = new NewsListingWidget();
 
@@ -245,7 +251,7 @@ class AbstractWidgetTest extends TestCase {
 			$this->anything()
 		)->willReturn('<div>Camel Case Widget</div>');
 
-		$result = $camelCaseWidget::render([], $this->mockFrontendView, null);
+		$result = $camelCaseWidget::render([], $this->mockFrontendView);
 
 		$this->assertSame('<div>Camel Case Widget</div>', $result);
 	}
@@ -259,6 +265,7 @@ class AbstractWidgetTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderFormWithEmptyFields(): void {
 		$emptyWidget = new class extends AbstractWidget {
 			/**
@@ -278,9 +285,9 @@ class AbstractWidgetTest extends TestCase {
 		};
 
 		$helpersCollection = $this->createMock(HelperRegistry::class);
-		$helpersCollection->method('get')->with('Form')->willReturn($this->mockFormHelper);
+		$helpersCollection->expects($this->atLeastOnce())->method('get')->with('Form')->willReturn($this->mockFormHelper);
 
-		$this->mockBackendView->method('helpers')->willReturn($helpersCollection);
+		$this->mockBackendView->expects($this->atLeastOnce())->method('helpers')->willReturn($helpersCollection);
 
 		$result = $emptyWidget::renderForm($this->mockBackendView);
 

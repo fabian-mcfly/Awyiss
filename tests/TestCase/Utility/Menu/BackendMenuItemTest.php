@@ -18,6 +18,7 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\TestSuite\IntegrationTestTrait;
 use Customer\Utility\Menu\BackendMenu as CustomBackendMenu;
 use Customer\Utility\Menu\BackendMenuItem as CustomBackendMenuItem;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use RuntimeException;
 use stdClass;
@@ -756,12 +757,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyDefault(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -817,12 +818,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyFullyAccessibleLeafs(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -852,12 +853,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyMixedAccessibility(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -888,12 +889,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithLinkAndAccess(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -924,12 +925,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithLinkAndNoAccess(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -959,12 +960,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithoutLink(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -1035,12 +1036,12 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testDetermineVisibilityComplexHierarchyWithIdentity(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
 
@@ -1329,11 +1330,11 @@ class BackendMenuItemTest extends TestCase {
 
 
 	/**
-	 * @dataProvider complexHierarchyProvider
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('complexHierarchyProvider')]
 	public function testMenuClassAndMenuItemClass(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, [
 			'menuClass' => CustomBackendMenu::class,

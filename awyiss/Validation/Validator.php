@@ -49,7 +49,7 @@ class Validator extends BaseValidator {
 	 * @noinspection PhpHierarchyChecksInspection (CakePHP marks the `name` argument as optional` which is not the case)
 	 */
 	public function field(string $name, ?ValidationSet $validationSet = null): ValidationSet {
-		if (empty($this->_fields[ $name ])) {
+		if (!isset($this->_fields[ $name ])) {
 			$this->_fields[ $name ] = $validationSet ?? new ValidationSet();
 
 			//Allow an empty string per default. Makes much more sense

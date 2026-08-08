@@ -9,6 +9,7 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\Widget\RoutePlannerWidget;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -38,9 +39,9 @@ class RoutePlannerWidgetTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockBackendView = $this->createMock(BackendView::class);
-		$this->mockFrontendView = $this->createMock(FrontendView::class);
-		$this->mockLanguage = $this->createMock(Language::class);
+		$this->mockBackendView = $this->createStub(BackendView::class);
+		$this->mockFrontendView = $this->createStub(FrontendView::class);
+		$this->mockLanguage = $this->createStub(Language::class);
 	}
 
 
@@ -170,11 +171,11 @@ class RoutePlannerWidgetTest extends TestCase {
 	/**
 	 * Test getFormFields method with different transportation modes
 	 *
-	 * @dataProvider transportationModeDataProvider
 	 * @param string $mode Transportation mode to test
 	 * @return void
 	 * @see \Awyiss\Widget\RoutePlannerWidget::getFormFields()
 	 */
+	#[DataProvider('transportationModeDataProvider')]
 	public function testGetFormFieldsWithDifferentTransportationModes(string $mode): void {
 		$settings = ['transportationMode' => $mode];
 

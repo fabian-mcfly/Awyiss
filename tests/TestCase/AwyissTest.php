@@ -34,7 +34,8 @@ class AwyissTest extends TestCase {
 			return $commands;
 		});
 
-		$awyiss = $this->getMockBuilder(Awyiss::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+		/** @var \Awyiss\Awyiss $awyiss */
+		$awyiss = $this->getStubBuilder(Awyiss::class)->disableOriginalConstructor()->onlyMethods([])->getStub();
 
 		$awyiss->console($commands);
 

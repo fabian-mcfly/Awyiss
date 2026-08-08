@@ -143,7 +143,7 @@ class FrontendViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testTwigHasGlobals(): void {
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn($this->designVariables);
 
 		$request = $this->view->getRequest();
@@ -402,11 +402,11 @@ class FrontendViewTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testGetWebfontData(): void {
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn($this->designVariables);
 
 		$requestMock = $this->createMock(ServerRequest::class);
-		$requestMock->method('getAttribute')->with('design')->willReturn($designMiddlewareMock);
+		$requestMock->expects($this->atLeastOnce())->method('getAttribute')->with('design')->willReturn($designMiddlewareMock);
 
 		$this->view->setRequest($requestMock);
 

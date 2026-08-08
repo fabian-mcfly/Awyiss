@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\Routing\Route;
 
 use Awyiss\Routing\Route\AwyissRoute;
 use Awyiss\Test\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -992,7 +993,6 @@ class AwyissRouteTest extends TestCase {
 
 
 	/**
-	 * @dataProvider parseDataProvider
 	 * @param string $template
 	 * @param array $defaults
 	 * @param array $options
@@ -1001,6 +1001,7 @@ class AwyissRouteTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Routing\Route\AwyissRoute::parse()
 	 */
+	#[DataProvider('parseDataProvider')]
 	public function testParse(string $template, array $defaults, array $options, array $testUrls, array $expectedResults): void {
 		$route = new AwyissRoute($template, $defaults, $options);
 
@@ -1027,7 +1028,6 @@ class AwyissRouteTest extends TestCase {
 
 
 	/**
-	 * @dataProvider matchDataProvider
 	 * @param string $template
 	 * @param array $defaults
 	 * @param array $options
@@ -1037,6 +1037,7 @@ class AwyissRouteTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Routing\Route\AwyissRoute::match()
 	 */
+	#[DataProvider('matchDataProvider')]
 	public function testMatch(string $template, array $defaults, array $options, array $pattern, array $urls, array $matches): void {
 		$route = new AwyissRoute($template, $defaults, $options);
 

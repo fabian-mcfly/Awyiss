@@ -20,7 +20,7 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testConstructorInitializesCallbacksCorrectly(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 
 		$config = [
 			'callbacks' => [
@@ -46,7 +46,7 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetCallback(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 		$callbackPermissionOption = new CallbackPermissionOption([], $permissionOptionCollection);
 
 		$callback = function () {
@@ -63,7 +63,7 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetCallbacks(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 		$callbackPermissionOption = new CallbackPermissionOption([], $permissionOptionCollection);
 
 		$callbacks = [
@@ -86,8 +86,8 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleWithCallback(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$callback = function () {
 			return true;
@@ -110,8 +110,8 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleNotWithCallback(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$callback = function ($accessible) {
 			return !$accessible;
@@ -134,8 +134,8 @@ class CallbackPermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleWithoutCallback(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$callbackPermissionOption = new CallbackPermissionOption([], $permissionOptionCollection);
 

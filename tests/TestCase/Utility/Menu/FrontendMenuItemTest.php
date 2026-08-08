@@ -267,7 +267,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Create customer with the required group
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
@@ -342,7 +342,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Create customer with the required group
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
@@ -519,7 +519,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Create customer with the required group
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
@@ -571,7 +571,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Create customer with the required group
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
@@ -592,7 +592,7 @@ class FrontendMenuItemTest extends TestCase {
 	public function testDetermineVisibilityWithIdentityAllowed(): void {
 		// Create a customer identity with groups
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		// Create menu entry with customer group access settings
@@ -632,7 +632,7 @@ class FrontendMenuItemTest extends TestCase {
 	public function testDetermineVisibilityWithIdentityDenied(): void {
 		// Create a customer identity with a different group
 		$customerGroup = new CustomerGroup(['id' => 2, 'name' => 'Other Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		// Create menu entry with customer group access settings
@@ -672,7 +672,7 @@ class FrontendMenuItemTest extends TestCase {
 	public function testDetermineVisibilityParentWithAccessibleChild(): void {
 		// Create a customer identity with group 1
 		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		// Child with customer group access control
@@ -719,7 +719,7 @@ class FrontendMenuItemTest extends TestCase {
 	public function testDetermineVisibilityParentWithInaccessibleChild(): void {
 		// Create a customer identity with group 2
 		$customerGroup = new CustomerGroup(['id' => 2, 'name' => 'Other Group']);
-		$customer = $this->createMock(Customer::class);
+		$customer = $this->createStub(Customer::class);
 		$customer->method('getGroups')->willReturn([$customerGroup]);
 
 		// Child with customer group access control - requires group 1
@@ -976,7 +976,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Create identity with group 1 that grants access
 		$customerGroup1 = new CustomerGroup(['id' => 1, 'name' => 'Group 1']);
-		$identity = $this->createMock(Customer::class);
+		$identity = $this->createStub(Customer::class);
 		$identity->method('getGroups')->willReturn([$customerGroup1]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
@@ -987,7 +987,7 @@ class FrontendMenuItemTest extends TestCase {
 
 		// Change identity to one with group 2 that denies access
 		$customerGroup2 = new CustomerGroup(['id' => 2, 'name' => 'Group 2']);
-		$identityDenied = $this->createMock(Customer::class);
+		$identityDenied = $this->createStub(Customer::class);
 		$identityDenied->method('getGroups')->willReturn([$customerGroup2]);
 
 		$menuItem->setIdentity($identityDenied);

@@ -31,7 +31,7 @@ class ControllerCommand extends BaseControllerCommand {
 	 * Re-implemented nearly 1:1 but honors the `namespace`-option and
 	 * uses `App::className` to find the defaultModel, instead of a simple sprintf-command, assuming we'd know the model name.
 	 *
-	 * It also changes the default actions: No 'index'- and 'view'-, but 'overview'- and 'save'-method.
+	 * It also changes the default actions: No 'index' and 'view', but 'overview' and 'save' method.
 	 *
 	 * @param string $controllerName Controller name already pluralized and correctly cased.
 	 * @param Arguments $args The console arguments
@@ -46,7 +46,7 @@ class ControllerCommand extends BaseControllerCommand {
 			$actions = ['overview', 'add', 'edit', 'delete', 'save'];
 		}
 		if ($args->getOption('actions')) {
-			$actions = array_map('trim', explode(',', $args->getOption('actions')));
+			$actions = array_map('trim', explode(',', (string)$args->getOption('actions')));
 			$actions = array_filter($actions);
 		}
 
@@ -73,15 +73,16 @@ class ControllerCommand extends BaseControllerCommand {
 
 		$currentModelName = $controllerName;
 		$plugin = $this->plugin;
-		if ($plugin) {
-			$plugin .= '.';
+		$pluginPath = $plugin;
+		if ($pluginPath) {
+			$pluginPath .= '.';
 		}
 
-		if ($this->getTableLocator()->exists($plugin . $currentModelName)) {
-			$model = $this->getTableLocator()->get($plugin . $currentModelName);
+		if ($this->getTableLocator()->exists($pluginPath . $currentModelName)) {
+			$model = $this->getTableLocator()->get($pluginPath . $currentModelName);
 		}
 		else {
-			$model = $this->getTableLocator()->get($plugin . $currentModelName, [
+			$model = $this->getTableLocator()->get($pluginPath . $currentModelName, [
 				'connectionName' => $this->connection,
 			]);
 		}
@@ -90,6 +91,12 @@ class ControllerCommand extends BaseControllerCommand {
 		$singularName = $this->_singularName($currentModelName);
 		$singularHumanName = $this->_singularHumanName($controllerName);
 		$pluralHumanName = $this->_variableName($controllerName);
+
+		// Handle cases where singular and plural are identical (e.g., "news", "sheep")
+		// to avoid variable collisions in generated controller code
+		if ($singularName === $pluralName) {
+			$singularName .= 'Entity';
+		}
 
 		$defaultModel = App::className($controllerName, 'Model/Table', 'Table');
 		if (!class_exists($defaultModel)) {

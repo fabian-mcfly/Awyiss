@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\Utility\Content;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Content\AwyissColumn;
 use Awyiss\Utility\Content\AwyissColumnSystem;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -63,21 +64,21 @@ class AwyissColumnSystemTest extends TestCase {
 
 
 	/**
-	 * @testWith [1, 1]
-	 *           [1, 2]
-	 *           [1, 3]
-	 *           [2, 3]
-	 *           [1, 4]
-	 *           [3, 4]
-	 *           [1, 5]
-	 *           [2, 5]
-	 *           [3, 5]
-	 *           [4, 5]
 	 * @param int $numerator
 	 * @param int $denominator
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
 	 */
+	#[TestWith([1, 1])]
+	#[TestWith([1, 2])]
+	#[TestWith([1, 3])]
+	#[TestWith([2, 3])]
+	#[TestWith([1, 4])]
+	#[TestWith([3, 4])]
+	#[TestWith([1, 5])]
+	#[TestWith([2, 5])]
+	#[TestWith([3, 5])]
+	#[TestWith([4, 5])]
 	public function testGetColumnWidthsColumnsHaveCorrectNumeratorAndDenominator(int $numerator, int $denominator): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
 
@@ -137,20 +138,20 @@ class AwyissColumnSystemTest extends TestCase {
 
 
 	/**
-	 * @testWith [1, 2]
-	 *           [1, 3]
-	 *           [2, 3]
-	 *           [1, 4]
-	 *           [3, 4]
-	 *           [1, 5]
-	 *           [2, 5]
-	 *           [3, 5]
-	 *           [4, 5]
 	 * @param int $numerator
 	 * @param int $denominator
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
 	 */
+	#[TestWith([1, 2])]
+	#[TestWith([1, 3])]
+	#[TestWith([2, 3])]
+	#[TestWith([1, 4])]
+	#[TestWith([3, 4])]
+	#[TestWith([1, 5])]
+	#[TestWith([2, 5])]
+	#[TestWith([3, 5])]
+	#[TestWith([4, 5])]
 	public function testGetColumnIndentsColumnsHaveCorrectNumeratorAndDenominator(int $numerator, int $denominator): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
 

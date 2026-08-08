@@ -4,8 +4,11 @@
 namespace Awyiss\Form\Protection;
 
 
+use AltchaOrg\Altcha\Algorithm\Pbkdf2;
 use AltchaOrg\Altcha\Altcha;
-use AltchaOrg\Altcha\ChallengeOptions;
+use AltchaOrg\Altcha\CreateChallengeOptions;
+use AltchaOrg\Altcha\Payload;
+use AltchaOrg\Altcha\VerifySolutionOptions;
 use Awyiss\Form\FormOptionsInterface;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormEntry;
@@ -13,8 +16,9 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\View\View;
-use DateInterval;
 use DateTimeImmutable;
+use RuntimeException;
+use Throwable;
 
 
 /**
@@ -35,11 +39,12 @@ class AltchaFormProtection implements FormProtectionInterface {
 		'htmlAttributes' => [
 			'auto' => 'onfocus',
 			'delay' => 0,
-			'hidefooter' => true,
-			'hidelogo' => false,
+			'hideFooter' => true,
+			'hideLogo' => true,
+			'type' => 'checkbox',
 			'name' => '_altcha',
 		],
-		'maxNumber' => 300_000,
+		'cost' => 10_000,
 		'securityKey' => null,
 	];
 	/**
@@ -98,19 +103,21 @@ class AltchaFormProtection implements FormProtectionInterface {
 			/** @var \Awyiss\View\Helper\HtmlHelper $htmlHelper */
 			$htmlHelper = $this->view->helpers()->get('Html');
 
-			if (empty($this->options['htmlAttributes']['challengejson'])) {
+			if (empty($this->options['htmlAttributes']['challenge'])) {
 				$altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
 
 				// Create a new challenge
-				$options = new ChallengeOptions(
-					expires: new DateTimeImmutable()->add(new DateInterval('PT20M')),
-					maxNumber: $this->options['maxNumber'] ?? 200_000,
+				$options = new CreateChallengeOptions(
+					algorithm: new Pbkdf2(),
+					cost: $this->options['cost'] ?? 10_000,
+					counter: random_int(5000, 10000),
+					expiresAt: new DateTimeImmutable('+20 minutes'),
 				);
 
-				$this->options['htmlAttributes']['challengejson'] = $altcha->createChallenge($options);
+				$this->options['htmlAttributes']['challenge'] = $altcha->createChallenge($options);
 			}
-			if (!is_string($this->options['htmlAttributes']['challengejson'])) {
-				$this->options['htmlAttributes']['challengejson'] = json_encode($this->options['htmlAttributes']['challengejson']);
+			if (!is_string($this->options['htmlAttributes']['challenge'])) {
+				$this->options['htmlAttributes']['challenge'] = json_encode($this->options['htmlAttributes']['challenge']);
 			}
 
 			$formattedAttributes = $htmlHelper->templater()->formatAttributes($this->options['htmlAttributes']);
@@ -133,7 +140,20 @@ class AltchaFormProtection implements FormProtectionInterface {
 		}
 
 		$altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
-		if (!$altcha->verifySolution($data[ $fieldName ])) {
+		try {
+			$payload = Payload::fromBase64($data[ $fieldName ]);
+			$result = $altcha->verifySolution(
+				new VerifySolutionOptions(
+					payload: $payload,
+					algorithm: new Pbkdf2(),
+				)
+			);
+
+			if (!$result->verified) {
+				throw new RuntimeException('Altcha verification failed.');
+			}
+		}
+		catch (Throwable) {
 			return __d('Form', 'altcha_error');
 		}
 

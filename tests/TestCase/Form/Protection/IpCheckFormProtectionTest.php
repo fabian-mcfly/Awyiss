@@ -186,7 +186,7 @@ class IpCheckFormProtectionTest extends TestCase {
 	 */
 	public function testValidateDataWithExistingEntryAndCustomTimeout(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')->with('ipCheck')->willReturn(['checkTimeout' => 1200]);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('ipCheck')->willReturn(['checkTimeout' => 1200]);
 
 		$this->ipCheckFormProtection->initialize(
 			$this->form,

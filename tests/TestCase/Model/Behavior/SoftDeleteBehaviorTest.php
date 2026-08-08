@@ -478,13 +478,16 @@ class SoftDeleteBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
 	 */
 	public function testBeforeDeleteThrowsExceptionOnFailure(): void {
-		$this->table = $this->getMockBuilder(EmployersTable::class)->setConstructorArgs([
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->table = $this->getStubBuilder(EmployersTable::class)->setConstructorArgs([
 			[
 				'table' => 'employers',
 				'registryAlias' => 'Employers',
 				'alias' => 'Employers',
 			],
-		])->onlyMethods(['save'])->getMock();
+		])
+		->onlyMethods(['save'])
+		->getStub();
 		$this->table->method('save')->willReturn(false);
 
 		$this->table->addBehavior('SoftDelete');

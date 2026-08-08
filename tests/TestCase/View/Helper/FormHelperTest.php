@@ -741,7 +741,7 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testIsFieldError(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
 
 		$this->formHelper->context($context);
 
@@ -756,10 +756,10 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testIsFieldErrorWithDot(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn($entity);
-		$entity->method('getError')->with('field')->willReturn(['error']);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn($entity);
+		$entity->expects($this->atLeastOnce())->method('getError')->with('field')->willReturn(['error']);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 
 		$this->formHelper->context($context);
@@ -775,9 +775,9 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testIsFieldErrorWithDotNoAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn(null);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn(null);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 
 		$this->formHelper->context($context);
@@ -793,10 +793,10 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testIsFieldErrorWithDotNoErrorInAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn($entity);
-		$entity->method('getError')->with('field')->willReturn([]);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn($entity);
+		$entity->expects($this->atLeastOnce())->method('getError')->with('field')->willReturn([]);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 		$this->formHelper->context($context);
 
@@ -810,10 +810,10 @@ class FormHelperTest extends TestCase {
 	 * @throws \Exception|\PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testInputContainerTemplateContainsCorrectClasses(): void {
-		$entity = $this->createMock(Entity::class);
+		$entity = $this->createStub(Entity::class);
 		$entity->method('getSource')->willReturn('Foo');
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 
 		$this->formHelper->context($context);
@@ -827,10 +827,10 @@ class FormHelperTest extends TestCase {
 		$this->assertStringContainsString('FormInputType-WeirdInput', $result);
 		$this->assertStringContainsString('FormInputName-Bar Required', $result);
 
-		$entity = $this->createMock(Entity::class);
+		$entity = $this->createStub(Entity::class);
 		$entity->method('getSource')->willReturn('Bar');
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 
 		$this->formHelper->context($context);
@@ -862,8 +862,8 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithError(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
-		$context->method('error')->with('field')->willReturn(['Error message']);
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('error')->with('field')->willReturn(['Error message']);
 		$this->formHelper->context($context);
 
 		$this->assertEquals('<div class="Error">Error message</div>', $this->formHelper->error('field'));
@@ -877,8 +877,8 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithErrorWithMultipleErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
-		$context->method('error')->with('field')->willReturn([
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('error')->with('field')->willReturn([
 			'Error message key' => 'Error message value',
 			'Error message key 2' => 'Error message value 2',
 		]);
@@ -898,8 +898,8 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithErrorWithNestedErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
-		$context->method('error')->with('field')->willReturn(['Error message' => [
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('error')->with('field')->willReturn(['Error message' => [
 			'Error Field' => 'Nested error message',
 		]]);
 		$this->formHelper->context($context);
@@ -915,8 +915,8 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithErrorWithMultipleNestedErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
-		$context->method('error')->with('field')->willReturn(['Error message' => [
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('error')->with('field')->willReturn(['Error message' => [
 			'Error Field' => 'Nested error message',
 			'Error Field 2' => 'Nested error message 2',
 		]]);
@@ -933,7 +933,7 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithoutError(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(false);
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(false);
 		$this->formHelper->context($context);
 
 		$this->assertEquals('', $this->formHelper->error('field'));
@@ -947,10 +947,10 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithDotWithError(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn($entity);
-		$entity->method('getError')->with('field')->willReturn(['Error message']);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn($entity);
+		$entity->expects($this->atLeastOnce())->method('getError')->with('field')->willReturn(['Error message']);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 		$this->formHelper->context($context);
 
@@ -965,10 +965,10 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithDotWithoutError(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn($entity);
-		$entity->method('getError')->with('field')->willReturn([]);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn($entity);
+		$entity->expects($this->atLeastOnce())->method('getError')->with('field')->willReturn([]);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 		$this->formHelper->context($context);
 
@@ -983,9 +983,9 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testErrorWithDotNoAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
-		$entity->method('get')->with('association')->willReturn(null);
+		$entity->expects($this->atLeastOnce())->method('get')->with('association')->willReturn(null);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 		$this->formHelper->context($context);
 
@@ -1000,8 +1000,8 @@ class FormHelperTest extends TestCase {
 	 */
 	public function testCustomErrorTextMapping(): void {
 		$context = $this->createMock(EntityContext::class);
-		$context->method('hasError')->with('field')->willReturn(true);
-		$context->method('error')->with('field')->willReturn(['Error message']);
+		$context->expects($this->atLeastOnce())->method('hasError')->with('field')->willReturn(true);
+		$context->expects($this->atLeastOnce())->method('error')->with('field')->willReturn(['Error message']);
 		$this->formHelper->context($context);
 
 		$customText = ['Error message' => 'Custom error message'];

@@ -118,7 +118,7 @@ class ConfigMiddlewareTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/',
 		]);
-		$handler = $this->createMock(RequestHandlerInterface::class);
+		$handler = $this->createStub(RequestHandlerInterface::class);
 		$handler->method('handle')->willReturn(new Response());
 
 		$response = $middleware->process($request, $handler);
@@ -148,7 +148,7 @@ class ConfigMiddlewareTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/',
 		]);
-		$handler = $this->createMock(RequestHandlerInterface::class);
+		$handler = $this->createStub(RequestHandlerInterface::class);
 		$handler->method('handle')->willReturn(new Response());
 
 		$this->expectException(Exception::class);
@@ -175,7 +175,7 @@ class ConfigMiddlewareTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/',
 		]);
-		$handler = $this->createMock(RequestHandlerInterface::class);
+		$handler = $this->createStub(RequestHandlerInterface::class);
 		$handler->method('handle')->willReturn(new Response());
 
 		$this->expectException(Exception::class);

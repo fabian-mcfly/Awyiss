@@ -336,7 +336,7 @@ class AbstractTranslationServiceTest extends TestCase {
 		$service = $this->createConcreteService();
 
 		// Create a mock entity that is neither Content nor Page
-		$entity = $this->createMock(EntityInterface::class);
+		$entity = $this->createStub(EntityInterface::class);
 
 		$fields = $this->callProtectedMethod($service, 'getTranslatableFields', $entity);
 

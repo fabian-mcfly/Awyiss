@@ -41,7 +41,7 @@ class ExtendsNodeVisitorTest extends TestCase {
 		parent::setUp();
 
 		$this->visitor = new ExtendsNodeVisitor();
-		$this->environment = $this->createMock(Environment::class);
+		$this->environment = $this->createStub(Environment::class);
 	}
 
 
@@ -66,7 +66,7 @@ class ExtendsNodeVisitorTest extends TestCase {
 	 */
 	public function testEnterNodeWithNonConstantParentReturnsUnchanged(): void {
 		$source = new Source('', '@Frontend/test.twig');
-		$parentNode = $this->createMock(AbstractExpression::class);
+		$parentNode = $this->createStub(AbstractExpression::class);
 		$node = new ModuleNode(new Node(), $parentNode, new Node(), new Node(), new Node(), [], $source);
 
 		$result = $this->visitor->enterNode($node, $this->environment);

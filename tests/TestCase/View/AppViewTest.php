@@ -34,7 +34,7 @@ class AppViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testInitialize(): void {
-		$view = new AppView($this->createMock(ServerRequest::class), $this->createMock(Response::class));
+		$view = new AppView($this->createStub(ServerRequest::class), $this->createStub(Response::class));
 
 		$this->assertArrayHasKey('VERSION', $view->get('Awyiss'));
 		$this->assertArrayHasKey('VERSION_NAME', $view->get('Awyiss'));
@@ -49,10 +49,11 @@ class AppViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testCell(): void {
-		$view = $this->getMockBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+		/** @var \Awyiss\View\AppView $view */
+		$view = $this->getStubBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getStub();
 
-		$view->setRequest($this->createMock(ServerRequest::class));
-		$view->setResponse($this->createMock(Response::class));
+		$view->setRequest($this->createStub(ServerRequest::class));
+		$view->setResponse($this->createStub(Response::class));
 
 		$cell = $view->cell('Test');
 
@@ -66,10 +67,11 @@ class AppViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testCellUnknownCellThrowsException(): void {
-		$view = $this->getMockBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+		/** @var \Awyiss\View\AppView $view */
+		$view = $this->getStubBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getStub();
 
-		$view->setRequest($this->createMock(ServerRequest::class));
-		$view->setResponse($this->createMock(Response::class));
+		$view->setRequest($this->createStub(ServerRequest::class));
+		$view->setResponse($this->createStub(Response::class));
 
 		$this->expectException(MissingCellException::class);
 		$view->cell('Unknown');

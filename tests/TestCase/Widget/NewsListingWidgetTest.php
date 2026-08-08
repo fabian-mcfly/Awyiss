@@ -6,17 +6,16 @@ namespace Awyiss\Test\TestCase\Widget;
 
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\Widget\NewsListingWidget;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Customer\Model\Enum\PageRole;
+use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
 
 
@@ -31,22 +30,17 @@ class NewsListingWidgetTest extends TestCase {
 	 */
 	protected BackendView $mockBackendView;
 	/**
-	 * @var \Awyiss\View\FrontendView
+	 * @var \Awyiss\View\FrontendView|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	protected FrontendView $mockFrontendView;
+	protected FrontendView|MockObject $mockFrontendView;
 	/**
-	 * @var \Awyiss\Model\Table
+	 * @var \Awyiss\Model\Table|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	protected Table $mockNewsTable;
+	protected Table|MockObject $mockNewsTable;
 	/**
-	 * @var \Cake\ORM\Query\SelectQuery
+	 * @var \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	protected SelectQuery $mockQuery;
-	/**
-	 * @var \Awyiss\ORM\Locator\TableLocator
-	 */
-	protected TableLocator $tableLocator;
-
+	protected SelectQuery|MockObject $mockQuery;
 
 	/**
 	 * @inheritDoc
@@ -55,22 +49,10 @@ class NewsListingWidgetTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockBackendView = $this->createMock(BackendView::class);
-		$this->mockFrontendView = $this->createMock(FrontendView::class);
-		$this->mockNewsTable = $this->createMock(Table::class);
-		$this->mockQuery = $this->createMock(SelectQuery::class);
-
-		// Set up the table locator
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->tableLocator = FactoryLocator::get('Table');
-
-		// Mock the FactoryLocator to return our mock table
-		$mockTableLocator = $this->createMock(TableLocator::class);
-		$mockTableLocator->method('get')->with('News')->willReturn($this->mockNewsTable);
-		FactoryLocator::add('Table', $mockTableLocator);
+		$this->mockBackendView = $this->createStub(BackendView::class);
 
 		// Mock Router request
-		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest = $this->createStub(ServerRequest::class);
 		$mockRequest->method('getQueryParams')->willReturn([]);
 		Router::setRequest($mockRequest);
 	}
@@ -80,8 +62,7 @@ class NewsListingWidgetTest extends TestCase {
 	 * @inheritDoc
 	 */
 	protected function tearDown(): void {
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
+		$this->getTableLocator()->clear();
 
 		parent::tearDown();
 
@@ -91,6 +72,44 @@ class NewsListingWidgetTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(null, null);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 */
+	protected function mockFrontendView(): void {
+		$this->mockFrontendView = $this->createMock(FrontendView::class);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 */
+	protected function mockSelectQuery(): void {
+		$this->mockQuery = $this->createMock(SelectQuery::class);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 */
+	protected function mockNewsTable(): void {
+		$this->mockNewsTable = $this->createMock(Table::class);
+		$this->getTableLocator()->set('News', $this->mockNewsTable);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 */
+	protected function stubNewsTable(): void {
+		$this->mockNewsTable = $this->createStub(Table::class);
+		$this->getTableLocator()->set('News', $this->mockNewsTable);
 	}
 
 
@@ -115,8 +134,10 @@ class NewsListingWidgetTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetFormFieldsWithDefaults(): void {
+		$this->mockNewsTable();
+
 		// Mock the news table for getCategoriesField
-		$this->mockNewsTable->method('hasBehavior')->with('Categories')->willReturn(false);
+		$this->mockNewsTable->expects($this->atLeastOnce())->method('hasBehavior')->with('Categories')->willReturn(false);
 
 		$result = NewsListingWidget::getFormFields($this->mockBackendView);
 
@@ -160,8 +181,9 @@ class NewsListingWidgetTest extends TestCase {
 	public function testGetFormFieldsWithPaginationEnabled(): void {
 		$settings = ['paginate' => true];
 
+		$this->mockNewsTable();
 		// Mock the news table for getCategoriesField
-		$this->mockNewsTable->method('hasBehavior')->with('Categories')->willReturn(false);
+		$this->mockNewsTable->expects($this->atLeastOnce())->method('hasBehavior')->with('Categories')->willReturn(false);
 
 		$result = NewsListingWidget::getFormFields($this->mockBackendView, null, null, $settings);
 
@@ -194,8 +216,9 @@ class NewsListingWidgetTest extends TestCase {
 			'itemsPerPage' => 15,
 		];
 
+		$this->mockNewsTable();
 		// Mock the news table for getCategoriesField
-		$this->mockNewsTable->method('hasBehavior')->with('Categories')->willReturn(false);
+		$this->mockNewsTable->expects($this->atLeastOnce())->method('hasBehavior')->with('Categories')->willReturn(false);
 
 		$result = NewsListingWidget::getFormFields($this->mockBackendView, null, null, $settings);
 
@@ -214,10 +237,7 @@ class NewsListingWidgetTest extends TestCase {
 	public function testGetFormFieldsWithCategoriesEnabled(): void {
 		$settings = ['categories' => [30]];
 
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
-		$newsTable = $this->tableLocator->get('News');
+		$newsTable = $this->fetchTable('News');
 		$newsTable->getBehavior('Categories')->setConfig([
 			'enabled' => true,
 			'categories' => [
@@ -252,10 +272,7 @@ class NewsListingWidgetTest extends TestCase {
 	 * @see \Awyiss\Widget\NewsListingWidget::getCategoriesField()
 	 */
 	public function testGetCategoriesFieldWithNoCategoriesAvailable(): void {
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
-		$newsTable = $this->tableLocator->get('News');
+		$newsTable = $this->fetchTable('News');
 		$newsTable->getBehavior('Categories')->setConfig([
 			'enabled' => true,
 			'categories' => [],
@@ -292,10 +309,7 @@ class NewsListingWidgetTest extends TestCase {
 	public function testRenderWithDefaultSettings(): void {
 		$settings = [];
 
-		// Use the real table locator for this test
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
+		$this->mockFrontendView();
 		// Mock the view element method to capture what gets passed to it
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/news_listing',
@@ -343,10 +357,7 @@ class NewsListingWidgetTest extends TestCase {
 			'itemsPerPage' => 15,
 		];
 
-		// Use the real table locator
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
+		$this->mockFrontendView();
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/news_listing',
 			$this->callback(function (array $params): bool {
@@ -389,11 +400,8 @@ class NewsListingWidgetTest extends TestCase {
 			'offset' => 3,
 		];
 
-		// Use the real table locator
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
-		$this->mockFrontendView->method('element')->with(
+		$this->mockFrontendView();
+		$this->mockFrontendView->expects($this->atLeastOnce())->method('element')->with(
 			'widget/news_listing',
 			$this->callback(function (array $params): bool {
 				$this->assertSame(2, $params['items']);
@@ -427,6 +435,7 @@ class NewsListingWidgetTest extends TestCase {
 			'categories' => [1, 2, 3],
 		];
 
+		$this->mockSelectQuery();
 		// Mock the query chain and verify where clause is called correctly
 		$this->mockQuery->method('find')->willReturn($this->mockQuery);
 		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
@@ -436,12 +445,14 @@ class NewsListingWidgetTest extends TestCase {
 		// This is the critical test - verify where is called with correct parameters
 		$this->mockQuery->expects($this->once())->method('where')->with(['parentId IN' => [1, 2, 3]])->willReturn($this->mockQuery);
 
-		$mockResultSet = $this->createMock(ResultSet::class);
+		$mockResultSet = $this->createStub(ResultSet::class);
 		$mockResultSet->method('toArray')->willReturn([]);
 		$this->mockQuery->method('all')->willReturn($mockResultSet);
 
+		$this->stubNewsTable();
 		$this->mockNewsTable->method('find')->willReturn($this->mockQuery);
 
+		$this->mockFrontendView();
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/news_listing',
 			$this->callback(function (array $params): bool {
@@ -478,6 +489,7 @@ class NewsListingWidgetTest extends TestCase {
 		$mockPage->id = 5;
 		$mockPage->pageRoleId = PageRole::Newscategory;
 
+		$this->mockSelectQuery();
 		// Mock the query chain and verify where clause is called correctly
 		$this->mockQuery->method('find')->willReturn($this->mockQuery);
 		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
@@ -487,12 +499,14 @@ class NewsListingWidgetTest extends TestCase {
 		// This is the critical test - verify where is called with correct entity ID
 		$this->mockQuery->expects($this->once())->method('where')->with(['parentId' => 5])->willReturn($this->mockQuery);
 
-		$mockResultSet = $this->createMock(ResultSet::class);
+		$mockResultSet = $this->createStub(ResultSet::class);
 		$mockResultSet->method('toArray')->willReturn([]);
 		$this->mockQuery->method('all')->willReturn($mockResultSet);
 
+		$this->stubNewsTable();
 		$this->mockNewsTable->method('find')->willReturn($this->mockQuery);
 
+		$this->mockFrontendView();
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/news_listing',
 			$this->callback(function (array $params): bool {
@@ -532,10 +546,7 @@ class NewsListingWidgetTest extends TestCase {
 		$property->setAccessible(true);
 		$property->setValue(null, true);
 
-		// Use the real table locator
-		FactoryLocator::drop('Table');
-		FactoryLocator::add('Table', $this->tableLocator);
-
+		$this->mockFrontendView();
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'widget/news_listing',
 			$this->callback(function (array $params): bool {

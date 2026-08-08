@@ -1444,7 +1444,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidScss(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
 
 		$request = Router::getRequest();
@@ -1478,7 +1478,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesInvalidScss(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
 
 		$request = Router::getRequest();
@@ -1513,7 +1513,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesScssWithKnownVariables(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([
 			'primaryColor' => '#ff0000',
 			'secondaryColor' => '#00ff00',
@@ -1551,7 +1551,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesScssWithUnknownVariables(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([
 			'primaryColor' => '#ff0000',
 		]);
@@ -1588,7 +1588,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesCssWithImport(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
 
 		$request = Router::getRequest();
@@ -1623,7 +1623,7 @@ class ContentsTableTest extends TestCase {
 	 */
 	public function testBuildRulesValidNestedScss(): void {
 		// Mock DesignMiddleware with design variables
-		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock = $this->createStub(DesignMiddleware::class);
 		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
 
 		$request = Router::getRequest();

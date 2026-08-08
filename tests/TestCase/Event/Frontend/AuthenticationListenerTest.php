@@ -86,8 +86,8 @@ class AuthenticationListenerTest extends TestCase {
 	 * @param int $id
 	 * @return \Authentication\IdentityInterface
 	 */
-	protected function createMockIdentity(int $id = 456): IdentityInterface {
-		$identity = $this->createMock(IdentityInterface::class);
+	protected function createStubIdentity(int $id = 456): IdentityInterface {
+		$identity = $this->createStub(IdentityInterface::class);
 		$identity->method('getIdentifier')->willReturn($id);
 
 		return $identity;
@@ -114,7 +114,7 @@ class AuthenticationListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\AuthenticationListener::authenticationAfterAuthenticate()
 	 */
 	public function testAuthenticationAfterAuthenticateSetsIdentity(): void {
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 
@@ -134,7 +134,7 @@ class AuthenticationListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\AuthenticationListener::authenticationRequestIdentity()
 	 */
 	public function testAuthenticationRequestIdentitySetsIdentityAsResult(): void {
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 
@@ -153,7 +153,7 @@ class AuthenticationListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\AuthenticationListener::authenticationRequestIdentity()
 	 */
 	public function testAuthenticationRequestIdentitySetsIdentityOnRequestingClassesWhenMethodSetIdentityExists(): void {
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 
@@ -188,7 +188,7 @@ class AuthenticationListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\AuthenticationListener::authenticationRequestIdentity()
 	 */
 	public function testAuthenticationRequestIdentityDoesNotFailWhenSubjectHasNoSetIdentityMethod(): void {
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 
@@ -231,7 +231,7 @@ class AuthenticationListenerTest extends TestCase {
 		$tableLocator = FactoryLocator::get('Table');
 		$tableLocator->clear();
 
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 
@@ -270,7 +270,7 @@ class AuthenticationListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\AuthenticationListener::authenticationRequestIdentity()
 	 */
 	public function testAuthenticationRequestIdentityHandlesExceptionGracefully(): void {
-		$identity = $this->createMockIdentity(456);
+		$identity = $this->createStubIdentity(456);
 
 		$authenticator = new SessionAuthenticator(null);
 

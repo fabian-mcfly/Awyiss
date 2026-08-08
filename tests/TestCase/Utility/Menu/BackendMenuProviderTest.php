@@ -73,10 +73,10 @@ class BackendMenuProviderTest extends TestCase {
 
 		Router::setRequest($this->request);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 
 		// Mock dependencies
-		$this->identity = $this->createMock(IdentityPermissionsInterface::class);
+		$this->identity = $this->createStub(IdentityPermissionsInterface::class);
 		$this->menuProvider = new BackendMenuProvider($this->identity);
 	}
 

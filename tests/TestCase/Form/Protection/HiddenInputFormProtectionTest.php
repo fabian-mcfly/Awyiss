@@ -174,7 +174,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 	 */
 	public function testGetHtmlWithCustomElementNameConflicting(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'name']);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'name']);
 
 		$this->hiddenInputFormProtection->initialize(
 			$this->form,
@@ -263,7 +263,7 @@ class HiddenInputFormProtectionTest extends TestCase {
 	 */
 	public function testValidateDataWithCustomFieldName(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'customField']);
+		$mockFormOptions->expects($this->atLeastOnce())->method('getProtectionOptions')->with('hiddenInput')->willReturn(['elementName' => 'customField']);
 
 		$this->hiddenInputFormProtection->initialize(
 			$this->form,

@@ -21,6 +21,9 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Exception;
 use Imagick;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\Format;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 use Symfony\Component\Process\Process;
@@ -124,9 +127,11 @@ class ConvertFilesCommand extends Command {
 	 * Creates an instance of the Intervention ImageManager
 	 *
 	 * @return void
+	 * @throws \Intervention\Image\Exceptions\InvalidArgumentException
 	 */
 	protected function createImageManager(): void {
-		$this->imageManager = $this->driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
+		$driver = $this->driver === 'gd' ? GdDriver::class : ImagickDriver::class;
+		$this->imageManager = ImageManager::usingDriver($driver, autoOrientation: false);
 	}
 
 
@@ -570,14 +575,14 @@ class ConvertFilesCommand extends Command {
 	 *
 	 * @param string $filePath
 	 * @param \Cake\Console\ConsoleIo $io
-	 * @return array|false
+	 * @return array{red: int, green: int, blue: int, alpha: int}|false
 	 */
 	protected function calculateAverageColorIntervention(string $filePath, ConsoleIo $io): array|false {
 		try {
-			$image = $this->imageManager->read($filePath);
+			$image = $this->imageManager->decodePath($filePath);
 
 			// Resize the image to 1x1 pixel
-			$color = $image->resize(1, 1)->pickColor(0, 0);
+			$color = $image->resize(1, 1)->colorAt(0, 0);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -586,13 +591,13 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
-		$colorParts = $color->toArray();
+		$colorParts = $color->channels();
 		$this->debug('Average-color Intervention raw output', ['path' => $filePath, 'output' => $colorParts]);
 
 		return [
-			'red' => $colorParts[0],
-			'green' => $colorParts[1],
-			'blue' => $colorParts[2],
+			'red' => $colorParts[0]->value(),
+			'green' => $colorParts[1]->value(),
+			'blue' => $colorParts[2]->value(),
 			'alpha' => 255,
 		];
 	}
@@ -795,9 +800,9 @@ class ConvertFilesCommand extends Command {
 		$inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		try {
-			$image = $this->imageManager->read($inputPath);
+			$image = $this->imageManager->decodePath($inputPath);
 
-			$image->toAvif($this->quality)->save($file->avifPathAbsolute);
+			$image->encodeUsingFormat(Format::AVIF, quality: $this->quality)->save($file->avifPathAbsolute);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -823,9 +828,9 @@ class ConvertFilesCommand extends Command {
 		$inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		try {
-			$image = $this->imageManager->read($inputPath);
+			$image = $this->imageManager->decodePath($inputPath);
 
-			$image->toWebp($this->quality)->save($file->webpPathAbsolute);
+			$image->encodeUsingFormat(Format::WEBP, quality: $this->quality)->save($file->webpPathAbsolute);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -1287,7 +1292,7 @@ class ConvertFilesCommand extends Command {
 		}
 
 		try {
-			$image = $this->imageManager->read($inputPath);
+			$image = $this->imageManager->decodePath($inputPath);
 
 			$this->debug('Cropping file with Intervention', [
 				'mediaId' => $file->id,
@@ -1519,7 +1524,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function resizeImageIntervention(MediaResizedImage $file, ConsoleIo $io): bool {
 		try {
-			$image = $this->imageManager->read($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
+			$image = $this->imageManager->decodePath($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
 
 			if ($file->strategy === ResizeStrategy::Contain) {
 				$image->scaleDown($file->width, $file->height);
@@ -2088,7 +2093,7 @@ class ConvertFilesCommand extends Command {
 		 */
 		if (!$this->cliMagickExists) {
 			try {
-				$image = $this->imageManager->read($filePath);
+				$image = $this->imageManager->decodePath($filePath);
 			}
 			catch (Exception) {
 				$io->error('Status: Cannot get image size');
@@ -2124,7 +2129,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function autoRotateImageIntervention(string $inputPath): bool {
 		try {
-			$image = $this->imageManager->read($inputPath);
+			$image = $this->imageManager->decodePath($inputPath);
 
 			$image = $image->orient();
 
@@ -2178,9 +2183,12 @@ class ConvertFilesCommand extends Command {
 	 * @param array $resize
 	 * @param string|null $outputPath
 	 * @return \Intervention\Image\Interfaces\ImageInterface
+	 * @throws \Intervention\Image\Exceptions\DriverException
+	 * @throws \Intervention\Image\Exceptions\ImageDecoderException
+	 * @throws \Intervention\Image\Exceptions\InvalidArgumentException
 	 */
 	protected function cropAndResizeIntervention(string $filePath, array $crop, array $resize, ?string $outputPath): ImageInterface {
-		$image = $this->imageManager->read($filePath);
+		$image = $this->imageManager->decodePath($filePath);
 
 		if ($crop) {
 			$image->crop(...$crop);

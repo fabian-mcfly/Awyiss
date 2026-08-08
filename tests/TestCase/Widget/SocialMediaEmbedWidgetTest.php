@@ -9,6 +9,7 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\Widget\SocialMediaEmbedWidget;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 
 /**
@@ -38,9 +39,9 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->mockBackendView = $this->createMock(BackendView::class);
+		$this->mockBackendView = $this->createStub(BackendView::class);
 		$this->mockFrontendView = $this->createMock(FrontendView::class);
-		$this->mockLanguage = $this->createMock(Language::class);
+		$this->mockLanguage = $this->createStub(Language::class);
 	}
 
 
@@ -50,6 +51,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getTitle()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetTitle(): void {
 		$result = SocialMediaEmbedWidget::getTitle();
 
@@ -63,6 +65,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithDefaults(): void {
 		$result = SocialMediaEmbedWidget::getFormFields($this->mockBackendView);
 
@@ -94,6 +97,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithYouTubeService(): void {
 		$settings = ['service' => 'youtube'];
 
@@ -118,6 +122,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithVimeoService(): void {
 		$settings = ['service' => 'vimeo'];
 
@@ -142,6 +147,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithInstagramService(): void {
 		$settings = ['service' => 'instagram'];
 
@@ -166,6 +172,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::getFormFields()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetFormFieldsWithCustomEmbedId(): void {
 		$settings = [
 			'service' => 'youtube',
@@ -184,6 +191,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::render()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithMissingService(): void {
 		$settings = ['embedId' => 'test123'];
 
@@ -199,6 +207,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::render()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithMissingEmbedId(): void {
 		$settings = ['service' => 'youtube'];
 
@@ -214,6 +223,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::render()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithUnsupportedService(): void {
 		$settings = [
 			'service' => 'tiktok',
@@ -232,6 +242,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::render()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRenderWithInvalidYouTubeId(): void {
 		$settings = [
 			'service' => 'youtube',
@@ -473,6 +484,7 @@ class SocialMediaEmbedWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Widget\SocialMediaEmbedWidget::registerService()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRegisterServiceWithInvalidInput(): void {
 		// Register a custom service with strict validation
 		$customExtractor = function (string $input): ?string {

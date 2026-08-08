@@ -158,6 +158,8 @@ class Awyiss extends BaseApplication {
 				}
 			}
 		}
+
+		$this->registerEvents();
 	}
 
 
@@ -278,9 +280,6 @@ class Awyiss extends BaseApplication {
 		$container = $this->getContainer();
 		$container->add(ServerRequest::class, $request);
 		$container->add(ContainerInterface::class, $container);
-
-		$eventManager = $this->events($this->getEventManager());
-		$this->setEventManager($this->pluginEvents($eventManager));
 
 		$this->controllerFactory ??= new ControllerFactory($container);
 

@@ -10,6 +10,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use ReflectionClass;
 
 
@@ -52,6 +53,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBuildOptionParser() {
 		$parser = $this->createMock(ConsoleOptionParser::class);
 
@@ -69,6 +71,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDetectCommands() {
 		Configure::write('AvailableCommands');
 
@@ -99,7 +102,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExecuteWithoutRetryOption() {
-		$this->args->method('getOption')->with('retry')->willReturn(false);
+		$this->args->expects($this->atLeastOnce())->method('getOption')->with('retry')->willReturn(false);
 
 		Configure::write('AvailableCommands', ['ffmpeg' => false]);
 
@@ -117,7 +120,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExecuteWithRetryOption() {
-		$this->args->method('getOption')->with('retry')->willReturn(true);
+		$this->args->expects($this->atLeastOnce())->method('getOption')->with('retry')->willReturn(true);
 
 		Configure::write('AvailableCommands', ['ffmpeg' => true]);
 
@@ -147,6 +150,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testTestUnknownProcess() {
 		$this->io->expects($this->once())->method('out')
 		->with('Testing UnknownAwyissCommand... ', 0);
@@ -168,6 +172,7 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testTestKnownProcess() {
 		$this->io->expects($this->once())->method('out')
 		->with('Testing pwd... ', 0);

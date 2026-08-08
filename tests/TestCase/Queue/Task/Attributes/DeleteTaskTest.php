@@ -13,6 +13,7 @@ use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\I18n\DateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Queue\Model\Table\QueuedJobsTable;
 
 
@@ -74,13 +75,13 @@ class DeleteTaskTest extends TestCase {
 
 
 	/**
-	 * @dataProvider scopeDataProvider
 	 * @param string $identifier
 	 * @param int $identityId
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\DeleteTask::run()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[DataProvider('scopeDataProvider')]
 	public function testRun(string $identifier, int $identityId): void {
 		$data = [
 			'identifier' => $identifier,

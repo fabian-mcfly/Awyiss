@@ -10,6 +10,7 @@ use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -429,16 +430,16 @@ class UrlHistoryTableTest extends TestCase {
 
 
 	/**
-	 * @testWith [301, true]
-	 *           [302, true]
-	 *           [307, true]
-	 *           [308, true]
-	 *           [404, false]
 	 * @param int $status
 	 * @param bool $allowed
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
 	 */
+	#[TestWith([301, true])]
+	#[TestWith([302, true])]
+	#[TestWith([307, true])]
+	#[TestWith([308, true])]
+	#[TestWith([404, false])]
 	public function testEntityValidationStatusValidLengths(int $status, bool $allowed): void {
 		$data = [
 			'url' => '/old-page',

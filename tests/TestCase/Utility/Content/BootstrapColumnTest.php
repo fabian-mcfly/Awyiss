@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\Utility\Content;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Content\BootstrapColumn;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -48,17 +49,17 @@ class BootstrapColumnTest extends TestCase {
 
 
 	/**
-	 * @testWith [3, 12, "25%"]
-	 *           [4, 12, "33%"]
-	 *           [8, 12, "67%"]
-	 *           [1, 4, "25%"]
-	 *           [2, 3, "67%"]
 	 * @param int $numerator
 	 * @param int $denominator
 	 * @param string $expectedPercentage
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getLabel()
 	 */
+	#[TestWith([3, 12, '25%'])]
+	#[TestWith([4, 12, '33%'])]
+	#[TestWith([8, 12, '67%'])]
+	#[TestWith([1, 4, '25%'])]
+	#[TestWith([2, 3, '67%'])]
 	public function testGetLabelWithDifferentFractions(int $numerator, int $denominator, string $expectedPercentage): void {
 		$column = new BootstrapColumn($numerator, $denominator);
 		$label = $column->getLabel();

@@ -13,6 +13,7 @@ use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 
 /**
@@ -73,6 +74,7 @@ class UserConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::implementedEvents()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
 
@@ -88,6 +90,7 @@ class UserConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::beforeSave()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBeforeSaveTypecastsValue(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity();
 		$entity->patch([
@@ -148,6 +151,7 @@ class UserConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::beforeSave()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBeforeSaveSetsCurrentUserId(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity([
 			'scope' => 'TestScope',

@@ -82,7 +82,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testAddArrayWithStringKeyAddsSubCollection() {
-		$configOption = $this->createMock(ConfigOption::class);
+		$configOption = $this->createStub(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
 		$collection = new ConfigOptionsCollection('root');
@@ -99,7 +99,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testAddArrayWithNumericKeyAddsConfigOption() {
-		$configOption = $this->createMock(ConfigOption::class);
+		$configOption = $this->createStub(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
 		$collection = new ConfigOptionsCollection('root');
@@ -119,7 +119,7 @@ class ConfigOptionCollectionTest extends TestCase {
 
 		$configOptionData = ['identifier' => 'option1', 'defaultValue' => 'test'];
 
-		$configOption = $this->createMock(ConfigOption::class);
+		$configOption = $this->createStub(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 		$configOption->method('getDefaultValue')->willReturn('test');
 
@@ -152,7 +152,7 @@ class ConfigOptionCollectionTest extends TestCase {
 		$collection = new ConfigOptionsCollection('root');
 		$subCollection1 = new ConfigOptionsCollection('sub');
 
-		$configOption = $this->createMock(ConfigOption::class);
+		$configOption = $this->createStub(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
 		$subCollection2 = new ConfigOptionsCollection('sub');

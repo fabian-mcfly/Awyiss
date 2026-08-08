@@ -68,6 +68,7 @@ use RuntimeException;
  * @method \Cake\ORM\Query\SelectQuery findById(int $id)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
+ * @template TEntity of \Cake\Datasource\EntityInterface = \Cake\Datasource\EntityInterface
  * @noinspection PhpFullyQualifiedNameUsageInspection
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
@@ -442,12 +443,13 @@ class Table extends BaseTable {
 	 * Re-implemented so it'll use `\Awyiss\Core\App::className()` to find the entity class.
 	 * Looks for the
 	 *
-	 * @return class-string<\Cake\Datasource\EntityInterface>
+	 * @return class-string<TEntity>
 	 * @see \Cake\ORM\Table::getEntityClass()
 	 * @see \Awyiss\Core\App::className()
 	 */
 	public function getEntityClass(): string {
 		if (!$this->_entityClass) {
+			/** @var class-string<TEntity> $default */
 			$default = Inflector::classify($this->_table);
 			$parts = explode('\\', static::class);
 
@@ -458,7 +460,7 @@ class Table extends BaseTable {
 			$alias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
 			$name = '\\' . implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
 
-			/** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+			/** @var class-string<TEntity>|null $class */
 			$class = App::className($alias, 'Model/Entity');
 			if (!$class) {
 				$class = App::className($default, 'Model/Entity');
@@ -480,7 +482,7 @@ class Table extends BaseTable {
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsTo
 	 *
 	 * @inheritDoc
-	 * @return \Awyiss\ORM\Association\BelongsTo
+	 * @return \Awyiss\ORM\Association\BelongsTo<\Awyiss\Model\Table>
 	 */
 	public function belongsTo(string $associated, array $options = []): BelongsTo {
 		$options += ['sourceTable' => $this];
@@ -497,7 +499,7 @@ class Table extends BaseTable {
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsToMany
 	 *
 	 * @inheritDoc
-	 * @return \Awyiss\ORM\Association\BelongsToMany
+	 * @return \Awyiss\ORM\Association\BelongsToMany<\Awyiss\Model\Table>
 	 */
 	public function belongsToMany(string $associated, array $options = []): BelongsToMany {
 		$options += ['sourceTable' => $this];
@@ -514,7 +516,7 @@ class Table extends BaseTable {
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\hasOne
 	 *
 	 * @inheritDoc
-	 * @return \Awyiss\ORM\Association\HasOne
+	 * @return \Awyiss\ORM\Association\HasOne<\Awyiss\Model\Table>
 	 */
 	public function hasOne(string $associated, array $options = []): HasOne {
 		$options += ['sourceTable' => $this];
@@ -531,7 +533,7 @@ class Table extends BaseTable {
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\HasMany
 	 *
 	 * @inheritDoc
-	 * @return \Awyiss\ORM\Association\HasMany
+	 * @return \Awyiss\ORM\Association\HasMany<\Awyiss\Model\Table>
 	 */
 	public function hasMany(string $associated, array $options = []): HasMany {
 		$options += ['sourceTable' => $this];
@@ -559,12 +561,11 @@ class Table extends BaseTable {
 		$options = array_merge($finderOptions, $options);
 		unset($options['finder']);
 
-		$results = $this->find($finder, ...$options)
+		$results = $this->unhydratedFind($finder, ...$options)
 			->applyOptions($options)
 			->select(['existing' => 1])
 			->where($conditions)
 			->limit(1)
-			->disableHydration()
 			->toArray();
 
 
@@ -800,7 +801,7 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @return \Awyiss\ORM\Marshaller
+	 * @return \Awyiss\ORM\Marshaller<TEntity>
 	 */
 	public function marshaller(): Marshaller {
 		return new Marshaller($this);
@@ -1247,7 +1248,7 @@ class Table extends BaseTable {
 	 *
 	 * @param array $additionalData
 	 * @param array $options
-	 * @return \Awyiss\Model\Entity
+	 * @return TEntity
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
 	 */
 	public function newDefaultEntity(array $additionalData = [], array $options = []): EntityInterface {

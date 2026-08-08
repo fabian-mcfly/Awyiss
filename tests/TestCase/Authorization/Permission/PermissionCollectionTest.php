@@ -22,9 +22,9 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testConstructorInitializesPermissionsCorrectly(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
-		$permissionInterface = $this->createMock(PermissionInterface::class);
+		$permissionInterface = $this->createStub(PermissionInterface::class);
 		$permissionInterface->method('getScope')->willReturn('FromObjectScope');
 		$permissionInterface->method('getIdentifier')->willReturn('unknown identifier');
 		$permissionInterface->method('getAccess')->willReturn('access');
@@ -59,7 +59,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testAddPermission(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$collection = new PermissionCollection($authorizationService);
 
@@ -98,7 +98,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetPermissionsReturnsNullWhenIdentifierNotFound(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
@@ -118,7 +118,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetPermissionsReturnsPermissionsForScope(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
@@ -140,7 +140,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetPermissionsReturnsPermissionsForScopeAndIdentifier(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'FooScope',
@@ -170,7 +170,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testHasPermissionsReturnsFalseWhenIdentifierNotFound(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'TestScope',
@@ -190,7 +190,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testHasPermissionsReturnsTrueWhenScopeFound(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'TestScope',
@@ -210,7 +210,7 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testHasPermissionsReturnsTrueWhenScopeAndIdentifierFound(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
 		$permission = Permission::createFromArray([
 			'scope' => 'TestScope',
@@ -240,9 +240,9 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testScopeIsAccessibleReturnsTrueWhenPermissionIsAccessible(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
-		$permission = $this->createMock(Permission::class);
+		$permission = $this->createStub(Permission::class);
 		$permission->method('getScope')->willReturn('test_scope');
 		$permission->method('getIdentifier')->willReturn('test_identifier');
 		$permission->method('isAccessible')->willReturn(true);
@@ -259,9 +259,9 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testScopeIsAccessibleReturnsFalseWhenPermissionIsNotAccessible(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
-		$permission = $this->createMock(Permission::class);
+		$permission = $this->createStub(Permission::class);
 		$permission->method('getScope')->willReturn('test_scope');
 		$permission->method('getIdentifier')->willReturn('test_identifier');
 		$permission->method('isAccessible')->willReturn(false);
@@ -289,19 +289,19 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testMultipleIdentifiers(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
-		$permission = $this->createMock(Permission::class);
+		$permission = $this->createStub(Permission::class);
 		$permission->method('getScope')->willReturn('test_scope');
 		$permission->method('getIdentifier')->willReturn('identifier1');
 		$permission->method('isAccessible')->willReturn(true);
 
-		$permission2 = $this->createMock(Permission::class);
+		$permission2 = $this->createStub(Permission::class);
 		$permission2->method('getScope')->willReturn('test_scope');
 		$permission2->method('getIdentifier')->willReturn('identifier2');
 		$permission2->method('isAccessible')->willReturn(false);
 
-		$permission3 = $this->createMock(Permission::class);
+		$permission3 = $this->createStub(Permission::class);
 		$permission3->method('getScope')->willReturn('test_scope');
 		$permission3->method('getIdentifier')->willReturn('identifier3');
 		$permission3->method('isAccessible')->willReturn(true);
@@ -330,19 +330,19 @@ class PermissionCollectionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testMultipleCombinedIdentifiers(): void {
-		$authorizationService = $this->createMock(AuthorizationService::class);
+		$authorizationService = $this->createStub(AuthorizationService::class);
 
-		$permission = $this->createMock(Permission::class);
+		$permission = $this->createStub(Permission::class);
 		$permission->method('getScope')->willReturn('test_scope');
 		$permission->method('getIdentifier')->willReturn('identifier1');
 		$permission->method('isAccessible')->willReturn(true);
 
-		$permission2 = $this->createMock(Permission::class);
+		$permission2 = $this->createStub(Permission::class);
 		$permission2->method('getScope')->willReturn('test_scope');
 		$permission2->method('getIdentifier')->willReturn('identifier2');
 		$permission2->method('isAccessible')->willReturn(false);
 
-		$permission3 = $this->createMock(Permission::class);
+		$permission3 = $this->createStub(Permission::class);
 		$permission3->method('getScope')->willReturn('test_scope');
 		$permission3->method('getIdentifier')->willReturn('identifier3');
 		$permission3->method('isAccessible')->willReturn(true);

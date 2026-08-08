@@ -64,7 +64,7 @@ class OrsRoutingServiceTest extends TestCase {
 		Router::setRequest($request);
 
 		// Create the service with a modified getClient method
-		$this->service = $this->getMockBuilder(OrsRoutingService::class)->onlyMethods(['getClient'])->getMock();
+		$this->service = $this->getStubBuilder(OrsRoutingService::class)->onlyMethods(['getClient'])->getStub();
 	}
 
 
@@ -111,13 +111,13 @@ class OrsRoutingServiceTest extends TestCase {
 		];
 
 		// Create mock response
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 200,
 			'getJson' => $responseData,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('get')->willReturn($response);
 
 		// Configure service to use mock client
@@ -188,13 +188,13 @@ class OrsRoutingServiceTest extends TestCase {
 		];
 
 		// Create mock response
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 200,
 			'getJson' => $responseData,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('get')->willReturn($response);
 
 		// Configure service to use mock client
@@ -233,12 +233,12 @@ class OrsRoutingServiceTest extends TestCase {
 	 */
 	public function testFindCoordinatesError(): void {
 		// Create mock response with error status
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 400,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('get')->willReturn($response);
 
 		// Configure service to use mock client
@@ -261,13 +261,13 @@ class OrsRoutingServiceTest extends TestCase {
 	 */
 	public function testFindCoordinatesEmptyFeatures(): void {
 		// Create response with empty features
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 200,
 			'getJson' => ['features' => []],
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('get')->willReturn($response);
 
 		// Configure service to use mock client
@@ -320,13 +320,13 @@ class OrsRoutingServiceTest extends TestCase {
 		];
 
 		// Create mock response
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 200,
 			'getJson' => $responseData,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('post')->willReturn($response);
 
 		// Configure service to use mock client
@@ -355,12 +355,12 @@ class OrsRoutingServiceTest extends TestCase {
 		$end = new Address(48.8566, 2.3522, 'Paris');
 
 		// Create mock response with error
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 400,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('post')->willReturn($response);
 
 		// Configure service to use mock client
@@ -387,13 +387,13 @@ class OrsRoutingServiceTest extends TestCase {
 		$end = new Address(48.8566, 2.3522, 'Paris');
 
 		// Create mock response with null data
-		$response = $this->createConfiguredMock(Response::class, [
+		$response = $this->createConfiguredStub(Response::class, [
 			'getStatusCode' => 200,
 			'getJson' => null,
 		]);
 
 		// Create mock client
-		$clientMock = $this->createMock(Client::class);
+		$clientMock = $this->createStub(Client::class);
 		$clientMock->method('post')->willReturn($response);
 
 		// Configure service to use mock client

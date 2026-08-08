@@ -35,14 +35,14 @@ class RouteTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		// Create mock AddressInterface objects
-		$this->start = $this->createMock(AddressInterface::class);
+		$this->start = $this->createStub(AddressInterface::class);
 		$this->start->method('toArray')->willReturn([
 			'lat' => 51.5074,
 			'lng' => -0.1278,
 			'name' => 'London',
 		]);
 
-		$this->end = $this->createMock(AddressInterface::class);
+		$this->end = $this->createStub(AddressInterface::class);
 		$this->end->method('toArray')->willReturn([
 			'lat' => 48.8566,
 			'lng' => 2.3522,

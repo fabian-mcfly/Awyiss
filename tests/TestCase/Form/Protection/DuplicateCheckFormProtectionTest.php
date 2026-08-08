@@ -249,7 +249,9 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	public function testValidateDataWithCustomTimeout(): void {
 		// Mock form options with custom timeout
 		$mockFormOptions = $this->createMock(FormOptions::class);
-		$mockFormOptions->method('getProtectionOptions')
+		$mockFormOptions
+			->expects($this->atLeastOnce())
+			->method('getProtectionOptions')
 			->with('duplicateCheck')
 			->willReturn(['checkTimeout' => 300]); // 5 minutes timeout
 

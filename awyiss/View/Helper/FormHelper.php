@@ -466,6 +466,8 @@ class FormHelper extends BaseFormHelper {
 		return $this->formatTemplate($inputContainerTemplate, [
 			'content' => $options['content'],
 			'error' => $options['error'],
+			'inputId' => $options['inputId'] ?? '',
+			'label' => $options['label'] ?? '',
 			'required' => $options['options']['required'] ? ' Required' : '',
 			'type' => Inflector::ucparts(Inflector::underscore($options['options']['type']), false),
 			'templateVars' => ($options['options']['templateVars'] ?? []) + ['identifier' => $name],
@@ -598,6 +600,7 @@ class FormHelper extends BaseFormHelper {
 		return $this->formatTemplate('error', [
 			'content' => $errorMessage ?? '',
 			'id' => $this->_domId($field) . '-error',
+			'inputId' => $this->_domId($field),
 		]);
 	}
 

@@ -89,7 +89,7 @@ class AutoTranslateTaskTest extends TestCase {
 		// Mock Contents table
 		$contentsTable = $this->getMockBuilder(ContentsTable::class)->onlyMethods(['saveMany'])->getMock();
 		$contentsTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -152,7 +152,7 @@ class AutoTranslateTaskTest extends TestCase {
 		$pagesTable->__construct();
 
 		$pagesTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -208,12 +208,12 @@ class AutoTranslateTaskTest extends TestCase {
 		);
 
 		// Mock Locks table
-		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
+		$locksTable = $this->getStubBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getStub();
 
 		// Mock Contents table
 		$contentsTable = $this->getMockBuilder(ContentsTable::class)->onlyMethods(['saveMany'])->getMock();
 		$contentsTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -271,7 +271,7 @@ class AutoTranslateTaskTest extends TestCase {
 		);
 
 		// Mock Locks table
-		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
+		$locksTable = $this->getStubBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getStub();
 
 		// Mock Pages table
 		$pagesTable = $this->getMockBuilder(PagesTable::class)->disableOriginalConstructor()->onlyMethods(['saveMany'])->getMock();
@@ -285,7 +285,7 @@ class AutoTranslateTaskTest extends TestCase {
 		$pagesTable->__construct();
 
 		$pagesTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -334,12 +334,12 @@ class AutoTranslateTaskTest extends TestCase {
 		$task->expects($this->once())->method('getTranslationService')->willReturn($mockService);
 
 		// Mock Locks table
-		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getMock();
+		$locksTable = $this->getStubBuilder(LocksTable::class)->onlyMethods(['deleteAll'])->getStub();
 
 		// Mock Contents table
 		$contentsTable = $this->getMockBuilder(ContentsTable::class)->onlyMethods(['saveMany'])->getMock();
 		$contentsTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -389,7 +389,7 @@ class AutoTranslateTaskTest extends TestCase {
 		// Mock Contents table
 		$contentsTable = $this->getMockBuilder(ContentsTable::class)->onlyMethods(['saveMany'])->getMock();
 		$contentsTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 
@@ -818,7 +818,7 @@ class AutoTranslateTaskTest extends TestCase {
 		$newsTable->__construct();
 
 		$newsTable->expects($this->once())->method('saveMany')->with(
-			$this->isType('array'),
+			$this->isArray(),
 			$this->arrayHasKey('atomic')
 		);
 		$tableLocator->remove('News');

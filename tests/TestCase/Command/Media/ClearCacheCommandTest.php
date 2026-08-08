@@ -12,6 +12,7 @@ use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\ORM\Query\SelectQuery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Component\Process\Process;
 
 
@@ -37,7 +38,7 @@ class ClearCacheCommandTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->args = $this->createMock(Arguments::class);
+		$this->args = $this->createStub(Arguments::class);
 
 		$this->io = $this->createMock(ConsoleIo::class);
 	}
@@ -64,6 +65,7 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBuildOptionParserIncludesSetOptions(): void {
 		$parser = new ConsoleOptionParser('test');
 
@@ -157,6 +159,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDeleteFoldersWithNoRecords(): void {
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->onlyMethods([
 			'deleteFolder',
@@ -173,6 +176,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRemoveDeletedFoldersFromDatabase(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
 
@@ -196,12 +200,13 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRemoveDeletedFoldersFromDatabaseWithUnknownType(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
 
 		$table->expects($this->never())->method('deleteAll');
 
-		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
+		$command = $this->getStubBuilder(ClearCacheCommand::class)->getStub();
 
 		$result = $this->callProtectedMethod($command, 'removeDeletedFoldersFromDatabase', 'unknown', $this->io);
 
@@ -213,6 +218,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testResetDatabaseRecords(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
 
@@ -236,6 +242,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDeleteResizedDatabaseRecords(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
 
@@ -258,12 +265,13 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDeleteResizedDatabaseRecordsWithUnknownType(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
 
 		$table->expects($this->never())->method('deleteAll');
 
-		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
+		$command = $this->getStubBuilder(ClearCacheCommand::class)->getStub();
 
 		$result = $this->callProtectedMethod($command, 'deleteResizedDatabaseRecords', 'unknown', $this->io);
 
@@ -275,6 +283,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchFolders(): void {
 		$this->_createTestFolders();
 
@@ -316,6 +325,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchDeletedFolders(): void {
 		$this->_createTestFolders();
 
@@ -347,6 +357,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchEffectsFolders(): void {
 		$this->_createTestFolders();
 
@@ -377,6 +388,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchPreviewsFolders(): void {
 		$this->_createTestFolders();
 
@@ -407,6 +419,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchResizedFolders(): void {
 		$this->_createTestFolders();
 
@@ -437,6 +450,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchAvifFolders(): void {
 		$this->_createTestFolders();
 
@@ -467,6 +481,7 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testFetchWebpFolders(): void {
 		$this->_createTestFolders();
 

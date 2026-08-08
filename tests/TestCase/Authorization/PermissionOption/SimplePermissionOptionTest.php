@@ -20,7 +20,7 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testConstructorInitializesOptionsCorrectly(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 		$config = [];
 
 		$simplePermissionOption = new SimplePermissionOption($config, $permissionOptionCollection);
@@ -40,7 +40,7 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testHarmonizeOptionValueReturnsNullForEmptyValue(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 		$config = [];
 		$simplePermissionOption = new SimplePermissionOption($config, $permissionOptionCollection);
 
@@ -54,7 +54,7 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testHarmonizeOptionValueReturnsPermissionAccess(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 		$config = [];
 		$simplePermissionOption = new SimplePermissionOption($config, $permissionOptionCollection);
 
@@ -75,8 +75,8 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleReturnsTrueForGrantedAccess(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$simplePermissionOption = new SimplePermissionOption([], $permissionOptionCollection);
 
@@ -92,9 +92,9 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleReturnsFalseForDeniedAccess(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
 
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$simplePermissionOption = new SimplePermissionOption([], $permissionOptionCollection);
 
@@ -110,8 +110,8 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testIsAccessibleReturnsNullForIndifferentAccess(): void {
-		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
-		$permissionCollection = $this->createMock(PermissionCollection::class);
+		$permissionOptionCollection = $this->createStub(PermissionOptionCollection::class);
+		$permissionCollection = $this->createStub(PermissionCollection::class);
 
 		$simplePermissionOption = new SimplePermissionOption([], $permissionOptionCollection);
 

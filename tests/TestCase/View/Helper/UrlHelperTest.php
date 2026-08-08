@@ -11,6 +11,7 @@ use Awyiss\View\Helper\UrlHelper;
 use Cake\Core\Configure;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\TestSuite\IntegrationTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -53,11 +54,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithoutNameUsesSetRealm(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -84,11 +85,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithFrontendName(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -136,11 +137,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithFrontendNameAndAdditionalParameter(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -184,11 +185,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -231,11 +232,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithParamsAll(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -278,11 +279,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithParamsString(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -325,11 +326,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithoutOptionWithParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -372,11 +373,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithoutParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -423,11 +424,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithoutParamsString(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();
@@ -474,11 +475,11 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
-	 * @dataProvider configProvider
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
 	 */
+	#[DataProvider('configProvider')]
 	public function testBuildUrlWithOptionWithoutParamsAll(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
 		$this->loadRoutes();

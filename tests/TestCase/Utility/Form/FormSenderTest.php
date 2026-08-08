@@ -2470,19 +2470,19 @@ class FormSenderTest extends TestCase {
 	public function testAddFormAttachments(): void {
 		$form = $this->form;
 
-		$stream = $this->getMockBuilder(Stream::class)
+		$stream = $this->getStubBuilder(Stream::class)
 			->disableOriginalConstructor()
-			->getMock();
+			->getStub();
 		$stream->method('getContents')->willReturn('This is the content of the uploaded file.');
 		$stream->method('getMetadata')->willReturn('text/dummy');
 
-		$file = $this->getMockBuilder(UploadedFile::class)->setConstructorArgs([
+		$file = $this->getStubBuilder(UploadedFile::class)->setConstructorArgs([
 			$stream,
 			1024,
 			UPLOAD_ERR_OK,
 			'testfile.txt',
 			'text/plain',
-		])->onlyMethods(['__construct'])->getMock();
+		])->onlyMethods(['__construct'])->getStub();
 
 		$form->setFormData([
 			'email' => 'example@domain.com',

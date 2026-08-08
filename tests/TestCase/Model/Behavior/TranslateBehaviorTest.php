@@ -74,7 +74,7 @@ class TranslateBehaviorTest extends TestCase {
 	 */
 	public function testInitializeWithoutLocale(): void {
 		$table = new ContentTemplatesTable();
-		$behavior = $this->getMockBuilder(TranslateBehavior::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
+		$behavior = $this->getStubBuilder(TranslateBehavior::class)->onlyMethods([])->disableOriginalConstructor()->getStub();
 
 		$config = [
 			'fields' => [

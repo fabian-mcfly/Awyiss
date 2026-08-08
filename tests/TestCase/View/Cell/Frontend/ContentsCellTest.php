@@ -18,6 +18,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\View\CellTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -76,7 +77,7 @@ class ContentsCellTest extends TestCase {
 		]);
 		Router::setRequest($this->request);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 
 		$this->view = new FrontendView($this->request);
 		$this->cell = new ContentsCell($this->request, $this->response, null, [
@@ -278,7 +279,6 @@ class ContentsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataThreadedContentsDataProvider
 	 * @param int $pageId
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
@@ -286,6 +286,7 @@ class ContentsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('dataThreadedContentsDataProvider')]
 	public function testFetchThreadedContents(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
@@ -331,12 +332,12 @@ class ContentsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataThreadedContentsForUnknownContentAreaDataProvider
 	 * @param int $pageId
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('dataThreadedContentsForUnknownContentAreaDataProvider')]
 	public function testFetchThreadedContentsForUnknownContentArea(int $pageId): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
@@ -360,7 +361,6 @@ class ContentsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataThreadedContentsContainsInactiveElementsWhenPreviewIsEnabledDataProvider
 	 * @param int $pageId
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
@@ -368,6 +368,7 @@ class ContentsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('dataThreadedContentsContainsInactiveElementsWhenPreviewIsEnabledDataProvider')]
 	public function testFetchThreadedContentsContainsInactiveElementsWhenPreviewIsEnabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
@@ -398,7 +399,6 @@ class ContentsCellTest extends TestCase {
 
 
 	/**
-	 * @dataProvider dataThreadedContentsDataProvider
 	 * @param int $pageId
 	 * @param int $expectedFirstLevelCount
 	 * @param int $expectedTotalCount
@@ -406,6 +406,7 @@ class ContentsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::fetchThreadedContents()
 	 * @throws \ReflectionException
 	 */
+	#[DataProvider('dataThreadedContentsDataProvider')]
 	public function testFetchThreadedContentsNotContainsInactiveElementsWhenPreviewIsDisabled(int $pageId, int $expectedFirstLevelCount, int $expectedTotalCount): void {
 		$page = $this->getTableLocator()->get('Pages')->get($pageId);
 
@@ -1089,7 +1090,7 @@ class ContentsCellTest extends TestCase {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -1107,7 +1108,7 @@ class ContentsCellTest extends TestCase {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -1125,7 +1126,7 @@ class ContentsCellTest extends TestCase {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -1143,7 +1144,7 @@ class ContentsCellTest extends TestCase {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div><widget data-identifier="empty">{"key":"value"}</widget><div>Some other content</div>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
@@ -1161,7 +1162,7 @@ class ContentsCellTest extends TestCase {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div><p><widget data-identifier="test">{"key":"other_value"}</widget>e other content</p>';
 
-		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+		$mediaRenderOptions = $this->createStub(MediaRenderOptions::class);
 
 		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 

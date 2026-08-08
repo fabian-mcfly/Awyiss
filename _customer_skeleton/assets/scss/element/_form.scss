@@ -206,6 +206,17 @@ altcha-widget {
 	display:block;
 	margin-top:calc(var(--lineHeightMain) * .5);
 
+	.altcha-main {
+		--altcha-border-radius:0;
+		--altcha-color-base:transparent;
+		--altcha-color-base-content:currentColor;
+		--altcha-spinner-color:#{$colorMain};
+	}
+
+	.altcha-footer {
+		display:none;
+	}
+
 	+ .FormInputType-Button {
 		margin-top:var(--lineHeightMain);
 	}

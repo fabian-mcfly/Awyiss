@@ -21,7 +21,7 @@ class AuthorizationTest extends TestCase {
 	public function testGetAuthorizationService(): void {
 		$authorization = new Authorization('Backend');
 
-		$service = $authorization->getAuthorizationService($this->createMock(ServerRequestInterface::class));
+		$service = $authorization->getAuthorizationService($this->createStub(ServerRequestInterface::class));
 
 		/** @noinspection PhpConditionAlreadyCheckedInspection */
 		$this->assertInstanceOf(AuthorizationService::class, $service);

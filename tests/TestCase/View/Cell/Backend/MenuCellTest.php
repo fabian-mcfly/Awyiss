@@ -63,7 +63,7 @@ class MenuCellTest extends TestCase {
 
 		Router::setRequest($this->request);
 
-		$this->response = $this->createMock(Response::class);
+		$this->response = $this->createStub(Response::class);
 	}
 
 

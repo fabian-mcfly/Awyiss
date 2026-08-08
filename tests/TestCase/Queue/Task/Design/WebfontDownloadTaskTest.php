@@ -259,9 +259,9 @@ SCSS);
 		$zip->close();
 
 		// Mock the getDownloadUrl method to return our temporary zip
-		$task = $this->getMockBuilder(WebfontDownloadTask::class)
+		$task = $this->getStubBuilder(WebfontDownloadTask::class)
 			->onlyMethods(['getDownloadUrl'])
-			->getMock();
+			->getStub();
 		$task->method('getDownloadUrl')->willReturn('file://' . $zipPath);
 
 		// Prepare data

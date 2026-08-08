@@ -51,6 +51,7 @@ class ColumnParser extends BaseColumnParser {
 	 */
 	public function parseFields(array $arguments): array {
 		$fields = [];
+		$primaryKeys = [];
 		$arguments = $this->validArguments($arguments);
 		foreach ($arguments as $field) {
 			preg_match($this->regexpParseColumn, $field, $matches);
@@ -95,11 +96,22 @@ class ColumnParser extends BaseColumnParser {
 				}
 			}
 
-			if ($isPrimaryKey === true && $type === 'integer') {
+			if ($isPrimaryKey) {
+				$primaryKeys[] = $field;
+			}
+
+			if ($isPrimaryKey && $type === 'integer') {
 				$fields[ $field ]['options']['autoIncrement'] = true;
 			}
 		}
 
+		// A composite primary key (e.g. a join table) must not auto-increment.
+		// Only a single integer primary key column gets auto-increment.
+		if (count($primaryKeys) > 1) {
+			foreach ($primaryKeys as $field) {
+				unset($fields[ $field ]['options']['autoIncrement']);
+			}
+		}
 
 		return $fields;
 	}

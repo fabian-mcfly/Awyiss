@@ -17,6 +17,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Symfony\Component\Process\Process;
 
 
@@ -42,7 +43,7 @@ class ConvertFilesCommandTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->args = $this->createMock(Arguments::class);
+		$this->args = $this->createStub(Arguments::class);
 		$this->args->method('getOption')->willReturnMap([
 			['quiet', false],
 			['limit', '20'],
@@ -82,6 +83,7 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBuildOptionParserIncludesSetOptions(): void {
 		$parser = new ConsoleOptionParser('test');
 
@@ -108,6 +110,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testExecuteSuccess(): void {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'processCropFiles',
@@ -141,6 +144,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testExecuteWithError(): void {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'processCropFiles',
@@ -174,8 +178,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessCropFilesReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -183,8 +188,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'cropImages',
 		])->getMock();
 
-		$command->method('fetchCropFiles')->with(20)->willReturn($files);
-		$command->method('cropImages')->with($files, $this->io)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchCropFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('cropImages')->with($files, $this->io)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processCropFiles($this->args, $this->io);
 
@@ -196,8 +201,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessCropFilesReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -205,7 +211,7 @@ class ConvertFilesCommandTest extends TestCase {
 			'cropImages',
 		])->getMock();
 
-		$command->method('fetchCropFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchCropFiles')->with(20)->willReturn($files);
 
 		$result = $command->processCropFiles($this->args, $this->io);
 
@@ -217,8 +223,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessCropFilesReturnsFalseWhenCropImagesFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -226,8 +233,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'cropImages',
 		])->getMock();
 
-		$command->method('fetchCropFiles')->with(20)->willReturn($files);
-		$command->method('cropImages')->with($files, $this->io)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchCropFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('cropImages')->with($files, $this->io)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processCropFiles($this->args, $this->io);
 
@@ -239,8 +246,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessNonImageFilesReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -248,8 +256,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertNonImages',
 		])->getMock();
 
-		$command->method('fetchNonImageFiles')->with(20)->willReturn($files);
-		$command->method('convertNonImages')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchNonImageFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertNonImages')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processNonImageFiles($this->args, $this->io);
 
@@ -261,15 +269,16 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessNonImageFilesReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchNonImageFiles',
 		])->getMock();
 
-		$command->method('fetchNonImageFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchNonImageFiles')->with(20)->willReturn($files);
 
 		$result = $command->processNonImageFiles($this->args, $this->io);
 
@@ -281,8 +290,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessNonImageFilesReturnsFalseWhenConvertNonImagesFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -290,8 +300,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertNonImages',
 		])->getMock();
 
-		$command->method('fetchNonImageFiles')->with(20)->willReturn($files);
-		$command->method('convertNonImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchNonImageFiles')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertNonImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processNonImageFiles($this->args, $this->io);
 
@@ -303,8 +313,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAvifConversionReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -312,8 +323,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToAvif',
 		])->getMock();
 
-		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
-		$command->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processAvifConversion($this->args, $this->io);
 
@@ -325,8 +336,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAvifConversionReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -334,7 +346,7 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToAvif',
 		])->getMock();
 
-		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
 
 		$result = $command->processAvifConversion($this->args, $this->io);
 
@@ -346,8 +358,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAvifConversionReturnsFalseWhenConvertImagesFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -355,8 +368,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToAvif',
 		])->getMock();
 
-		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
-		$command->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processAvifConversion($this->args, $this->io);
 
@@ -368,8 +381,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessWebpConversionReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -377,8 +391,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToWebp',
 		])->getMock();
 
-		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
-		$command->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processWebpConversion($this->args, $this->io);
 
@@ -390,8 +404,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessWebpConversionReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -399,7 +414,7 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToWebp',
 		])->getMock();
 
-		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
 
 		$result = $command->processWebpConversion($this->args, $this->io);
 
@@ -411,8 +426,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessWebpConversionReturnsFalseWhenConvertImagesFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -420,8 +436,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'convertImagesToWebp',
 		])->getMock();
 
-		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
-		$command->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processWebpConversion($this->args, $this->io);
 
@@ -433,8 +449,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessResizingReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -442,8 +459,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'resizeImages',
 		])->getMock();
 
-		$command->method('fetchFilesForResizing')->with(20)->willReturn($files);
-		$command->method('resizeImages')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForResizing')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('resizeImages')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processResizing($this->args, $this->io);
 
@@ -455,8 +472,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessResizingReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -464,7 +482,7 @@ class ConvertFilesCommandTest extends TestCase {
 			'resizeImages',
 		])->getMock();
 
-		$command->method('fetchFilesForResizing')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForResizing')->with(20)->willReturn($files);
 
 		$result = $command->processResizing($this->args, $this->io);
 
@@ -476,8 +494,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessResizingReturnsFalseWhenResizeImagesFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -485,8 +504,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'resizeImages',
 		])->getMock();
 
-		$command->method('fetchFilesForResizing')->with(20)->willReturn($files);
-		$command->method('resizeImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForResizing')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('resizeImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processResizing($this->args, $this->io);
 
@@ -498,8 +517,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAverageColorCalculationReturnsFileCountWhenFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -507,8 +527,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'calculateAverageColors',
 		])->getMock();
 
-		$command->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
-		$command->method('calculateAverageColors')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('calculateAverageColors')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processAverageColorCalculation($this->args, $this->io);
 
@@ -520,8 +540,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAverageColorCalculationReturnsZeroWhenNoFilesExist(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(0);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -529,7 +550,7 @@ class ConvertFilesCommandTest extends TestCase {
 			'calculateAverageColors',
 		])->getMock();
 
-		$command->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
 
 		$result = $command->processAverageColorCalculation($this->args, $this->io);
 
@@ -541,8 +562,9 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testProcessAverageColorCalculationReturnsFalseWhenCalculateAverageColorsFails(): void {
-		$files = $this->createMock(ResultSetInterface::class);
+		$files = $this->createStub(ResultSetInterface::class);
 		$files->method('count')->willReturn(5);
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -550,8 +572,8 @@ class ConvertFilesCommandTest extends TestCase {
 			'calculateAverageColors',
 		])->getMock();
 
-		$command->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
-		$command->method('calculateAverageColors')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->expects($this->atLeastOnce())->method('fetchFilesForAverageColorCalculation')->with(20)->willReturn($files);
+		$command->expects($this->atLeastOnce())->method('calculateAverageColors')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processAverageColorCalculation($this->args, $this->io);
 
@@ -564,6 +586,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testCalculateAverageColorsForValidFiles(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
@@ -591,6 +614,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testCalculateAverageColorsForNonExistentFile(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
@@ -628,9 +652,9 @@ class ConvertFilesCommandTest extends TestCase {
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
 
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchTable',
-		])->getMock();
+		])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 
@@ -655,10 +679,10 @@ class ConvertFilesCommandTest extends TestCase {
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
 
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'calculateAverageColor',
 			'fetchTable',
-		])->getMock();
+		])->getStub();
 
 		$command->method('calculateAverageColor')->willReturn(['red' => 100, 'green' => 150, 'blue' => 200, 'alpha' => 255]);
 		$command->method('fetchTable')->willReturn($table);
@@ -676,13 +700,14 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testCalculateAverageColor(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $table->find()->where(['id' => 2])->first();
 
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->getStub();
 
 		$result = $this->callProtectedMethod($command, 'calculateAverageColor', $media->pathAbsolute, $this->io);
 
@@ -734,7 +759,7 @@ class ConvertFilesCommandTest extends TestCase {
 		});
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 
@@ -774,10 +799,12 @@ class ConvertFilesCommandTest extends TestCase {
 				$this->assertSame('Creating Avif file for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
 			}
 		});
-		$this->io->expects($this->once())->method('error')->with('Status: Unable to decode input');
+		$this->io->expects($this->once())
+			->method('error')
+			->with(sprintf('Status: File "logo-awyiss2.jpg" not found in directory "%s/webroot/../awyiss/Command/Media/TestFiles"', ROOT));
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 
@@ -829,7 +856,7 @@ class ConvertFilesCommandTest extends TestCase {
 		});
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 
@@ -869,10 +896,12 @@ class ConvertFilesCommandTest extends TestCase {
 				$this->assertSame('Creating WebP file for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
 			}
 		});
-		$this->io->expects($this->once())->method('error')->with('Status: Unable to decode input');
+		$this->io->expects($this->once())
+			->method('error')
+			->with(sprintf('Status: File "logo-awyiss2.jpg" not found in directory "%s/webroot/../awyiss/Command/Media/TestFiles"', ROOT));
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 
@@ -929,10 +958,10 @@ class ConvertFilesCommandTest extends TestCase {
 		});
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchTable',
 			'getRealImageSize',
-		])->getMock();
+		])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 		$command->method('getRealImageSize')->willReturn([100, 100]);
@@ -953,6 +982,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConvertNonImagesWithUnknownCommand(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
@@ -966,7 +996,7 @@ class ConvertFilesCommandTest extends TestCase {
 		);
 
 		// Mock the Process
-		$process = $this->createMock(Process::class);
+		$process = $this->createStub(Process::class);
 		$process->method('isSuccessful')->willReturn(true);
 		$process->method('getExitCodeText')->willReturn('');
 
@@ -983,11 +1013,11 @@ class ConvertFilesCommandTest extends TestCase {
 		$this->io->expects($this->once())->method('warning')->with('Status: Cannot convert filetype `docx`');
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchTable',
 			'getPreviewCommand',
 			'getProcess',
-		])->getMock();
+		])->getStub();
 
 		$command->method('fetchTable')->willReturn($table);
 		$command->method('getPreviewCommand')->willReturn(false);
@@ -1005,13 +1035,14 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetCropCommand(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
 		$resultSet = $table->find()->all();
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->getStub();
 
 		// Set different crop properties on the files
 		$resultSet->each(function (Media $file) use ($command) {
@@ -1098,13 +1129,14 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetResizeCommand(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
 		$resultSet = $table->find()->all();
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->getStub();
 
 		// Set different crop properties on the files
 		$resultSet->each(function (Media $file) use ($command) {
@@ -1196,6 +1228,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testGetResizeCommandRespectsQualitySetting(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
 		$table = $this->fetchTable('Media');
@@ -1205,7 +1238,7 @@ class ConvertFilesCommandTest extends TestCase {
 		Configure::write('Awyiss.Media.Frontend.resizing.quality', 54);
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+		$command = $this->getStubBuilder(ConvertFilesCommand::class)->getStub();
 
 		// Set different crop properties on the files
 		for ($i = 1; $i <= 4; $i++) {

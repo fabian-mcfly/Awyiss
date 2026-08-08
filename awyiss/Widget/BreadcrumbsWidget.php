@@ -309,7 +309,10 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'PageRoles.systemOrder' => 'ASC',
 		]);
 
-		$query->where(['languageShortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
+		$languageShortcode ??= LocaleMiddleware::getLanguage()?->shortcode;
+		if ($languageShortcode) {
+			$query->where(['languageShortcode' => $languageShortcode]);
+		}
 
 		// Order by parentId first
 		$query->orderBy(['Pages.parentId' => 'ASC']);

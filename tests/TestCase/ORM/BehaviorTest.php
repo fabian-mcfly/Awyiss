@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\ORM;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\Test\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use RuntimeException;
 
 
@@ -43,6 +44,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithDefaultConfiguration(): void {
 		$this->behavior = new Behavior($this->mockTable);
 
@@ -75,6 +77,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithCustomImplementedEvents(): void {
 		$customEvents = ['beforeSave', 'afterSave'];
 		$config = ['implementedEvents' => $customEvents];
@@ -92,6 +95,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithEmptyImplementedEvents(): void {
 		$config = ['implementedEvents' => []];
 
@@ -108,6 +112,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithNullImplementedEventsUsesDefault(): void {
 		$config = ['implementedEvents' => null];
 
@@ -138,6 +143,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithCustomImplementedMethods(): void {
 		$customMethods = ['customMethod1', 'customMethod2'];
 		$config = ['implementedMethods' => $customMethods];
@@ -155,6 +161,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithEmptyImplementedMethods(): void {
 		$config = ['implementedMethods' => []];
 
@@ -171,6 +178,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testImplementedEventsReturnsEmptyArrayWhenNoEvents(): void {
 		$config = ['implementedEvents' => []];
 		$this->behavior = new Behavior($this->mockTable, $config);
@@ -248,6 +256,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::enable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testEnableSuccessfullyEnablesBehavior(): void {
 		$config = ['enabled' => false];
 		$this->behavior = new Behavior($this->mockTable, $config);
@@ -265,6 +274,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::enable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testEnableThrowsExceptionWhenEnabledKeyMissing(): void {
 		$this->behavior = new Behavior($this->mockTable);
 
@@ -281,6 +291,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::disable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDisableSuccessfullyDisablesBehavior(): void {
 		$config = ['enabled' => true];
 		$this->behavior = new Behavior($this->mockTable, $config);
@@ -298,6 +309,7 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::disable()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testDisableThrowsExceptionWhenEnabledKeyMissing(): void {
 		$this->behavior = new Behavior($this->mockTable);
 
@@ -315,6 +327,7 @@ class BehaviorTest extends TestCase {
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 * @throws \ReflectionException
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testConstructorWithComplexConfiguration(): void {
 		$config = [
 			'implementedMethods' => ['customMethod1', 'customMethod2'],
@@ -344,6 +357,7 @@ class BehaviorTest extends TestCase {
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testBehaviorWithCustomEvents(): void {
 		// Create an anonymous class that extends Behavior with custom defaultEvents
 		$customBehavior = new class ($this->fetchTable('Users'), ['implementedEvents' => ['dummyMethod1', 'dummyMethod2', 'dummyMethod3']]) extends Behavior {

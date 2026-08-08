@@ -23,7 +23,7 @@ class TranslatableTextWidgetTest extends TestCase {
 		$stringTemplate = new StringTemplate();
 		$stringTemplate->load('form_templates_backend');
 
-		$context = $this->createMock(ContextInterface::class);
+		$context = $this->createStub(ContextInterface::class);
 		$widget = new TranslatableTextWidget($stringTemplate);
 
 		$data = [

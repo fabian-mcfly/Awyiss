@@ -24,10 +24,11 @@ class AbstractPermissionOptionTest extends TestCase {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
 		$config = ['identifier' => 'testIdentifier'];
 
-		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
-		->setConstructorArgs([$config, $permissionOptionCollection])
-		->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
-		->getMock();
+		/** @var \Awyiss\Authorization\PermissionOption\AbstractPermissionOption $abstractPermissionOption */
+		$abstractPermissionOption = $this->getStubBuilder(AbstractPermissionOption::class)
+			->setConstructorArgs([$config, $permissionOptionCollection])
+			->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
+			->getStub();
 
 		$this->assertSame($permissionOptionCollection, $abstractPermissionOption->getPermissionOptionCollection());
 		$this->assertSame('testIdentifier', $abstractPermissionOption->getConfig('identifier'));
@@ -77,10 +78,11 @@ class AbstractPermissionOptionTest extends TestCase {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
 		$config = ['identifier' => 'testIdentifier'];
 
-		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
-		->setConstructorArgs([$config, $permissionOptionCollection])
-		->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
-		->getMock();
+		/** @var \Awyiss\Authorization\PermissionOption\AbstractPermissionOption $abstractPermissionOption */
+		$abstractPermissionOption = $this->getStubBuilder(AbstractPermissionOption::class)
+			->setConstructorArgs([$config, $permissionOptionCollection])
+			->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
+			->getStub();
 
 		$this->assertSame([], $abstractPermissionOption->getOptions());
 	}
@@ -94,10 +96,11 @@ class AbstractPermissionOptionTest extends TestCase {
 		$permissionOptionCollection = new PermissionOptionCollection('TestScope');
 		$config = ['identifier' => 'testIdentifier'];
 
-		$abstractPermissionOption = $this->getMockBuilder(AbstractPermissionOption::class)
-		->setConstructorArgs([$config, $permissionOptionCollection])
-		->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
-		->getMock();
+		/** @var \Awyiss\Authorization\PermissionOption\AbstractPermissionOption $abstractPermissionOption */
+		$abstractPermissionOption = $this->getStubBuilder(AbstractPermissionOption::class)
+			->setConstructorArgs([$config, $permissionOptionCollection])
+			->onlyMethods(['harmonizeOptionValue', 'isAccessible'])
+			->getStub();
 
 		$this->expectException(RuntimeException::class);
 		$abstractPermissionOption->setOptions(['testOption' => 'test_value']);

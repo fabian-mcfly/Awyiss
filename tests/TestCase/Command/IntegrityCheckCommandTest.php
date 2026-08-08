@@ -58,7 +58,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
 	public function testExecuteAddCommandWithPath(): void {
-		$args = $this->createMock(Arguments::class);
+		$args = $this->createStub(Arguments::class);
 		$args->method('getArgument')->willReturnMap([
 			['command', 'add'],
 			['path', 'some/path'],
@@ -80,7 +80,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
 	public function testExecuteRemoveCommandWithPath(): void {
-		$args = $this->createMock(Arguments::class);
+		$args = $this->createStub(Arguments::class);
 		$args->method('getArgument')->willReturnMap([
 			['command', 'remove'],
 			['path', 'some/path'],
@@ -102,7 +102,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
 	public function testExecuteCheckCommandWithPath(): void {
-		$args = $this->createMock(Arguments::class);
+		$args = $this->createStub(Arguments::class);
 		$args->method('getArgument')->willReturnMap([
 			['command', 'check'],
 			['path', 'some/path'],
@@ -128,7 +128,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
 	public function testExecuteInvalidCommand(): void {
-		$args = $this->createMock(Arguments::class);
+		$args = $this->createStub(Arguments::class);
 		$args->method('getArgument')->willReturnMap([
 			['command', 'invalid'],
 			['path', null],
@@ -148,7 +148,7 @@ class IntegrityCheckCommandTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
 	 */
 	public function testExecuteAddCommandWithoutPath(): void {
-		$args = $this->createMock(Arguments::class);
+		$args = $this->createStub(Arguments::class);
 		$args->method('getArgument')->willReturnMap([
 			['command', 'add'],
 			['path', null],
@@ -193,7 +193,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('success')->with(sprintf('Added: %s with hash `%s`', $path, $hash));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		Configure::write('FileHashes', []);
 
@@ -216,7 +216,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('error')->with(sprintf('File does not exist: %s', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		$this->callProtectedMethod($command, 'addFile', $io, $path);
 	}
@@ -233,7 +233,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('success')->with(sprintf('Added: %s with hash `%s`', $path, $hash));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		Configure::write('FileHashes', []);
 
@@ -257,7 +257,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('error')->with(sprintf('Error processing method `%s`', $exceptionMessage));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		$this->callProtectedMethod($command, 'addFile', $io, $path);
 	}
@@ -273,7 +273,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('success')->with(sprintf('Removed `%s`', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		Configure::write('FileHashes', [$path => 'somehash', 'dummy' => 'somehash']);
 
@@ -295,7 +295,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('error')->with(sprintf('File does not exist `%s`', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		$this->callProtectedMethod($command, 'removeFile', $io, $path);
 	}
@@ -311,7 +311,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('error')->with(sprintf('Identifier not found `%s`', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		$this->callProtectedMethod($command, 'removeFile', $io, $path);
 	}
@@ -327,7 +327,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('success')->with(sprintf('Removed `%s`', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		Configure::write('FileHashes', [$path => 'somehash', 'dummy' => 'somehash']);
 
@@ -349,7 +349,7 @@ class IntegrityCheckCommandTest extends TestCase {
 		$io = $this->createMock(ConsoleIo::class);
 		$io->expects($this->once())->method('error')->with(sprintf('Identifier not found `%s`', $path));
 
-		$command = $this->getMockBuilder(IntegrityCheckCommand::class)->getMock();
+		$command = $this->getStubBuilder(IntegrityCheckCommand::class)->getStub();
 
 		Configure::write('FileHashes', ['dummy' => 'somehash']);
 

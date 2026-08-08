@@ -70,7 +70,7 @@ class GeneralEventsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
 	 */
 	public function testBeforeSaveAllowsNonAwyissEntity(): void {
-		$entity = $this->createMock(BaseEntity::class);
+		$entity = $this->createStub(BaseEntity::class);
 
 		$options = new ArrayObject();
 		$event = new Event('Model.beforeSave');
@@ -87,7 +87,7 @@ class GeneralEventsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
 	 */
 	public function testBeforeSaveAllowsMediaResizedImageEntity(): void {
-		$entity = $this->createMock(MediaResizedImage::class);
+		$entity = $this->createStub(MediaResizedImage::class);
 		$options = new ArrayObject();
 		$event = new Event('Model.beforeSave');
 

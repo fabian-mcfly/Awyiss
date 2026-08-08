@@ -36,7 +36,7 @@ class DesignsListenerTest extends TestCase {
 
 		$this->listener = new DesignsListener();
 
-		$designMiddleware = $this->createMock(DesignMiddleware::class);
+		$designMiddleware = $this->createStub(DesignMiddleware::class);
 		$request = Router::getRequest();
 		$request = $request->withAttribute('design', $designMiddleware);
 		Router::setRequest($request);

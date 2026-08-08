@@ -7,7 +7,7 @@ namespace Awyiss\Command;
 use Cake\Command\I18nExtractCommand as BaseI18nExtractCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\Utility\Filesystem;
+use Cake\Utility\Fs\Finder;
 
 
 /**
@@ -41,15 +41,15 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 		];
 		$pattern = '/(' . implode('|', array_keys($functions)) . ')\s*\(/';
 
-		foreach ($this->_files as $filePath) {
-			$this->_file = $filePath;
+		foreach ($this->_files as $file) {
+			$this->_file = $file;
 			if ($isVerbose) {
-				$io->verbose(sprintf('Processing %s...', $filePath));
+				$io->verbose(sprintf('Processing %s...', $file));
 			}
 
-			$code = file_get_contents($filePath);
+			$code = file_get_contents($file);
 
-			if (str_ends_with($filePath, '.twig')) {
+			if (str_ends_with($file, '.twig')) {
 				$code = str_replace(['{{', '{%'], '<?php', $code);
 				$code = str_replace(['}}', '%}'], '?>', $code);
 			}
@@ -69,6 +69,8 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 					$this->_parse($io, $functionName, $map);
 				}
 			}
+
+			$this->extractFileReflection($file, $code);
 
 			if (!$isVerbose) {
 				$progress->increment();
@@ -102,16 +104,20 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 				continue;
 			}
 			$path .= DIRECTORY_SEPARATOR;
-			/** @noinspection PhpInternalEntityUsedInspection */
-			$filesystem = new Filesystem();
-			$files = $filesystem->findRecursive($path, '/\.(php|twig)$/');
-			$files = array_keys(iterator_to_array($files));
-			sort($files);
-			if (!empty($pattern)) {
-				$files = preg_grep($pattern, $files, PREG_GREP_INVERT);
-				$files = array_values($files);
+			$files = (new Finder())
+				->in($path)
+				->name('*.php')
+				->name('*.twig')
+				->files();
+			foreach ($files as $file) {
+				$this->_files[] = $file->getPathname();
 			}
-			$this->_files = array_merge($this->_files, $files);
+		}
+		$this->_files = array_unique($this->_files);
+		sort($this->_files);
+		if ($pattern) {
+			$this->_files = preg_grep($pattern, $this->_files, PREG_GREP_INVERT) ?: [];
+			$this->_files = array_values($this->_files);
 		}
 		$this->_files = array_unique($this->_files);
 	}

@@ -814,10 +814,11 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo')->with(WWW_ROOT . 'media' . DS . 'new-test.jpg');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -848,10 +849,11 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo')->with(WWW_ROOT . 'media' . DS . 'test.jpg');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -884,10 +886,11 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_CANT_WRITE);
 		$mockFile->expects($this->never())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -921,10 +924,11 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_CANT_WRITE);
 		$mockFile->expects($this->never())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -956,10 +960,11 @@ class MediaListenerTest extends TestCase {
 		file_put_contents(WWW_ROOT . 'media' . DS . 'test.jpg', 'test');
 		$this->assertFileExists(WWW_ROOT . 'media' . DS . 'test.jpg');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -990,10 +995,11 @@ class MediaListenerTest extends TestCase {
 		file_put_contents(WWW_ROOT . 'media' . DS . 'test.jpg', 'test');
 		$this->assertFileExists(WWW_ROOT . 'media' . DS . 'test.jpg');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods([
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods([
 			'deleteConvertedFiles',
 			'moveConvertedFiles',
-		])->getMock();
+		])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -1297,7 +1303,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1341,7 +1348,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1394,7 +1402,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1447,7 +1456,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1491,7 +1501,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1534,7 +1545,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1585,7 +1597,8 @@ class MediaListenerTest extends TestCase {
 		$mockFile->method('getError')->willReturn(UPLOAD_ERR_OK);
 		$mockFile->expects($this->once())->method('moveTo');
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
@@ -1624,7 +1637,8 @@ class MediaListenerTest extends TestCase {
 		$tableLocator->clear();
 		$tableLocator->set('UrlHistory', $urlHistoryTable);
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -1671,7 +1685,8 @@ class MediaListenerTest extends TestCase {
 		$tableLocator->clear();
 		$tableLocator->set('UrlHistory', $urlHistoryTable);
 
-		$mockEntity = $this->getMockBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getMock();
+		/** @var \Awyiss\Model\Entity\Media $mockEntity */
+		$mockEntity = $this->getStubBuilder(Media::class)->onlyMethods(['deleteConvertedFiles', 'deleteResizedFiles'])->getStub();
 		$mockEntity->id = 123;
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
@@ -1839,7 +1854,7 @@ class MediaListenerTest extends TestCase {
 		$event = new Event('Model.Media.afterDelete', $mediaTable);
 
 		$mockEntity = $this->createMock(Media::class);
-		$mockEntity->method('__get')->with('path')->willReturn($testFile);
+		$mockEntity->expects($this->atLeastOnce())->method('__get')->with('path')->willReturn($testFile);
 		$mockEntity->expects($this->once())->method('deleteResizedFiles');
 		$mockEntity->expects($this->once())->method('deleteConvertedFiles');
 

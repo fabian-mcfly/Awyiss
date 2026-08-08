@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\Migration;
 
 use Awyiss\Migration\ColumnParser;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 
 /**
@@ -296,12 +297,12 @@ class ColumnParserTest extends TestCase {
 
 
 	/**
-	 * @dataProvider parseFieldsProvider
 	 * @param string $input
 	 * @param array $output
 	 * @return void
 	 * @see \Awyiss\Migration\ColumnParser::parseFields()
 	 */
+	#[DataProvider('parseFieldsProvider')]
 	public function testParseFields(string $input, array $output): void {
 		$result = $this->columnParser->parseFields([$input]);
 		$this->assertEquals($output, $result);
@@ -373,13 +374,13 @@ class ColumnParserTest extends TestCase {
 
 
 	/**
-	 * @dataProvider getTypeAndLengthAndDefaultProvider
 	 * @param string $field
 	 * @param string $type
 	 * @param array $output
 	 * @return void
 	 * @see \Awyiss\Migration\ColumnParser::getTypeAndLengthAndDefault()
 	 */
+	#[DataProvider('getTypeAndLengthAndDefaultProvider')]
 	public function testGetTypeAndLengthAndDefault(string $field, string $type, array $output): void {
 		$result = $this->columnParser->getTypeAndLengthAndDefault($field, $type);
 

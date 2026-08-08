@@ -8,6 +8,8 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\ORM\Query;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
@@ -43,7 +45,7 @@ class BelongsToManyTest extends TestCase {
 
 		$this->mockQuery = $this->createMock(Query::class);
 
-		$this->mockSourceTable = $this->createMock(Table::class);
+		$this->mockSourceTable = $this->createStub(Table::class);
 		$this->mockSourceTable->method('getTable')->willReturn('posts');
 		$this->mockSourceTable->method('getAlias')->willReturn('Posts');
 		$this->mockSourceTable->method('getRegistryAlias')->willReturn('Posts');
@@ -54,7 +56,8 @@ class BelongsToManyTest extends TestCase {
 		$this->mockTargetTable->method('getRegistryAlias')->willReturn('Tags');
 
 		// Create a partial mock of BelongsToMany to override the find method
-		$this->belongsToManyAssociation = $this->getMockBuilder(BelongsToMany::class)
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->belongsToManyAssociation = $this->getStubBuilder(BelongsToMany::class)
 			->setConstructorArgs(['Tags', [
 				'sourceTable' => $this->mockSourceTable,
 				'targetTable' => $this->mockTargetTable,
@@ -63,7 +66,7 @@ class BelongsToManyTest extends TestCase {
 				'targetForeignKey' => 'tag_id',
 			]])
 			->onlyMethods(['find'])
-			->getMock();
+			->getStub();
 
 		// Mock the find method to return our query mock
 		$this->belongsToManyAssociation->method('find')->willReturn($this->mockQuery);
@@ -71,12 +74,12 @@ class BelongsToManyTest extends TestCase {
 
 
 	/**
-	 * @testWith [true]
-	 *           [false]
 	 * @param bool $exists
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsToMany::exists()
 	 */
+	#[TestWith([true])]
+	#[TestWith([false])]
 	public function testExistsPassesOptionsToTargetTable(bool $exists): void {
 		$conditions = ['dummy' => 123];
 		$options = [
@@ -107,6 +110,7 @@ class BelongsToManyTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsToMany::hasThrough()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHasThroughReturnsFalseWhenNoThroughTable(): void {
 		$result = $this->belongsToManyAssociation->hasThrough();
 
@@ -121,8 +125,9 @@ class BelongsToManyTest extends TestCase {
 	 * @see \Awyiss\ORM\Association\BelongsToMany::hasThrough()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testHasThroughReturnsTrueWhenThroughTableIsSet(): void {
-		$throughTable = $this->createMock(Table::class);
+		$throughTable = $this->createStub(Table::class);
 
 		$belongsToManyAssociation = new BelongsToMany('Tags', [
 			'sourceTable' => $this->mockSourceTable,

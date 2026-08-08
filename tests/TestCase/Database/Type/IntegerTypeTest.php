@@ -36,9 +36,8 @@ class IntegerTypeTest extends TestCase {
 		parent::setUp();
 
 		$this->type = new IntegerType();
-		$this->driver = $this->getMockBuilder(Driver::class)
-			->disableOriginalConstructor()
-			->getMock();
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->driver = $this->getStubBuilder(Driver::class)->disableOriginalConstructor()->getStub();
 	}
 
 

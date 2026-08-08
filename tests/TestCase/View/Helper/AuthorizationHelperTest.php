@@ -126,7 +126,7 @@ class AuthorizationHelperTest extends TestCase {
 	public function testGetIdentityReturnsIdentityFromRequestIfNotSet(): void {
 		$helper = new AuthorizationHelper($this->view);
 
-		$identityMock = $this->createMock(IdentityPermissionsInterface::class);
+		$identityMock = $this->createStub(IdentityPermissionsInterface::class);
 
 		$request = $helper->getView()->getRequest()->withAttribute('BackendIdentity', $identityMock);
 
@@ -144,7 +144,7 @@ class AuthorizationHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetIdentity(): void {
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity = $this->createStub(IdentityPermissionsInterface::class);
 
 		$this->helper->setConfig('identity', $identity);
 
@@ -158,7 +158,7 @@ class AuthorizationHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetIdentity(): void {
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity = $this->createStub(IdentityPermissionsInterface::class);
 
 		$this->helper->setIdentity($identity);
 
@@ -172,7 +172,7 @@ class AuthorizationHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testResetIdentity(): void {
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity = $this->createStub(IdentityPermissionsInterface::class);
 
 		$this->helper->setIdentity($identity);
 		$this->helper->resetIdentity();
@@ -224,7 +224,7 @@ class AuthorizationHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testIsAccessible(): void {
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity = $this->createStub(IdentityPermissionsInterface::class);
 		$identity->method('scopeIsAccessible')->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
@@ -295,7 +295,7 @@ class AuthorizationHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testScopeIsAccessible(): void {
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity = $this->createStub(IdentityPermissionsInterface::class);
 		$this->helper->setConfig('identity', $identity);
 
 		$identity->method('scopeIsAccessible')->willReturnOnConsecutiveCalls(true, false);
@@ -314,8 +314,8 @@ class AuthorizationHelperTest extends TestCase {
 	public function testScopeIsAccessiblePassesAdditionDataAsIs(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('Scope', ['foo2' => 'bar2'], 'identifier')
-		->willReturn(true);
+			->with('Scope', ['foo2' => 'bar2'], 'identifier')
+			->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 		$this->helper->setConfig('additionalData', ['foo' => 'bar']);
@@ -324,8 +324,8 @@ class AuthorizationHelperTest extends TestCase {
 
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('Scope', ['foo' => 'bar'], 'identifier')
-		->willReturn(true);
+			->with('Scope', ['foo' => 'bar'], 'identifier')
+			->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 		$this->helper->setConfig('additionalData', ['foo' => 'bar']);
@@ -343,8 +343,8 @@ class AuthorizationHelperTest extends TestCase {
 	public function testScopeIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('Scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
-		->willReturn(true);
+			->with('Scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
+			->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);
 
@@ -503,7 +503,7 @@ class AuthorizationHelperTest extends TestCase {
 		/** @var class-string<\Customer\Authorization\Policy\Backend\FoobarsPolicy> $policy */
 		$policy = $service->getPolicy('foobars');
 
-		$fakeEntity = $this->createMock(Media::class);
+		$fakeEntity = $this->createStub(Media::class);
 
 		$view = $this->getMockBuilder(BackendView::class)
 			->disableOriginalConstructor()
@@ -536,7 +536,7 @@ class AuthorizationHelperTest extends TestCase {
 	public function testPermissionOptionsThrowsExceptionWithoutIdentifier(): void {
 		$this->expectException(RuntimeException::class);
 
-		$permission = $this->createMock(PermissionOptionInterface::class);
+		$permission = $this->createStub(PermissionOptionInterface::class);
 		$permission->method('getConfig')->willReturnMap([
 			['preferredInput', (object)['value' => 'input']],
 			['identifier', null],

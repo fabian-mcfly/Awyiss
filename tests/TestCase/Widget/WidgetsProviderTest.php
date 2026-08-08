@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\Widget;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Widget\WidgetInterface;
 use Awyiss\Widget\WidgetsProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionProperty;
 use RuntimeException;
@@ -176,12 +177,12 @@ class WidgetsProviderTest extends TestCase {
 	/**
 	 * Test sanitizeIdentifier method with various inputs
 	 *
-	 * @dataProvider sanitizeIdentifierDataProvider
 	 * @param string $input
 	 * @param string $expected
 	 * @return void
 	 * @see \Awyiss\Widget\WidgetsProvider::sanitizeIdentifier()
 	 */
+	#[DataProvider('sanitizeIdentifierDataProvider')]
 	public function testSanitizeIdentifier(string $input, string $expected): void {
 		$result = WidgetsProvider::sanitizeIdentifier($input);
 

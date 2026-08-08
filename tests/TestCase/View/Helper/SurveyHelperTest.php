@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\Helper\SurveyHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 
 /**
@@ -40,8 +41,9 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithSameActiveStatus(): void {
-		// Create survey survey question entities
+		// Create survey_survey_question entities
 		$question1 = new SurveySurveyQuestion([
 			'identifier' => 'q1',
 			'surveyQuestion' => new SurveyQuestion(['active' => true]),
@@ -85,8 +87,9 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithActiveStatus(): void {
-		// Create survey survey question entities
+		// Create survey_survey_question entities
 		$question1 = new SurveySurveyQuestion([
 			'identifier' => 'q1',
 			'surveyQuestion' => new SurveyQuestion(['active' => false]),
@@ -133,8 +136,9 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithNoNextQuestion(): void {
-		// Create survey survey question entities
+		// Create survey_survey_question entities
 		$question1 = new SurveySurveyQuestion([
 			'identifier' => 'q1',
 			'surveyQuestion' => new SurveyQuestion(['active' => true]),
@@ -177,6 +181,7 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithEmptyArray(): void {
 		$result = $this->helper->realNextQuestion([], 'q1');
 		$this->assertFalse($result);
@@ -188,8 +193,9 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithInvalidIdentifier(): void {
-		// Create survey survey question entities
+		// Create survey_survey_question entities
 		$question1 = new SurveySurveyQuestion([
 			'identifier' => 'q1',
 			'surveyQuestion' => new SurveyQuestion(['active' => true]),
@@ -233,8 +239,9 @@ class SurveyHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 */
+	#[AllowMockObjectsWithoutExpectations]
 	public function testRealNextQuestionWithMultipleQuestionsWithSameActiveStatus(): void {
-		// Create survey survey question entities
+		// Create survey_survey_question entities
 		$question1 = new SurveySurveyQuestion([
 			'identifier' => 'q1',
 			'surveyQuestion' => new SurveyQuestion(['active' => true]),

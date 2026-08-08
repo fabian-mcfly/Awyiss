@@ -116,13 +116,15 @@ class SearchBehaviorTest extends TestCase {
 		$this->session->write('_filter.TestTable', $sessionData);
 
 		// Create a new table with SearchBehavior
-		$table = $this->getMockBuilder(EmployersTable::class)->setConstructorArgs([
+		$table = $this->getStubBuilder(EmployersTable::class)->setConstructorArgs([
 			[
 				'table' => 'employers',
 				'registryAlias' => 'TestTable',
 				'alias' => 'TestTable',
 			],
-		])->onlyMethods([])->getMock();
+		])
+		->onlyMethods([])
+		->getStub();
 
 		$table->addBehavior('Search');
 		$behavior = $table->getBehavior('Search');

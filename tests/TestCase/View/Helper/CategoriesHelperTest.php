@@ -75,7 +75,7 @@ class CategoriesHelperTest extends TestCase {
 
 		$entity = $this->fetchTable('Media')->get(2);
 
-		$context = $this->createMock(EntityContext::class);
+		$context = $this->createStub(EntityContext::class);
 		$context->method('entity')->willReturn($entity);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -100,7 +100,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetWidgetLocator(): void {
-		$widgetLocator = $this->createMock(WidgetLocator::class);
+		$widgetLocator = $this->createStub(WidgetLocator::class);
 
 		$this->helper->setWidgetLocator($widgetLocator);
 

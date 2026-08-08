@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import 'Frontend/MapLibre/maplibre-gl';
+import * as maplibregl from 'Frontend/MapLibre/maplibre-gl';
 // noinspection NpmUsedModulesInstalled
 import mapLibreLocale from 'Frontend/MapLibre/locale';
 

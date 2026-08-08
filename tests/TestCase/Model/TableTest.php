@@ -18,6 +18,7 @@ use Awyiss\Model\Behavior\AttributesBehavior;
 use Awyiss\Model\Behavior\TranslateBehavior;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Attribute;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\Model\Table\FormsTable;
@@ -45,9 +46,11 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Behavior as CakeBehavior;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Query\UnhydratedSelectQuery;
 use Closure;
 use Customer\Model\Entity\DummyUser;
 use Customer\Model\Enum\PageRole;
+use PHPUnit\Framework\Attributes\TestWith;
 use ReflectionClass;
 use RuntimeException;
 
@@ -444,7 +447,7 @@ HTML;
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer'])->addColumn('deleted', ['type' => 'boolean']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -475,7 +478,7 @@ HTML;
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -495,7 +498,7 @@ HTML;
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer'])->addColumn('systemOrder', ['type' => 'integer']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -526,7 +529,7 @@ HTML;
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -906,16 +909,17 @@ HTML;
 
 
 	/**
-	 * @testWith [true]
-	 *           [false]
 	 * @param bool $translateBehaviorExists
 	 * @return void
 	 * @see \Awyiss\Model\Table::findTranslations()
 	 */
+	#[TestWith([true])]
+	#[TestWith([false])]
 	public function testFindTranslationsCallsBehaviorMethodWhenTranslateBehaviorExists(bool $translateBehaviorExists): void {
-		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->getMock();
+		/** @var \Cake\ORM\Query\SelectQuery $query */
+		$query = $this->getStubBuilder(SelectQuery::class)->disableOriginalConstructor()->getStub();
 
-		$modifiedQuery = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->getMock();
+		$modifiedQuery = $this->getStubBuilder(SelectQuery::class)->disableOriginalConstructor()->getStub();
 
 		$translateBehavior = $this->getMockBuilder(TranslateBehavior::class)->disableOriginalConstructor()->onlyMethods(['findTranslations'])->getMock();
 
@@ -964,7 +968,7 @@ HTML;
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer'])->addColumn('active', ['type' => 'boolean']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -979,12 +983,12 @@ HTML;
 	 * @see \Awyiss\Model\Table::findActive()
 	 */
 	public function testFindActiveThrowsExceptionWhenActiveColumnDoesNotExist(): void {
-		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->getMock();
+		$query = $this->getStubBuilder(SelectQuery::class)->disableOriginalConstructor()->getStub();
 
 		$schema = new TableSchema('pages');
 		$schema->addColumn('id', ['type' => 'integer']);
 
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['getSchema'])->getStub();
 
 		$table->method('getSchema')->willReturn($schema);
 
@@ -1289,11 +1293,11 @@ HTML;
 	 * @see \Awyiss\Model\Table::exists()
 	 */
 	public function testExistsPassesOptionsToQuery(): void {
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
+		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['unhydratedFind'])->getMock();
 
-		$query = $this->getMockBuilder(SelectQuery::class)
+		$query = $this->getMockBuilder(UnhydratedSelectQuery::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'disableHydration', 'toArray'])
+			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'toArray'])
 			->getMock();
 
 		$options = [
@@ -1303,7 +1307,7 @@ HTML;
 			'group' => ['categoryId'],
 		];
 
-		$table->expects($this->once())->method('find')->with('all')->willReturn($query);
+		$table->expects($this->once())->method('unhydratedFind')->with('all')->willReturn($query);
 
 		$query->expects($this->once())->method('applyOptions')->with($options)->willReturnSelf();
 
@@ -1312,8 +1316,6 @@ HTML;
 		$query->expects($this->once())->method('where')->with(['id' => 1])->willReturnSelf();
 
 		$query->expects($this->once())->method('limit')->with(1)->willReturnSelf();
-
-		$query->expects($this->once())->method('disableHydration')->willReturnSelf();
 
 		$query->expects($this->once())->method('toArray')->willReturn([['existing' => 1]]);
 
@@ -1328,11 +1330,11 @@ HTML;
 	 * @see \Awyiss\Model\Table::exists()
 	 */
 	public function testExistsPassesFinderOptionsToQuery(): void {
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find', '_extractFinder'])->getMock();
+		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['unhydratedFind', '_extractFinder'])->getMock();
 
-		$query = $this->getMockBuilder(SelectQuery::class)
+		$query = $this->getMockBuilder(UnhydratedSelectQuery::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'disableHydration', 'toArray'])
+			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'toArray'])
 			->getMock();
 
 		$options = [
@@ -1348,7 +1350,7 @@ HTML;
 
 		$table->expects($this->once())->method('_extractFinder')->with('active')->willReturn(['active', []]);
 
-		$table->expects($this->once())->method('find')->with('active')->willReturn($query);
+		$table->expects($this->once())->method('unhydratedFind')->with('active')->willReturn($query);
 
 		$query->expects($this->once())->method('applyOptions')->with($extractedOptions)->willReturnSelf();
 
@@ -1357,8 +1359,6 @@ HTML;
 		$query->expects($this->once())->method('where')->with(['active' => true])->willReturnSelf();
 
 		$query->expects($this->once())->method('limit')->with(1)->willReturnSelf();
-
-		$query->expects($this->once())->method('disableHydration')->willReturnSelf();
 
 		$query->expects($this->once())->method('toArray')->willReturn([]);
 
@@ -1373,20 +1373,19 @@ HTML;
 	 * @see \Awyiss\Model\Table::exists()
 	 */
 	public function testExistsReturnsTrueWhenRecordExists(): void {
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
+		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['unhydratedFind'])->getMock();
 
-		$query = $this->getMockBuilder(SelectQuery::class)
+		$query = $this->getStubBuilder(UnhydratedSelectQuery::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'disableHydration', 'toArray'])
-			->getMock();
+			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'toArray'])
+			->getStub();
 
-		$table->expects($this->once())->method('find')->with('all')->willReturn($query);
+		$table->expects($this->once())->method('unhydratedFind')->with('all')->willReturn($query);
 
 		$query->method('applyOptions')->willReturnSelf();
 		$query->method('select')->willReturnSelf();
 		$query->method('where')->willReturnSelf();
 		$query->method('limit')->willReturnSelf();
-		$query->method('disableHydration')->willReturnSelf();
 		$query->method('toArray')->willReturn([['existing' => 1]]);
 
 		$result = $table->exists(['id' => 1]);
@@ -1400,20 +1399,19 @@ HTML;
 	 * @see \Awyiss\Model\Table::exists()
 	 */
 	public function testExistsReturnsFalseWhenNoRecordExists(): void {
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
+		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['unhydratedFind'])->getMock();
 
-		$query = $this->getMockBuilder(SelectQuery::class)
+		$query = $this->getStubBuilder(UnhydratedSelectQuery::class)
 			->disableOriginalConstructor()
-			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'disableHydration', 'toArray'])
-			->getMock();
+			->onlyMethods(['applyOptions', 'select', 'where', 'limit', 'toArray'])
+			->getStub();
 
-		$table->expects($this->once())->method('find')->with('all')->willReturn($query);
+		$table->expects($this->once())->method('unhydratedFind')->with('all')->willReturn($query);
 
 		$query->method('applyOptions')->willReturnSelf();
 		$query->method('select')->willReturnSelf();
 		$query->method('where')->willReturnSelf();
 		$query->method('limit')->willReturnSelf();
-		$query->method('disableHydration')->willReturnSelf();
 		$query->method('toArray')->willReturn([]);
 
 		$result = $table->exists(['id' => 999]);
@@ -2359,7 +2357,7 @@ HTML;
 		$this->assertTrue($entity->isDirty());
 
 		// Mock the parent save to just return the entity
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['_processSave'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['_processSave'])->getStub();
 
 		$table->method('_processSave')->willReturn(false);
 
@@ -2396,7 +2394,7 @@ HTML;
 		$this->assertTrue($entity->isDirty());
 
 		// Mock the parent save to just return the entity
-		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['_processSave'])->getMock();
+		$table = $this->getStubBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['_processSave'])->getStub();
 
 		$table->method('_processSave')->willReturn(false);
 
@@ -2546,8 +2544,6 @@ HTML;
 
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'test_entities']])->onlyMethods(['save', 'getConnection'])->getMock();
 
-		$table->expects($this->any())->method('getConnection')->willReturn($mockConnection);
-
 		// Mock save to return false (failure)
 		$table->expects($this->once())->method('save')->willReturn(false);
 
@@ -2577,7 +2573,7 @@ HTML;
 
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'test_entities']])->onlyMethods(['save', 'getConnection'])->getMock();
 
-		$table->expects($this->any())->method('getConnection')->willReturn($mockConnection);
+		$table->expects($this->atLeastOnce())->method('getConnection')->willReturn($mockConnection);
 
 		// Mock save to return false (failure)
 		$table->expects($this->once())->method('save')->willReturn(false);
@@ -3015,7 +3011,7 @@ HTML,
 		/** @noinspection HtmlUnknownTarget */
 		$text = '<p>Test image: <img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="Test Image" width="100" height="100"></p>';
 
-		$entity = new Entity();
+		$entity = new Page();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$entity->text = $text;
 
@@ -3044,7 +3040,7 @@ HTML,
 		};
 		$table->getEventManager()->on('Model.beforeSave', ['priority' => 100], $cancelEvent);
 
-		$entity = new Entity();
+		$entity = new Page();
 		/** @noinspection HtmlUnknownTarget, PhpPossiblePolymorphicInvocationInspection */
 		$entity->text = '<p>Test image: <img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="Test Image" width="100" height="100"></p>';
 		$entity->setSource('pages');

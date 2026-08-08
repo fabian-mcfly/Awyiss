@@ -315,7 +315,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('setErrors');
 
-		$this->mockEntity->expects($this->once())->method('patch')->with($this->isType('array'));
+		$this->mockEntity->expects($this->once())->method('patch')->with($this->isArray());
 
 		$this->mockTable->expects($this->never())->method('getEntityClass');
 
@@ -332,7 +332,7 @@ class MarshallerTest extends TestCase {
 			}
 
 			// Return must be an EventInterface instance, but we don't care about the details here
-			return $this->createMock(EventInterface::class);
+			return $this->createStub(EventInterface::class);
 		});
 
 		$result = $this->marshaller->merge($this->mockEntity, $data, $options);
@@ -356,7 +356,7 @@ class MarshallerTest extends TestCase {
 
 		$this->mockEntity->expects($this->once())->method('setErrors');
 
-		$this->mockEntity->expects($this->once())->method('patch')->with($this->isType('array'));
+		$this->mockEntity->expects($this->once())->method('patch')->with($this->isArray());
 
 		$this->mockTable->expects($this->never())->method('getEntityClass');
 
@@ -374,7 +374,7 @@ class MarshallerTest extends TestCase {
 			}
 
 			// Return must be an EventInterface instance, but we don't care about the details here
-			return $this->createMock(EventInterface::class);
+			return $this->createStub(EventInterface::class);
 		});
 
 		$result = $this->marshaller->merge($this->mockEntity, $data, $options);

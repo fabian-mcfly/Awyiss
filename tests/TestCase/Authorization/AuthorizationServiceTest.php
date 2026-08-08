@@ -32,7 +32,7 @@ class AuthorizationServiceTest extends TestCase {
 	public function testSetAuthenticationService(): void {
 		$service = new AuthorizationService('realm');
 
-		$service->setAuthenticationService($this->createMock(AuthenticationServiceInterface::class));
+		$service->setAuthenticationService($this->createStub(AuthenticationServiceInterface::class));
 		$this->assertInstanceOf(AuthenticationServiceInterface::class, $service->getAuthenticationService());
 	}
 
