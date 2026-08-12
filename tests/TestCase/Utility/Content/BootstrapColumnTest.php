@@ -135,19 +135,6 @@ class BootstrapColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 */
-	public function testGetPercentageWithZeroNumerator(): void {
-		$column = new BootstrapColumn(0, 12);
-
-		$percentage = $column->getPercentage();
-
-		$this->assertEquals(0.0, $percentage);
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::__construct()
 	 */
 	public function testConstructorWithZeroDenominator(): void {

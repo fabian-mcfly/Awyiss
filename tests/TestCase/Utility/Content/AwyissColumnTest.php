@@ -135,19 +135,6 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
-	 */
-	public function testGetPercentageWithZeroNumerator(): void {
-		$column = new AwyissColumn(0, 12);
-
-		$percentage = $column->getPercentage();
-
-		$this->assertEquals(0.0, $percentage);
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
 	 */
 	public function testConstructorWithZeroDenominator(): void {

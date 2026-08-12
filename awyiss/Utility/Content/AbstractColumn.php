@@ -42,8 +42,8 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	 * @param string|null $label
 	 */
 	public function __construct(int $numerator, int $denominator, ?string $label = null) {
-		if ($numerator < 0) {
-			throw new InvalidArgumentException('Numerator must be greater than or equal to zero.');
+		if ($numerator <= 0) {
+			throw new InvalidArgumentException('Numerator must be greater than zero.');
 		}
 
 		if ($denominator <= 0) {
