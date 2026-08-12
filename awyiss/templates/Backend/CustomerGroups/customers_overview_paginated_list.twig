@@ -52,7 +52,7 @@
 											</th>
 										{% else %}
 											{% if field ends with 'Id' and field != 'parentId' %}
-												{% set associationName = field|slice(0, -3) %}
+												{% set associationName = field|slice(0, -2) %}
 												<th class="TableHeader-{{ field|camelize }}">
 													{{ __df('Customers', 'System', field|underscore) }}
 												</th>

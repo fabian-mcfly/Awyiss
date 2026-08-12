@@ -131,16 +131,16 @@ class PaginateComponent extends Component {
 			if (is_array($params['sort'])) {
 				$params['sort'] = array_map(function ($field) {
 					if (!str_contains($field, '.')) {
-						return Inflector::underscore($field);
+						return Inflector::variable($field);
 					}
 
 					$parts = explode('.', $field);
 
-					return $parts[0] . '.' . Inflector::underscore($parts[1]);
+					return $parts[0] . '.' . Inflector::variable($parts[1]);
 				}, $params['sort']);
 			}
 			else {
-				$params['sort'] = Inflector::underscore($params['sort']);
+				$params['sort'] = Inflector::variable($params['sort']);
 			}
 		}
 
@@ -228,7 +228,7 @@ class PaginateComponent extends Component {
 		}
 
 		$categoriesField = $table->getBehavior('Categories')->getConfig('field');
-		if (Inflector::underscore($categoriesField) !== $params['sort']) {
+		if (Inflector::variable($categoriesField) !== $params['sort']) {
 			return;
 		}
 
@@ -262,7 +262,7 @@ class PaginateComponent extends Component {
 			$settings['sortableFields'] = array_merge($this->defaultSortableFields,	$table->getSchema()->columns());
 
 			$settings['sortableFields'] = array_map(
-				fn($field) => Inflector::underscore($field),
+				fn($field) => Inflector::variable($field),
 				$settings['sortableFields']
 			);
 
@@ -270,13 +270,13 @@ class PaginateComponent extends Component {
 		}
 
 		if ($isContain) {
-			$singularAlias = Inflector::underscore(Inflector::singularize($tableAlias));
+			$singularTableAlias = Inflector::variable(Inflector::singularize($tableAlias));
 			// Prefix all fields with the table alias
 			foreach ($table->getSchema()->columns() as $field) {
-				$underscoredAlias = $singularAlias . '_' . $field;
+				$singularAlias = $singularTableAlias . '.' . $field;
 				$settings['sortableFields'][] = $tableAlias . '.' . $field;
 
-				if (isset($params['sort']) && $params['sort'] === $underscoredAlias) {
+				if (isset($params['sort']) && $params['sort'] === $singularAlias) {
 					$params['sort'] = $tableAlias . '.' . $field;
 				}
 			}

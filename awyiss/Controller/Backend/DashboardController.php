@@ -248,7 +248,7 @@ class DashboardController extends Controller {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function applyQuerySortingByAssociation(Table $table, SelectQuery $query, string $field, string $direction): SelectQuery {
-		$associationName = substr($field, 0, -3);
+		$associationName = substr($field, 0, -2);
 		$associationName = Inflector::camelize(Inflector::pluralize($associationName));
 		if (!$table->hasAssociation($associationName)) {
 			return $query;
