@@ -40,5 +40,7 @@
 
 	{% set contents = content('ContentArea') %}
 
-	<p class="ReadingTime">Lesezeit: ca. {{ _self.readingTime(contents) }}</p>
+	{% if contents %}
+		<p class="ReadingTime">Lesezeit: ca. {{ _self.readingTime(contents) }}</p>
+	{% endif %}
 {% endblock %}
