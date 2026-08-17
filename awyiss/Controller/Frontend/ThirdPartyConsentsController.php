@@ -21,16 +21,18 @@ class ThirdPartyConsentsController extends AppController {
 	public function track(): void {
 		$requestData = $this->request->getData();
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setClassName('Json')
-			->setOption('serialize', ['status']);
+			->setOption('serialize', ['status'])
+		;
 
 		// Check if the required fields exist
 		if (
-			!isset($requestData['consentId']) ||
-			!isset($requestData['acceptType']) ||
-			!isset($requestData['acceptedCategories']) ||
-			!isset($requestData['rejectedCategories'])
+			!isset($requestData['consentId'])
+			|| !isset($requestData['acceptType'])
+			|| !isset($requestData['acceptedCategories'])
+			|| !isset($requestData['rejectedCategories'])
 		) {
 			// Set the response data
 			$this->set([

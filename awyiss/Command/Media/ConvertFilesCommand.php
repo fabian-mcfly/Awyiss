@@ -34,13 +34,6 @@ use Symfony\Component\Process\Process;
  */
 class ConvertFilesCommand extends Command {
 	/**
-	 * An instance of the Intervention ImageManager,
-	 * using the configured driver (gd or imagick)
-	 *
-	 * @var \Intervention\Image\ImageManager
-	 */
-	protected ImageManager $imageManager;
-	/**
 	 * Whether to use the ImageMagick commands
 	 * for image manipulation.
 	 *
@@ -51,6 +44,13 @@ class ConvertFilesCommand extends Command {
 	 * @var string
 	 */
 	protected string $driver;
+	/**
+	 * An instance of the Intervention ImageManager,
+	 * using the configured driver (gd or imagick)
+	 *
+	 * @var \Intervention\Image\ImageManager
+	 */
+	protected ImageManager $imageManager;
 	/**
 	 * The quality of the generated images.
 	 * For Avif files, the quality can be lower while
@@ -65,27 +65,6 @@ class ConvertFilesCommand extends Command {
 	 * @var bool
 	 */
 	protected bool $verbose = false;
-
-
-	/**
-	 * @param string $message
-	 * @param array<string, mixed> $context
-	 * @return void
-	 */
-	protected function debug(string $message, array $context = []): void {
-		if (!$this->verbose) {
-			return;
-		}
-
-		$logMessage = '[ConvertFilesCommand] ' . $message;
-
-		if ($context) {
-			$jsonContext = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-			$logMessage .= ' | ' . ($jsonContext === false ? '[context-encode-failed]' : $jsonContext);
-		}
-
-		Log::debug($logMessage);
-	}
 
 
 	/**
@@ -120,6 +99,27 @@ class ConvertFilesCommand extends Command {
 		$this->createImageManager();
 
 		$this->quality = Configure::read('Awyiss.Media.Frontend.resizing.quality', 70);
+	}
+
+
+	/**
+	 * @param string $message
+	 * @param array<string, mixed> $context
+	 * @return void
+	 */
+	protected function debug(string $message, array $context = []): void {
+		if (!$this->verbose) {
+			return;
+		}
+
+		$logMessage = '[ConvertFilesCommand] ' . $message;
+
+		if ($context) {
+			$jsonContext = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+			$logMessage .= ' | ' . ($jsonContext === false ? '[context-encode-failed]' : $jsonContext);
+		}
+
+		Log::debug($logMessage);
 	}
 
 
@@ -192,7 +192,13 @@ class ConvertFilesCommand extends Command {
 			'quiet' => (bool)$args->getOption('quiet'),
 		]);
 
-		$io->out(sprintf('Starting media processing using %s with %u%% quality...', $this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $this->driver . ')', $this->quality));
+		$io->out(
+			sprintf(
+				'Starting media processing using %s with %u%% quality...',
+				$this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $this->driver . ')',
+				$this->quality
+			)
+		);
 
 		/**
 		 * @see self::processCropFiles()
@@ -331,7 +337,13 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForAvifConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 		if ($files->count()) {
-			$this->debug('Fetched avif conversion files', ['count' => $files->count(), 'retryFailed' => (bool)$args->getOption('retry-failed')]);
+			$this->debug(
+				'Fetched avif conversion files',
+				[
+					'count' => $files->count(),
+					'retryFailed' => (bool)$args->getOption('retry-failed'),
+				]
+			);
 
 			$result = $this->convertImagesToAvif($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
@@ -354,7 +366,13 @@ class ConvertFilesCommand extends Command {
 		$files = $this->fetchFilesForWebpConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 		if ($files->count()) {
-			$this->debug('Fetched webp conversion files', ['count' => $files->count(), 'retryFailed' => (bool)$args->getOption('retry-failed')]);
+			$this->debug(
+				'Fetched webp conversion files',
+				[
+					'count' => $files->count(),
+					'retryFailed' => (bool)$args->getOption('retry-failed'),
+				]
+			);
 
 			$result = $this->convertImagesToWebp($files, $io);
 			if ($result !== static::CODE_SUCCESS) {
@@ -503,14 +521,19 @@ class ConvertFilesCommand extends Command {
 
 			/** @var \Awyiss\Model\Entity\Media $file */
 			foreach ($files as $file) {
-				$averageColorCases->when(['id = ' . $file->id])->then($file->averageColor, 'string');
+				$averageColorCases
+					->when(['id = ' . $file->id])
+					->then($file->averageColor, 'string')
+				;
 			}
 
 			return [
 				'averageColor' => $averageColorCases,
 			];
 		}, [
-			'id IN' => $files->extract('id')->toArray(),
+			'id IN' => $files
+				->extract('id')
+				->toArray(),
 		]);
 
 		return static::CODE_SUCCESS;
@@ -582,7 +605,10 @@ class ConvertFilesCommand extends Command {
 			$image = $this->imageManager->decodePath($filePath);
 
 			// Resize the image to 1x1 pixel
-			$color = $image->resize(1, 1)->colorAt(0, 0);
+			$color = $image
+				->resize(1, 1)
+				->colorAt(0, 0)
+			;
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -618,7 +644,12 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
 
-		$avifStatus = array_unique($files->extract('avif')->toArray(), SORT_REGULAR);
+		$avifStatus = array_unique(
+			$files
+				->extract('avif')
+				->toArray(),
+			SORT_REGULAR
+		);
 		if (count($avifStatus) === 1) {
 			/**
 			 * If all files have the same avif status, use a simple updateAll command
@@ -626,7 +657,9 @@ class ConvertFilesCommand extends Command {
 			$mediaTable->updateAll([
 				'avif' => $avifStatus[0],
 			], [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 		else {
@@ -635,14 +668,19 @@ class ConvertFilesCommand extends Command {
 
 				/** @var \Awyiss\Model\Entity\Media $file */
 				foreach ($files as $file) {
-					$avifCases->when(['id = ' . $file->id])->then($file->avif->value, 'integer');
+					$avifCases
+						->when(['id = ' . $file->id])
+						->then($file->avif->value, 'integer')
+					;
 				}
 
 				return [
 					'avif' => $avifCases,
 				];
 			}, [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -666,7 +704,12 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
 
-		$webpStatus = array_unique($files->extract('webp')->toArray(), SORT_REGULAR);
+		$webpStatus = array_unique(
+			$files
+				->extract('webp')
+				->toArray(),
+			SORT_REGULAR
+		);
 		if (count($webpStatus) === 1) {
 			/**
 			 * If all files have the same webp status, use a simple updateAll command
@@ -674,7 +717,9 @@ class ConvertFilesCommand extends Command {
 			$mediaTable->updateAll([
 				'webp' => $webpStatus[0],
 			], [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 		else {
@@ -683,14 +728,19 @@ class ConvertFilesCommand extends Command {
 
 				/** @var \Awyiss\Model\Entity\Media $file */
 				foreach ($files as $file) {
-					$webpCases->when(['id = ' . $file->id])->then($file->webp->value, 'integer');
+					$webpCases
+						->when(['id = ' . $file->id])
+						->then($file->webp->value, 'integer')
+					;
 				}
 
 				return [
 					'webp' => $webpCases,
 				];
 			}, [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -734,10 +784,7 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Creating Avif file for file `%s`', $file->path));
 
 		// If magick is not available or cannot convert to AVIF, use the Intervention library
-		if (
-			!$this->cliMagickExists ||
-			Configure::read('AvailableCommands.imageMagick.avif', false) === false
-		) {
+		if (!$this->cliMagickExists	|| Configure::read('AvailableCommands.imageMagick.avif', false) === false) {
 			return $this->convertImageToAvifIntervention($file, $io);
 		}
 
@@ -780,10 +827,7 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
 
 		// If magick is not available or cannot convert to WebP, use the Intervention library
-		if (
-			!$this->cliMagickExists ||
-			Configure::read('AvailableCommands.imageMagick.webp', false) === false
-		) {
+		if (!$this->cliMagickExists || Configure::read('AvailableCommands.imageMagick.webp', false) === false) {
 			return $this->convertImageToWebpIntervention($file, $io);
 		}
 
@@ -802,7 +846,10 @@ class ConvertFilesCommand extends Command {
 		try {
 			$image = $this->imageManager->decodePath($inputPath);
 
-			$image->encodeUsingFormat(Format::AVIF, quality: $this->quality)->save($file->avifPathAbsolute);
+			$image
+				->encodeUsingFormat(Format::AVIF, quality: $this->quality)
+				->save($file->avifPathAbsolute)
+			;
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -830,7 +877,10 @@ class ConvertFilesCommand extends Command {
 		try {
 			$image = $this->imageManager->decodePath($inputPath);
 
-			$image->encodeUsingFormat(Format::WEBP, quality: $this->quality)->save($file->webpPathAbsolute);
+			$image
+				->encodeUsingFormat(Format::WEBP, quality: $this->quality)
+				->save($file->webpPathAbsolute)
+			;
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -897,7 +947,12 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
 
-		$previewStatus = array_unique($files->extract('preview')->toArray(), SORT_REGULAR);
+		$previewStatus = array_unique(
+			$files
+				->extract('preview')
+				->toArray(),
+			SORT_REGULAR
+		);
 		/**
 		 * If all files have the same preview status "failed", use a simple updateAll command
 		 * This also means no preview was created, even though it was requested.
@@ -909,7 +964,9 @@ class ConvertFilesCommand extends Command {
 				'avif' => ProcessStatus::Undefined,
 				'webp' => ProcessStatus::Undefined,
 			], [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 		else {
@@ -928,16 +985,31 @@ class ConvertFilesCommand extends Command {
 
 				/** @var \Awyiss\Model\Entity\Media $file */
 				foreach ($files as $file) {
-					$widthCases->when(['id = ' . $file->id])->then($file->width, 'float');
-					$heightCases->when(['id = ' . $file->id])->then($file->height, 'float');
-					$previewCases->when(['id = ' . $file->id])->then($file->preview->value, 'integer');
+					$widthCases
+						->when(['id = ' . $file->id])
+						->then($file->width, 'float')
+					;
+					$heightCases
+						->when(['id = ' . $file->id])
+						->then($file->height, 'float')
+					;
+					$previewCases
+						->when(['id = ' . $file->id])
+						->then($file->preview->value, 'integer')
+					;
 
 					if ($includeAvif) {
-						$avifCases->when(['id = ' . $file->id])->then($file->avif->value, 'integer');
+						$avifCases
+							->when(['id = ' . $file->id])
+							->then($file->avif->value, 'integer')
+						;
 					}
 
 					if ($includeWebp) {
-						$webpCases->when(['id = ' . $file->id])->then($file->webp->value, 'integer');
+						$webpCases
+							->when(['id = ' . $file->id])
+							->then($file->webp->value, 'integer')
+						;
 					}
 				}
 
@@ -957,7 +1029,9 @@ class ConvertFilesCommand extends Command {
 
 				return $cases;
 			}, [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -1007,17 +1081,19 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Creating preview for file `%s`', $file->path));
 
 		if (
-			!in_array($file->mimeType, ['video/mp4', 'video/x-msvideo']) &&
-			(
-				!$this->cliMagickExists ||
-				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+			!in_array($file->mimeType, ['video/mp4', 'video/x-msvideo'])
+			&& (
+				!$this->cliMagickExists
+				|| Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
 			)
 		) {
 			$this->debug('Using Intervention pipeline for non-image conversion', ['mediaId' => $file->id]);
+
 			return $this->convertNonImageIntervention($file, $io, $includeAvif, $includeWebp);
 		}
 
 		$this->debug('Using CLI pipeline for non-image conversion', ['mediaId' => $file->id]);
+
 		return $this->convertNonImageCli($file, $io, $includeAvif, $includeWebp);
 	}
 
@@ -1033,8 +1109,8 @@ class ConvertFilesCommand extends Command {
 		try {
 			// If Imagick does not exist, nothing can be done
 			if (
-				!class_exists('Imagick') ||
-				!in_array($file->extension, ['pdf', 'eps', 'ai', 'psd'], true)
+				!class_exists('Imagick')
+				|| !in_array($file->extension, ['pdf', 'eps', 'ai', 'psd'], true)
 			) {
 				throw new Exception(sprintf('Cannot convert filetype `%s`', $file->extension));
 			}
@@ -1183,9 +1259,18 @@ class ConvertFilesCommand extends Command {
 
 			/** @var \Awyiss\Model\Entity\Media $file */
 			foreach ($files as $file) {
-				$widthCases->when(['id = ' . $file->id])->then($file->width, 'float');
-				$heightCases->when(['id = ' . $file->id])->then($file->height, 'float');
-				$cropCases->when(['id = ' . $file->id])->then($file->crop, 'integer');
+				$widthCases
+					->when(['id = ' . $file->id])
+					->then($file->width, 'float')
+				;
+				$heightCases
+					->when(['id = ' . $file->id])
+					->then($file->height, 'float')
+				;
+				$cropCases
+					->when(['id = ' . $file->id])
+					->then($file->crop, 'integer')
+				;
 			}
 
 			return [
@@ -1194,7 +1279,9 @@ class ConvertFilesCommand extends Command {
 				'crop' => $cropCases,
 			];
 		}, [
-			'id IN' => $files->extract('id')->toArray(),
+			'id IN' => $files
+				->extract('id')
+				->toArray(),
 		]);
 
 		return static::CODE_SUCCESS;
@@ -1214,10 +1301,10 @@ class ConvertFilesCommand extends Command {
 		]);
 
 		if (
-			!$this->cliMagickExists ||
-			(
-				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false &&
-				!in_array(strtolower($file->extension), ['gif', 'png', 'jpg', 'jpeg'], true)
+			!$this->cliMagickExists
+			|| (
+				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+				&& !in_array(strtolower($file->extension), ['gif', 'png', 'jpg', 'jpeg'], true)
 			)
 		) {
 			$this->debug('Crop via Intervention', ['mediaId' => $file->id]);
@@ -1306,7 +1393,10 @@ class ConvertFilesCommand extends Command {
 				$image->crop(...$crop);
 			}
 
-			if ((float)$file->crop['width'] !== (float)$file->crop['resizeWidth'] || (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']) {
+			if (
+				(float)$file->crop['width'] !== (float)$file->crop['resizeWidth']
+				|| (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']
+			) {
 				$resize = [(int)$file->crop['resizeWidth'], (int)$file->crop['resizeHeight']];
 
 				$image->scaleDown(...$resize);
@@ -1314,6 +1404,7 @@ class ConvertFilesCommand extends Command {
 
 			if (!$crop && !$resize) {
 				$image = null; //phpcs:ignore
+
 				return true;
 			}
 
@@ -1359,6 +1450,7 @@ class ConvertFilesCommand extends Command {
 
 		if (empty($commands['original'])) {
 			$this->debug('Skipping CLI crop because no crop/resize operation is required', ['mediaId' => $file->id]);
+
 			return true;
 		}
 
@@ -1408,7 +1500,12 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $mediaTable */
 		$mediaTable = $this->fetchTable('MediaResizedImages');
 
-		$status = array_unique($files->extract('status')->toArray(), SORT_REGULAR);
+		$status = array_unique(
+			$files
+				->extract('status')
+				->toArray(),
+			SORT_REGULAR
+		);
 		/**
 		 * If all files have the same status "failed", use a simple updateAll command
 		 */
@@ -1416,7 +1513,9 @@ class ConvertFilesCommand extends Command {
 			$mediaTable->updateAll([
 				'status' => ProcessStatus::Fail,
 			], [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 		else {
@@ -1427,9 +1526,18 @@ class ConvertFilesCommand extends Command {
 
 				/** @var \Awyiss\Model\Entity\MediaResizedImage $file */
 				foreach ($files as $file) {
-					$realWidthCases->when(['id = ' . $file->id])->then($file->realWidth, 'integer');
-					$realHeightCases->when(['id = ' . $file->id])->then($file->realHeight, 'integer');
-					$statusCases->when(['id = ' . $file->id])->then($file->status->value, 'integer');
+					$realWidthCases
+						->when(['id = ' . $file->id])
+						->then($file->realWidth, 'integer')
+					;
+					$realHeightCases
+						->when(['id = ' . $file->id])
+						->then($file->realHeight, 'integer')
+					;
+					$statusCases
+						->when(['id = ' . $file->id])
+						->then($file->status->value, 'integer')
+					;
 				}
 
 				return [
@@ -1438,7 +1546,9 @@ class ConvertFilesCommand extends Command {
 					'status' => $statusCases,
 				];
 			}, [
-				'id IN' => $files->extract('id')->toArray(),
+				'id IN' => $files
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -1487,10 +1597,14 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Resizing file `%s` to `%s', $file->media->path, $file->path));
 
 		if (
-			!$this->cliMagickExists ||
-			(
-				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false &&
-				!in_array(strtolower($file->extension), ['gif', 'png', 'jpg', 'jpeg'], true)
+			!$this->cliMagickExists
+			|| (
+				Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+				&& !in_array(
+					strtolower($file->extension),
+					['gif', 'png', 'jpg', 'jpeg'],
+					true
+				)
 			)
 		) {
 			$this->debug('Resize via Intervention', ['resizedImageId' => $file->id]);
@@ -1524,7 +1638,9 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function resizeImageIntervention(MediaResizedImage $file, ConsoleIo $io): bool {
 		try {
-			$image = $this->imageManager->decodePath($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
+			$image = $this->imageManager->decodePath(
+				$file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute
+			);
 
 			if ($file->strategy === ResizeStrategy::Contain) {
 				$image->scaleDown($file->width, $file->height);
@@ -1582,6 +1698,7 @@ class ConvertFilesCommand extends Command {
 			}
 			else {
 				$io->error('Status: Unsupported resize strategy');
+
 				return false;
 			}
 
@@ -1621,10 +1738,15 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
 
-		return $mediaTable->find()->where([
-			'crop IS NOT' => null,
-			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
-		])->limit($limit)->all();
+		return $mediaTable
+			->find()
+			->where([
+				'crop IS NOT' => null,
+				'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+			])
+			->limit($limit)
+			->all()
+		;
 	}
 
 
@@ -1671,10 +1793,15 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
 
-		return $mediaTable->find()->where([
-			'averageColor IS' => null,
-			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
-		])->limit($limit)->all();
+		return $mediaTable
+			->find()
+			->where([
+				'averageColor IS' => null,
+				'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+			])
+			->limit($limit)
+			->all()
+		;
 	}
 
 
@@ -1696,13 +1823,21 @@ class ConvertFilesCommand extends Command {
 
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $mediaResizedImagesTable */
 		$mediaResizedImagesTable = $this->fetchTable('MediaResizedImages');
-		$records = $mediaResizedImagesTable->find()->where($where)->contain(['Media'])->limit($limit)->all();
+		$records = $mediaResizedImagesTable
+			->find()
+			->where($where)
+			->contain(['Media'])
+			->limit($limit)
+			->all()
+		;
 
 		if ($records->count()) {
 			$mediaResizedImagesTable->updateAll([
 				'status' => ProcessStatus::InProgress,
 			], [
-				'id IN' => $records->extract('id')->toArray(),
+				'id IN' => $records
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -1757,7 +1892,12 @@ class ConvertFilesCommand extends Command {
 	protected function fetchFiles(array $where, int $limit, array $processStatusColumns): ResultSetInterface {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 		$mediaTable = $this->fetchTable('Media');
-		$records = $mediaTable->find()->where($where)->limit($limit)->all();
+		$records = $mediaTable
+			->find()
+			->where($where)
+			->limit($limit)
+			->all()
+		;
 
 		if ($records->count()) {
 			$this->debug('Fetched media records', ['count' => $records->count()]);
@@ -1768,7 +1908,9 @@ class ConvertFilesCommand extends Command {
 			}
 
 			$mediaTable->updateAll($updatedProcessStatusColumns, [
-				'id IN' => $records->extract('id')->toArray(),
+				'id IN' => $records
+					->extract('id')
+					->toArray(),
 			]);
 		}
 
@@ -1916,7 +2058,10 @@ class ConvertFilesCommand extends Command {
 			]);
 		}
 
-		if ((float)$file->crop['width'] !== (float)$file->crop['resizeWidth'] || (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']) {
+		if (
+			(float)$file->crop['width'] !== (float)$file->crop['resizeWidth']
+			|| (float)$file->crop['height'] !== (float)$file->crop['resizeHeight']
+		) {
 			$resize = [(int)$file->crop['resizeWidth'], (int)$file->crop['resizeHeight']];
 			$commandOriginal = array_merge($commandOriginal, [
 				'-resize',
@@ -2025,7 +2170,7 @@ class ConvertFilesCommand extends Command {
 				'SouthEast',
 			];
 
-			$gravity = $gravityValues[ (int)$focusPoint[0] * 3 + (int)$focusPoint[1]];
+			$gravity = $gravityValues[ (int)$focusPoint[0] * 3 + (int)$focusPoint[1] ];
 		}
 
 		return match ($file->strategy) {

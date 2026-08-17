@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class Configuration
  */
@@ -23,112 +22,147 @@ class Configuration {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('configuration')) {
-			$this->migration->table('configuration')->drop()->save();
+			$this->migration
+				->table('configuration')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('configuration')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('realm', 'string', [
-			'default' => null,
-			'limit' => 20,
-			'null' => false,
-		])->addColumn('scope', 'string', [
-			'default' => 'global',
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('identifier', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => false,
-		])->addColumn('value', 'string', [
-			'default' => null,
-			'limit' => 1024,
-			'null' => true,
-		])->addColumn('language_shortcode', 'char', [
-			'default' => null,
-			'limit' => 2,
-			'null' => true,
-		])->addColumn('description', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'realm',
-			], [
-				'name' => 'CONFIGURATION_REALM',
-			]
-		)->addIndex(
-			[
-				'scope',
-			], [
-				'name' => 'CONFIGURATION_SCOPE',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'CONFIGURATION_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'language_shortcode',
-			], [
-				'name' => 'CONFIGURATION_LANGUAGE_SHORTCODE',
-			]
-		)->create();
+		$this->migration
+			->table('configuration')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('realm', 'string', [
+				'default' => null,
+				'limit' => 20,
+				'null' => false,
+			])
+			->addColumn('scope', 'string', [
+				'default' => 'global',
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('identifier', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => false,
+			])
+			->addColumn('value', 'string', [
+				'default' => null,
+				'limit' => 1024,
+				'null' => true,
+			])
+			->addColumn('language_shortcode', 'char', [
+				'default' => null,
+				'limit' => 2,
+				'null' => true,
+			])
+			->addColumn('description', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'realm',
+				], [
+					'name' => 'CONFIGURATION_REALM',
+				]
+			)
+			->addIndex(
+				[
+					'scope',
+				], [
+					'name' => 'CONFIGURATION_SCOPE',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'CONFIGURATION_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'language_shortcode',
+				], [
+					'name' => 'CONFIGURATION_LANGUAGE_SHORTCODE',
+				]
+			)
+			->create()
+		;
 
-		if ($this->migration->getAdapter()->getAdapterType() !== 'sqlite') {
-			$this->migration->table('configuration')
-			->changeComment('Do not alter values in scope, identifier, type and/or required')
-			->save();
+		if (
+			$this->migration
+				->getAdapter()
+				->getAdapterType() !== 'sqlite'
+		) {
+			$this->migration
+				->table('configuration')
+				->changeComment('Do not alter values in scope, identifier, type and/or required')
+				->save()
+			;
 		}
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('configuration')->drop()->save();
+		$this->migration
+			->table('configuration')
+			->drop()
+			->save()
+		;
 	}
 }

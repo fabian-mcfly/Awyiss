@@ -105,15 +105,22 @@ class ContentTemplatesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
-			'ContentAreas',
-			'ContentTemplateElements' => [
-				'queryBuilder' => function (SelectQuery $query) {
-					/** @uses \Awyiss\Model\Table::findTranslations() */
-					return $query->find('translations');
-				},
-			],
-		])->first();
+		$contentTemplate = $this->ContentTemplates
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain([
+				'ContentAreas',
+				'ContentTemplateElements' => [
+					'queryBuilder' => function (SelectQuery $query) {
+						/** @uses \Awyiss\Model\Table::findTranslations() */
+						return $query->find('translations');
+					},
+				],
+			])
+			->first()
+		;
 
 		if (!$contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
@@ -266,15 +273,27 @@ class ContentTemplatesController extends Controller {
 		static $pageTemplates;
 
 		if (!isset($pageTemplates)) {
-			$pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all()->sortBy('pageRole.systemOrder', SORT_ASC);
+			$pageTemplates = $this
+				->fetchTable('PageTemplates')
+				->find()
+				->contain(['ContentAreas', 'PageRoles'])
+				->all()
+				->sortBy(
+					'pageRole.systemOrder',
+					SORT_ASC
+				)
+			;
 		}
 
 		if ($returnGrouped) {
-			$groupedPageTemplates = $pageTemplates->filter(function (PageTemplate $entity) {
-				return !empty($entity->contentAreas);
-			})->groupBy(function (PageTemplate $entity) {
-				return $entity->pageRole->label;
-			});
+			$groupedPageTemplates = $pageTemplates
+				->filter(function (PageTemplate $entity) {
+					return !empty($entity->contentAreas);
+				})
+				->groupBy(function (PageTemplate $entity) {
+					return $entity->pageRole->label;
+				})
+			;
 
 			return $groupedPageTemplates->toArray();
 		}

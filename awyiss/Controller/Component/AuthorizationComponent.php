@@ -29,8 +29,8 @@ use RuntimeException;
  * - `isAccessible(string|array ...$identifier)`
  *   Returns true or false, depending on the accessibility of the provided identifier(s).
  *
- * - `scopeIsAccessible(string $scope, ?IdentityPermissionsInterface $identity = null, ?array $additionalData = null, string|array ...$identifier)`
- *   Returns true or false, depending on the accessibility of the provided identifier(s) for the provided scope and identity
+ * - `scopeIsAccessible(string $scope, ?IdentityPermissionsInterface $identity = null, ?array $additionalData = null, string|array
+ * ...$identifier)` Returns true or false, depending on the accessibility of the provided identifier(s) for the provided scope and identity
  *
  * @method \Awyiss\Controller\AppController getController()
  * @noinspection PhpFullyQualifiedNameUsageInspection
@@ -38,7 +38,6 @@ use RuntimeException;
 class AuthorizationComponent extends Component {
 	/**
 	 * @inheritDoc
-	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'additionalData' => [],
@@ -315,8 +314,8 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @param array|string ...$identifier
 	 * @return void
-	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 * @throws \Cake\Http\Exception\ForbiddenException|\Exception
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
 	public function ensure(string|array ...$identifier): void {
 		$scope = $this->getScope();
@@ -373,12 +372,18 @@ class AuthorizationComponent extends Component {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface $identity */
-		$identity = $this->getController()->getRequest()->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
-		if (!($identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
+		$identity = $this
+			->getController()
+			->getRequest()
+			->getAttribute(Awyiss::REALM_BACKEND . 'Identity')
+		;
+
+		if ($identity instanceof IdentityPermissionsInterface) {
+			return $identity;
 		}
 
-
-		return $identity;
+		throw new RuntimeException(
+			sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class)
+		);
 	}
 }

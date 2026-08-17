@@ -34,6 +34,10 @@ class FormRenderer {
 
 
 	/**
+	 * @var \Awyiss\View\FrontendView
+	 */
+	protected FrontendView $View;
+	/**
 	 * @var \Awyiss\Model\Entity\Form|null
 	 */
 	protected ?Form $form = null;
@@ -45,11 +49,6 @@ class FormRenderer {
 	 * @var \Awyiss\Model\Entity\Page|null $page
 	 */
 	protected ?Page $page = null;
-	/**
-	 * @var \Awyiss\View\FrontendView
-	 * @noinspection PhpPropertyNamingConventionInspection
-	 */
-	protected FrontendView $View;
 
 
 	/**
@@ -65,7 +64,10 @@ class FormRenderer {
 	 * @return \Awyiss\Model\Entity\Form|null
 	 */
 	public function getFormByIdentifier(string|int $identifier): ?Form {
-		DebugTimer::start('FormRenderer::getFormByIdentifier', sprintf('FormRenderer::getFormByIdentifier: Fetching form "%s"', $identifier));
+		DebugTimer::start(
+			'FormRenderer::getFormByIdentifier',
+			sprintf('FormRenderer::getFormByIdentifier: Fetching form "%s"', $identifier)
+		);
 
 		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
 		$formsTable = $this->fetchTable('Forms');
@@ -107,13 +109,17 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function initForm(Form|string|int $form, array $requestData, ?Page $page = null): static {
-		DebugTimer::start('FormRenderer::initForm', sprintf('FormRenderer::initForm: Initializing form "%s"', $form instanceof Form ? $form->identifier : $form));
+		DebugTimer::start(
+			'FormRenderer::initForm',
+			sprintf('FormRenderer::initForm: Initializing form "%s"', $form instanceof Form ? $form->identifier : $form)
+		);
 
 		$this->form = $form instanceof Form ? $form : $this->getFormByIdentifier($form);
 		$this->page = $page;
 
 		if (!$this->form) {
 			DebugTimer::stop('FormRenderer::initForm');
+
 			return $this;
 		}
 
@@ -136,6 +142,7 @@ class FormRenderer {
 		}
 
 		DebugTimer::stop('FormRenderer::initForm');
+
 		return $this;
 	}
 
@@ -154,10 +161,14 @@ class FormRenderer {
 	 * @throws \ReflectionException
 	 */
 	public function getFormBody(array $options): string {
-		DebugTimer::start('FormRenderer::getFormBody', sprintf('FormRenderer::getFormBody: Building body for form "%s"', $this->form?->identifier ?? 'unknown'));
+		DebugTimer::start(
+			'FormRenderer::getFormBody',
+			sprintf('FormRenderer::getFormBody: Building body for form "%s"', $this->form?->identifier ?? 'unknown')
+		);
 
 		if (!$this->form || $this->formSent) {
 			DebugTimer::stop('FormRenderer::getFormBody');
+
 			return '';
 		}
 
@@ -167,7 +178,8 @@ class FormRenderer {
 			'sent' => $this->formSent,
 			'submitted' => $this->form->isSubmitted(),
 			'fullWidth' => $options['fullWidth'] ?? $this->View->get('fullWidth', 1920),
-			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'] ?? $this->View->get('singleColumnBreakpoint', 860),
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint']
+				?? $this->View->get('singleColumnBreakpoint', 860),
 			...($options['viewVars'] ?? []),
 		]);
 
@@ -175,6 +187,7 @@ class FormRenderer {
 
 		if (!$formElements) {
 			DebugTimer::stop('FormRenderer::getFormBody');
+
 			return '';
 		}
 
@@ -224,7 +237,11 @@ class FormRenderer {
 		$formEntriesTable = $this->fetchTable('FormEntries');
 
 		/** @var \Awyiss\Model\Entity\FormEntry|null $entry */
-		$entry = $formEntriesTable->find('all')->where(['identifier' => $entryHash])->first();
+		$entry = $formEntriesTable
+			->find('all')
+			->where(['identifier' => $entryHash])
+			->first()
+		;
 
 		return $entry;
 	}
@@ -240,7 +257,10 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function process(?string $entryHash = null, array $options = []): void {
-		DebugTimer::start('FormRenderer::process', sprintf('FormRenderer::process: Processing form "%s"', $this->form?->identifier ?? 'unknown'));
+		DebugTimer::start(
+			'FormRenderer::process',
+			sprintf('FormRenderer::process: Processing form "%s"', $this->form?->identifier ?? 'unknown')
+		);
 
 		if (!$this->form) {
 			DebugTimer::stop('FormRenderer::process');
@@ -254,6 +274,7 @@ class FormRenderer {
 			}
 
 			DebugTimer::stop('FormRenderer::process');
+
 			return;
 		}
 
@@ -322,19 +343,26 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
-		DebugTimer::start('FormRenderer::renderElement' . $entity->id, sprintf('FormRenderer::renderElement: Rendering form element #%d type "%s"', $entity->id, $entity->type));
+		DebugTimer::start(
+			'FormRenderer::renderElement' . $entity->id,
+			sprintf('FormRenderer::renderElement: Rendering form element #%d type "%s"', $entity->id, $entity->type)
+		);
 
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->View->get('fullWidth', 1920),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
-			columnWidth: $entity->realColumnWidth,
-			selector: '#FormElement' . $entity->id,
-			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
-		);
+		$mediaRenderOptions = $this->View
+			->helpers()
+			->get('Media')
+			->mediaRenderOptions(
+				baseWidth: $this->View->get('fullWidth', 1920),
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $entity->realColumnWidth,
+				selector: '#FormElement' . $entity->id,
+				singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
+			)
+		;
 
 		if ($entity->type === 'freeText') {
 			// Parse the Awyiss image tags
@@ -350,7 +378,7 @@ class FormRenderer {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$renderedElement = $fullWidthMissingWarning . $this->View->element('form/form_elements', [
+		$renderedElement = $this->View->element('form/form_elements', [
 			'form' => $this->form,
 			'formData' => $this->form->getFormData(),
 			'formElement' => $entity,
@@ -358,6 +386,8 @@ class FormRenderer {
 			'children' => $children,
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
+
+		$renderedElement = $fullWidthMissingWarning . $renderedElement;
 
 		DebugTimer::stop('FormRenderer::renderElement' . $entity->id);
 
@@ -369,7 +399,10 @@ class FormRenderer {
 	 * @return string|false
 	 */
 	public function sendForm(): string|false {
-		DebugTimer::start('FormRenderer::sendForm', sprintf('FormRenderer::sendForm: Sending form "%s"', $this->form?->identifier ?? 'unknown'));
+		DebugTimer::start(
+			'FormRenderer::sendForm',
+			sprintf('FormRenderer::sendForm: Sending form "%s"', $this->form?->identifier ?? 'unknown')
+		);
 
 		if (!$this->form) {
 			DebugTimer::stop('FormRenderer::sendForm');
@@ -379,6 +412,7 @@ class FormRenderer {
 		// Make sure the form is submitted
 		if (!$this->form->isSubmitted()) {
 			DebugTimer::stop('FormRenderer::sendForm');
+
 			return false;
 		}
 
@@ -390,6 +424,7 @@ class FormRenderer {
 
 		if (!$this->formSent) {
 			DebugTimer::stop('FormRenderer::sendForm');
+
 			return false;
 		}
 
@@ -475,19 +510,24 @@ class FormRenderer {
 		$options['mediaRenderOptions']['selector'] ??= '#Form' . $this->form->id;
 
 		// Determine the single column breakpoint
-		$options['mediaRenderOptions']['singleColumnBreakpoint'] ??= $options['singleColumnBreakpoint'] ?? $this->View->get('singleColumnBreakpoint');
+		$options['mediaRenderOptions']['singleColumnBreakpoint'] ??= $options['singleColumnBreakpoint']
+			?? $this->View->get('singleColumnBreakpoint');
 
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $options['mediaRenderOptions']['fullWidth'],
-			breakpoints: $options['mediaRenderOptions']['breakpoints'],
-			columnWidth: $options['mediaRenderOptions']['columnWidth'],
-			selector: $options['mediaRenderOptions']['selector'],
-			singleColumnBreakpoint: $options['mediaRenderOptions']['singleColumnBreakpoint']
-		);
+		$mediaRenderOptions = $this->View
+			->helpers()
+			->get('Media')
+			->mediaRenderOptions(
+				baseWidth: $options['mediaRenderOptions']['fullWidth'],
+				breakpoints: $options['mediaRenderOptions']['breakpoints'],
+				columnWidth: $options['mediaRenderOptions']['columnWidth'],
+				selector: $options['mediaRenderOptions']['selector'],
+				singleColumnBreakpoint: $options['mediaRenderOptions']['singleColumnBreakpoint']
+			)
+		;
 
 		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($this->form, $mediaRenderOptions);

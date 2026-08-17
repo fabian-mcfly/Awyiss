@@ -25,6 +25,7 @@ use Cake\Utility\Text;
 class Lock extends Entity {
 	use IdentityAwareTrait;
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -49,8 +50,8 @@ class Lock extends Entity {
 		$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
 
 		if ($sessionBased) {
-			return $this->createdBy === $identity->getIdentifier() &&
-			   $this->uniqueId === $session->read('Backend.lockIdentifier');
+			return $this->createdBy === $identity->getIdentifier()
+				&& $this->uniqueId === $session->read('Backend.lockIdentifier');
 		}
 
 		return $this->createdBy === $identity->getIdentifier();

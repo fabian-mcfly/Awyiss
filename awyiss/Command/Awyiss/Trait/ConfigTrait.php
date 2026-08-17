@@ -23,21 +23,17 @@ use Cake\Utility\Security;
  */
 trait ConfigTrait {
 	/**
-	 * @var string The database username
+	 * @var string The database host
 	 */
-	protected string $dbUsername;
-	/**
-	 * @var string The database password
-	 */
-	protected string $dbPassword;
+	protected string $dbHost;
 	/**
 	 * @var string The database name
 	 */
 	protected string $dbName;
 	/**
-	 * @var string The database host
+	 * @var string The database password
 	 */
-	protected string $dbHost;
+	protected string $dbPassword;
 	/**
 	 * @var string The database port
 	 */
@@ -46,6 +42,10 @@ trait ConfigTrait {
 	 * @var string The database type
 	 */
 	protected string $dbType;
+	/**
+	 * @var string The database username
+	 */
+	protected string $dbUsername;
 	/**
 	 * @var string
 	 */
@@ -66,12 +66,12 @@ trait ConfigTrait {
 			// Check if the .env file can be created
 			if (
 				(
-					file_exists($envFilePath) &&
-					!is_writable($envFilePath)
-				) ||
-				(
-					!file_exists($envFilePath) &&
-					!is_writable(dirname($envFilePath))
+					file_exists($envFilePath)
+					&& !is_writable($envFilePath)
+				)
+				|| (
+					!file_exists($envFilePath)
+					&& !is_writable(dirname($envFilePath))
 				)
 			) {
 				$this->io->error('.env file cannot be created due to permission issues.');
@@ -99,10 +99,18 @@ trait ConfigTrait {
 			unlink($envExampleFilePath);
 
 			// Replace the placeholders with the user inputs
-			$envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $envExampleContents);
+			$envContents = str_replace(
+				'CONFIG_ENV=\'development\'',
+				'CONFIG_ENV=\'' . $this->installEnvironment . '\'',
+				$envExampleContents
+			);
 			$envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $envContents);
 			$envContents = str_replace('SECURITY_SALT=\'random_salt\'', 'SECURITY_SALT=\'' . $securitySalt . '\'', $envContents);
-			$envContents = str_replace('SESSION_COOKIE_NAME=\'awyiss_session\'', 'SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'', $envContents);
+			$envContents = str_replace(
+				'SESSION_COOKIE_NAME=\'awyiss_session\'',
+				'SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'',
+				$envContents
+			);
 		}
 
 		// Write the updated contents back to the .env file
@@ -188,7 +196,9 @@ trait ConfigTrait {
 		$environmentConfig['Datasources']['default']['log'] = $logFlag;
 
 		// Temporarily set the 'custom' connection as the default connection to apply the new database configuration immediately
-		$config = ConnectionManager::get('default')->config();
+		$config = ConnectionManager::get('default')
+			->config()
+		;
 		ConnectionManager::setConfig('custom', array_merge($config, $environmentConfig['Datasources']['default'], [
 			'className' => Connection::class,
 		]));
@@ -198,13 +208,13 @@ trait ConfigTrait {
 			// Check if the folder can be created
 			if (
 				(
-					file_exists($environmentConfigFilePath) &&
-					!is_writable($environmentConfigFilePath)
-				) ||
-				(
-					!file_exists($environmentConfigFilePath) &&
-					!file_exists($environmentFolderPath) &&
-					!is_writable(dirname($environmentFolderPath))
+					file_exists($environmentConfigFilePath)
+					&& !is_writable($environmentConfigFilePath)
+				)
+				|| (
+					!file_exists($environmentConfigFilePath)
+					&& !file_exists($environmentFolderPath)
+					&& !is_writable(dirname($environmentFolderPath))
 				)
 			) {
 				$this->io->error('Environment config file cannot be created due to permission issues.');
@@ -242,6 +252,7 @@ trait ConfigTrait {
 		// Write the updated contents back to the environment config file
 		if (file_put_contents($environmentConfigFilePath, $contents)) {
 			$this->io->success('Environment config file set.');
+
 			return;
 		}
 
@@ -262,11 +273,14 @@ trait ConfigTrait {
 			// If the file does not exist or is not writable, skip the update
 			if (
 				(
-					!file_exists($filePath) ||
-					!is_writable($filePath)
+					!file_exists($filePath)
+					|| !is_writable($filePath)
 				)
 			) {
-				$this->io->warning('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file cannot be updated due to permission issues.');
+				$this->io->warning(
+					'\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file cannot be updated due to permission issues.'
+				);
+
 				return;
 			}
 
@@ -285,6 +299,7 @@ trait ConfigTrait {
 		// Write the updated contents back to the ContentsAttributeOptions.php file
 		if (file_put_contents($filePath, $fileContents)) {
 			$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
+
 			return;
 		}
 
@@ -305,11 +320,12 @@ trait ConfigTrait {
 			// If the file does not exist or is not writable, skip the update
 			if (
 				(
-					!file_exists($filePath) ||
-					!is_writable($filePath)
+					!file_exists($filePath)
+					|| !is_writable($filePath)
 				)
 			) {
 				$this->io->warning('\Customer\View\Cell\Frontend\MenuCell file cannot be updated due to permission issues.');
+
 				return;
 			}
 
@@ -328,6 +344,7 @@ trait ConfigTrait {
 		// Write the updated contents back to the MenuCell.php file
 		if (file_put_contents($filePath, $fileContents)) {
 			$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+
 			return;
 		}
 
@@ -348,11 +365,12 @@ trait ConfigTrait {
 			// If the file does not exist or is not writable, skip the update
 			if (
 				(
-					!file_exists($filePath) ||
-					!is_writable($filePath)
+					!file_exists($filePath)
+					|| !is_writable($filePath)
 				)
 			) {
 				$this->io->warning('ide-twig.json file cannot be updated due to permission issues.');
+
 				return;
 			}
 
@@ -397,11 +415,12 @@ trait ConfigTrait {
 			// If the file does not exist or is not writable, skip the update
 			if (
 				(
-					!file_exists($filePath) ||
-					!is_writable($filePath)
+					!file_exists($filePath)
+					|| !is_writable($filePath)
 				)
 			) {
 				$this->io->warning('\Twig\Extension\CustomerExtension file cannot be updated due to permission issues.');
+
 				return;
 			}
 
@@ -428,7 +447,10 @@ trait ConfigTrait {
 		}
 
 		// Rename the CustomerExtension.php file to match the new class name
-		$newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::ucparts($this->customerName, false) . 'Extension.php';
+		$newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::ucparts(
+			$this->customerName,
+			false
+		) . 'Extension.php';
 		if (rename($filePath, $newFilePath)) {
 			$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
 
@@ -457,7 +479,10 @@ trait ConfigTrait {
 
 		/** @var \Awyiss\Model\Table\ConfigurationTable $configTable */
 		$configTable = $this->fetchTable('Configuration');
-		$configTable->getBehavior('Categories')->setConfig('buildRules', false);
+		$configTable
+			->getBehavior('Categories')
+			->setConfig('buildRules', false)
+		;
 		$config = $configTable->newDefaultEntity();
 
 		$configTable->patchEntity($config, [

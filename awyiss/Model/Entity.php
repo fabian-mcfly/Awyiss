@@ -176,7 +176,8 @@ class Entity extends BaseEntity {
 		if ($includeUnknownFields) {
 			foreach ($fields as $field) {
 				if (
-					!array_key_exists($field, $extracted) && !in_array($field, $this->_originalFields)
+					!array_key_exists($field, $extracted)
+					&& !in_array($field, $this->_originalFields)
 				) {
 					$extracted[ $field ] = null;
 				}

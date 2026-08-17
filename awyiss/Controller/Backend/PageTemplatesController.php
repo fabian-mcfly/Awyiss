@@ -35,12 +35,17 @@ class PageTemplatesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table\PageTemplatesTable::findWithUsages() */
-		$query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
+		$query = $this->PageTemplates
+			->find('withUsages')
+			->where($this->getOverviewWhere())
+			->contain(['ContentAreas', 'PageRoles'])
+		;
 		$this->Categories->filterQuery($query, null, false);
 		$this->Search->filterQuery($query);
 
 		return $query;
 	}
+
 
 	/**
 	 * Overview method
@@ -116,7 +121,14 @@ class PageTemplatesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();
+		$pageTemplate = $this->PageTemplates
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain(['ContentAreas'])
+			->first()
+		;
 		if (!$pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -205,9 +217,10 @@ class PageTemplatesController extends Controller {
 			else {
 				$contentAreaIds = array_column($requestData['contentAreas'], 'id');
 				$requestData['contentTemplateContentAreas'] = array_merge(...$requestData['contentTemplateContentAreas']);
-				$requestData['contentTemplateContentAreas'] = array_filter($requestData['contentTemplateContentAreas'], function (array $element) use ($contentAreaIds) {
-					return !empty($element['contentTemplateId']) && in_array($element['contentAreaId'], $contentAreaIds);
-				});
+				$requestData['contentTemplateContentAreas'] = array_filter(
+					$requestData['contentTemplateContentAreas'],
+					fn(array $element) => !empty($element['contentTemplateId']) && in_array($element['contentAreaId'], $contentAreaIds)
+				);
 			}
 		}
 
@@ -265,37 +278,48 @@ class PageTemplatesController extends Controller {
 		$query = $this->PageTemplates->ContentAreas->find();
 
 		if ($pageTemplate->contentAreas && !$pageTemplate->isNew()) {
-			$query->orderByAsc(
-				$query->func()->coalesce([
-					'ContentAreas_title_translation.content' => 'literal',
-					'ContentAreas.title' => 'literal',
+			$query
+				->orderByAsc(
+					$query
+						->func()
+						->coalesce([
+							'ContentAreas_title_translation.content' => 'literal',
+							'ContentAreas.title' => 'literal',
+						])
+				)
+				->orderByAsc('ContentAreas_title_translation.content')
+				->orderByAsc('ContentAreas.title')
+			;
+
+			$query
+				->contain([
+					'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {
+						return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplate->id]);
+					},
 				])
-			);
-			$query->orderByAsc('ContentAreas_title_translation.content');
-			$query->orderByAsc('ContentAreas.title');
+				->formatResults(function (CollectionInterface $collection): CollectionInterface {
+					return $collection->map(function ($row) {
+						/** @var \Awyiss\Model\Entity\ContentArea $row */
+						if (!is_array($row->contentTemplates)) {
+							return $row;
+						}
 
-			$query->contain([
-				'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {
-					return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplate->id]);
-				},
-			])->formatResults(function (CollectionInterface $collection): CollectionInterface {
-				return $collection->map(function ($row) {
-					/** @var \Awyiss\Model\Entity\ContentArea $row */
-					if (!is_array($row->contentTemplates)) {
+						$row->contentTemplates = collection($row->contentTemplates)->indexBy('id')->toArray();
+
 						return $row;
-					}
-
-					$row->contentTemplates = collection($row->contentTemplates)->indexBy('id')->toArray();
-
-					return $row;
-				});
-			});
+					});
+				})
+			;
 		}
 
 		$contentAreas = $query->all()->toArray();
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates->find('translations')->all()->toArray();
+		$contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates
+			->find('translations')
+			->all()
+			->toArray()
+		;
 
 		$this->set([
 			'pageTemplate' => $pageTemplate,

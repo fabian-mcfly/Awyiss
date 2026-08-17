@@ -38,7 +38,6 @@ class MediaHelper extends Helper {
 	protected string $lazyLoadClass = 'Lazyload';
 	/**
 	 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
-	 * @noinspection PhpGetterAndSetterCanBeReplacedWithPropertyHooksInspection
 	 */
 	protected MediaRenderOptions $mediaRenderOptions;
 	/**
@@ -60,7 +59,10 @@ class MediaHelper extends Helper {
 		$twig->addGlobal('ProcessStatus', ProcessStatus::class);
 		$twig->addGlobal('ResizeStrategy', ResizeStrategy::class);
 
-		$this->resizeMediaFileType = $config['resizeMediaFileType'] ?? Configure::read('Awyiss.Media.Frontend.resizing.fileType', MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF);
+		$this->resizeMediaFileType = $config['resizeMediaFileType'] ?? Configure::read(
+			'Awyiss.Media.Frontend.resizing.fileType',
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF
+		);
 	}
 
 
@@ -78,17 +80,25 @@ class MediaHelper extends Helper {
 	 * @param array<string, MediaRenderOptions|array> $options
 	 * @return string
 	 */
-	public function element(string $name, ?array $mediaAssignments, ?MediaRenderOptions $mediaRenderOptions = null, array $options = []): string {
+	public function element(
+		string $name,
+		?array $mediaAssignments,
+		?MediaRenderOptions $mediaRenderOptions = null,
+		array $options = []
+	): string {
 		if (!isset($mediaAssignments[ $name ])) {
 			return '';
 		}
 
-		return $this->getView()->element('media/' . Inflector::underscore($name), [
-			'mediaAssignments' => $mediaAssignments[ $name ],
-			'mediaRenderOptions' => $mediaRenderOptions ?? $this->getMediaRenderOptions(),
-			'options' => $options,
-			'MediaHelper' => $this,
-		]);
+		return $this
+			->getView()
+			->element('media/' . Inflector::underscore($name), [
+				'mediaAssignments' => $mediaAssignments[ $name ],
+				'mediaRenderOptions' => $mediaRenderOptions ?? $this->getMediaRenderOptions(),
+				'options' => $options,
+				'MediaHelper' => $this,
+			])
+		;
 	}
 
 
@@ -126,7 +136,10 @@ class MediaHelper extends Helper {
 				return '';
 			}
 
-			$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+			$nonce = $this
+				->getView()
+				->getRequest()
+				->getAttribute('cspStyleNonce') ?: '';
 			if ($nonce) {
 				$nonce = ' nonce="' . $nonce . '"';
 			}
@@ -186,11 +199,14 @@ class MediaHelper extends Helper {
 	 */
 	public function htmlTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true): string {
 		if (
-			!$media->isImage() &&
-			$media->mimeType !== 'image/svg+xml' &&
-			!$media->isVideo() &&
-			!$media->isAudio() &&
-			!($allowPreview && $media->preview === ProcessStatus::Success)
+			!$media->isImage()
+			&& $media->mimeType !== 'image/svg+xml'
+			&& !$media->isVideo()
+			&& !$media->isAudio()
+			&& !(
+				$allowPreview
+				&& $media->preview === ProcessStatus::Success
+			)
 		) {
 			return '';
 		}
@@ -206,8 +222,8 @@ class MediaHelper extends Helper {
 		}
 
 		if (
-			$media->mimeType === 'image/svg+xml' ||
-			!$mediaRenderOptions->getResponsive()
+			$media->mimeType === 'image/svg+xml'
+			|| !$mediaRenderOptions->getResponsive()
 		) {
 			return $this->imageTag($media, $mediaRenderOptions);
 		}
@@ -253,10 +269,20 @@ class MediaHelper extends Helper {
 		}
 
 		if ($subtitles && $allowVideoTag) {
-			return '<video' . $attributesString . '><source src="' . $media->path . '" type="' . $media->mimeType . '">' . $sources . $subtitles . '</video>';
+			return '<video' . $attributesString . '>'
+				. '<source src="' . $media->path . '" type="' . $media->mimeType . '">'
+				. $sources
+				. $subtitles
+				. '</video>'
+			;
 		}
 
-		return '<audio' . $attributesString . '><source src="' . $media->path . '" type="' . $media->mimeType . '">' . $sources . $subtitles . '</audio>';
+		return '<audio' . $attributesString . '>'
+			. '<source src="' . $media->path . '" type="' . $media->mimeType . '">'
+			. $sources
+			. $subtitles
+			. '</audio>'
+		;
 	}
 
 
@@ -272,11 +298,19 @@ class MediaHelper extends Helper {
 	 * @param array $breakpointFiles
 	 * @return string
 	 */
-	public function imageTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true, array $breakpointFiles = []): string {
+	public function imageTag(
+		Media $media,
+		?MediaRenderOptions $mediaRenderOptions = null,
+		bool $allowPreview = true,
+		array $breakpointFiles = []
+	): string {
 		if (
-			!$media->isImage() &&
-			$media->mimeType !== 'image/svg+xml' &&
-			!($allowPreview && $media->preview === ProcessStatus::Success)
+			!$media->isImage()
+			&& $media->mimeType !== 'image/svg+xml'
+			&& !(
+				$allowPreview
+				&& $media->preview === ProcessStatus::Success
+			)
 		) {
 			return '';
 		}
@@ -299,8 +333,8 @@ class MediaHelper extends Helper {
 			// If the <svg> tag has a `data-force-inline="true"` attribute, the svg will be inlined instead of using an <img> tag
 			$contents = $this->contents($media);
 			if (
-				$contents &&
-				preg_match('/<svg\\b[^>]*\\bdata-force-inline\\s*=\\s*(["\'])true\\1/i', $contents)
+				$contents
+				&& preg_match('/<svg\\b[^>]*\\bdata-force-inline\\s*=\\s*(["\'])true\\1/i', $contents)
 			) {
 				return $contents;
 			}
@@ -312,11 +346,12 @@ class MediaHelper extends Helper {
 
 			// If there's a g#AWYISS_SVG_ID in the SVG, return an <svg> tag with a use statement
 			if (
-				$contents &&
-				preg_match('/<g\\b[^>]*\\bid\\s*=\\s*(["\'])AWYISS_SVG_ID\\1/i', $contents)
+				$contents
+				&& preg_match('/<g\\b[^>]*\\bid\\s*=\\s*(["\'])AWYISS_SVG_ID\\1/i', $contents)
 			) {
 				// Take the viewbox from the SVG, if it exists
-				$attributes['viewBox'] = preg_match('/<svg\\b[^>]*\\bviewBox\\s*=\\s*(["\'])([^"\']+)\\1/i', $contents, $matches) ? $matches[2] : '0 0 ' . $media->width . ' ' . $media->height;
+				$attributes['viewBox'] = preg_match('/<svg\\b[^>]*\\bviewBox\\s*=\\s*(["\'])([^"\']+)\\1/i', $contents, $matches)
+					? $matches[2] : '0 0 ' . $media->width . ' ' . $media->height;
 				$attributes['xmlns'] = 'http://www.w3.org/2000/svg';
 				$attributes['preserveAspectRatio'] = 'xMidYMid meet';
 				$attributes['id'] ??= 'Image-' . substr(hash('xxh64', $media->name . serialize($mediaRenderOptions)), 0, 15);
@@ -329,8 +364,10 @@ class MediaHelper extends Helper {
 					$mediaRenderOptions
 				);
 
-				return '<svg' . $this->Html->templater()->formatAttributes($attributes) . '><use xlink:href="' . $media->path . '#AWYISS_SVG_ID"></use></svg>' . PHP_EOL .
-					$placeholderStyleTag . PHP_EOL;
+				return '<svg' . $this->Html->templater()->formatAttributes($attributes) . '>'
+					. '<use xlink:href="' . $media->path . '#AWYISS_SVG_ID"></use>'
+					. '</svg>' . PHP_EOL . $placeholderStyleTag . PHP_EOL
+				;
 			}
 
 			return $this->simpleImageTag($media->path, $attributes, $media, $mediaRenderOptions);
@@ -354,15 +391,15 @@ class MediaHelper extends Helper {
 		}
 		elseif ($media->width && $media->height) {
 			if (
-				!empty($attributes['width']) &&
-				empty($attributes['height'])
+				!empty($attributes['width'])
+				&& empty($attributes['height'])
 			) {
 				// Use the media's original aspect ratio
 				$attributes['height'] = round($media->height * $attributes['width'] / $media->width);
 			}
 			elseif (
-				empty($attributes['width']) &&
-				!empty($attributes['height'])
+				empty($attributes['width'])
+				&& !empty($attributes['height'])
 			) {
 				// Use the aspect ratio
 				$attributes['width'] = round($media->width * $attributes['height'] / $media->height);
@@ -385,9 +422,12 @@ class MediaHelper extends Helper {
 	 */
 	public function pictureTag(Media $media, ?MediaRenderOptions $mediaRenderOptions, bool $allowPreview = true): string {
 		if (
-			!$media->isImage() &&
-			$media->mimeType !== 'image/svg+xml' &&
-			!($allowPreview && $media->preview === ProcessStatus::Success)
+			!$media->isImage()
+			&& $media->mimeType !== 'image/svg+xml'
+			&& !(
+				$allowPreview
+				&& $media->preview === ProcessStatus::Success
+			)
 		) {
 			return '';
 		}
@@ -479,7 +519,12 @@ class MediaHelper extends Helper {
 			$subtitles = $this->getSubtitles($alternative, $subtitles);
 		}
 
-		return '<video' . $attributesString . '><source ' . $srcAttribute . '="' . $path . '" type="' . $media->mimeType . '">' . $sources . $subtitles . '</video>';
+		return '<video' . $attributesString . '>'
+			. '<source ' . $srcAttribute . '="' . $path . '" type="' . $media->mimeType . '">'
+			. $sources
+			. $subtitles
+			. '</video>'
+		;
 	}
 
 
@@ -534,8 +579,14 @@ class MediaHelper extends Helper {
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
-	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy:
-	 *     \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
+	 * @param array<float, array{
+	 *     baseWidth: float|null,
+	 *     breakpoint: float,
+	 *     columnWidth: float|null,
+	 *     width: float|null,
+	 *     height: float|null,
+	 *     resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null
+	 * }> $breakpoints
 	 * @param float|int $columnWidth
 	 * @param bool $lazyload
 	 * @param float|int|null $height
@@ -693,12 +744,20 @@ class MediaHelper extends Helper {
 	 * @param bool $remove2xDuplicates
 	 * @return array<string|int, \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media>
 	 */
-	public function getResponsiveImages(Media $media, MediaRenderOptions $mediaRenderOptions, bool $removeDuplicates = false, bool $remove2xDuplicates = false): array {
+	public function getResponsiveImages(
+		Media $media,
+		MediaRenderOptions $mediaRenderOptions,
+		bool $removeDuplicates = false,
+		bool $remove2xDuplicates = false
+	): array {
 		if (
 			// If the media item is an SVG,
-			$media->mimeType === 'image/svg+xml' ||
+			$media->mimeType === 'image/svg+xml'
 			// or if it requires a preview (since it's not an image) but the preview is not yet created, return an empty array
-			($media->preview !== ProcessStatus::NotRequired && $media->preview !== ProcessStatus::Success)
+			|| (
+				$media->preview !== ProcessStatus::NotRequired
+				&& $media->preview !== ProcessStatus::Success
+			)
 		) {
 			return [];
 		}
@@ -812,7 +871,12 @@ class MediaHelper extends Helper {
 	 * @return string|null
 	 * @throws \Exception
 	 */
-	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {
+	public function replaceCustomImageTagsInField(
+		Entity $entity,
+		MediaRenderOptions $mediaRenderOptions,
+		string $field,
+		?string $value = null
+	): ?string {
 		$imageHandlerClass = $this->getImageHandlerClass();
 
 		return $imageHandlerClass::replaceCustomImageTagsInField($entity, $this->getView(), $mediaRenderOptions, $field, $value);
@@ -827,7 +891,13 @@ class MediaHelper extends Helper {
 	 * @param bool $remove2xDuplicates
 	 * @return array
 	 */
-	protected function getBreakpointFiles(Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpoints, bool $removeDuplicates, bool $remove2xDuplicates = false): array {
+	protected function getBreakpointFiles(
+		Media $media,
+		MediaRenderOptions $mediaRenderOptions,
+		array $breakpoints,
+		bool $removeDuplicates,
+		bool $remove2xDuplicates = false
+	): array {
 		$breakpointFiles = [];
 
 		$file = $this->getMediaResizedImage($media, $mediaRenderOptions);
@@ -889,20 +959,20 @@ class MediaHelper extends Helper {
 			}
 
 			if (
-				!$is2x &&
-				(
-					!$removeDuplicates ||
-					!in_array($path, $paths['1x'], true)
+				!$is2x
+				&& (
+					!$removeDuplicates
+					|| !in_array($path, $paths['1x'], true)
 				)
 			) {
 				$breakpointFiles[ $breakpoint['breakpoint'] ] = $resizedImage ?? $media;
 				$paths['1x'] = [$path];
 			}
 			elseif (
-				$is2x &&
-				(
-					!$remove2xDuplicates ||
-					!in_array($path, $paths['2x'], true)
+				$is2x
+				&& (
+					!$remove2xDuplicates
+					|| !in_array($path, $paths['2x'], true)
 				)
 			) {
 				$breakpointFiles[ $breakpoint['breakpoint'] . 'x2' ] = $resizedImage ?? $media;
@@ -922,7 +992,11 @@ class MediaHelper extends Helper {
 	 * @param array|string|null $focusPoint
 	 * @return string
 	 */
-	protected function getBackgroundColorStyle(MediaRenderOptions $mediaRenderOptions, ?string $averageColor, string|array|null $focusPoint = null): string {
+	protected function getBackgroundColorStyle(
+		MediaRenderOptions $mediaRenderOptions,
+		?string $averageColor,
+		string|array|null $focusPoint = null
+	): string {
 		$backgroundColor = null;
 		if ($mediaRenderOptions->getBackgroundColor() !== false) {
 			$backgroundColor = $mediaRenderOptions->getBackgroundColor();
@@ -951,7 +1025,11 @@ class MediaHelper extends Helper {
 	 * @param array $overrideOptions
 	 * @return \Awyiss\Utility\Media\MediaRenderOptions
 	 */
-	protected function getBreakpointRenderOptions(array $breakpointOptions, MediaRenderOptions $mediaRenderOptions, array $overrideOptions): MediaRenderOptions {
+	protected function getBreakpointRenderOptions(
+		array $breakpointOptions,
+		MediaRenderOptions $mediaRenderOptions,
+		array $overrideOptions
+	): MediaRenderOptions {
 		$optionKeys = [
 			'aspectRatio',
 			'baseWidth',
@@ -965,8 +1043,8 @@ class MediaHelper extends Helper {
 
 		foreach ($overrideOptions as $key => $value) {
 			if (
-				$value === MediaRenderOptions::PRESERVE_VALUE ||
-				!in_array($key, $optionKeys, true)
+				$value === MediaRenderOptions::PRESERVE_VALUE
+				|| !in_array($key, $optionKeys, true)
 			) {
 				continue;
 			}
@@ -1031,7 +1109,10 @@ class MediaHelper extends Helper {
 			$backgroundColorStyle .= ' --preferredPosition:' . $this->getFocusPointCssValue($focusPoint) . ';';
 		}
 
-		$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+		$nonce = $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspStyleNonce') ?: '';
 		if ($nonce) {
 			$nonce = ' nonce="' . $nonce . '"';
 		}
@@ -1060,7 +1141,13 @@ class MediaHelper extends Helper {
 		}
 
 		/** @noinspection CssInvalidHtmlTagReference, CssUnresolvedCustomProperty */
-		return '<style' . $nonce . '>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $backgroundColorStyle . ' }' . $breakpointStyles . '</style>';
+		return '<style' . $nonce . '>#' . $id . ', #' . $id . '-NoScript {'
+			. ' --imageAspectRatio: ' . round($width / $height, 2) . ';'
+			. $backgroundColorStyle
+			. ' }'
+			. $breakpointStyles
+			. '</style>'
+		;
 	}
 
 
@@ -1072,7 +1159,13 @@ class MediaHelper extends Helper {
 	 * @param array $breakpointFiles
 	 * @return string
 	 */
-	protected function simpleImageTag(string $path, array $attributes, Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpointFiles = []): string {
+	protected function simpleImageTag(
+		string $path,
+		array $attributes,
+		Media $media,
+		MediaRenderOptions $mediaRenderOptions,
+		array $breakpointFiles = []
+	): string {
 		$noScriptAttributes = $attributes;
 
 		$attributes['class'] = trim(($mediaRenderOptions->getLazyload() ? $this->lazyLoadClass : '') . ' ' . ($attributes['class'] ?? ''));
@@ -1113,10 +1206,16 @@ class MediaHelper extends Helper {
 			}
 		}
 
+		$noScriptTag = '';
+		if ($mediaRenderOptions->getLazyload()) {
+			/** @noinspection HtmlRequiredAltAttribute */
+			$noScriptTag = '<noscript><img src="' . $path . '"' . $noScriptSrcSet . $noScriptAttributesString . '></noscript>' . PHP_EOL;
+		}
+
 		/** @noinspection HtmlRequiredAltAttribute */
-		return '<img ' . $sourceAttribute . '="' . $path . '"' . $srcSet . $attributesString . '>' . PHP_EOL .
-			($mediaRenderOptions->getLazyload() ? '<noscript><img src="' . $path . '"' . $noScriptSrcSet . $noScriptAttributesString . '></noscript>' . PHP_EOL : '') .
-			$placeholderStyleTag . PHP_EOL;
+		return '<img ' . $sourceAttribute . '="' . $path . '"' . $srcSet . $attributesString . '>' . PHP_EOL
+			. $noScriptTag . $placeholderStyleTag . PHP_EOL
+		;
 	}
 
 
@@ -1165,7 +1264,10 @@ class MediaHelper extends Helper {
 		float|int $aspectRatio,
 		string $backgroundColorStyle
 	): string {
-		$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+		$nonce = $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspStyleNonce') ?: '';
 		if ($nonce) {
 			$nonce = ' nonce="' . $nonce . '"';
 		}
@@ -1297,9 +1399,9 @@ class MediaHelper extends Helper {
 			$default = $sourceLang === (LocaleMiddleware::getLanguage()->shortcode ?? '') ? ' default' : '';
 
 			// Add a track tag for the subtitle
-			$subtitles .= PHP_EOL . '<track src="' . $media->path . '" kind="subtitles"' .
-						  $default .
-				' srclang="' . $sourceLang . '" label="' . ($media->alt ?? locale_get_display_language($sourceLang)) . '">';
+			$subtitles .= PHP_EOL . '<track src="' . $media->path . '" kind="subtitles"' . $default
+				. ' srclang="' . $sourceLang . '" label="' . ($media->alt ?? locale_get_display_language($sourceLang)) . '">'
+			;
 		}
 
 		return $subtitles;
@@ -1315,15 +1417,23 @@ class MediaHelper extends Helper {
 	 */
 	protected function getTargetPath(Media $media): ?string {
 		if (
-			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF &&
-			in_array($media->avif, [ProcessStatus::Success, ProcessStatus::NotRequired], true)
+			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF
+			&& in_array(
+				$media->avif,
+				[ProcessStatus::Success, ProcessStatus::NotRequired],
+				true
+			)
 		) {
 			return $media->avifPath;
 		}
 
 		if (
-			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP &&
-			in_array($media->webp, [ProcessStatus::Success, ProcessStatus::NotRequired], true)
+			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP
+			&& in_array(
+				$media->webp,
+				[ProcessStatus::Success, ProcessStatus::NotRequired],
+				true
+			)
 		) {
 			return $media->webpPath;
 		}

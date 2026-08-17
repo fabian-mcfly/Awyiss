@@ -81,13 +81,9 @@ class UrlHistoryTable extends Table {
 			'status',
 		], 'create');
 
-		$validator->requirePresence([
-			'target',
-		], fn ($context) => empty($context['data']['scope']));
+		$validator->requirePresence('target', fn($context) => empty($context['data']['scope']));
 
-		$validator->requirePresence([
-			'foreignKey',
-		], fn ($context) => !empty($context['data']['scope']));
+		$validator->requirePresence('foreignKey', fn($context) => !empty($context['data']['scope']));
 
 		$validator->notEmptyString('url');
 		$validator->add('url', [
@@ -97,7 +93,7 @@ class UrlHistoryTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		$validator->notEmptyString('target', null, fn ($context) => empty($context['data']['scope']));
+		$validator->notEmptyString('target', null, fn($context) => empty($context['data']['scope']));
 		$validator->add('target', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
@@ -105,7 +101,7 @@ class UrlHistoryTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		$validator->notEmptyString('foreignKey', null, fn ($context) => !empty($context['data']['scope']));
+		$validator->notEmptyString('foreignKey', null, fn($context) => !empty($context['data']['scope']));
 		$validator->add('foreignKey', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
@@ -137,47 +133,55 @@ class UrlHistoryTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$rules->add(function (UrlHistory $entity, array $options) use ($rules) {
-			$tableLocator = FactoryLocator::get('Table');
+		$rules->add(
+			function (UrlHistory $entity, array $options) use ($rules) {
+				$tableLocator = FactoryLocator::get('Table');
 
-			if ($entity->scope === 'Pages') {
-				/** @var \Awyiss\Model\Table\PagesTable $table */
-				$table = $tableLocator->get('Pages');
-				$existsIn = $rules->existsIn(['foreignKey'], $table, [
-					'finder' => [
-						'all' => [
-							'skipPageRoleCheck' => true,
+				if ($entity->scope === 'Pages') {
+					/** @var \Awyiss\Model\Table\PagesTable $table */
+					$table = $tableLocator->get('Pages');
+					$existsIn = $rules->existsIn(['foreignKey'], $table, [
+						'finder' => [
+							'all' => [
+								'skipPageRoleCheck' => true,
+							],
 						],
-					],
-				]);
+					]);
 
-				return $existsIn($entity, $options);
-			}
+					return $existsIn($entity, $options);
+				}
 
-			if ($entity->scope === 'Media') {
-				/** @var \Awyiss\Model\Table\MediaTable $table */
-				$table = $tableLocator->get('Media');
-				$existsIn = $rules->existsIn(['foreignKey'], $table);
+				if ($entity->scope === 'Media') {
+					/** @var \Awyiss\Model\Table\MediaTable $table */
+					$table = $tableLocator->get('Media');
+					$existsIn = $rules->existsIn(['foreignKey'], $table);
 
-				return $existsIn($entity, $options);
-			}
+					return $existsIn($entity, $options);
+				}
 
-			return empty($entity->foreignKey);
-		}, 'validForeignKey', [
-			'errorField' => 'foreignKey',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_foreign_key'),
-		]);
+				return empty($entity->foreignKey);
+			},
+			'validForeignKey',
+			[
+				'errorField' => 'foreignKey',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_foreign_key'),
+			]
+		);
 
-		$rules->add(function (UrlHistory $entity/*, array $options*/) use ($rules) {
-			if (!empty($entity->scope)) {
-				return empty($entity->target);
-			}
+		$rules->add(
+			function (UrlHistory $entity) use ($rules) {
+				if (!empty($entity->scope)) {
+					return empty($entity->target);
+				}
 
-			return !empty($entity->target);
-		}, 'validTarget', [
-			'errorField' => 'target',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_target'),
-		]);
+				return !empty($entity->target);
+			},
+			'validTarget',
+			[
+				'errorField' => 'target',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_target'),
+			]
+		);
 
 		return $rules;
 	}

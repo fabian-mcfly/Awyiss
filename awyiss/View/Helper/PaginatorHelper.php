@@ -97,9 +97,9 @@ class PaginatorHelper extends BasePaginatorHelper {
 		$templateName = 'sort';
 
 		if (
-			$sortKey === ($tableName . '.' . $field) ||
-			$sortKey === ($alias . '.' . $key) ||
-			($tableName . '.' . $field) === ($alias . '.' . $sortKey)
+			$sortKey === ($tableName . '.' . $field)
+			|| $sortKey === ($alias . '.' . $key)
+			|| ($tableName . '.' . $field) === ($alias . '.' . $sortKey)
 		) {
 			$direction = $this->sortDir() === 'asc' ? 'desc' : 'asc';
 			$templateName = $direction === 'asc' ? 'sortDesc' : 'sortAsc';
@@ -215,9 +215,9 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		//If the sorting-column and -direction equal their default value, set both to false, so they won't be part of the generated URI
 		if (
-			isset($params['sortDefault'], $params['directionDefault'], $params['sort'], $params['direction']) &&
-			$params['sort'] === $params['sortDefault'] &&
-			strtolower($params['direction']) === strtolower($params['directionDefault'])
+			isset($params['sortDefault'], $params['directionDefault'], $params['sort'], $params['direction'])
+			&& $params['sort'] === $params['sortDefault']
+			&& strtolower($params['direction']) === strtolower($params['directionDefault'])
 		) {
 			$params['sort'] = $params['direction'] = false;
 		}
@@ -283,11 +283,12 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string
 	 */
 	public function limitControl(array $limits = [], ?int $default = null, array $options = []): string {
-		$limits = $limits ?: [
-			'20' => '20',
-			'50' => '50',
-			'100' => '100',
-		];
+		$limits = $limits
+			?: [
+				'20' => '20',
+				'50' => '50',
+				'100' => '100',
+			];
 
 		$limits += [$this->param('perPage') => $this->param('perPage')];
 
@@ -330,9 +331,12 @@ class PaginatorHelper extends BasePaginatorHelper {
 			return '';
 		}
 
-		return $this->getView()->element('paginator/pagination', [
-			'PaginatorHelper' => $this,
-		]);
+		return $this
+			->getView()
+			->element('paginator/pagination', [
+				'PaginatorHelper' => $this,
+			])
+		;
 	}
 
 

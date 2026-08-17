@@ -33,20 +33,29 @@ trait TableFieldsTrait {
 		static $tables;
 
 		if (!isset($tables)) {
-			$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+			$tables = ConnectionManager::get('default')
+				->getSchemaCollection()
+				->listTables()
+			;
 		}
 
 		$scope = $scope ?? (method_exists($this, 'getDynamicScope') ? $this->getDynamicScope() : static::getScope());
 
 		/** @var \Awyiss\Model\Table $table */
-		$table = FactoryLocator::get('Table')->get(Inflector::camelize($scope));
+		$table = FactoryLocator::get('Table')
+			->get(Inflector::camelize($scope))
+		;
 		$columns = [];
 
 		if (!in_array($table->getTable(), $tables)) {
 			return [];
 		}
 
-		foreach ($table->getSchema()->columns() as $column) {
+		foreach (
+			$table
+				->getSchema()
+				->columns() as $column
+		) {
 			if (in_array($column, $this->blocklistedTableFields, true)) {
 				continue;
 			}

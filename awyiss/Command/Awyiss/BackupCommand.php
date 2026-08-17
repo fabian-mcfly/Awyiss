@@ -23,7 +23,6 @@ use ZipArchive;
 class BackupCommand extends Command {
 	/**
 	 * @var \Cake\Console\ConsoleIo The console I/O
-	 * @noinspection PhpPropertyNamingConventionInspection
 	 */
 	protected ConsoleIo $io;
 
@@ -81,6 +80,7 @@ class BackupCommand extends Command {
 
 		if (!$zip->open($destination, ZipArchive::CREATE)) {
 			$this->io->error('Could not create backup file `' . $destination . '`.');
+
 			return false;
 		}
 
@@ -99,8 +99,8 @@ class BackupCommand extends Command {
 				if ($iterator->hasChildren()) {
 					// Exclude directories with names starting with '_deleted_' or matching '_*_preview'
 					if (
-						fnmatch('_deleted_*', $current->getFilename()) ||
-						fnmatch('_*_preview', $current->getFilename())
+						fnmatch('_deleted_*', $current->getFilename())
+						|| fnmatch('_*_preview', $current->getFilename())
 					) {
 						return false;
 					}
@@ -154,6 +154,7 @@ class BackupCommand extends Command {
 
 		if (!$database || !$host || !$username || !$password) {
 			$this->io->warning('Database configuration not found. Skipping database backup.');
+
 			return;
 		}
 
@@ -173,6 +174,7 @@ class BackupCommand extends Command {
 		catch (ProcessFailedException $ex) {
 			$this->io->error('Database backup failed.');
 			$this->io->error($ex->getMessage());
+
 			return;
 		}
 

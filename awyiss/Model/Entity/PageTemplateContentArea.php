@@ -27,7 +27,7 @@ class PageTemplateContentArea extends Entity {
 		'systemOrder' => true,
 	];
 	/**
-	 * @var array|array<string>
+	 * @var array<string>
 	 */
 	protected array $_virtual = []; // phpcs:ignore
 }

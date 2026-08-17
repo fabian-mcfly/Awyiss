@@ -49,10 +49,10 @@ class UrlHelper extends BaseUrlHelper {
 
 			if (
 				(
-					!array_key_exists('_name', $cleanUrlParts) ||
-					$cleanUrlParts['_name'] === null
-				) &&
-				empty($cleanUrlParts['plugin'])
+					!array_key_exists('_name', $cleanUrlParts)
+					|| $cleanUrlParts['_name'] === null
+				)
+				&& empty($cleanUrlParts['plugin'])
 			) {
 				unset($cleanUrlParts['_name']);
 			}

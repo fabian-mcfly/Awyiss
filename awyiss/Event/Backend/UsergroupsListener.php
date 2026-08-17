@@ -22,6 +22,7 @@ class UsergroupsListener implements EventListenerInterface {
 	use LocatorAwareTrait;
 	use IdentityAwareTrait;
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -44,10 +45,14 @@ class UsergroupsListener implements EventListenerInterface {
 	public function afterSave(Event $event, Usergroup $entity): void {
 		$usersTable = $this->fetchTable('Users');
 
-		$query = $usersTable->find()->matching('Usergroups', function (SelectQuery $query) use ($entity) {
-			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			return $query->find('withDeleted')->where(['Usergroups.id' => $entity->id]);
-		});
+		$query = $usersTable
+			->find()
+			->matching(
+				'Usergroups',
+				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
+				fn(SelectQuery $query) => $query->find('withDeleted')->where(['Usergroups.id' => $entity->id])
+			)
+		;
 
 		$users = $query->all();
 
@@ -71,14 +76,17 @@ class UsergroupsListener implements EventListenerInterface {
 
 		$now = DateTime::now();
 		// Decrease the system order of all records
-		$users = $users->compile()->each(function (User $user) use ($entity, $now, $currentUser): void {
-			$user->changedOn = $now;
+		$users = $users
+			->compile()
+			->each(function (User $user) use ($entity, $now, $currentUser): void {
+				$user->changedOn = $now;
 
-			if ($user->id === $currentUser->id) {
-				$currentUser->unset('usergroups');
-				$currentUser->unsetPermissionCollection();
-			}
-		});
+				if ($user->id === $currentUser->id) {
+					$currentUser->unset('usergroups');
+					$currentUser->unsetPermissionCollection();
+				}
+			})
+		;
 
 		try {
 			// Save all found records, but skip the audit and the system order behavior on those to avoid recursion.

@@ -79,7 +79,12 @@ class BreadcrumbsWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+	public static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array {
 		return [
 			// Checkbox if the homepage should be included in the breadcrumbs (default: true)
 			'settings.includeHomepage' => [
@@ -129,7 +134,13 @@ class BreadcrumbsWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions = null, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
+	public static function render(
+		array $settings,
+		FrontendView $view,
+		?MediaRenderOptions $mediaRenderOptions = null,
+		?Entity $entity = null,
+		?Language $frontendLanguage = null
+	): string {
 		$includeHomepage = $settings['includeHomepage'] ?? true;
 		$includeCurrentPage = $settings['includeCurrentPage'] ?? true;
 		$showOnHomepage = $settings['showOnHomepage'] ?? false;
@@ -171,7 +182,8 @@ class BreadcrumbsWidget extends AbstractWidget {
 			$query
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		$currentPath = '';
@@ -186,14 +198,16 @@ class BreadcrumbsWidget extends AbstractWidget {
 		}
 
 		if ($paths) {
-			$query->where(['Pages.slug IN' => $paths])
+			$query
+				->where(['Pages.slug IN' => $paths])
 				/**
 				 * Order by the length of the slug since
 				 * all slugs are nested, and we want to
 				 * show the shortest slug first
 				 * (e.g. /about/team should come before /about/team/john)
 				 */
-				->orderBy(['LENGTH(Pages.slug)' => 'ASC']);
+				->orderBy(['LENGTH(Pages.slug)' => 'ASC'])
+			;
 			$pages = $query->all()->indexBy('id')->toArray();
 		}
 		else {
@@ -237,7 +251,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 		$pages = $pageTable->listNested($query);
 
 		/** @var \Awyiss\Model\Entity\Page $page */
-		foreach ($pages ?? [] as $page) {
+		foreach ($pages as $page) {
 			/** @noinspection PhpUndefinedFieldInspection */
 			$options[ $page->id ] = str_repeat('- ', $page->level) . $page->title;
 		}

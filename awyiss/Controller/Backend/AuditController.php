@@ -50,7 +50,11 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->Audit->find()->where($this->getOverviewWhere());
+		$query = $this->Audit
+			->find()
+			->where($this->getOverviewWhere())
+		;
+
 		$this->Search->filterQuery($query);
 
 		return $query;
@@ -114,6 +118,7 @@ class AuditController extends Controller {
 			$this->ensurePageRoleAccess($entity);
 		}
 		elseif ($scope === 'Configuration') {
+			/** @var \Awyiss\Model\Entity\Configuration $entity */
 			$this->Authorization->scopeIsAccessible($scope, [
 				'scope' => $entity->scope,
 			], 'update');
@@ -183,10 +188,15 @@ class AuditController extends Controller {
 		if ($table->hasAttributes()) {
 			// Get all identifiers of translatable attributes
 			$translatableAttributes = array_column($attributes, null, 'identifier');
-			$translatableAttributes = array_keys(array_filter($translatableAttributes, fn(Attribute $attribute) => $attribute->translatable));
+			$translatableAttributes = array_keys(
+				array_filter(
+					$translatableAttributes,
+					fn(Attribute $attribute) => $attribute->translatable
+				)
+			);
 		}
 
-		$associations = array_map(fn (Association $association) => [
+		$associations = array_map(fn(Association $association) => [
 			'association' => $association,
 			'name' => $association->getName(),
 			'property' => $association->getProperty(),
@@ -210,14 +220,25 @@ class AuditController extends Controller {
 			'languages' => $languages,
 			'translatableFields' => $translatableFields,
 			'translatableAttributes' => $translatableAttributes,
-			'datatables' => $this->fetchTable('Datatables')->findAllAndCache()->indexBy('identifier')->toArray(),
-			'pageRoles' => $this->fetchTable('PageRoles')->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-				return Inflector::pluralize($pageRole->identifier);
-			})->toArray(),
+			'datatables' => $this
+				->fetchTable('Datatables')
+				->findAllAndCache()
+				->indexBy('identifier')
+				->toArray(),
+			'pageRoles' => $this
+				->fetchTable('PageRoles')
+				->findAllAndCache()
+				->indexBy(function (PageRole $pageRole) {
+					return Inflector::pluralize($pageRole->identifier);
+				})
+				->toArray(),
 		]);
 
 		if ($this->request->is('ajax')) {
-			$this->viewBuilder()->setLayout('overlay_configuration');
+			$this
+				->viewBuilder()
+				->setLayout('overlay_configuration')
+			;
 		}
 	}
 
@@ -250,7 +271,12 @@ class AuditController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\AuditBehavior::findWithAuditUsers()
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$record = $this->fetchTable(Inflector::camelize($scope))->findById($id)->find('withAuditUsers')->first($id);
+		$record = $this
+			->fetchTable(Inflector::camelize($scope))
+			->findById($id)
+			->find('withAuditUsers')
+			->first($id)
+		;
 		if (!$record) {
 			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'index']));
 		}
@@ -290,7 +316,6 @@ class AuditController extends Controller {
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
-
 
 			return;
 		}
@@ -361,12 +386,17 @@ class AuditController extends Controller {
 				$foreignKey = $association->getProperty();
 			}
 			elseif (
-				$association instanceof HasMany &&
-				$association->getCascadeCallbacks() &&
-				$association->getDependent() &&
-				!in_array($association->getTarget()->getTable(), [
-					MediaAssignmentsTable::TABLE,
-				])
+				$association instanceof HasMany
+				&& $association->getCascadeCallbacks()
+				&& $association->getDependent()
+				&& !in_array(
+					$association
+						->getTarget()
+						->getTable(),
+					[
+						MediaAssignmentsTable::TABLE,
+					]
+				)
 			) {
 				$foreignKey = $association->getProperty();
 			}
@@ -402,14 +432,24 @@ class AuditController extends Controller {
 			Hash::extract($audits, '{n}.dataNew.mediaAssignments'),
 		);
 
-		$mediaIds = array_merge($mediaIds, Hash::extract($mediaAssignments, '{n}.{s}.{*}.mediaId'), Hash::extract($mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
+		$mediaIds = array_merge(
+			$mediaIds,
+			Hash::extract($mediaAssignments, '{n}.{s}.{*}.mediaId'),
+			Hash::extract($mediaAssignments, '{n}.{s}.{s}.{n}.mediaId')
+		);
 		$mediaIds = array_unique($mediaIds);
 
 		if (!$mediaIds) {
 			return new Collection([]);
 		}
 
-		return $this->fetchTable('Media')->find()->where(['id IN' => $mediaIds])->all()->indexBy('id');
+		return $this
+			->fetchTable('Media')
+			->find()
+			->where(['id IN' => $mediaIds])
+			->all()
+			->indexBy('id')
+		;
 	}
 
 
@@ -419,9 +459,13 @@ class AuditController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMediaElements(Entity $entity, CollectionInterface $audits): CollectionInterface {
-		$mediaElements = $this->fetchTable('MediaElements')->find()->contain([
-			'MediaElementSelectors.MediaSelectors',
-		])->all()->indexBy('identifier');
+		$mediaElements = $this
+			->fetchTable('MediaElements')
+			->find()
+			->contain(['MediaElementSelectors.MediaSelectors'])
+			->all()
+			->indexBy('identifier')
+		;
 
 		$audits = $audits->toList();
 		$oldMediaElements = Hash::merge(
@@ -432,11 +476,15 @@ class AuditController extends Controller {
 
 		$currentMediaElements = array_keys($entity->mediaAssignments ?? []);
 
-		return $mediaElements->filter(function (MediaElement $mediaElement) use ($oldMediaElements, $currentMediaElements) {
-			$identifier = Inflector::variable($mediaElement->identifier);
+		return $mediaElements
+			->filter(function (MediaElement $mediaElement) use ($oldMediaElements, $currentMediaElements) {
+				$identifier = Inflector::variable($mediaElement->identifier);
 
-			return in_array($identifier, $oldMediaElements, true) || in_array($identifier, $currentMediaElements, true);
-		})->indexBy('identifier')->compile();
+				return in_array($identifier, $oldMediaElements, true) || in_array($identifier, $currentMediaElements, true);
+			})
+			->indexBy('identifier')
+			->compile()
+		;
 	}
 
 
@@ -447,14 +495,14 @@ class AuditController extends Controller {
 	 * @return void
 	 */
 	protected function loadOldAssociationEntities(Entity $entity, CollectionInterface $audits, array $associations): void {
-		$associationProperties = array_map(fn (Association $association) => [
+		$associationProperties = array_map(fn(Association $association) => [
 			'association' => $association,
 			'name' => $association->getName(),
 			'property' => $association->getProperty(),
 		], $associations);
 
 		$audits = $audits->toList();
-		$diffData =	Hash::merge(
+		$diffData = Hash::merge(
 			Hash::extract($audits, '{n}.dataOld'),
 			Hash::extract($audits, '{n}.dataNew')
 		);
@@ -495,9 +543,15 @@ class AuditController extends Controller {
 			}
 
 			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			$oldEntities[ $propertyName ] = $associations[ $propertyName ]->find($finder, skipPageRoleCheck: true)->where([
-				$associations[ $propertyName ]->getBindingKey() . ' IN' => $foreignKeys,
-			])->all()->indexBy('id')->toArray();
+			$oldEntities[ $propertyName ] = $associations[ $propertyName ]
+				->find($finder, skipPageRoleCheck: true)
+				->where([
+					$associations[ $propertyName ]->getBindingKey() . ' IN' => $foreignKeys,
+				])
+				->all()
+				->indexBy('id')
+				->toArray()
+			;
 		}
 
 		if (!$oldEntities) {
@@ -511,6 +565,7 @@ class AuditController extends Controller {
 		}
 	}
 
+
 	/**
 	 * Populate association entities in audit data
 	 *
@@ -521,8 +576,14 @@ class AuditController extends Controller {
 	 * @param string $diffField The diff field name ('old' or 'new')
 	 * @return void
 	 */
-	protected function populateAssociationEntities(Audit $audit, array $associationProperties, array $oldEntities, string $dataField, string $diffField): void {
-		$data = $audit->{ $dataField };
+	protected function populateAssociationEntities(
+		Audit $audit,
+		array $associationProperties,
+		array $oldEntities,
+		string $dataField,
+		string $diffField
+	): void {
+		$data = $audit->{$dataField};
 
 		foreach ($associationProperties as $foreignKey => $association) {
 			$id = $data[ $foreignKey ] ?? null;
@@ -608,7 +669,8 @@ class AuditController extends Controller {
 				});
 			})
 			->all()
-			->compile();
+			->compile()
+		;
 	}
 
 
@@ -633,12 +695,19 @@ class AuditController extends Controller {
 		$combinedPivotAudits = $this->combinePivotAudits($groupedPivotAudits, $table, $entity);
 
 		// Merge with main audits and sort
-		$audits = $audits->append($combinedPivotAudits)->sortBy('createdOn', SORT_ASC)->toList();
+		$audits = $audits
+			->append($combinedPivotAudits)
+			->sortBy('createdOn', SORT_ASC)
+			->toList()
+		;
 
 		// Build complete state for each pivot audit including cumulative association changes
 		$audits = $this->buildPivotAuditStates($audits, $table, $entity, $associations);
 
-		$audits = new Collection($audits)->sortBy('createdOn')->compile();
+		$audits = new Collection($audits)
+			->sortBy('createdOn')
+			->compile()
+		;
 	}
 
 
@@ -651,7 +720,10 @@ class AuditController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getPivotTableAudits(Table $table, Entity $entity, CollectionInterface $audits): CollectionInterface {
-		$indexedAudits = $audits->indexBy('transactionId')->toArray();
+		$indexedAudits = $audits
+			->indexBy('transactionId')
+			->toArray()
+		;
 
 		$pivotTableAudits = $this->findAudits([
 			'OR' => [
@@ -667,7 +739,7 @@ class AuditController extends Controller {
 		]);
 
 		// Filter out audits that are already included in the main audits
-		return $pivotTableAudits->reject(fn (Audit $audit) => isset($indexedAudits[ $audit->transactionId ]));
+		return $pivotTableAudits->reject(fn(Audit $audit) => isset($indexedAudits[ $audit->transactionId ]));
 	}
 
 
@@ -718,11 +790,11 @@ class AuditController extends Controller {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				if (
 					(
-						$audit->type === 'c' &&
-						$entity->createdOn &&
-						$audit->createdOn->equals($entity->createdOn)
-					) ||
-					$audit->type === 'u'
+						$audit->type === 'c'
+						&& $entity->createdOn
+						&& $audit->createdOn->equals($entity->createdOn)
+					)
+					|| $audit->type === 'u'
 				) {
 					continue;
 				}
@@ -804,8 +876,8 @@ class AuditController extends Controller {
 		$targetTableCamelized = Inflector::camelize($targetTable);
 
 		if (
-			!$table->hasAssociation($targetTableCamelized) ||
-			!$table->getAssociation($targetTableCamelized) instanceof BelongsToMany
+			!$table->hasAssociation($targetTableCamelized)
+			|| !$table->getAssociation($targetTableCamelized) instanceof BelongsToMany
 		) {
 			return null;
 		}
@@ -983,12 +1055,16 @@ class AuditController extends Controller {
 		if ($entity->get('_translations')) {
 			$translateFields = null;
 			if ($table->hasBehavior('Translate')) {
-				$translateFields = $table->getBehavior('Translate')->getConfig('fields');
+				$translateFields = $table
+					->getBehavior('Translate')
+					->getConfig('fields')
+				;
 			}
 
 			if ($translateFields) {
 				$translations = [];
 
+				/** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
 				foreach (($entity->get('_translations') ?? []) as $languageShortcode => $translatedEntity) {
 					$translations[ $languageShortcode ] = $translatedEntity?->extract($translateFields, false, false) ?? null;
 				}
@@ -1049,9 +1125,7 @@ class AuditController extends Controller {
 				return null;
 			}, $value);
 
-			$ids = array_values(
-				array_filter($ids, fn ($id) => $id !== null)
-			);
+			$ids = array_values(array_filter($ids, fn($id) => $id !== null));
 
 			$normalizedData[ $key ] = [
 				'_ids' => $ids,
@@ -1135,18 +1209,24 @@ class AuditController extends Controller {
 			if ($forward) {
 				// Forward: current state is BEFORE, calculate AFTER
 				$idsBefore = $currentState;
-				$idsAfter = array_values(array_diff(
-					array_unique(array_merge($idsBefore, $addedIds)),
-					$removedIds
-				));
+				$idsAfter = array_values(
+					array_diff(
+						array_unique(array_merge($idsBefore, $addedIds)),
+						$removedIds
+					)
+				);
 			}
 			else {
 				// Reverse: current state is AFTER, calculate BEFORE
 				$idsAfter = $currentState;
-				$idsBefore = array_values(array_unique(array_merge(
-					array_diff($idsAfter, $addedIds),
-					$removedIds
-				)));
+				$idsBefore = array_values(
+					array_unique(
+						array_merge(
+							array_diff($idsAfter, $addedIds),
+							$removedIds
+						)
+					)
+				);
 			}
 
 			$newDataOld[ $property ] = ['_ids' => $idsBefore];
@@ -1171,7 +1251,12 @@ class AuditController extends Controller {
 	 * @param array $association
 	 * @return array
 	 */
-	protected function buildEntitiesArrayFromAuditData(array $auditData, string $foreignKey, array $oldEntities, array $association): array {
+	protected function buildEntitiesArrayFromAuditData(
+		array $auditData,
+		string $foreignKey,
+		array $oldEntities,
+		array $association
+	): array {
 		$entitiesArray = [];
 
 		/** @var \Awyiss\Model\Table $targetTable */

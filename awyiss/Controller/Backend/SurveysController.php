@@ -49,12 +49,14 @@ class SurveysController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->surveyQuestions = $this->fetchTable('SurveyQuestions')
+		$this->surveyQuestions = $this
+			->fetchTable('SurveyQuestions')
 			->find('all')
 			->contain(['SurveyAnswers'])
 			->all()
 			->indexBy('id')
-			->toArray();
+			->toArray()
+		;
 
 		Arrays::naturalSort($this->surveyQuestions, 'title');
 	}
@@ -125,7 +127,8 @@ class SurveysController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$survey = $this->Surveys->findById($id)
+		$survey = $this->Surveys
+			->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
@@ -139,7 +142,8 @@ class SurveysController extends Controller {
 					],
 				],
 			])
-			->first();
+			->first()
+		;
 
 		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
@@ -216,7 +220,8 @@ class SurveysController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 */
-		$survey = $this->Surveys->findById($id)
+		$survey = $this->Surveys
+			->findById($id)
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain([
@@ -229,7 +234,8 @@ class SurveysController extends Controller {
 					],
 				],
 			])
-			->first();
+			->first()
+		;
 
 		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
@@ -239,10 +245,15 @@ class SurveysController extends Controller {
 		$entryId = (int)$this->request->getParam('entryId');
 		if ($entryId) {
 			$surveyEntriesTable = $this->fetchTable('SurveyEntries');
-			$entry = $surveyEntriesTable->find()->where([
-				'id' => $entryId,
-				'surveyId' => $id,
-			])->first();
+			/** @var \Awyiss\Model\Entity\SurveyEntry $entry */
+			$entry = $surveyEntriesTable
+				->find()
+				->where([
+					'id' => $entryId,
+					'surveyId' => $id,
+				])
+				->first()
+			;
 
 			if ($entry) {
 				$postData = $this->decodeEntryData($entry->data);
@@ -275,7 +286,8 @@ class SurveysController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 */
-		$survey = $this->Surveys->findById($id)
+		$survey = $this->Surveys
+			->findById($id)
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain([
@@ -287,7 +299,9 @@ class SurveysController extends Controller {
 						'SurveyAnswers',
 					],
 				],
-			])->first();
+			])
+			->first()
+		;
 
 		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
@@ -296,9 +310,14 @@ class SurveysController extends Controller {
 
 		// Fetch all entries for this survey
 		$surveyEntriesTable = $this->fetchTable('SurveyEntries');
-		$entries = $surveyEntriesTable->find()->where([
-			'surveyId' => $id,
-		])->orderBy(['createdOn' => 'DESC'])->all();
+		$entries = $surveyEntriesTable
+			->find()
+			->where([
+				'surveyId' => $id,
+			])
+			->orderBy(['createdOn' => 'DESC'])
+			->all()
+		;
 
 		// Analyze the data
 		$analysis = $this->analyzeEntries($survey, $entries);
@@ -306,14 +325,19 @@ class SurveysController extends Controller {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $questionTypeEnum */
 		$questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
-		$entries = $this->paginate($surveyEntriesTable->find()->where([
-			'surveyId' => $id,
-		]), [
-			'limit' => 20,
-			'order' => [
-				'createdOn' => 'DESC',
-			],
-		]);
+		$entries = $this->paginate(
+			$surveyEntriesTable
+				->find()
+				->where([
+					'surveyId' => $id,
+				]),
+			[
+				'limit' => 20,
+				'order' => [
+					'createdOn' => 'DESC',
+				],
+			]
+		);
 
 		$this->set([
 			'survey' => $survey,
@@ -455,6 +479,7 @@ class SurveysController extends Controller {
 		}
 	}
 
+
 	/**
 	 * @param Survey $survey
 	 * @param string $method
@@ -518,12 +543,13 @@ class SurveysController extends Controller {
 			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
 			$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 			foreach ($survey->surveySurveyQuestions as $key => $surveySurveyQuestion) {
-				$survey->surveySurveyQuestions[ $key ]->surveyQuestion = $this->surveyQuestions[ $surveySurveyQuestion->surveyQuestionId ] ?? null;
+				$survey->surveySurveyQuestions[ $key ]->surveyQuestion = $this->surveyQuestions[ $surveySurveyQuestion->surveyQuestionId ]
+					?? null;
 
 				// If any question is repeated in a linear survey, set an error.
 				if (
-					$survey->type === $surveyTypeEnum::Linear &&
-					array_count_values($surveyQuestionIds)[ $surveySurveyQuestion->surveyQuestionId ] > 1
+					$survey->type === $surveyTypeEnum::Linear
+					&& array_count_values($surveyQuestionIds)[ $surveySurveyQuestion->surveyQuestionId ] > 1
 				) {
 					$survey->setError('surveySurveyQuestions', __('error_no_repeated_questions_in_linear_survey'));
 					$surveySurveyQuestion->setError('surveyQuestionId', __('error_no_repeated_questions_in_linear_survey'));
@@ -571,8 +597,8 @@ class SurveysController extends Controller {
 				];
 
 				if (
-					!$question->surveySurveyAnswers ||
-					!$question->surveyQuestion?->surveyAnswers
+					!$question->surveySurveyAnswers
+					|| !$question->surveyQuestion?->surveyAnswers
 				) {
 					continue;
 				}
@@ -598,7 +624,12 @@ class SurveysController extends Controller {
 			'survey' => $survey,
 			'availableQuestions' => $this->surveyQuestions,
 			'availableActions' => $this->Surveys->availableNextActions(),
-			'availableForms' => $this->fetchTable('Forms')->find()->all()->indexBy('id')->toArray(),
+			'availableForms' => $this
+				->fetchTable('Forms')
+				->find()
+				->all()
+				->indexBy('id')
+				->toArray(),
 			'finalActions' => $this->Surveys->availableFinalActions(),
 			'specifyQuestionOptions' => $specifyQuestionOptions,
 			'questionTypeEnum' => $questionTypeEnum,
@@ -615,18 +646,18 @@ class SurveysController extends Controller {
 		$count = 0;
 
 		if (
-			!isset($data['surveySurveyQuestions']) ||
-			!is_array($data['surveySurveyQuestions'])
+			!isset($data['surveySurveyQuestions'])
+			|| !is_array($data['surveySurveyQuestions'])
 		) {
 			$data['surveySurveyQuestions'] = [];
 		}
 
 		foreach ($data['surveySurveyQuestions'] as $key => $questionData) {
 			if (
-				!is_array($questionData) ||
-				!isset($questionData['surveyQuestionId'])
+				!is_array($questionData)
+				|| !isset($questionData['surveyQuestionId'])
 			) {
-				unset($data['surveySurveyQuestions'][$key]);
+				unset($data['surveySurveyQuestions'][ $key ]);
 				continue;
 			}
 
@@ -666,16 +697,16 @@ class SurveysController extends Controller {
 		$count = 0;
 
 		if (
-			!isset($data['surveySurveyAnswers']) ||
-			!is_array($data['surveySurveyAnswers'])
+			!isset($data['surveySurveyAnswers'])
+			|| !is_array($data['surveySurveyAnswers'])
 		) {
 			$data['surveySurveyAnswers'] = [];
 		}
 
 		foreach ($data['surveySurveyAnswers'] as $key => $answerData) {
 			if (
-				!is_array($answerData) ||
-				!isset($answerData['surveyAnswerId'])
+				!is_array($answerData)
+				|| !isset($answerData['surveyAnswerId'])
 			) {
 				unset($data['surveySurveyAnswers'][ $key ]);
 				continue;

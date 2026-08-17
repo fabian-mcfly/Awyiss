@@ -22,11 +22,10 @@ use Cake\ORM\Query\SelectQuery;
  */
 class FormElementsController extends Controller {
 	/**
-	 * @inheritDoc
+	 * Form element types and which form fields should not be shown for them in the backend form.
+	 *
+	 * @var array<string, array<string>>
 	 */
-	protected array $categories = [
-		'uriParam' => 'form-id',
-	];
 	protected array $blocklistedElements = [
 		'text' => ['options', 'text'],
 		'freeText' => ['identifier', 'options', 'placeholder', 'required', 'title', 'titleEmail'],
@@ -48,7 +47,12 @@ class FormElementsController extends Controller {
 		'hidden' => ['columnWidth', 'columnIndent', 'columnLast', 'columnRtl', 'options', 'placeholder', 'required', 'text'],
 		'submit' => ['identifier', 'options', 'placeholder', 'required', 'text', 'titleEmail'],
 	];
-
+	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'uriParam' => 'form-id',
+	];
 	/**
 	 * @var string|null Session identifier for the selected parentId
 	 */
@@ -99,32 +103,39 @@ class FormElementsController extends Controller {
 		 */
 		$query = $this->getOverviewQuery()->find('mediaAssignments');
 
-		$formElements = $query->formatResults(function (CollectionInterface $result): CollectionInterface {
-			/** @var \Awyiss\Model\Entity\FormElement $formElement */
-			foreach ($result as $formElement) {
-				/** @noinspection PhpUndefinedFieldInspection */
-				$formElement->class = $formElement->column['width']->getCssClass();
+		$formElements = $query
+			->formatResults(function (CollectionInterface $result): CollectionInterface {
+				/** @var \Awyiss\Model\Entity\FormElement $formElement */
+				foreach ($result as $formElement) {
+					$formElement->class = $formElement->column['width']->getCssClass();
 
-				if ($formElement->column['indent']) {
-					$formElement->class .= ' ' . $formElement->column['indent']->getCssClass();
+					if ($formElement->column['indent']) {
+						$formElement->class .= ' ' . $formElement->column['indent']->getCssClass();
+					}
+
+					if ($formElement->columnRtl) {
+						$formElement->class .= ' Column-RTL';
+					}
+
+					if ($formElement->columnLast) {
+						$formElement->class .= ' Column-Last';
+					}
 				}
 
-				if ($formElement->columnRtl) {
-					$formElement->class .= ' Column-RTL';
-				}
-
-				if ($formElement->columnLast) {
-					$formElement->class .= ' Column-Last';
-				}
-			}
-
-			return $result;
-		})->find('threaded')->all();
+				return $result;
+			})
+			->find('threaded')
+			->all()
+		;
 
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->FormElements->getColumnSystemClass();
 
-		$form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
+		$form = $this
+			->fetchTable('Forms')
+			->findById($this->Categories->getSelectedCategory())
+			->first()
+		;
 
 		$this->set([
 			'formElements' => $formElements,
@@ -176,7 +187,13 @@ class FormElementsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$formElement = $this->FormElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$formElement = $this->FormElements
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$formElement) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -188,9 +205,11 @@ class FormElementsController extends Controller {
 		}
 
 		if ($this->request->getParam('mode') === 'frontendEditor') {
-			$this->viewBuilder()
-			->setTemplate('edit_frontend_editor')
-			->setLayout('frontend_editor');
+			$this
+				->viewBuilder()
+				->setTemplate('edit_frontend_editor')
+				->setLayout('frontend_editor')
+			;
 		}
 
 		$this->setViewVars($formElement);
@@ -309,9 +328,12 @@ class FormElementsController extends Controller {
 	 */
 	protected function getPossibleParentFormElements(FormElement $formElement): CollectionInterface {
 		if (!isset($this->threadedFormElements)) {
-			$query = $this->FormElements->find('mediaAssignments')->where([
-				'formId' => $formElement->formId,
-			]);
+			$query = $this->FormElements
+				->find('mediaAssignments')
+				->where([
+					'formId' => $formElement->formId,
+				])
+			;
 
 			$this->threadedFormElements = $this->FormElements->listNested($query);
 		}
@@ -464,13 +486,15 @@ class FormElementsController extends Controller {
 
 		if (count($options) === 1) {
 			// If key, value and all translations are empty, no options are set
-			$emptyKey = empty($options[0]['key']) && !array_filter($options[0]['_translations'], function (array $translation): bool {
-				return !empty($translation['key']);
-			});
+			$emptyKey = empty($options[0]['key'])
+				&& !array_filter($options[0]['_translations'], function (array $translation): bool {
+					return !empty($translation['key']);
+				});
 
-			$emptyValue = empty($options[0]['value']) && !array_filter($options[0]['_translations'], function (array $translation): bool {
-				return !empty($translation['value']);
-			});
+			$emptyValue = empty($options[0]['value'])
+				&& !array_filter($options[0]['_translations'], function (array $translation): bool {
+					return !empty($translation['value']);
+				});
 
 			if ($emptyKey && $emptyValue) {
 				$options = [];

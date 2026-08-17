@@ -10,8 +10,7 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Task class for creating view template files.
- * This one overwrites the default bake TemplateAllCommand to use
- *  	\AwyissBake\Command\Bake\TemplateCommand
+ * This one overwrites the default bake TemplateAllCommand to use \AwyissBake\Command\Bake\TemplateCommand
  */
 class TemplateAllCommand extends BaseTemplateAllCommand {
 	/**

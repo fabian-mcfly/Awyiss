@@ -38,7 +38,12 @@ class NewsListingWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+	public static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array {
 		$formFields = [
 			'settings.titleTag' => [
 				'columnSpan' => 6,
@@ -126,7 +131,13 @@ class NewsListingWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions = null, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
+	public static function render(
+		array $settings,
+		FrontendView $view,
+		?MediaRenderOptions $mediaRenderOptions = null,
+		?Entity $entity = null,
+		?Language $frontendLanguage = null
+	): string {
 		$paginate = isset($settings['paginate']) && $settings['paginate'] === true;
 		$itemsLimit = $settings['items'] ?? 3;
 		$itemsPerPage = $settings['itemsPerPage'] ?? 9;
@@ -193,8 +204,8 @@ class NewsListingWidget extends AbstractWidget {
 		$newsTable = FactoryLocator::get('Table')->get('News');
 
 		if (
-			!$newsTable->hasBehavior('Categories') ||
-			!$newsTable->getBehavior('Categories')->getConfig('enabled')
+			!$newsTable->hasBehavior('Categories')
+			|| !$newsTable->getBehavior('Categories')->getConfig('enabled')
 		) {
 			return [];
 		}
@@ -248,7 +259,8 @@ class NewsListingWidget extends AbstractWidget {
 			$query = $newsTable
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */

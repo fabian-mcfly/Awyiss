@@ -96,8 +96,8 @@ class EventManager extends BaseEventManager {
 
 		if ($generalScope) {
 			if (
-				empty($parts[1]) ||
-				$parts[1][0] !== strtoupper($parts[1][0])
+				empty($parts[1])
+				|| $parts[1][0] !== strtoupper($parts[1][0])
 			) {
 				// No second part, or it starts with a lower case letter: do nothing as it's not a scope
 				return;

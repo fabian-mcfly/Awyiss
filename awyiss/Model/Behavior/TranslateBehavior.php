@@ -104,9 +104,9 @@ class TranslateBehavior extends BaseTranslateBehavior {
 			 * If the main language's field remains empty, it will be set to the Spanish translation again.
 			 */
 			if (
-				!$data[ $field ] &&
-				$firstLanguageShortcode !== $currentLanguageShortcode &&
-				in_array($field, $forcedFields)
+				!$data[ $field ]
+				&& $firstLanguageShortcode !== $currentLanguageShortcode
+				&& in_array($field, $forcedFields)
 			) {
 				$data[ $field ] = $data['_translations'][ $currentLanguageShortcode ][ $field ] ?? null;
 			}

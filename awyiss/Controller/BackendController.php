@@ -39,13 +39,13 @@ abstract class BackendController extends AppController {
 
 
 	/**
-	 * @see AuthorizationComponent
 	 * @var array Settings for the AuthorizationComponent
+	 * @see AuthorizationComponent
 	 */
 	protected array $authorization = [];
 	/**
-	 * @see CategoriesComponent
 	 * @var array Settings for the CategoriesComponent
+	 * @see CategoriesComponent
 	 */
 	protected array $categories = [];
 	/**
@@ -59,23 +59,22 @@ abstract class BackendController extends AppController {
 		'systemOrder',
 	];
 	/**
-	 * @see \Awyiss\Controller\Component\EventTriggerComponent
 	 * @var array Settings for the EventTriggerComponent
+	 * @see \Awyiss\Controller\Component\EventTriggerComponent
 	 */
 	protected array $eventTrigger = [];
 	/**
-	 * @see \Awyiss\Controller\Component\LockComponent
 	 * @var array Settings for the LockComponent
+	 * @see \Awyiss\Controller\Component\LockComponent
 	 */
 	protected array $lock = [];
 	/**
-	 * @see initializeOverviewWhere()
 	 * @var array Settings used in initializeOverviewWhere()
+	 * @see initializeOverviewWhere()
 	 */
 	protected array $overviewWhere;
 	/**
 	 * @inheritDoc
-	 * @var array
 	 */
 	protected array $paginate = [
 		'enabled' => false,
@@ -85,13 +84,13 @@ abstract class BackendController extends AppController {
 	 */
 	protected array $publicationData = [];
 	/**
-	 * @see SearchComponent
 	 * @var array Settings for the SearchComponent
+	 * @see SearchComponent
 	 */
 	protected array $search = [];
 	/**
-	 * @see SystemOrderComponent
 	 * @var array Settings for the SystemOrderComponent
+	 * @see SystemOrderComponent
 	 */
 	protected array $systemOrder = [];
 
@@ -298,9 +297,11 @@ abstract class BackendController extends AppController {
 			$lock = $this->Lock->createLock((int)$this->request->getData('id'));
 		}
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setClassName('Json')
-			->setOption('serialize', ['data', 'status']);
+			->setOption('serialize', ['data', 'status'])
+		;
 
 		$data = [];
 		if ($lock) {
@@ -357,9 +358,11 @@ abstract class BackendController extends AppController {
 			$lock = $this->Lock->releaseLock((int)$this->request->getData('id'), $this->request->getData('createdOn'));
 		}
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setClassName('Json')
-			->setOption('serialize', ['data', 'status']);
+			->setOption('serialize', ['data', 'status'])
+		;
 
 		// Set the response data
 		$this->set([
@@ -483,7 +486,11 @@ abstract class BackendController extends AppController {
 		//Get the UserConfiguration table and fetch a matching config
 		/** @var \Awyiss\Model\Table\UserConfigurationTable $table */
 		$table = $this->fetchTable('UserConfiguration');
-		$configEntity = $table->find()->where($configSettings)->first();
+		$configEntity = $table
+			->find()
+			->where($configSettings)
+			->first()
+		;
 
 		if (!$configEntity) {
 			$configEntity = $table->newDefaultEntity();
@@ -541,8 +548,11 @@ abstract class BackendController extends AppController {
 		$viewBuilder = $this->viewBuilder();
 		// Disable the layout for ajax requests
 		if (
-			$this->request->is('ajax') &&
-			($this->request->getData('reloadForm') || $this->request->getParam('ajaxForm'))
+			$this->request->is('ajax')
+			&& (
+				$this->request->getData('reloadForm')
+				|| $this->request->getParam('ajaxForm')
+			)
 		) {
 			$viewBuilder->disableAutoLayout();
 

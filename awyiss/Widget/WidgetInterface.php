@@ -46,7 +46,12 @@ interface WidgetInterface {
 	 * @param array $settings
 	 * @return string
 	 */
-	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string;
+	public static function renderForm(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): string;
 
 
 	/**
@@ -62,5 +67,11 @@ interface WidgetInterface {
 	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage
 	 * @return string
 	 */
-	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions = null, ?Entity $entity = null, ?Language $frontendLanguage = null): string;
+	public static function render(
+		array $settings,
+		FrontendView $view,
+		?MediaRenderOptions $mediaRenderOptions = null,
+		?Entity $entity = null,
+		?Language $frontendLanguage = null
+	): string;
 }

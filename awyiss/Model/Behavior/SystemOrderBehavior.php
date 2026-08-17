@@ -85,8 +85,10 @@ class SystemOrderBehavior extends Behavior {
 		parent::initialize($config);
 
 		$this->setConfig('implementedEvents', [
-			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.direction.afterSaveCommit' => 'rebuildSystemOrderAfterDirectionSave',
-			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.field.afterSaveCommit' => 'rebuildSystemOrderAfterFieldSave',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.direction.afterSaveCommit'
+				=> 'rebuildSystemOrderAfterDirectionSave',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.field.afterSaveCommit'
+				=> 'rebuildSystemOrderAfterFieldSave',
 		]);
 	}
 
@@ -100,10 +102,10 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function rebuildSystemOrderAfterDirectionSave(Event $event, Configuration $configuration): void {
 		if (
-			!$configuration->isNew() &&
-			(
-				!$configuration->hasOriginal('value') ||
-				$configuration->getOriginal('value') === $configuration->value
+			!$configuration->isNew()
+			&& (
+				!$configuration->hasOriginal('value')
+				|| $configuration->getOriginal('value') === $configuration->value
 			)
 		) {
 			return;
@@ -132,12 +134,12 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function rebuildSystemOrderAfterFieldSave(Event $event, Configuration $configuration): void {
 		if (
-			$configuration->value === 'systemOrder' ||
-			(
-				!$configuration->isNew() &&
-				(
-					!$configuration->hasOriginal('value') ||
-					$configuration->getOriginal('value') === $configuration->value
+			$configuration->value === 'systemOrder'
+			|| (
+				!$configuration->isNew()
+				&& (
+					!$configuration->hasOriginal('value')
+					|| $configuration->getOriginal('value') === $configuration->value
 				)
 			)
 		) {
@@ -231,6 +233,7 @@ class SystemOrderBehavior extends Behavior {
 			$entity->systemOrder = 1;
 		}
 	}
+
 
 	/**
 	 * Before saving an entity, make sure the value for systemOrder is valid.
@@ -564,8 +567,8 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
-			!$this->getConfig('enabled') ||
-			!isset($this->rememberedData[ $entity->get('id') ])
+			!$this->getConfig('enabled')
+			|| !isset($this->rememberedData[ $entity->get('id') ])
 		) {
 			return;
 		}
@@ -662,7 +665,11 @@ class SystemOrderBehavior extends Behavior {
 
 		$query = $this->addQueryConditions($table->find(), $entity);
 
-		$record = $query->select('systemOrder')->orderByDesc('systemOrder')->first();
+		$record = $query
+			->select('systemOrder')
+			->orderByDesc('systemOrder')
+			->first()
+		;
 
 
 		return $record ? $record->get('systemOrder') : 0;
@@ -727,18 +734,18 @@ class SystemOrderBehavior extends Behavior {
 
 		foreach ($relatedColumns as $column) {
 			if (
-				$entity->isDirty($column) &&
-				$entity->hasOriginal($column) &&
-				$entity->get($column) !== $entity->getOriginal($column)
+				$entity->isDirty($column)
+				&& $entity->hasOriginal($column)
+				&& $entity->get($column) !== $entity->getOriginal($column)
 			) {
 				return true;
 			}
 
 			if (
-				$entity->get('attributes') instanceof EntityInterface &&
-				$entity->get('attributes')->isDirty($column) &&
-				$entity->get('attributes')->hasOriginal($column) &&
-				$entity->get('attributes')->get($column) !== $entity->get('attributes')->getOriginal($column)
+				$entity->get('attributes') instanceof EntityInterface
+				&& $entity->get('attributes')->isDirty($column)
+				&& $entity->get('attributes')->hasOriginal($column)
+				&& $entity->get('attributes')->get($column) !== $entity->get('attributes')->getOriginal($column)
 			) {
 				return true;
 			}
@@ -756,7 +763,12 @@ class SystemOrderBehavior extends Behavior {
 	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	public function rebuildSystemOrder(string $field, int $direction = SORT_ASC, ?EventInterface $event = null, array $additionalWhere = []): iterable|false {
+	public function rebuildSystemOrder(
+		string $field,
+		int $direction = SORT_ASC,
+		?EventInterface $event = null,
+		array $additionalWhere = []
+	): iterable|false {
 		if (Inflector::variable($field) === 'systemOrder') {
 			return $this->ensureGaplessSystemOrder($direction, $event, $additionalWhere);
 		}
@@ -764,11 +776,19 @@ class SystemOrderBehavior extends Behavior {
 		$table = $this->table();
 		if (str_starts_with($field, 'attributes.')) {
 			$dbField = substr($field, 11);
-			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($dbField);
+			$fieldType = $table
+				->getAttributesTable()
+				->getSchema()
+				->getColumnType($dbField)
+			;
 		}
 		else {
 			if ($table->fieldIsAttribute($field)) {
-				$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);
+				$fieldType = $table
+					->getAttributesTable()
+					->getSchema()
+					->getColumnType($field)
+				;
 			}
 			else {
 				$fieldType = $table->getSchema()->getColumnType($field);
@@ -789,10 +809,13 @@ class SystemOrderBehavior extends Behavior {
 			$records = collection($records);
 		}
 		else {
-			$records = $query->all()->sortBy(
-				$field,
-				$direction
-			);
+			$records = $query
+				->all()
+				->sortBy(
+					$field,
+					$direction
+				)
+			;
 		}
 
 
@@ -872,9 +895,9 @@ class SystemOrderBehavior extends Behavior {
 		 * to retrieve the records of the old scope.
 		 */
 		if (
-			$originalData &&
-			$attributes &&
-			array_filter($this->getConfig('relatedColumns'), fn ($field) => str_starts_with($field, 'attributes.'))
+			$originalData
+			&& $attributes
+			&& array_filter($this->getConfig('relatedColumns'), fn($field) => str_starts_with($field, 'attributes.'))
 		) {
 			$entity = clone $entity;
 
@@ -954,11 +977,16 @@ class SystemOrderBehavior extends Behavior {
 			$query->where(['id !=' => $entity->get('id')]);
 		}
 
-		$records = $query->all()->append([$entity])->sortBy(
-			$sortField,
-			$this->getConfig('direction'),
-			in_array($fieldType, ['string', 'text', 'mediumtext', 'longtext', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
-		)->toList();
+		$records = $query
+			->all()
+			->append([$entity])
+			->sortBy(
+				$sortField,
+				$this->getConfig('direction'),
+				in_array($fieldType, ['string', 'text', 'mediumtext', 'longtext', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+			)
+			->toList()
+		;
 
 		// Loop through all records (including the entity being saved) to determine its position in the sorted list
 		foreach ($records as $key => $existingEntity) {
@@ -987,10 +1015,10 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		if (
-			!$entity->isNew() &&
-			(
-				!$entity->hasOriginal('systemOrder') ||
-				$entity->get('systemOrder') === $entity->getOriginal('systemOrder')
+			!$entity->isNew()
+			&& (
+				!$entity->hasOriginal('systemOrder')
+				|| $entity->get('systemOrder') === $entity->getOriginal('systemOrder')
 			)
 		) {
 			$entity->setDirty('systemOrder', false);
@@ -1009,9 +1037,9 @@ class SystemOrderBehavior extends Behavior {
 		// Make sure the systemOrder is set and not higher than the max. allowed
 		// value plus 1 and not lower than 1 because cool orders start at 1, not 0.
 		if (
-			is_null($systemOrder) ||
-			$systemOrder === 0 ||
-			$systemOrder > $hightesSystemOrder
+			is_null($systemOrder)
+			|| $systemOrder === 0
+			|| $systemOrder > $hightesSystemOrder
 		) {
 			$entity->set('systemOrder', $hightesSystemOrder + 1);
 		}
@@ -1064,7 +1092,11 @@ class SystemOrderBehavior extends Behavior {
 	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	protected function ensureGaplessSystemOrder(int $direction = SORT_ASC, ?EventInterface $event = null, array $additionalWhere = []): iterable|false {
+	protected function ensureGaplessSystemOrder(
+		int $direction = SORT_ASC,
+		?EventInterface $event = null,
+		array $additionalWhere = []
+	): iterable|false {
 		$table = $this->table();
 		$query = $table->find();
 
@@ -1090,43 +1122,46 @@ class SystemOrderBehavior extends Behavior {
 
 		if ($relatedColumns) {
 			$relatedColumns = $table->extractAttributeFields($relatedColumns, true);
-			$groupedItems = $records->groupBy(function (EntityInterface $entity) use ($relatedColumns) {
-				$values = array_map(function (string $field) use ($entity) {
-					$value = $entity->get($field);
+			$groupedItems = $records
+				->groupBy(function (EntityInterface $entity) use ($relatedColumns) {
+					$values = array_map(function (string $field) use ($entity) {
+						$value = $entity->get($field);
 
-					if ($value instanceof BackedEnum) {
-						$value = $value->value;
-					}
+						if ($value instanceof BackedEnum) {
+							$value = $value->value;
+						}
 
-					return $value ?? '-';
-				}, $relatedColumns);
+						return $value ?? '-';
+					}, $relatedColumns);
 
 
-				return implode('_', $values);
-			})->reject(function (array $items): bool {
-				return count($items) === 1;
-			})->each(function (array $items): void {
-				// Increase the system order of all records
-				array_walk($items, function (EntityInterface $record, int $index): void {
-					/*
-					 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
-					 * This might happen if the fetch records have no attribute association but available attributes.
-					 * In this case, a default attribute entity gets set but this could be invalid.
-					 */
+					return implode('_', $values);
+				})
+				->reject(function (array $items): bool {
+					return count($items) === 1;
+				})
+				->each(function (array $items): void {
+					// Increase the system order of all records
+					array_walk($items, function (EntityInterface $record, int $index): void {
+						/*
+						 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
+						 * This might happen if the fetch records have no attribute association but available attributes.
+						 * In this case, a default attribute entity gets set but this could be invalid.
+						 */
 
-					/** @var \Awyiss\Model\Entity $record */
-					$record->clean();
+						/** @var \Awyiss\Model\Entity $record */
+						$record->clean();
 
-					$record->set('systemOrder', $index + 1);
-				});
-			});
+						$record->set('systemOrder', $index + 1);
+					});
+				})
+			;
 
 			$items = $groupedItems->unfold()->toList();
 		}
 		else {
 			$index = 1;
 			$records->each(function (EntityInterface $record) use (&$index): void {
-
 				/**
 				 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
 				 * This might happen if the fetch records have no attribute association but available attributes.

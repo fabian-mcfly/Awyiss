@@ -31,13 +31,13 @@ class ConfigOption {
 	 */
 	protected string $description = '';
 	/**
-	 * @var bool Can the config value be set independently per language
-	 */
-	protected bool $localizable = true;
-	/**
 	 * @var string
 	 */
 	protected string $identifier;
+	/**
+	 * @var bool Can the config value be set independently per language
+	 */
+	protected bool $localizable = true;
 	/**
 	 * @var array{global: bool, localized: bool} Can the config value be empty or is it required?
 	 */
@@ -283,7 +283,10 @@ class ConfigOption {
 
 		return match ($this->type) {
 			ConfigOptionType::Bool => $value ? 'true' : 'false',
-			ConfigOptionType::Json, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($value) ? implode(', ', $value) : print_r($value, true),
+			ConfigOptionType::Json, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($value) ? implode(
+				', ',
+				$value
+			) : print_r($value, true),
 			default => $value,
 		};
 	}
@@ -307,6 +310,7 @@ class ConfigOption {
 
 		return $this;
 	}
+
 
 	/**
 	 * @return ConfigOptionType
@@ -413,13 +417,15 @@ class ConfigOption {
 
 
 		if (
-			$this->getType() === ConfigOptionType::Enum ||
-			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ValueCollection
+			$this->getType() === ConfigOptionType::Enum
+			|| $this->getType() === ConfigOptionType::ListKey
+			|| $this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$values = $this->getValues(true, $languageShortcode);
 			if (!$values) {
-				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->type->name));
+				throw new RuntimeException(
+					sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->type->name)
+				);
 			}
 		}
 
@@ -450,7 +456,10 @@ class ConfigOption {
 		}
 
 
-		return $this->getType()->validate($value, $this->isNullable($languageShortcode !== null));
+		return $this
+			->getType()
+			->validate($value, $this->isNullable($languageShortcode !== null))
+		;
 	}
 
 
@@ -467,13 +476,19 @@ class ConfigOption {
 		}
 
 		if (
-			$this->getType() === ConfigOptionType::Enum ||
-			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ValueCollection
+			$this->getType() === ConfigOptionType::Enum
+			|| $this->getType() === ConfigOptionType::ListKey
+			|| $this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$values = $this->getValues(true, $languageShortcode);
 			if (!is_array($values) && $values instanceof BackedEnum) {
-				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, $this->getType()->name));
+				throw new RuntimeException(
+					sprintf(
+						'Cannot typecast option `%s` with type `%s` without a list of values',
+						$this->identifier,
+						$this->getType()->name
+					)
+				);
 			}
 		}
 
@@ -492,7 +507,10 @@ class ConfigOption {
 			return $this->typecastValueCollection($value, $values);
 		}
 
-		return $this->getType()->cast($value, $this->isNullable($languageShortcode !== null));
+		return $this
+			->getType()
+			->cast($value, $this->isNullable($languageShortcode !== null))
+		;
 	}
 
 

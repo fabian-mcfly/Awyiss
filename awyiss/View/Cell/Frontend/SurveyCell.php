@@ -67,6 +67,7 @@ class SurveyCell extends Cell {
 		$survey = $surveyRenderer->getSurvey();
 		if (!$survey) {
 			DebugTimer::stop('SurveyCell::display');
+
 			return;
 		}
 
@@ -79,10 +80,12 @@ class SurveyCell extends Cell {
 			$this->request->getParam('formEntry')
 		);
 
-		$this->set([
-			'contents' => $surveyRenderer->getSurveyBody($options),
-			'survey' => $survey,
-		] + $options);
+		$this->set(
+			[
+				'contents' => $surveyRenderer->getSurveyBody($options),
+				'survey' => $survey,
+			] + $options
+		);
 
 		DebugTimer::stop('SurveyCell::display');
 	}

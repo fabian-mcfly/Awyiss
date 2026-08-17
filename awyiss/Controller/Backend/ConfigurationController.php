@@ -53,10 +53,14 @@ class ConfigurationController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
-			'identifier' => 'ASC',
-			'languageShortcode' => 'ASC',
-		]);
+		$query = $this->Configuration
+			->find()
+			->where($this->getOverviewWhere())
+			->orderBy([
+				'identifier' => 'ASC',
+				'languageShortcode' => 'ASC',
+			])
+		;
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($query);
 
@@ -71,9 +75,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview() {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('read');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('read');
 
 		$selectedScope = $this->Categories->getSelectedCategory();
 
@@ -87,18 +89,27 @@ class ConfigurationController extends Controller {
 
 		$query = $this->getOverviewQuery();
 
-		$configuration = $query->all()->groupBy('realm')->map(function ($data) use ($configOptions) {
-			return Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($configOptions) {
-				$identifier = array_map(function (string $identifier) {
-					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-				}, explode('.', $entity->identifier));
+		$configuration = $query
+			->all()
+			->groupBy('realm')
+			->map(function ($data) use ($configOptions) {
+				return Hash::expand(
+					collection($data)
+						->groupBy(function (Configuration $entity) use ($configOptions) {
+							$identifier = array_map(function (string $identifier) {
+								return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+							}, explode('.', $entity->identifier));
 
-				/** @noinspection PhpUndefinedFieldInspection */
-				$entity->configOption = $configOptions->getConfigOption($entity->realm, implode('.', $identifier));
+							/** @noinspection PhpUndefinedFieldInspection */
+							$entity->configOption = $configOptions->getConfigOption($entity->realm, implode('.', $identifier));
 
-				return implode('.', $identifier);
-			})->toArray());
-		})->toArray();
+							return implode('.', $identifier);
+						})
+						->toArray()
+				);
+			})
+			->toArray()
+		;
 
 		if ($this->Configuration->searchIsActive()) {
 			$mergedConfiguration = $configuration;
@@ -132,9 +143,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add(): void {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('create');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('create');
 
 		$configuration = $this->Configuration->newDefaultEntity();
 
@@ -152,7 +161,9 @@ class ConfigurationController extends Controller {
 		$configOptionsArray = $configOptions->getConfigOptions($configuration->realm);
 
 		/** @noinspection PhpUndefinedFieldInspection */
-		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption($configuration->realm, $configuration->identifier) : null;
+		$configuration->configOption = $configuration->identifier
+			? $configOptions->getConfigOption($configuration->realm, $configuration->identifier)
+			: null;
 
 		$this->set([
 			'configuration' => $configuration,
@@ -170,9 +181,7 @@ class ConfigurationController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	public function edit(int $id) {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('update');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('update');
 
 		/**
 		 * @var \Awyiss\Model\Entity\Configuration $configuration
@@ -180,7 +189,13 @@ class ConfigurationController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$configuration = $this->Configuration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$configuration = $this->Configuration
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -204,7 +219,9 @@ class ConfigurationController extends Controller {
 		$configOptionsArray = $configOptions->getConfigOptions($configuration->realm);
 
 		/** @noinspection PhpUndefinedFieldInspection */
-		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption($configuration->realm, $configuration->identifier) : null;
+		$configuration->configOption = $configuration->identifier
+			? $configOptions->getConfigOption($configuration->realm, $configuration->identifier)
+			: null;
 
 		$this->set([
 			'configuration' => $configuration,
@@ -222,9 +239,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete(int $id): Response {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('delete');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -328,7 +343,11 @@ class ConfigurationController extends Controller {
 		/** @var \Awyiss\Model\Entity\Configuration $configuration */
 		$configuration = $this->Configuration->findById($configId)->first();
 		if (!$configuration) {
-			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['data', 'status'])
+			;
 
 			// Set the response data
 			$this->set([
@@ -357,7 +376,11 @@ class ConfigurationController extends Controller {
 		/** @var \Awyiss\Model\Entity\Configuration $configuration */
 		$configuration = $this->Configuration->findById($configId)->first();
 		if (!$configuration) {
-			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['data', 'status'])
+			;
 
 			// Set the response data
 			$this->set([
@@ -387,7 +410,7 @@ class ConfigurationController extends Controller {
 		string $selectedScope,
 		?string $parentCategories = null
 	): array {
-		$realm = Inflector::camelize($realm);
+		$realm = Inflector::underscore($realm);
 
 		uksort($configOptions, function ($a, $b) use ($configOptions, $parentCategories, $realm, $selectedScope) {
 			$i18nKeyA = 'configuration_' . ($this->isCategory($configOptions[ $a ]) ? 'category' : 'identifier') . '_' . $realm;
@@ -452,7 +475,7 @@ class ConfigurationController extends Controller {
 		if (is_array($value)) {
 			// If the array contains only instances of \Awyiss\Model\Entity\Configuration,
 			// then it is not a category
-			return array_any($value, fn ($configItem) => !$configItem instanceof Configuration);
+			return array_any($value, fn($configItem) => !$configItem instanceof Configuration);
 		}
 
 		return false;

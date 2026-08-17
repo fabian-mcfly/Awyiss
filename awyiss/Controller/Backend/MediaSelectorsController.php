@@ -95,7 +95,11 @@ class MediaSelectorsController extends Controller {
 		 * @var \Awyiss\Model\Entity\MediaSelector $mediaSelector
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$mediaSelector = $this->MediaSelectors->findById($id)->find('translations')->first();
+		$mediaSelector = $this->MediaSelectors
+			->findById($id)
+			->find('translations')
+			->first()
+		;
 		if (!$mediaSelector) {
 			$this->Flash->error(__('record_not_found'));
 

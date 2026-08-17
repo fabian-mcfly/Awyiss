@@ -183,8 +183,8 @@ class ContentsListener implements EventListenerInterface {
 	 */
 	protected function detectLanguageChange(Content $entity, ArrayObject $options): void {
 		if (
-			Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto' ||
-			!isset($options['transactionId'])
+			Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto'
+			|| !isset($options['transactionId'])
 		) {
 			return;
 		}
@@ -198,9 +198,9 @@ class ContentsListener implements EventListenerInterface {
 		];
 
 		if (
-			$this->checkedTransactions[ $transactionId ]['languageChanged'] === null &&
-			$entity->hasOriginal('pageId') &&
-			$entity->getOriginal('pageId') !== $entity->pageId
+			$this->checkedTransactions[ $transactionId ]['languageChanged'] === null
+			&& $entity->hasOriginal('pageId')
+			&& $entity->getOriginal('pageId') !== $entity->pageId
 		) {
 			$oldPageId = $entity->getOriginal('pageId');
 			$newPageId = $entity->pageId;
@@ -209,9 +209,16 @@ class ContentsListener implements EventListenerInterface {
 				/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 				$pagesTable = FactoryLocator::get('Table')->get('Pages');
 				/** @var array<\Awyiss\Model\Entity\Page> $pages */
-				$pages = $pagesTable->find('all', skipPageRoleCheck: true)->select(['id', 'languageShortcode'])->where([
-					'id IN' => [$oldPageId, $newPageId],
-				])->all()->indexBy('id')->toArray();
+				$pages = $pagesTable
+					->find('all', skipPageRoleCheck: true)
+					->select(['id', 'languageShortcode'])
+					->where([
+						'id IN' => [$oldPageId, $newPageId],
+					])
+					->all()
+					->indexBy('id')
+					->toArray()
+				;
 
 				$this->pagesCache[ $oldPageId ] = $pages[ $oldPageId ] ?? null;
 				$this->pagesCache[ $newPageId ] = $pages[ $newPageId ] ?? null;
@@ -220,10 +227,12 @@ class ContentsListener implements EventListenerInterface {
 			// Cannot determine language change if one of the pages does not exist
 			if (!isset($this->pagesCache[ $newPageId ]) || !isset($this->pagesCache[ $oldPageId ])) {
 				$this->checkedTransactions[ $transactionId ]['languageChanged'] = false;
+
 				return;
 			}
 
-			$this->checkedTransactions[ $transactionId ]['languageChanged'] = $this->pagesCache[ $oldPageId ]->languageShortcode !== $this->pagesCache[ $newPageId ]->languageShortcode;
+			$this->checkedTransactions[ $transactionId ]['languageChanged'] = $this->pagesCache[ $oldPageId ]->languageShortcode
+				!== $this->pagesCache[ $newPageId ]->languageShortcode;
 			$this->checkedTransactions[ $transactionId ]['sourceLanguage'] = $this->pagesCache[ $oldPageId ]->languageShortcode;
 			$this->checkedTransactions[ $transactionId ]['targetLanguage'] = $this->pagesCache[ $newPageId ]->languageShortcode;
 		}

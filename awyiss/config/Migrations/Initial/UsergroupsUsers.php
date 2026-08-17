@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class Usergroups
  */
@@ -23,53 +22,70 @@ class UsergroupsUsers {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('usergroups_users')) {
-			$this->migration->table('usergroups_users')->drop()->save();
+			$this->migration
+				->table('usergroups_users')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('usergroups_users')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('usergroup_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('user_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addIndex(
-			[
-				'usergroup_id',
-			], [
-				'name' => 'USERGROUPS_USERS_USERGROUP_ID',
-			]
-		)->addIndex(
-			[
-				'user_id',
-			], [
-				'name' => 'USERGROUPS_USERS_USER_ID',
-			]
-		)->create();
+		$this->migration
+			->table('usergroups_users')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('usergroup_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('user_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addIndex(
+				[
+					'usergroup_id',
+				], [
+					'name' => 'USERGROUPS_USERS_USERGROUP_ID',
+				]
+			)
+			->addIndex(
+				[
+					'user_id',
+				], [
+					'name' => 'USERGROUPS_USERS_USER_ID',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('usergroups_users')->drop()->save();
+		$this->migration
+			->table('usergroups_users')
+			->drop()
+			->save()
+		;
 	}
 }

@@ -26,15 +26,17 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * Authentication service or application instance.
-	 */
-	protected AuthorizationServiceProviderInterface|AuthorizationServiceInterface $subject;
-	/**
 	 * Default config
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = []; // phpcs:ignore
+	protected array $_defaultConfig = [];  // phpcs:ignore
+	/**
+	 * Authentication service or application instance.
+	 *
+	 * @var \Awyiss\Authorization\AuthorizationServiceProviderInterface|\Awyiss\Authorization\AuthorizationServiceInterface
+	 */
+	protected AuthorizationServiceProviderInterface|AuthorizationServiceInterface $subject;
 
 
 	/**
@@ -79,7 +81,11 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 		if (!$subject instanceof AuthorizationServiceInterface) {
 			throw new RuntimeException(
-				sprintf('Service provided by a subject must be an instance of `%s`, `%s` given.', AuthorizationServiceInterface::class, gettype($subject))
+				sprintf(
+					'Service provided by a subject must be an instance of `%s`, `%s` given.',
+					AuthorizationServiceInterface::class,
+					gettype($subject)
+				)
 			);
 		}
 

@@ -45,7 +45,11 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationAfterAuthenticate(Event $event, AuthenticatorInterface $authenticator, IdentityInterface $identity): void {
+	public function authenticationAfterAuthenticate(
+		Event $event,
+		AuthenticatorInterface $authenticator,
+		IdentityInterface $identity
+	): void {
 		$this->identity = $identity;
 	}
 

@@ -22,12 +22,18 @@ use Cake\ORM\Query\SelectQuery;
  * This makes writing out the table name obsolete when using joins.
  */
 class AutoPrefixBehavior extends Behavior {
+	/**
+	 * @var array
+	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,
 		'implementedEvents' => [
 			'beforeFind',
 		],
 	];
+	/**
+	 * @var string The alias of the table this behavior is attached to.
+	 */
 	protected string $alias;
 
 

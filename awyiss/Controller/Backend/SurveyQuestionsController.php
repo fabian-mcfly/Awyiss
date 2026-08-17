@@ -96,7 +96,13 @@ class SurveyQuestionsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$surveyQuestion = $this->SurveyQuestions->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$surveyQuestion = $this->SurveyQuestions
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$surveyQuestion) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -168,8 +174,8 @@ class SurveyQuestionsController extends Controller {
 		$requestData = $this->request->getData();
 
 		if (
-			!empty($requestData['answers']) &&
-			$this->Authorization->scopeIsAccessible('SurveyAnswers', [], 'create')
+			!empty($requestData['answers'])
+			&& $this->Authorization->scopeIsAccessible('SurveyAnswers', [], 'create')
 		) {
 			$associated[] = 'SurveyAnswers';
 			$surveyQuestion->setAccess('surveyAnswers', true);

@@ -70,10 +70,10 @@ class MediaListener implements EventListenerInterface {
 	 */
 	public function clearMediaCacheAfterSave(Event $event, Configuration $configuration): void {
 		if (
-			!$configuration->isNew() &&
-			(
-				!$configuration->hasOriginal('value') ||
-				$configuration->getOriginal('value') === $configuration->value
+			!$configuration->isNew()
+			&& (
+				!$configuration->hasOriginal('value')
+				|| $configuration->getOriginal('value') === $configuration->value
 			)
 		) {
 			return;
@@ -142,13 +142,21 @@ class MediaListener implements EventListenerInterface {
 			 * @var \Cake\Collection\Iterator\TreeIterator $mediaFolders
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$mediaFolders = $mediaTable->MediaFolders->find()->select(['id', 'title', 'path'])->all();
+			$mediaFolders = $mediaTable->MediaFolders
+				->find()
+				->select(['id', 'title', 'path'])
+				->all()
+			;
 			static::$mediaFolders = $mediaFolders->indexBy('id')->toArray();
 		}
 
 		if (!isset(static::$media[ $entity->mediaFolderId ])) {
 			/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
-			$media = $mediaTable->find()->where(['mediaFolderId' => $entity->mediaFolderId])->all();
+			$media = $mediaTable
+				->find()
+				->where(['mediaFolderId' => $entity->mediaFolderId])
+				->all()
+			;
 			static::$media[ $entity->mediaFolderId ] = $media->indexBy('name')->toArray();
 		}
 
@@ -183,8 +191,13 @@ class MediaListener implements EventListenerInterface {
 		if ($entity->file) {
 			$this->setDimensions($entity);
 
-			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
-			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
+			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml'])
+				? ProcessStatus::NotRequired
+				: ProcessStatus::Undefined;
+
+			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml'])
+				? ProcessStatus::NotRequired
+				: ProcessStatus::Undefined;
 
 			if ($isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
 				$this->useExistingsFileData($mediaTable, $entity);
@@ -478,7 +491,11 @@ class MediaListener implements EventListenerInterface {
 				'guard' => false,
 			]);
 
-			$entity->usageCount = $table->MediaAssignments->find()->where(['mediaId' => $currentMedia->id, 'deleted' => 0])->count();
+			$entity->usageCount = $table->MediaAssignments
+				->find()
+				->where(['mediaId' => $currentMedia->id, 'deleted' => 0])
+				->count()
+			;
 
 			$entity->setDirty('systemOrder', false);
 

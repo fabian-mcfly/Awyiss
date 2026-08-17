@@ -29,11 +29,11 @@ class ResizedImageManager {
 	 */
 	protected static array $mediaItems = [];
 	/**
-	 * Static storage for resized images, indexed by the media id
+	 * Media resized images table instance
 	 *
-	 * @var array<int, array<\Awyiss\Model\Entity\MediaResizedImage>> $resizedRecords
+	 * @var \Awyiss\Model\Table\MediaResizedImagesTable
 	 */
-	protected static array $resizedRecords = [];
+	protected static MediaResizedImagesTable $mediaResizedImagesTable;
 	/**
 	 * Media table instance
 	 *
@@ -41,11 +41,11 @@ class ResizedImageManager {
 	 */
 	protected static MediaTable $mediaTable;
 	/**
-	 * Media resized images table instance
+	 * Static storage for resized images, indexed by the media id
 	 *
-	 * @var \Awyiss\Model\Table\MediaResizedImagesTable
+	 * @var array<int, array<\Awyiss\Model\Entity\MediaResizedImage>> $resizedRecords
 	 */
-	protected static MediaResizedImagesTable $mediaResizedImagesTable;
+	protected static array $resizedRecords = [];
 
 
 	/**
@@ -53,6 +53,65 @@ class ResizedImageManager {
 	 */
 	public static function getMediaItems(): array {
 		return static::$mediaItems;
+	}
+
+
+	/**
+	 * Add multiple media items to the static storage
+	 *
+	 * @param array<\Awyiss\Model\Entity\Media|int> $mediaItems
+	 * @param bool $merge Whether to merge the media items with the existing ones or set them as the new ones
+	 * @return void
+	 */
+	public static function setMediaItems(array $mediaItems, bool $merge = true): void {
+		$itemsToFetch = [];
+
+		if (!$merge) {
+			static::$mediaItems = [];
+		}
+
+		/** @var \Awyiss\Model\Entity\Media|int $mediaItem */
+		foreach ($mediaItems as $mediaItem) {
+			if ($mediaItem instanceof Media) {
+				static::$mediaItems[ $mediaItem->id ] = $mediaItem;
+
+				if ($mediaItem->mediaResizedImages) {
+					/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
+					foreach ($mediaItem->mediaResizedImages as $resizedImage) {
+						static::$resizedRecords[ $mediaItem->id ][ $resizedImage->id ] = $resizedImage;
+					}
+				}
+
+				continue;
+			}
+
+			if (!is_numeric($mediaItem)) {
+				continue;
+			}
+
+			// If the media item is an id and not in the static storage, add it to the list of items to fetch
+			if (!isset(static::$mediaItems[ $mediaItem ])) {
+				$itemsToFetch[] = $mediaItem;
+			}
+		}
+
+		if ($itemsToFetch) {
+			if (!isset(static::$mediaTable)) {
+				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+				static::$mediaTable = FactoryLocator::get('Table')->get('Media');
+			}
+
+			$records = static::$mediaTable
+				->find()
+				->where(['id IN' => $itemsToFetch])
+				->all()
+			;
+
+			/** @var \Awyiss\Model\Entity\Media $record */
+			foreach ($records as $record) {
+				static::$mediaItems[ $record->id ] = $record;
+			}
+		}
 	}
 
 
@@ -117,61 +176,6 @@ class ResizedImageManager {
 
 
 	/**
-	 * Add multiple media items to the static storage
-	 *
-	 * @param array<\Awyiss\Model\Entity\Media|int> $mediaItems
-	 * @param bool $merge Whether to merge the media items with the existing ones or set them as the new ones
-	 * @return void
-	 */
-	public static function setMediaItems(array $mediaItems, bool $merge = true): void {
-		$itemsToFetch = [];
-
-		if (!$merge) {
-			static::$mediaItems = [];
-		}
-
-		/** @var \Awyiss\Model\Entity\Media|int $mediaItem */
-		foreach ($mediaItems as $mediaItem) {
-			if ($mediaItem instanceof Media) {
-				static::$mediaItems[ $mediaItem->id ] = $mediaItem;
-
-				if ($mediaItem->mediaResizedImages) {
-					/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
-					foreach ($mediaItem->mediaResizedImages as $resizedImage) {
-						static::$resizedRecords[ $mediaItem->id ][ $resizedImage->id ] = $resizedImage;
-					}
-				}
-
-				continue;
-			}
-
-			if (!is_numeric($mediaItem)) {
-				continue;
-			}
-
-			// If the media item is an id and not in the static storage, add it to the list of items to fetch
-			if (!isset(static::$mediaItems[ $mediaItem ])) {
-				$itemsToFetch[] = $mediaItem;
-			}
-		}
-
-		if ($itemsToFetch) {
-			if (!isset(static::$mediaTable)) {
-				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-				static::$mediaTable = FactoryLocator::get('Table')->get('Media');
-			}
-
-			$records = static::$mediaTable->find()->where(['id IN' => $itemsToFetch])->all();
-
-			/** @var \Awyiss\Model\Entity\Media $record */
-			foreach ($records as $record) {
-				static::$mediaItems[ $record->id ] = $record;
-			}
-		}
-	}
-
-
-	/**
 	 * Returns all resized images, indexed by the media id
 	 *
 	 * If a media id is provided, only the resized images for that media item are returned
@@ -209,11 +213,14 @@ class ResizedImageManager {
 		bool $allowUpscale = false,
 	): ?MediaResizedImage {
 		if (
-			!$media->path ||
+			!$media->path
 			// If the media item is an SVG, return null
-			$media->mimeType === 'image/svg+xml' ||
+			|| $media->mimeType === 'image/svg+xml'
 			// If the media item requires a preview (not an image) but the preview is not yet created, return null
-			($media->preview !== ProcessStatus::NotRequired && $media->preview !== ProcessStatus::Success)
+			|| (
+				$media->preview !== ProcessStatus::NotRequired
+				&& $media->preview !== ProcessStatus::Success
+			)
 		) {
 			return null;
 		}
@@ -275,7 +282,11 @@ class ResizedImageManager {
 				static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 			}
 
-			$resizedRecords = static::$mediaResizedImagesTable->find()->where(['mediaId IN' => $missingMediaIds])->all();
+			$resizedRecords = static::$mediaResizedImagesTable
+				->find()
+				->where(['mediaId IN' => $missingMediaIds])
+				->all()
+			;
 
 			/**
 			 * Group the fetched records by media id
@@ -380,10 +391,10 @@ class ResizedImageManager {
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
 		foreach ($resizedImages as $resizedImage) {
 			if (
-				$resizedImage->width == $width &&
-				$resizedImage->height == $height &&
-				$resizedImage->strategy === $strategy &&
-				$resizedImage->extension === $format
+				$resizedImage->width == $width
+				&& $resizedImage->height == $height
+				&& $resizedImage->strategy === $strategy
+				&& $resizedImage->extension === $format
 			) {
 				return $resizedImage;
 			}
@@ -417,7 +428,13 @@ class ResizedImageManager {
 	 * @param string $format
 	 * @return \Awyiss\Model\Entity\MediaResizedImage
 	 */
-	protected static function newMediaResizedImage(Media $media, ?int $width, ?int $height, ResizeStrategy|string|int $strategy, string $format): MediaResizedImage {
+	protected static function newMediaResizedImage(
+		Media $media,
+		?int $width,
+		?int $height,
+		ResizeStrategy|string|int $strategy,
+		string $format
+	): MediaResizedImage {
 		if (!isset(static::$mediaResizedImagesTable)) {
 			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
@@ -464,12 +481,12 @@ class ResizedImageManager {
 		// No resize needed when requested dimensions match the original image.
 		if (
 			(
-				!$width ||
-				$width == $media->width
-			) &&
-			(
-				!$height ||
-				$height == $media->height
+				!$width
+				|| $width == $media->width
+			)
+			&& (
+				!$height
+				|| $height == $media->height
 			)
 		) {
 			return false;

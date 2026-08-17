@@ -17,16 +17,6 @@ use Awyiss\View\FrontendView;
  */
 class SocialMediaEmbedWidget extends AbstractWidget {
 	/**
-	 * Supported social media services
-	 *
-	 * @var array<string>
-	 */
-	protected static array $supportedServices = [
-		'youtube',
-		'vimeo',
-		'instagram',
-	];
-	/**
 	 * Extractor methods for each service
 	 *
 	 * @var array<string, string|callable>
@@ -35,6 +25,16 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 		'youtube' => 'extractYouTubeId',
 		'vimeo' => 'extractVimeoId',
 		'instagram' => 'extractInstagramId',
+	];
+	/**
+	 * Supported social media services
+	 *
+	 * @var array<string>
+	 */
+	protected static array $supportedServices = [
+		'youtube',
+		'vimeo',
+		'instagram',
 	];
 
 
@@ -49,7 +49,12 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+	public static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array {
 		$services = array_combine(
 			static::$supportedServices,
 			array_map(function (string $service): string {
@@ -178,7 +183,6 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 			'/youtube\.com\/v\/([a-zA-Z0-9_-]{11})/',
 		];
 
-		/** @noinspection PhpLoopCanBeConvertedToArrayAnyInspection */
 		foreach ($patterns as $pattern) {
 			if (preg_match($pattern, $input, $matches)) {
 				return $matches[1];
@@ -211,7 +215,6 @@ class SocialMediaEmbedWidget extends AbstractWidget {
 			'/vimeo\.com\/groups\/[^\/]+\/videos\/(\d+)/',
 		];
 
-		/** @noinspection PhpLoopCanBeConvertedToArrayAnyInspection */
 		foreach ($patterns as $pattern) {
 			if (preg_match($pattern, $input, $matches)) {
 				return $matches[1];

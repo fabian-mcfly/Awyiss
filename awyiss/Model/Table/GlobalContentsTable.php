@@ -65,10 +65,6 @@ class GlobalContentsTable extends Table {
 	 */
 	protected array $columnIndents;
 	/**
-	 * @var string
-	 */
-	private string $forScope;
-	/**
 	 * @inheritDoc
 	 */
 	protected array $nest = [
@@ -93,6 +89,10 @@ class GlobalContentsTable extends Table {
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
+	/**
+	 * @var string
+	 */
+	private string $forScope;
 
 
 	/**
@@ -333,7 +333,10 @@ class GlobalContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				// Global Content Template not found
-				$entity->setError('globalContentTemplateId', __df($this->getI18nDomain(), 'Validation', 'error_valid_global_content_template_id'));
+				$entity->setError(
+					'globalContentTemplateId',
+					__df($this->getI18nDomain(), 'Validation', 'error_valid_global_content_template_id')
+				);
 
 				return false;
 			}
@@ -370,7 +373,11 @@ class GlobalContentsTable extends Table {
 		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
 
 
-		$rules->add($rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]), 'validSurveyId', ['errorField' => 'surveyId']);
+		$rules->add(
+			$rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]),
+			'validSurveyId',
+			['errorField' => 'surveyId']
+		);
 
 
 		$rules->add(function (GlobalContent $entity): bool {
@@ -414,20 +421,24 @@ class GlobalContentsTable extends Table {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	public function nestedByIdentifier(SelectQuery $query): CollectionInterface {
-		return $query->find('threaded')->all()->groupBy('identifier')->map(function (array $globalContents): CollectionInterface {
-			$globalContents = new Collection($globalContents)->listNested();
+		return $query
+			->find('threaded')
+			->all()
+			->groupBy('identifier')
+			->map(function (array $globalContents): CollectionInterface {
+				$globalContents = new Collection($globalContents)->listNested();
 
-			/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
-			foreach ($globalContents as $globalContent) {
-				$globalContent->setVirtual(['level'], true);
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				/** @noinspection PhpUndefinedFieldInspection */
-				$globalContent->level = $globalContents->getDepth();
-			}
+				/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+				foreach ($globalContents as $globalContent) {
+					$globalContent->setVirtual(['level'], true);
+					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+					/** @noinspection PhpUndefinedFieldInspection */
+					$globalContent->level = $globalContents->getDepth();
+				}
 
-
-			return $globalContents;
-		});
+				return $globalContents;
+			})
+		;
 	}
 
 
@@ -439,7 +450,13 @@ class GlobalContentsTable extends Table {
 	 * @param \Awyiss\Model\Entity\GlobalContentTemplate $globalContentTemplate
 	 * @return array
 	 */
-	protected function validateInputFields(array $data, GlobalContent $entity, Validator $validator, ?Validator $attributesValidator, GlobalContentTemplate $globalContentTemplate): array {
+	protected function validateInputFields(
+		array $data,
+		GlobalContent $entity,
+		Validator $validator,
+		?Validator $attributesValidator,
+		GlobalContentTemplate $globalContentTemplate
+	): array {
 		$globalContentAttributes = $this->GlobalContentTemplates->getAvailableGlobalContentAttributes();
 
 		$this->validateAssignedElements($globalContentTemplate, $entity, $validator, $globalContentAttributes, $attributesValidator);
@@ -481,7 +498,12 @@ class GlobalContentsTable extends Table {
 			if (!str_starts_with($globalContentTemplateElement->identifier, 'attributes.')) {
 				if ($globalContentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$validator->requirePresence($globalContentTemplateElement->identifier)->notEmptyString($globalContentTemplateElement->identifier);
+					$validator
+						->requirePresence($globalContentTemplateElement->identifier)
+						->notEmptyString(
+							$globalContentTemplateElement->identifier
+						)
+					;
 					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
 				}
 
@@ -498,8 +520,8 @@ class GlobalContentsTable extends Table {
 
 			// If the field already has an error or if it's not required, skip it.
 			if (
-				$entity->attributes->getError($identifier) ||
-				$globalContentTemplateElement->required !== true
+				$entity->attributes->getError($identifier)
+				|| $globalContentTemplateElement->required !== true
 			) {
 				continue;
 			}
@@ -528,7 +550,11 @@ class GlobalContentsTable extends Table {
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
-	protected function validateUnassignedElements(GlobalContentTemplate $globalContentTemplate, GlobalContent $entity, Validator $validator): void {
+	protected function validateUnassignedElements(
+		GlobalContentTemplate $globalContentTemplate,
+		GlobalContent $entity,
+		Validator $validator
+	): void {
 		//Traverse all elements that are available but not assigned to the global content template
 		foreach (
 			array_diff(
@@ -588,7 +614,12 @@ class GlobalContentsTable extends Table {
 	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @return void
 	 */
-	protected function validateUnassignedAttributes(GlobalContentTemplate $globalContentTemplate, GlobalContent $entity, array $globalContentAttributes, ?Validator $attributesValidator): void {
+	protected function validateUnassignedAttributes(
+		GlobalContentTemplate $globalContentTemplate,
+		GlobalContent $entity,
+		array $globalContentAttributes,
+		?Validator $attributesValidator
+	): void {
 		$attributes = array_keys($globalContentAttributes);
 
 		// Traverse all attributes that are available but not assigned to the global content template
@@ -621,15 +652,27 @@ class GlobalContentsTable extends Table {
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
 		if ($column === 'formId') {
-			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('Forms')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 		if ($column === 'surveyId') {
-			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('Surveys')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 		if ($column === 'globalContentTemplateId') {
-			return $this->getAssociation('GlobalContentTemplates')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('GlobalContentTemplates')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 

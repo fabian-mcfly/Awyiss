@@ -25,11 +25,11 @@ class TemplateCommand extends BaseTemplateCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public array $scaffoldActions = ['overview', 'add', 'edit', 'form'];
+	public string $ext = 'twig';
 	/**
 	 * @inheritDoc
 	 */
-	public string $ext = 'twig';
+	public array $scaffoldActions = ['overview', 'add', 'edit', 'form'];
 
 
 	/**
@@ -76,7 +76,8 @@ class TemplateCommand extends BaseTemplateCommand {
 
 
 	/**
-	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`, but honors the `folder`-option.
+	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`, but honors the
+	 * `folder`-option.
 	 *
 	 * @inheritDoc
 	 * @param Arguments $args The arguments
@@ -87,7 +88,9 @@ class TemplateCommand extends BaseTemplateCommand {
 	public function getTemplatePath(Arguments $args, ?string $container = null): string {
 		$paths = (array)Configure::read('App.paths.templates');
 		if (empty($paths)) {
-			throw new InvalidArgumentException('Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.');
+			throw new InvalidArgumentException(
+				'Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.'
+			);
 		}
 
 		$basePath = reset($paths);
@@ -121,7 +124,12 @@ class TemplateCommand extends BaseTemplateCommand {
 			$vars['fields'] = array_diff($vars['fields'], $vars['hidden']);
 		}
 
-		$renderer = $this->createTemplateRenderer()->set('action', $action)->set('plugin', $this->plugin)->set($vars);
+		$renderer = $this
+			->createTemplateRenderer()
+			->set('action', $action)
+			->set('plugin', $this->plugin)
+			->set($vars)
+		;
 
 		$indexColumns = 0;
 		if ($action === 'index' && $args->getOption('index-columns') !== null) {
@@ -156,7 +164,9 @@ class TemplateCommand extends BaseTemplateCommand {
 		$basePath = reset($paths);
 
 		$parser->addOption('folder', [
-			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates` (`' . $basePath . '`).',
+			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates` (`'
+				. $basePath
+				. '`).',
 		]);
 
 

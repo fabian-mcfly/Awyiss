@@ -76,7 +76,13 @@ trait PageRoleEnumTrait {
 		$tableLocator = FactoryLocator::get('Table');
 
 		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
-		$pageRoles = $tableLocator->get('PageRoles')->find()->all()->indexBy('identifier')->toArray();
+		$pageRoles = $tableLocator
+			->get('PageRoles')
+			->find()
+			->all()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		return $pageRoles;
 	}

@@ -44,12 +44,13 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	final public const string  STRATEGY_FETCH_GRADUALLY = 'fetchGradually';
+	final public const string STRATEGY_FETCH_GRADUALLY = 'fetchGradually';
 	/**
 	 * Fetches all items inside the element's scope and builds a collection
 	 * by filtering out siblings and records that aren't children or parents
 	 */
-	final public const string  STRATEGY_FETCH_ALL = 'fetchAll';
+	final public const string STRATEGY_FETCH_ALL = 'fetchAll';
+
 
 	/**
 	 * Default configuration
@@ -144,19 +145,19 @@ class NestBehavior extends Behavior {
 		$alias = $this->getConfig('alias');
 
 		if (
-			$schema->hasColumn($this->getConfig('children.foreignKey')) &&
-			(
-				!$this->getConfig('children.associationName') ||
-				!$table->hasAssociation($this->getConfig('children.associationName'))
+			$schema->hasColumn($this->getConfig('children.foreignKey'))
+			&& (
+				!$this->getConfig('children.associationName')
+				|| !$table->hasAssociation($this->getConfig('children.associationName'))
 			)
 		) {
 			$associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($alias);
 
 			$bindingKeys = (array)$this->getConfig('children.bindingKey');
-			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$bindingKeys = array_filter($bindingKeys, fn($field) => !str_starts_with($field, 'attributes.'));
 
 			$foreignKeys = (array)$this->getConfig('children.foreignKey');
-			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$foreignKeys = array_filter($foreignKeys, fn($field) => !str_starts_with($field, 'attributes.'));
 
 			$table->hasMany($associationName, [
 				'bindingKey' => $bindingKeys,
@@ -171,19 +172,19 @@ class NestBehavior extends Behavior {
 		}
 
 		if (
-			$schema->hasColumn($this->getConfig('parent.foreignKey')) &&
-			(
-				!$this->getConfig('parent.associationName') ||
-				!$table->hasAssociation($this->getConfig('parent.associationName'))
+			$schema->hasColumn($this->getConfig('parent.foreignKey'))
+			&& (
+				!$this->getConfig('parent.associationName')
+				|| !$table->hasAssociation($this->getConfig('parent.associationName'))
 			)
 		) {
 			$associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($alias);
 
 			$bindingKeys = array_merge((array)$this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
-			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$bindingKeys = array_filter($bindingKeys, fn($field) => !str_starts_with($field, 'attributes.'));
 
 			$foreignKeys = array_merge((array)$this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
-			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$foreignKeys = array_filter($foreignKeys, fn($field) => !str_starts_with($field, 'attributes.'));
 
 			$table->belongsTo($associationName, [
 				'bindingKey' => $bindingKeys,
@@ -400,8 +401,21 @@ class NestBehavior extends Behavior {
 	 * @param string $direction
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function listNested(SelectQuery|TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc'): CollectionInterface {
-		$records = $query instanceof TreeIterator ? $query : $query->find('threaded', nestingKey: $nestingKey)->all()->listNested($direction, $nestingKey);
+	public function listNested(
+		SelectQuery|TreeIterator $query,
+		string $nestingKey = 'children',
+		string $direction = 'desc'
+	): CollectionInterface {
+		$records = $query instanceof TreeIterator
+			? $query
+			: $query
+				->find('threaded', nestingKey: $nestingKey)
+				->all()
+				->listNested(
+					$direction,
+					$nestingKey
+				)
+		;
 
 		/** @var \Awyiss\Model\Entity $entity */
 		foreach ($records as $entity) {
@@ -477,7 +491,11 @@ class NestBehavior extends Behavior {
 			}
 
 			if (!$exists) {
-				return __df($this->table()->getI18nDomain(), 'Validation', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
+				return __df(
+					$this->table()->getI18nDomain(),
+					'Validation',
+					'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey'))
+				);
 			}
 
 			return true;
@@ -588,9 +606,9 @@ class NestBehavior extends Behavior {
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
-			$entity->isNew() ||
-			!$this->getConfig('enabled') ||
-			!$this->getConfig('relatedColumns')
+			$entity->isNew()
+			|| !$this->getConfig('enabled')
+			|| !$this->getConfig('relatedColumns')
 		) {
 			return;
 		}
@@ -661,6 +679,7 @@ class NestBehavior extends Behavior {
 
 		/**
 		 * Patch all children with the related column values of the entity, without guarding the fields
+		 *
 		 * @var EntityInterface $child
 		 */
 		foreach ($entity->get($associationProperty) as $child) {
@@ -702,9 +721,12 @@ class NestBehavior extends Behavior {
 		 * to retrieve the records of the old scope.
 		 */
 		if (
-			$originalData &&
-			$originalEntity->get('attributes') &&
-			array_filter($this->getConfig('relatedColumns'), fn ($field) => str_starts_with($field, 'attributes.'))
+			$originalData
+			&& $originalEntity->get('attributes')
+			&& array_filter(
+				$this->getConfig('relatedColumns'),
+				fn($field) => str_starts_with($field, 'attributes.')
+			)
 		) {
 			$attributes = $originalEntity->get('attributes');
 
@@ -741,7 +763,7 @@ class NestBehavior extends Behavior {
 		$ids = $children->extract('id')->toList();
 
 		// Extract all values of related columns in the entity
-		$relatedBaseColumns = array_filter($relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.'));
+		$relatedBaseColumns = array_filter($relatedColumns, fn($field) => !str_starts_with($field, 'attributes.'));
 		if ($relatedBaseColumns) {
 			$data = $entity->extract($relatedBaseColumns);
 
@@ -775,13 +797,14 @@ class NestBehavior extends Behavior {
 		 * Houston, we have a problem
 		 * Not all children have an attribute row.
 		 */
-		$existingIds = $association->find()
+		$existingIds = $association
+			->unhydratedFind()
 			->select($foreignKey)
 			->where([$foreignKey . ' IN' => $ids])
-			->disableHydration()
 			->all()
 			->extract($foreignKey)
-			->toList();
+			->toList()
+		;
 
 		$newIds = array_diff($ids, $existingIds);
 
@@ -844,7 +867,9 @@ class NestBehavior extends Behavior {
 				continue;
 			}
 
-			$value = $entity->hasOriginal($bindingKeys[ $key ]) ? $entity->getOriginal($bindingKeys[ $key ]) : $entity->get($bindingKeys[ $key ]);
+			$value = $entity->hasOriginal($bindingKeys[ $key ])
+				? $entity->getOriginal($bindingKeys[ $key ])
+				: $entity->get($bindingKeys[ $key ]);
 
 			if ($value === null) {
 				$foreignKey .= ' IS';
@@ -865,7 +890,13 @@ class NestBehavior extends Behavior {
 		$associationName = $this->getConfig($type . '.associationName');
 
 		if (!$associationName || !$this->table()->hasAssociation($associationName)) {
-			throw new RuntimeException(sprintf('Expected option for `%s.associationName` to be a valid assocation on table `%s`', $type, $this->table()->getAlias()));
+			throw new RuntimeException(
+				sprintf(
+					'Expected option for `%s.associationName` to be a valid assocation on table `%s`',
+					$type,
+					$this->table()->getAlias()
+				)
+			);
 		}
 
 		return $this->table()->getAssociation($associationName);
@@ -1039,13 +1070,13 @@ class NestBehavior extends Behavior {
 
 		if (
 			(
-				$deleted &&
-				!$defaultNest
-			) ||
-			(
-				!$deleted &&
-				$entity->isDirty('value') &&
-				!$entity->value
+				$deleted
+				&& !$defaultNest
+			)
+			|| (
+				!$deleted
+				&& $entity->isDirty('value')
+				&& !$entity->value
 			)
 		) {
 			$table = $this->table();

@@ -27,13 +27,13 @@ class RouteController extends AppController {
 	 */
 	final public const string ROUTE_PREFERENCE_FASTEST = 'fastest';
 	/**
-	 * @var string Route preference for the shortest route
-	 */
-	final public const string ROUTE_PREFERENCE_SHORTEST = 'shortest';
-	/**
 	 * @var string Route preference for the recommended route
 	 */
 	final public const string ROUTE_PREFERENCE_RECOMMENDED = 'recommended';
+	/**
+	 * @var string Route preference for the shortest route
+	 */
+	final public const string ROUTE_PREFERENCE_SHORTEST = 'shortest';
 
 
 	/**
@@ -48,7 +48,11 @@ class RouteController extends AppController {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->routingService = new (Configure::read('Awyiss.System.Frontend.route.routingService') ?? App::className('Ors', 'Utility/Route', 'RoutingService'))();
+		$this->routingService = new (Configure::read('Awyiss.System.Frontend.route.routingService') ?? App::className(
+			'Ors',
+			'Utility/Route',
+			'RoutingService'
+		))();
 	}
 
 
@@ -62,7 +66,11 @@ class RouteController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function findCoordinates(string $search): void {
-		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'addresses', 'title', 'message']);
+		$this
+			->viewBuilder()
+			->setClassName('Json')
+			->setOption('serialize', ['status', 'addresses', 'title', 'message'])
+		;
 
 		$this->accessCheck();
 
@@ -102,6 +110,7 @@ class RouteController extends AppController {
 		]);
 	}
 
+
 	/**
 	 * Fetch the route between two coordinates.
 	 * If the start coordinates are not given as lat/lng,
@@ -116,7 +125,11 @@ class RouteController extends AppController {
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::getRoute()
 	 */
 	public function route(string $start, string $end): void {
-		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'addresses', 'route', 'message']);
+		$this
+			->viewBuilder()
+			->setClassName('Json')
+			->setOption('serialize', ['status', 'addresses', 'route', 'message'])
+		;
 
 		$this->accessCheck();
 
@@ -124,9 +137,12 @@ class RouteController extends AppController {
 		$endCoordinates = array_map('trim', $endCoordinates);
 
 		if (
-			count($endCoordinates) !== 2 ||
-			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $endCoordinates[0]) ||
-			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $endCoordinates[1])
+			count($endCoordinates) !== 2
+			|| !preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $endCoordinates[0])
+			|| !preg_match(
+				'/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/',
+				$endCoordinates[1]
+			)
 		) {
 			$this->set([
 				'status' => 'error',
@@ -149,9 +165,9 @@ class RouteController extends AppController {
 		$startCoordinates = array_map('trim', $startCoordinates);
 
 		if (
-			count($startCoordinates) !== 2 ||
-			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $startCoordinates[0]) ||
-			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $startCoordinates[1])
+			count($startCoordinates) !== 2
+			|| !preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $startCoordinates[0])
+			|| !preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $startCoordinates[1])
 		) {
 			$addresses = $this->routingService->findCoordinates($start, $this->request->getParam('lang'));
 
@@ -205,7 +221,13 @@ class RouteController extends AppController {
 			},
 		];
 
-		$route = $this->routingService->getRoute($startAddress, $endAddress, $transportationMode, $this->request->getParam('lang'), $params);
+		$route = $this->routingService->getRoute(
+			$startAddress,
+			$endAddress,
+			$transportationMode,
+			$this->request->getParam('lang'),
+			$params
+		);
 		$message = __d('Route', $route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([

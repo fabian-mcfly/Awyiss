@@ -102,7 +102,13 @@ class MenusController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$menu = $this->Menus->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$menu = $this->Menus
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$menu) {
 			$this->Flash->error(__('record_not_found'));
 

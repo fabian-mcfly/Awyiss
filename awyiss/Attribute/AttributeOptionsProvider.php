@@ -114,7 +114,10 @@ class AttributeOptionsProvider {
 	 * @return AttributeOptionsCollectionInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getAttributeOptionsFile(string $scope, bool $returnLoaded = false): string|AttributeOptionsCollectionInterface|null {
+	public static function getAttributeOptionsFile(
+		string $scope,
+		bool $returnLoaded = false
+	): string|AttributeOptionsCollectionInterface|null {
 		$scope = static::sanitizeScope($scope);
 
 		if (empty(static::$attributeOptions[ $scope ])) {

@@ -40,6 +40,7 @@ class FormConditionalRecipient extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $defaultValues = [
-		'formId' => null, // Since sqlite sets '0' as default
+		// Since sqlite sets '0' as default for int columns, we need to set it to null so that the database will auto-increment the id.
+		'formId' => null,
 	];
 }

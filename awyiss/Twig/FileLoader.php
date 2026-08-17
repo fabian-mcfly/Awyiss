@@ -20,6 +20,8 @@ class FileLoader extends BaseFileLoader {
 	 * Identifier for main namespace paths
 	 */
 	public const string MAIN_NAMESPACE = '__main__';
+
+
 	/**
 	 * @var array
 	 */
@@ -150,11 +152,10 @@ class FileLoader extends BaseFileLoader {
 			// as template from element() end up here too.
 			// We also need to protect against `{% include var_name %}`
 			// where var_name is request data.
-			foreach ($templatePaths as $templatePath) {
-				if (str_starts_with($name, $templatePath)) {
-					return $name;
-				}
+			if (array_any($templatePaths, fn($templatePath) => str_starts_with($name, $templatePath))) {
+				return $name;
 			}
+
 			foreach (Plugin::loaded() as $pluginName) {
 				$pluginPath = Plugin::templatePath($pluginName);
 				if (str_starts_with($name, $pluginPath)) {
@@ -181,7 +182,14 @@ class FileLoader extends BaseFileLoader {
 				return $path;
 			}
 
-			throw new LoaderError(sprintf("Could not find template `%s` in plugin `%s` in these paths:\n\n" . "- `%s`\n", $originalName, $plugin, $templatePath));
+			throw new LoaderError(
+				sprintf(
+					"Could not find template `%s` in plugin `%s` in these paths:\n\n" . "- `%s`\n",
+					$originalName,
+					$plugin,
+					$templatePath
+				)
+			);
 		}
 
 		// Make sure the given filename is valid and inside the set paths
@@ -290,8 +298,8 @@ class FileLoader extends BaseFileLoader {
 	 * @return bool
 	 */
 	protected function isAbsolutePath(string $file): bool {
-		return strspn($file, '/\\', 0, 1) ||
-			   (strlen($file) > 3 && ctype_alpha($file[0]) && $file[1] === ':' && strspn($file, '/\\', 2, 1)) ||
-			   parse_url($file, PHP_URL_SCHEME) !== null;
+		return strspn($file, '/\\', 0, 1)
+			|| (strlen($file) > 3 && ctype_alpha($file[0]) && $file[1] === ':' && strspn($file, '/\\', 2, 1))
+			|| parse_url($file, PHP_URL_SCHEME) !== null;
 	}
 }

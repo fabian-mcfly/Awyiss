@@ -182,7 +182,11 @@ class CategoriesComponent extends Component {
 			$sessionIdentifier .= '_' . $bindingKey;
 		}
 
-		$action = $this->getController()->getRequest()->getParam('action');
+		$action = $this
+			->getController()
+			->getRequest()
+			->getParam('action')
+		;
 		if (in_array($action, $startupMethods)) {
 			$categories = $this->table->getCategories();
 
@@ -410,11 +414,15 @@ class CategoriesComponent extends Component {
 	 * @param bool $sortByAssociation
 	 * @return SelectQuery
 	 */
-	public function groupResult(SelectQuery $query, ?string $column = null, ?string $associationName = null, bool $sortByAssociation = true): SelectQuery {
+	public function groupResult(
+		SelectQuery $query,
+		?string $column = null,
+		?string $associationName = null,
+		bool $sortByAssociation = true
+	): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
-
 
 		return $this->getBehavior()->groupResult($query, $column, $associationName, $sortByAssociation);
 	}
@@ -456,16 +464,22 @@ class CategoriesComponent extends Component {
 		$verifiedSelection = $this->getBehavior()->verifySelection($categoryId, $categories);
 
 		if (
-			$verifiedSelection === false &&
-			(
-				$redirect === true ||
-				($this->getConfig('redirectOnInvalidSelection') && $redirect !== false)
+			$verifiedSelection === false
+			&& (
+				$redirect === true
+				|| (
+					$this->getConfig('redirectOnInvalidSelection')
+					&& $redirect !== false
+				)
 			)
 		) {
 			throw new RedirectException(Router::url([
 				'action' => 'overview',
 				$this->getConfig('uriParam') => current($categories),
-				'_name' => $this->getController()->getRequest()->getParam('_name'),
+				'_name' => $this
+					->getController()
+					->getRequest()
+					->getParam('_name'),
 			], true), 302);
 		}
 

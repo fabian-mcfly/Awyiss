@@ -53,6 +53,7 @@ class SurveySurveyAnswersTable extends Table {
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -175,13 +176,15 @@ class SurveySurveyAnswersTable extends Table {
 			function (SurveySurveyAnswer $entity/*, array $options*/): string|bool {
 				$tableLocator = FactoryLocator::get('Table');
 				// Check if the given answer id is part of the question
-				$query = $tableLocator->get('SurveySurveyQuestions')
+				$query = $tableLocator
+					->get('SurveySurveyQuestions')
 					->find()
 					->innerJoinWith('SurveyQuestions.SurveyAnswers')
 					->where([
 						'SurveySurveyQuestions.id' => $entity->surveySurveyQuestionId,
 						'SurveyAnswers.id' => $entity->surveyAnswerId,
-					]);
+					])
+				;
 
 				return $query->count() > 0;
 			},

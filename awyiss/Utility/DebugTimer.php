@@ -20,6 +20,7 @@ class DebugTimer {
 	 */
 	protected static bool $debugEnabled;
 
+
 	/**
 	 * Check if debugging is enabled
 	 *

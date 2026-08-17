@@ -51,6 +51,9 @@ class PageTemplatesSeed extends BaseSeed {
 		];
 
 		$table = $this->table('page_templates');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

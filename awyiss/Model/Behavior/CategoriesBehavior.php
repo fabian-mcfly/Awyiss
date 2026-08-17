@@ -121,7 +121,9 @@ class CategoriesBehavior extends Behavior {
 		}
 
 		if (!$this->getConfig('identifier')) {
-			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $table->getAlias()));
+			throw new RuntimeException(
+				sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $table->getAlias())
+			);
 		}
 
 		if (!$this->getConfig('field')) {
@@ -160,7 +162,8 @@ class CategoriesBehavior extends Behavior {
 			if (!is_array($categories)) {
 				throw new RuntimeException(
 					sprintf(
-						'You need to provide categories or a `buildCategories`-method when using `useDatasource = false` in `%s` for table `%s`.',
+						'You need to provide categories or a `buildCategories`-method when using `useDatasource = false`'
+						. ' in `%s` for table `%s`.',
 						static::class,
 						$table->getAlias()
 					)
@@ -243,7 +246,9 @@ class CategoriesBehavior extends Behavior {
 
 		$associationName = $this->getConfig('associationName');
 		if (!$associationName || !$query->getRepository()->hasAssociation($associationName)) {
-			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias()));
+			throw new RuntimeException(
+				sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias())
+			);
 		}
 
 		$association = $query->getRepository()->getAssociation($associationName);
@@ -356,7 +361,12 @@ class CategoriesBehavior extends Behavior {
 	 * @param bool $sortByAssociation
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function groupResult(SelectQuery $query, ?string $column = null, ?string $associationName = null, bool $sortByAssociation = true): SelectQuery {
+	public function groupResult(
+		SelectQuery $query,
+		?string $column = null,
+		?string $associationName = null,
+		bool $sortByAssociation = true
+	): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
@@ -496,14 +506,25 @@ class CategoriesBehavior extends Behavior {
 			$this->sortQueryBySystemOrderField($query);
 		}
 
-		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query
+			->getConnection()
+			->getDriver()
+			->schemaDialect()
+		;
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-				$prefixedColumn => 'identifier',
-				implode(',', $categoryIdentifiers),
-			])), true);
+			$query->orderByAsc(
+				$query->expr(
+					$query
+						->func()
+						->FIND_IN_SET([
+							$prefixedColumn => 'identifier',
+							implode(',', $categoryIdentifiers),
+						])
+				),
+				true
+			);
 		}
 		else {
 			$query->orderBy(function ($exp) use ($prefixedColumn, $categoryIdentifiers) {
@@ -574,11 +595,10 @@ class CategoriesBehavior extends Behavior {
 
 		foreach ($validSelectionValues as $validSelectionValue) {
 			if (
-				$categoryId == $validSelectionValue ||
-				(
-					is_string($categoryId) &&
-					is_string($validSelectionValue) &&
-					Inflector::variable($categoryId) === Inflector::variable($validSelectionValue)
+				$categoryId == $validSelectionValue
+				|| (
+					is_string($categoryId) && is_string($validSelectionValue)
+					&& Inflector::variable($categoryId) === Inflector::variable($validSelectionValue)
 				)
 			) {
 				return $validSelectionValue;
@@ -609,9 +629,10 @@ class CategoriesBehavior extends Behavior {
 		$associationName = $this->getConfig('associationName');
 
 		if (
-			empty($associationName) ||
-			!$table->hasAssociation($associationName) ||
-			!$table->getAssociation($associationName)->hasBehavior('Categories')
+			empty($associationName) || !$table->hasAssociation($associationName)
+			|| !$table
+				->getAssociation($associationName)
+				->hasBehavior('Categories')
 		) {
 			$this->parentCategories = null;
 
@@ -622,8 +643,7 @@ class CategoriesBehavior extends Behavior {
 		$categoriesBehavior = $table->getAssociation($associationName)->getBehavior('Categories');
 
 		if (
-			!$categoriesBehavior->getConfig('enabled') ||
-			!$categoriesBehavior->getConfig('useDatasource')
+			!$categoriesBehavior->getConfig('enabled') || !$categoriesBehavior->getConfig('useDatasource')
 		) {
 			$this->parentCategories = null;
 
@@ -716,15 +736,26 @@ class CategoriesBehavior extends Behavior {
 			$field = $this->getConfig('foreignKey');
 			$field = $association->aliasField($field);
 
-			$dialect = $query->getConnection()->getDriver()->schemaDialect();
+			$dialect = $query
+				->getConnection()
+				->getDriver()
+				->schemaDialect()
+			;
 			// Order by parent categories first
 			// Only MySQL supports FIND_IN_SET for ordering.
 			if ($dialect instanceof MysqlSchemaDialect) {
 				/** @noinspection PhpUndefinedMethodInspection */
-				$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-					$field => 'identifier',
-					implode(',', $parentCategorieIds),
-				])), true);
+				$query->orderByAsc(
+					$query->expr(
+						$query
+							->func()
+							->FIND_IN_SET([
+								$field => 'identifier',
+								implode(',', $parentCategorieIds),
+							])
+					),
+					true
+				);
 			}
 			else {
 				$query->orderBy(function ($exp) use ($field, $parentCategorieIds) {
@@ -835,23 +866,31 @@ class CategoriesBehavior extends Behavior {
 
 		if (str_starts_with($field, 'attributes.')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType(substr($field, 11));
+			$fieldType = $table
+				->getAttributesTable()
+				->getSchema()
+				->getColumnType(substr($field, 11))
+			;
 		}
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		elseif ($table->fieldIsAttribute($field)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);
+			$fieldType = $table
+				->getAttributesTable()
+				->getSchema()
+				->getColumnType($field)
+			;
 		}
 		else {
 			$fieldType = $table->getSchema()->getColumnType($field);
 		}
 
-		 $query->formatResults(function (CollectionInterface $collection) use ($field, $direction, $fieldType) {
-			 return $collection->sortBy(
-				 $field,
-				 $direction,
-				 in_array($fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
-			 );
-		 });
+		$query->formatResults(function (CollectionInterface $collection) use ($field, $direction, $fieldType) {
+			return $collection->sortBy(
+				$field,
+				$direction,
+				in_array($fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+			);
+		});
 	}
 }

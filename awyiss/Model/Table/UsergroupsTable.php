@@ -27,15 +27,17 @@ class UsergroupsTable extends Table {
 
 
 	/**
+	 * @var array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
+	 */
+	protected static array $authorizationPolicies;
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected array $translate = [
 		'fields' => ['title'],
 	];
-	/**
-	 * @var array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
-	 */
-	protected static array $authorizationPolicies;
 
 
 	/**

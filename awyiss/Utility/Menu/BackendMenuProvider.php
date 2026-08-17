@@ -22,14 +22,6 @@ class BackendMenuProvider {
 
 
 	/**
-	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|null
-	 */
-	protected ?IdentityPermissionsInterface $identity = null;
-	/**
-	 * @var \Awyiss\Utility\Menu\BackendMenu|null
-	 */
-	protected ?Menu $menu = null;
-	/**
 	 * @var \Awyiss\Utility\Menu\BackendMenu|null
 	 */
 	protected ?Menu $customMenu = null;
@@ -37,6 +29,14 @@ class BackendMenuProvider {
 	 * @var \Awyiss\Utility\Menu\BackendMenu|null
 	 */
 	protected ?Menu $dynamicMenu = null;
+	/**
+	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|null
+	 */
+	protected ?IdentityPermissionsInterface $identity = null;
+	/**
+	 * @var \Awyiss\Utility\Menu\BackendMenu|null
+	 */
+	protected ?Menu $menu = null;
 
 
 	/**
@@ -121,13 +121,15 @@ class BackendMenuProvider {
 	protected function createDynamicMenu(?SelectQuery $query = null): void {
 		$query ??= $this->fetchTable('BackendMenuEntries');
 
-		$menuEntries = $query->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
-			return $entity->parentId ? 'appendTo' : 'insertAfter';
-		})->map(function (array $menuEntries) {
-			return collection($menuEntries)->groupBy(function (BackendMenuEntry $entity) {
-				return $entity->parentId ?? $entity->insertAfterId ?? '';
-			})->toArray();
-		})->toArray();
+		$menuEntries = $query
+			->find('threaded')
+			->all()
+			->groupBy(fn(BackendMenuEntry $entity) => $entity->parentId ? 'appendTo' : 'insertAfter')
+			->map(fn(array $menuEntries) => collection($menuEntries)
+				->groupBy(fn(BackendMenuEntry $entity) => $entity->parentId ?? $entity->insertAfterId ?? '')
+				->toArray())
+			->toArray()
+		;
 
 		/**
 		 * Serialize and unserialize to ensure that the menu is a new instance
@@ -139,6 +141,7 @@ class BackendMenuProvider {
 
 
 	/**
+	 * @param string $filePath
 	 * @return void
 	 * @throws \ReflectionException
 	 */

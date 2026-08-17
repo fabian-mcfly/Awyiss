@@ -90,9 +90,9 @@ class ControllerFactory extends BaseControllerFactory {
 				$paramType = $parameter->getType();
 				// TODO: In a future minor release it would be good to start requiring the components parameter
 				if (
-					$parameter->getName() === 'components' &&
-					$paramType instanceof ReflectionNamedType &&
-					$paramType->getName() === ComponentRegistry::class
+					$parameter->getName() === 'components'
+					&& $paramType instanceof ReflectionNamedType
+					&& $paramType->getName() === ComponentRegistry::class
 				) {
 					$hasComponents = true;
 					break;
@@ -136,7 +136,12 @@ class ControllerFactory extends BaseControllerFactory {
 		// Disallow plugin short forms, / and \\ from
 		// controller names as they allow direct references to
 		// be created.
-		if (str_contains($controller, '\\') || str_contains($controller, '/') || str_contains($controller, '.') || $firstChar === strtolower($firstChar)) {
+		if (
+			str_contains($controller, '\\')
+			|| str_contains($controller, '/')
+			|| str_contains($controller, '.')
+			|| $firstChar === strtolower($firstChar)
+		) {
 			throw $this->missingController($request);
 		}
 
@@ -164,7 +169,10 @@ class ControllerFactory extends BaseControllerFactory {
 
 		$singular = Inflector::singularize(Inflector::underscore($controller));
 		//Disallow calling the singular form of the controller, e.g. /backend/de/page instead of /backend/de/pages
-		if ($singular == Inflector::underscore($controller) && $singular != Inflector::pluralize(Inflector::underscore($controller))) {
+		if (
+			$singular == Inflector::underscore($controller)
+			&& $singular != Inflector::pluralize(Inflector::underscore($controller))
+		) {
 			return null;
 		}
 
@@ -233,8 +241,10 @@ class ControllerFactory extends BaseControllerFactory {
 		 * @var \Awyiss\Controller\Backend\GenericDatatablesController $controller
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
-		$controller = new class ($request) extends GenericDatatablesBase { };
+		$controller = new class ($request) extends GenericDatatablesBase {
+		};
 		$controller->forDatatable($datatable, $controllerName);
+
 		//phpcs:enable
 
 
@@ -281,8 +291,10 @@ class ControllerFactory extends BaseControllerFactory {
 		 * @var \Awyiss\Controller\Backend\PagesController $controller
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
-		$controller = new class ($request) extends GenericPagesBase { };
+		$controller = new class ($request) extends GenericPagesBase {
+		};
 		$controller->asPageRole($pageRole, $controllerName);
+
 		//phpcs:enable
 
 

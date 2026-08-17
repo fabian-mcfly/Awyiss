@@ -35,7 +35,13 @@ class UserConfigurationPolicy extends AbstractPolicy {
 	 * @return bool|null
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function callback(?bool $accessible, mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
+	public static function callback(
+		?bool $accessible,
+		mixed $access,
+		mixed $settings,
+		array $additionalData,
+		PermissionCollection $permissionCollection
+	): ?bool {
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
 		if (!$accessible) {
 			return $accessible;

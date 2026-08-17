@@ -54,13 +54,13 @@ class CustomerCenterController extends AppController {
 		'passwordConfirm',
 	];
 	/**
-	 * @var string|null
-	 */
-	protected ?string $languageShortcode = null;
-	/**
 	 * @var \Awyiss\Model\Table\CustomersTable
 	 */
 	protected CustomersTable $customersTable;
+	/**
+	 * @var string|null
+	 */
+	protected ?string $languageShortcode = null;
 
 
 	/**
@@ -86,9 +86,11 @@ class CustomerCenterController extends AppController {
 
 		$this->loadComponent('Flash', ['key' => '*']);
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setClassName('Frontend')
-			->addHelper('Flash');
+			->addHelper('Flash')
+		;
 	}
 
 
@@ -189,6 +191,7 @@ class CustomerCenterController extends AppController {
 			}, (array)$defaultGroups);
 		}
 
+		/** @see \Awyiss\Model\Table\CustomersTable::validationRegistration() */
 		$this->customersTable->patchEntity($customer, $data, [
 			'validate' => 'registration',
 			'associated' => $associated,
@@ -279,7 +282,8 @@ class CustomerCenterController extends AppController {
 				'customer' => $customer,
 				'verifyUrl' => $verifyUrl,
 				'verificationCode' => $verificationCode,
-			]);
+			])
+		;
 
 		$this->setMailerData($mailSender, $customer);
 
@@ -333,6 +337,7 @@ class CustomerCenterController extends AppController {
 			]);
 
 			$this->redirect($redirectUri);
+
 			return;
 		}
 
@@ -341,7 +346,11 @@ class CustomerCenterController extends AppController {
 			$email = $this->request->getData('email');
 			if ($email) {
 				/** @var \Awyiss\Model\Entity\Customer $customer */
-				$customer = $this->customersTable->find()->where(['email' => $email])->first();
+				$customer = $this->customersTable
+					->find()
+					->where(['email' => $email])
+					->first()
+				;
 				if ($customer && !$customer->verified) {
 					$errorMessage = __d('Customers', 'error_account_not_verified');
 				}
@@ -538,7 +547,8 @@ class CustomerCenterController extends AppController {
 			// Validate current password
 			if (!$currentPassword || !password_verify($currentPassword, $customer->password)) {
 				$this->Flash->error(__d('Customers', 'error_password_incorrect'));
-			} else {
+			}
+			else {
 				$data = array_intersect_key($data, array_flip([
 					'password',
 					'passwordConfirm',
@@ -606,7 +616,8 @@ class CustomerCenterController extends AppController {
 		}
 
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
-		$customer = $this->customersTable->find('active')
+		$customer = $this->customersTable
+			->find('active')
 			->where([
 				'email' => $email,
 				'OR' => [
@@ -614,7 +625,8 @@ class CustomerCenterController extends AppController {
 					'passwordResetOn <=' => DateTime::now()->subMinutes(60),
 				],
 			])
-			->first();
+			->first()
+		;
 
 		if ($customer) {
 			// Generate a reset code
@@ -674,9 +686,11 @@ class CustomerCenterController extends AppController {
 		}
 
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
-		$customer = $this->customersTable->find('active')
+		$customer = $this->customersTable
+			->find('active')
 			->where(['passwordResetCode' => $code])
-			->first();
+			->first()
+		;
 
 		if (!$customer || !$this->checkPasswordResetCodeValidity($customer)) {
 			$this->Flash->error(__d('Customers', 'error_invalid_reset_code'));
@@ -790,11 +804,13 @@ class CustomerCenterController extends AppController {
 		}
 
 		/** @var \Awyiss\Model\Entity\Customer|null $customer */
-		$customer = $this->customersTable->find()
+		$customer = $this->customersTable
+			->find()
 			->where([
 				'verificationCode' => $code,
 			])
-			->first();
+			->first()
+		;
 
 		if ($customer) {
 			$customer->patch([
@@ -856,7 +872,8 @@ class CustomerCenterController extends AppController {
 				'resetUrl' => $resetUrl,
 				'codeValidityHours' => $codeValidityHours,
 				'resetCode' => $resetCode,
-			]);
+			])
+		;
 
 		$this->setMailerData($mailSender, $customer);
 

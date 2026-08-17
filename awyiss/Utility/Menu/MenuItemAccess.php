@@ -12,17 +12,17 @@ use Awyiss\Utility\Menu\Exception\MenuValidationException;
  */
 class MenuItemAccess {
 	/**
-	 * @var string
+	 * @var array|null
 	 */
-	protected string $scope;
+	protected ?array $additionalData = null;
 	/**
 	 * @var array|string
 	 */
 	protected array|string $identifier;
 	/**
-	 * @var array|null
+	 * @var string
 	 */
-	protected ?array $additionalData = null;
+	protected string $scope;
 
 
 	/**

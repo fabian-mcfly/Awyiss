@@ -112,7 +112,8 @@ class DesignsController extends Controller {
 		 */
 		$variables = $this->nestVariables($internalVariables);
 
-		// Group the variables by their 'category' attribute. If a variable does not have a group, it will be placed in the 'variables' group.
+		// Group the variables by their 'category' attribute.
+		// If a variable does not have a group, it will be placed in the 'variables' group.
 		$variables = array_reduce(array_keys($variables), function (array $carry, string $key) use ($variables): array {
 			$item = $variables[ $key ];
 			$group = $item['category'] ?? 'variables';
@@ -145,7 +146,7 @@ class DesignsController extends Controller {
 			'designs' => $designs,
 			'fontStacks' => $fontStacks,
 			'fontWeights' => $fontWeights,
-			'preview' => $preview ,
+			'preview' => $preview,
 			'previewIdentifier' => $preview?->identifier,
 			'units' => $scssVariableProvider->getConfig('units'),
 			'variables' => $variables,
@@ -220,7 +221,10 @@ class DesignsController extends Controller {
 				$session = $this->request->getSession();
 				$session->delete('designPreviewIdentifier');
 
-				throw new RedirectException(Router::url(['action' => 'overview', 'identifier' => $use ? $design->identifier : null], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'overview', 'identifier' => $use ? $design->identifier : null], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {
@@ -272,7 +276,7 @@ class DesignsController extends Controller {
 		$data = ['settings' => []];
 
 		// Create a map of the internal variables and their underscored names
-		$keys = array_map(fn ($key) => Inflector::variable($key), array_keys($internalVariables));
+		$keys = array_map(fn($key) => Inflector::variable($key), array_keys($internalVariables));
 		$variableMap = array_combine($keys, array_keys($internalVariables));
 		$internalVariables = new Collection($internalVariables);
 
@@ -290,9 +294,12 @@ class DesignsController extends Controller {
 				$value = $requestData['custom'][ $key ] ?? '';
 			}
 
-			$variableOptions = $internalVariables->filter(function ($variableOptions, $variableKey) use ($key) {
-				return Inflector::variable($variableKey) === $key;
-			})->first();
+			$variableOptions = $internalVariables
+				->filter(function ($variableOptions, $variableKey) use ($key) {
+					return Inflector::variable($variableKey) === $key;
+				})
+				->first()
+			;
 
 			if ($variableOptions && $variableOptions['type'] === ScssVariableType::FontName) {
 				if (isset($webfonts[ $value ])) {
@@ -313,9 +320,9 @@ class DesignsController extends Controller {
 
 			// Don't save empty font stacks
 			if (
-				$variableOptions &&
-				$variableOptions['type'] === ScssVariableType::FontStack &&
-				empty($value)
+				$variableOptions
+				&& $variableOptions['type'] === ScssVariableType::FontStack
+				&& empty($value)
 			) {
 				continue;
 			}
@@ -351,10 +358,13 @@ class DesignsController extends Controller {
 			$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 
 			// Check if the user has a preview design
-			$identifier = $this->designs->firstMatch([
-				'isPreview' => true,
-				'createdBy' => $identity->id,
-			])?->get('identifier');
+			$identifier = $this->designs
+				->firstMatch([
+					'isPreview' => true,
+					'createdBy' => $identity->id,
+				])
+				?->get('identifier')
+			;
 
 			if ($identifier) {
 				// If the user has a preview design, redirect to the overview page
@@ -423,12 +433,15 @@ class DesignsController extends Controller {
 	protected function loadDesigns(): void {
 		if (!isset($this->designs)) {
 			/** @uses \Awyiss\Model\Table::findTranslations() */
-			$this->designs = $this->Designs->find('translations')
-			->contain([
-				'CreatedByUser',
-			])
-			->orderByDesc('Designs.id')
-			->all()->compile();
+			$this->designs = $this->Designs
+				->find('translations')
+				->contain([
+					'CreatedByUser',
+				])
+				->orderByDesc('Designs.id')
+				->all()
+				->compile()
+			;
 		}
 
 		if (!$this->designs->count()) {
@@ -484,7 +497,10 @@ class DesignsController extends Controller {
 		$preview->css = $this->generateCss($previewData);
 
 		if ($this->Designs->save($preview)) {
-			throw new RedirectException(Router::url(['action' => 'overview', 'preview' => $preview->identifier, '#' => 'Preview'], true), 302);
+			throw new RedirectException(
+				Router::url(['action' => 'overview', 'preview' => $preview->identifier, '#' => 'Preview'], true),
+				302
+			);
 		}
 
 		return null;
@@ -589,7 +605,8 @@ class DesignsController extends Controller {
 				$scssVariableProvider->setScssFiles([$scssFile]);
 
 				$internalVariables = $scssVariableProvider->getInternalVariables();
-				$includeColumnSystem = isset($internalVariables['includeColumnSystem']) && $internalVariables['includeColumnSystem']->getValue() === true;
+				$includeColumnSystem = isset($internalVariables['includeColumnSystem'])
+					&& $internalVariables['includeColumnSystem']->getValue() === true;
 
 				// compileScss expects SplFileInfo, not a string, so convert it
 				$scssFile = new SplFileInfo($scssFile);

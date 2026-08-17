@@ -92,7 +92,11 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 			$randomString = 'c' . bin2hex(random_bytes(8));
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
+			$nonce = $this->view
+				->helpers()
+				->get('Asset')
+				->getStyleNonce()
+			;
 			$css = '<style nonce="' . $nonce . '">.c' . $randomString . ' { position:absolute; visibility:hidden; }</style>';
 
 			return $css . '<input type="email" name="' . $this->getFieldName() . '" value="" class="c' . $randomString . '">';

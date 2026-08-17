@@ -41,8 +41,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	 */
 	public function afterConfigurationSaveCommit(Event $event, Configuration $configuration): void {
 		if (
-			$configuration->realm !== Awyiss::REALM_BACKEND ||
-			$configuration->identifier !== 'splitIntoLanguages'
+			$configuration->realm !== Awyiss::REALM_BACKEND
+			|| $configuration->identifier !== 'splitIntoLanguages'
 		) {
 			return;
 		}
@@ -50,8 +50,8 @@ class GeneralEventsListener implements EventListenerInterface {
 		// If configuration is not for a generic datatable or value is true, do nothing as we cannot move entries to a specific language
 		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
 		if (
-			!$configOptions instanceof GenericDatatablesConfigOptions ||
-			(bool)$configuration->value === true
+			!$configOptions instanceof GenericDatatablesConfigOptions
+			|| (bool)$configuration->value === true
 		) {
 			return;
 		}
@@ -80,8 +80,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	 */
 	public function afterConfigurationDeleteCommit(Event $event, Configuration $configuration): void {
 		if (
-			$configuration->realm !== Awyiss::REALM_BACKEND ||
-			$configuration->identifier !== 'splitIntoLanguages'
+			$configuration->realm !== Awyiss::REALM_BACKEND
+			|| $configuration->identifier !== 'splitIntoLanguages'
 		) {
 			return;
 		}

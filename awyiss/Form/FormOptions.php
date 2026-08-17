@@ -78,8 +78,12 @@ class FormOptions implements FormOptionsInterface {
 				]);
 			}
 			elseif (
-				($formElement->type === 'checkbox' && $formElement->options && count($formElement->options) > 1) ||
 				$formElement->type === 'selectMultiple'
+				|| (
+					$formElement->type === 'checkbox'
+					&& $formElement->options
+					&& count($formElement->options) > 1
+				)
 			) {
 				$options = $formElement->options;
 				$validator->add($formElement->identifier, [
@@ -97,8 +101,8 @@ class FormOptions implements FormOptionsInterface {
 				$keys = array_keys($formElement->options ?? []);
 
 				if (
-					in_array($formElement->type, ['checkbox', 'radio']) &&
-					!$formElement->required
+					in_array($formElement->type, ['checkbox', 'radio'])
+					&& !$formElement->required
 				) {
 					$keys[] = '';
 				}

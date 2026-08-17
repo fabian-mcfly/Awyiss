@@ -171,7 +171,7 @@ class AwyissRoute extends DashedRoute {
 				$value = Inflector::dasherize((string)$value);
 			}
 			elseif (is_array($value)) {
-				$value = implode(',', array_map(fn (string|int $value) => Inflector::dasherize((string)$value), $value));
+				$value = implode(',', array_map(fn(string|int $value) => Inflector::dasherize((string)$value), $value));
 			}
 			elseif ($value instanceof BackedEnum) {
 				$value = Inflector::dasherize((string)$value->value);
@@ -205,9 +205,11 @@ class AwyissRoute extends DashedRoute {
 		}
 
 		/**
-		 * If the template contains '**', add '**' and '%2F' to the search array and the passed parameters string and '/' to the replace-array.
+		 * If the template contains '**', add '**' and '%2F' to the search array
+		 *  and the passed parameters string and '/' to the replace-array.
 		 * If the template contains '*', add '*' to the search array.
-		 * If the 'slug' parameter is not empty, add the 'slug' parameter and the passed parameters string (if not empty) separated by '/' to the replace-array.
+		 * If the 'slug' parameter is not empty, add the 'slug' parameter and the passed parameters string (if not empty)
+		 *  separated by '/' to the replace-array.
 		 * Otherwise, add the passed parameters string to the replace-array.
 		 */
 		if (str_contains($this->template, '**')) {
@@ -281,7 +283,8 @@ class AwyissRoute extends DashedRoute {
 
 		// Initialize the 'pass' array.
 		$pass = [];
-		// For each key in the 'pass' option, if it exists in the route array, add it to the 'pass' array and remove it from the route array.
+		// For each key in the 'pass' option, if it exists in the route array, add it to the 'pass' array
+		// and remove it from the route array.
 		foreach ($this->options['pass'] ?? [] as $key) {
 			$value = null;
 			if (isset($route[ $key ])) {
@@ -342,7 +345,8 @@ class AwyissRoute extends DashedRoute {
 	protected function applyHostOptions(array $hostOptions, array $context): ?array {
 		// Apply the _host option if possible
 		if (isset($this->options['_host'])) {
-			// If the _host key is not set in the host options array and the _host option does not contain a '*', set the _host key in the host options array to the _host option.
+			// If the _host key is not set in the host options array and the _host option does not contain a '*',
+			// set the _host key in the host options array to the _host option.
 			if (!isset($hostOptions['_host']) && !str_contains($this->options['_host'], '*')) {
 				$hostOptions['_host'] = $this->options['_host'];
 			}
@@ -361,7 +365,8 @@ class AwyissRoute extends DashedRoute {
 		if (isset($hostOptions['_scheme']) || isset($hostOptions['_port']) || isset($hostOptions['_host'])) {
 			$hostOptions += $context;
 
-			// If the _scheme key is set in the host options array and the service name for the _scheme key in the host options array is the same as the _port key in the host options array, unset the _port key.
+			// If the _scheme key is set in the host options array and the service name for the _scheme key in the host options array
+			// is the same as the _port key in the host options array, unset the _port key.
 			if ($hostOptions['_scheme'] && getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']) {
 				unset($hostOptions['_port']);
 			}
@@ -496,7 +501,8 @@ class AwyissRoute extends DashedRoute {
 			return null;
 		}
 
-		// If the '?' key is set in the URL array, cast its value to an array and assign it to the query variable. Otherwise, assign an empty array to the query variable.
+		// If the '?' key is set in the URL array, cast its value to an array and assign it to the query variable.
+		// Otherwise, assign an empty array to the query variable.
 		$query = !empty($url['?']) ? (array)$url['?'] : [];
 
 		// Unset the '_host', '_scheme', '_port', '_base', and '?' keys from the URL array.
@@ -539,7 +545,12 @@ class AwyissRoute extends DashedRoute {
 		// If the options array is not empty, for each key-value pair in the options array...
 		if (!empty($this->options)) {
 			// If the key exists in the URL array and its value does not match the pattern, return null.
-			if (array_any($this->options, fn ($pattern, $key) => isset($url[ $key ]) && !preg_match('#^' . $pattern . '$#u', (string)$url[ $key ]))) {
+			if (
+				array_any(
+					$this->options,
+					fn($pattern, $key) => isset($url[ $key ]) && !preg_match('#^' . $pattern . '$#u', (string)$url[ $key ])
+				)
+			) {
 				return null;
 			}
 		}
@@ -549,9 +560,18 @@ class AwyissRoute extends DashedRoute {
 
 		// If the 'controller', 'action', or 'slug' key is set in the key names array and is not set in the URL array, return null.
 		if (
-			(isset($keyNames['controller']) && !isset($url['controller'])) ||
-			(isset($keyNames['action']) && !isset($url['action'])) ||
-			(isset($keyNames['slug']) && !isset($url['slug']))
+			(
+				isset($keyNames['controller'])
+				&& !isset($url['controller'])
+			)
+			|| (
+				isset($keyNames['action'])
+				&& !isset($url['action'])
+			)
+			|| (
+				isset($keyNames['slug'])
+				&& !isset($url['slug'])
+			)
 		) {
 			return null;
 		}

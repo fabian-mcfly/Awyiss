@@ -104,15 +104,19 @@ class GlobalContentTemplatesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$globalContentTemplate = $this->GlobalContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
-		->contain([
-			'GlobalContentTemplateElements' => [
-				'queryBuilder' => function (SelectQuery $query) {
+		$globalContentTemplate = $this->GlobalContentTemplates
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain([
+				'GlobalContentTemplateElements' => [
 					/** @uses \Awyiss\Model\Table::findTranslations() */
-					return $query->find('translations');
-				},
-			],
-		])->first();
+					'queryBuilder' => fn(SelectQuery $query) => $query->find('translations'),
+				],
+			])
+			->first()
+		;
 
 		if (!$globalContentTemplate) {
 			$this->Flash->error(__('record_not_found'));
@@ -183,22 +187,26 @@ class GlobalContentTemplatesController extends Controller {
 		$requestData = $this->request->getData() + ['globalContentTemplateElements' => []];
 
 		if (!empty($requestData['globalContentTemplateElements'])) {
-			$requestData['globalContentTemplateElements'] = array_filter($requestData['globalContentTemplateElements'], function ($element) {
-				return !empty($element['identifier']);
-			});
+			$requestData['globalContentTemplateElements'] = array_filter(
+				$requestData['globalContentTemplateElements'],
+				fn($element) => !empty($element['identifier'])
+			);
 
 			$currentFieldset = '';
 			$systemOrder = 1;
-			$requestData['globalContentTemplateElements'] = array_map(function (array $element) use (&$currentFieldset, &$systemOrder): array {
-				if ($element['fieldset'] !== $currentFieldset) {
-					$currentFieldset = $element['fieldset'];
-					$systemOrder = 1;
-				}
+			$requestData['globalContentTemplateElements'] = array_map(
+				function (array $element) use (&$currentFieldset, &$systemOrder): array {
+					if ($element['fieldset'] !== $currentFieldset) {
+						$currentFieldset = $element['fieldset'];
+						$systemOrder = 1;
+					}
 
-				$element['systemOrder'] = $systemOrder++;
+					$element['systemOrder'] = $systemOrder++;
 
-				return $element;
-			}, $requestData['globalContentTemplateElements']);
+					return $element;
+				},
+				$requestData['globalContentTemplateElements']
+			);
 
 			$request = $this->request->withData('globalContentTemplateElements', $requestData['globalContentTemplateElements']);
 			$this->setRequest($request);

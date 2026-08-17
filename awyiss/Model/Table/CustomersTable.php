@@ -177,7 +177,11 @@ class CustomersTable extends Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a Validator object with some rules that are specific to the registration process.
+	 * This method is used when a new customer is being registered from the frontend.
+	 *
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to add some rules to it.
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationRegistration(Validator $validator): Validator {

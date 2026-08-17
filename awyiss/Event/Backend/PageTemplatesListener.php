@@ -81,7 +81,11 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		$filePath = $folderPath . $fileName . $extension;
 
-		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
+		if (
+			!($options['isCopy'] ?? false)
+			&& $entity->hasOriginal('fileName')
+			&& $entity->get('fileName') != $entity->getOriginal('fileName')
+		) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$currentFilePath = $folderPath . $currentFileName . $extension;
@@ -96,7 +100,9 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontend page templates
 		if (!$fileExists) {
-			$commands[] = 'bin' . DS . 'cake bake template page_templates page_template ' . $fileName . ' --prefix Frontend --controller page';
+			$commands[] = 'bin' . DS . 'cake bake template page_templates page_template '
+				. $fileName . ' --prefix Frontend --controller page'
+			;
 			$commands[] = 'chmod 0755 ' . $filePath;
 		}
 

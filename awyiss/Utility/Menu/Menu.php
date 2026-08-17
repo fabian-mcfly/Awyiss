@@ -158,15 +158,9 @@ abstract class Menu {
 	 * @return \Awyiss\Utility\Menu\MenuItem|null
 	 */
 	public function getItem(string|int $id, bool $deep = true): ?MenuItem {
-		$items = $deep ? $this->items() : $this->items;
-		foreach ($items as $identifier => $item) {
-			if ($identifier === $id) {
-				return $item;
-			}
-		}
+		$items = $deep ? iterator_to_array($this->items()) : $this->items;
 
-
-		return null;
+		return array_find($items, fn($item, $identifier) => $identifier === $id);
 	}
 
 

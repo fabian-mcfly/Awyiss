@@ -89,8 +89,8 @@ abstract class GenericDatatablesController extends Controller {
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (
-			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey') ||
-			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey')
+			|| $this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
 		) {
 			$this->sortable = false;
 		}
@@ -131,6 +131,7 @@ abstract class GenericDatatablesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
+		/** @var \Awyiss\Model\Entity $entity */
 		$entity = $this->Datatable->newDefaultEntity([
 			'languageShortcode' => $this->splitIntoLanguages ? LocaleMiddleware::getLanguage()->shortcode : null,
 		]);
@@ -158,7 +159,13 @@ abstract class GenericDatatablesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$entity = $this->Datatable
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 
 		if (!$entity) {
 			$this->Flash->error(__df($this->datatable->identifier, 'GenericDatatables', 'record_not_found'));
@@ -170,7 +177,11 @@ abstract class GenericDatatablesController extends Controller {
 			$this->save($entity, 'edit');
 		}
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		elseif ($this->splitIntoLanguages && $entity->languageShortcode && $entity->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
+		elseif (
+			$this->splitIntoLanguages
+			&& $entity->languageShortcode
+			&& $entity->languageShortcode != LocaleMiddleware::getLanguage()->shortcode
+		) {
 			//Don't allow modifying a record in another language
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			throw new RedirectException(Router::url([
@@ -278,7 +289,10 @@ abstract class GenericDatatablesController extends Controller {
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $entity->languageShortcode, 'id' => $entity->id], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'edit', 'lang' => $entity->languageShortcode, 'id' => $entity->id], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {
@@ -405,11 +419,18 @@ abstract class GenericDatatablesController extends Controller {
 			 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $entity->languageShortcode, includeGlobal: false)->where(
-				$this->getOverviewWhere() + $this->Categories->getQueryConditions(
-					$this->Categories->getSelectedCategory($entity)
+			$query = $this->Datatable
+				->find(
+					'forCurrentLanguage',
+					languageShortcode: $entity->languageShortcode,
+					includeGlobal: false
 				)
-			);
+				->where(
+					$this->getOverviewWhere() + $this->Categories->getQueryConditions(
+						$this->Categories->getSelectedCategory($entity)
+					)
+				)
+			;
 
 			$this->threadedRecords = $this->Datatable->listNested($query);
 		}
@@ -499,8 +520,8 @@ abstract class GenericDatatablesController extends Controller {
 		$categoriesBehavior = $this->Datatable->getBehavior('Categories');
 
 		if (
-			$categoriesBehavior->getConfig('enabled') &&
-			$categoriesBehavior->getConfig('foreignKey') === 'parentId'
+			$categoriesBehavior->getConfig('enabled')
+			&& $categoriesBehavior->getConfig('foreignKey') === 'parentId'
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parentId` as the foreign key.');
 		}

@@ -31,14 +31,16 @@ class LockComponent extends Component {
 
 	/**
 	 * @inheritDoc
-	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
-		'autoload' => ['edit'], //can be a boolean value or an array containing all action names for which the locks should get set automatically
+		// can be a boolean value or an array containing all action names for which the locks should get set automatically
+		'autoload' => ['edit'],
 		'enabled' => true,
-		'urlParam' => 'id', //the url parameter that contains the id of the entity
+		// the url parameter that contains the id of the entity
+		'urlParam' => 'id',
 		'tableName' => null,
-		'timeout' => 1200, //timeout in seconds
+		// timeout in seconds
+		'timeout' => 1200,
 	];
 	/**
 	 * @var \Awyiss\Model\Table\LocksTable
@@ -69,7 +71,11 @@ class LockComponent extends Component {
 
 		$this->locksTable = $this->fetchTable('Locks');
 
-		$session = $this->getController()->getRequest()->getSession();
+		$session = $this
+			->getController()
+			->getRequest()
+			->getSession()
+		;
 		if (!$session->read('Backend.lockIdentifier')) {
 			$session->write('Backend.lockIdentifier', Text::uuid());
 		}
@@ -89,16 +95,16 @@ class LockComponent extends Component {
 
 		//Shall we autoload the records?
 		if (
-			$autoload === false ||
-			(
-				$autoload !== true &&
-				(
-					!is_array($autoload) ||
-					!in_array($action, $autoload)
-				) &&
-				(
-					!is_string($autoload) ||
-					$action !== $autoload
+			$autoload === false
+			|| (
+				$autoload !== true
+				&& (
+					!is_array($autoload)
+					|| !in_array($action, $autoload)
+				)
+				&& (
+					!is_string($autoload)
+					|| $action !== $autoload
 				)
 			)
 		) {
@@ -154,7 +160,11 @@ class LockComponent extends Component {
 			$this->locksTable->patchEntity($lock, [
 				'scope' => $this->getConfig('tableName'),
 				'foreignKey' => $id,
-				'uniqueId' => $this->getController()->getRequest()->getSession()->read('Backend.lockIdentifier'),
+				'uniqueId' => $this
+					->getController()
+					->getRequest()
+					->getSession()
+					->read('Backend.lockIdentifier'),
 				'createdOn' => new DateTime(),
 				'createdBy' => $this->getIdentityId(),
 			], ['accessibleFields' => ['createdOn', 'createdBy']]);
@@ -235,7 +245,7 @@ class LockComponent extends Component {
 		];
 
 		if ($ownLock !== null) {
-			$where['createdBy' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
+			$where[ 'createdBy' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
 
 			$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
 			if ($sessionBased) {
@@ -247,7 +257,12 @@ class LockComponent extends Component {
 			$where['createdOn <='] = $createdOn;
 		}
 
-		return $this->locksTable->find()->where($where)->contain(['CreatedByUser'])->first();
+		return $this->locksTable
+			->find()
+			->where($where)
+			->contain(['CreatedByUser'])
+			->first()
+		;
 	}
 
 

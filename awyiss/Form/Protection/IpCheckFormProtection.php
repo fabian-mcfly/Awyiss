@@ -29,7 +29,8 @@ class IpCheckFormProtection implements FormProtectionInterface {
 	 * @var array
 	 */
 	protected array $defaultOptions = [
-		'checkTimeout' => 300, // 5 minutes
+		// 5 minutes
+		'checkTimeout' => 300,
 	];
 	/**
 	 * @var \Awyiss\Model\Entity\Form

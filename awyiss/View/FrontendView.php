@@ -35,7 +35,6 @@ class FrontendView extends AppView {
 	final public const string TYPE_GLOBAL_CONTENT = 'global_content';
 
 
-
 	/**
 	 * The class string to use for the row element
 	 *
@@ -44,6 +43,8 @@ class FrontendView extends AppView {
 	protected static string $rowClass = '';
 	/**
 	 * The class name for inactive elements in preview mode
+	 *
+	 * @var string
 	 */
 	protected static string $previewModeElementClass = 'AwyissFrontendPreview-InactiveElement';
 
@@ -53,8 +54,8 @@ class FrontendView extends AppView {
 	 * the default configuration contents are stored under. You can also choose a cache config
 	 * per element.
 	 *
-	 * @see \Cake\View\View::content()
 	 * @var string
+	 * @see \Cake\View\View::content()
 	 */
 	protected string $contentCache = 'default';
 	/**
@@ -62,8 +63,8 @@ class FrontendView extends AppView {
 	 * the default configuration global_contents are stored under. You can also choose a cache config
 	 * per element.
 	 *
-	 * @see \Cake\View\View::globalContent()
 	 * @var string
+	 * @see \Cake\View\View::globalContent()
 	 */
 	protected string $globalContentCache = 'default';
 
@@ -119,8 +120,19 @@ class FrontendView extends AppView {
 		}
 
 		$backendLanguage = null;
-		if ($this->getRequest()->getSession()->read('Backend.languageShortcode')) {
-			$backendLanguage = LocaleMiddleware::getLanguageByShortcode($this->getRequest()->getSession()->read('Backend.languageShortcode'), Awyiss::REALM_BACKEND);
+		if (
+			$this
+				->getRequest()
+				->getSession()
+				->read('Backend.languageShortcode')
+		) {
+			$backendLanguage = LocaleMiddleware::getLanguageByShortcode(
+				$this
+					->getRequest()
+					->getSession()
+					->read('Backend.languageShortcode'),
+				Awyiss::REALM_BACKEND
+			);
 			if ($backendLanguage) {
 				$backendLanguage = $this->cleanLanguage($backendLanguage);
 			}
@@ -141,14 +153,26 @@ class FrontendView extends AppView {
 		$twig->addGlobal('currentBackendLanguage', $backendLanguage);
 		$twig->addGlobal('currentCustomer', $this->getCurrentCustomer());
 		$twig->addGlobal('currentLanguage', $frontendLanguage);
-		$twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$twig->addGlobal(
+			'currentPath',
+			$this
+				->getRequest()
+				->getUri()
+				->getPath()
+		);
 		$twig->addGlobal('currentUrl', $uri->__toString());
 		$twig->addGlobal('designSettings', $this->getDesignVariables(true));
 		$twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : null);
 		$twig->addGlobal('folder', $folder);
 		$twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$twig->addGlobal('languageShortcode', $frontendLanguage?->shortcode);
-		$twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
+		$twig->addGlobal(
+			'previewMode',
+			$this
+				->getRequest()
+				->getSession()
+				->read('previewMode', [])
+		);
 		$twig->addGlobal('webfont', $this->getWebfontData());
 	}
 
@@ -500,10 +524,14 @@ class FrontendView extends AppView {
 			if ($designPreviewIdentifier) {
 				$designTable = FactoryLocator::get('Table')->get('Designs');
 				/** @var \Awyiss\Model\Entity\Design $design */
-				$design = $designTable->find('all')->where([
-					'identifier' => $designPreviewIdentifier,
-					'inUse' => false,
-				])->first();
+				$design = $designTable
+					->find('all')
+					->where([
+						'identifier' => $designPreviewIdentifier,
+						'inUse' => false,
+					])
+					->first()
+				;
 			}
 
 			if ($design) {
@@ -596,6 +624,7 @@ class FrontendView extends AppView {
 			$this->set('ogImage', Router::url('/_open-graph-image/id:' . $this->get('page')->id . '/', true));
 			$this->set('ogImageWidth', 1200);
 			$this->set('ogImageHeight', 680);
+
 			return;
 		}
 

@@ -20,13 +20,13 @@ use Cake\Utility\Security;
  */
 trait AdminTrait {
 	/**
-	 * @var string The admin user's username
-	 */
-	protected string $adminUsername;
-	/**
 	 * @var string The admin user's password
 	 */
 	protected string $adminPassword;
+	/**
+	 * @var string The admin user's username
+	 */
+	protected string $adminUsername;
 
 
 	/**
@@ -36,7 +36,9 @@ trait AdminTrait {
 	 */
 	protected function createAdminUsergroup(): Usergroup {
 		/** @var \Awyiss\Model\Table\UsergroupsTable $usersTable */
-		$usergroupsTable = TableRegistry::getTableLocator()->get('Usergroups');
+		$usergroupsTable = TableRegistry::getTableLocator()
+			->get('Usergroups')
+		;
 
 		/** @var \Awyiss\Model\Entity\Usergroup $usergroup */
 		$usergroup = $usergroupsTable->findOrCreate([
@@ -89,7 +91,9 @@ trait AdminTrait {
 		$usergroup = $this->createAdminUsergroup();
 
 		/** @var \Awyiss\Model\Table\UsergroupsTable $usersTable */
-		$usersTable = TableRegistry::getTableLocator()->get('Users');
+		$usersTable = TableRegistry::getTableLocator()
+			->get('Users')
+		;
 
 		/** @var \Awyiss\Model\Entity\User $user */
 		$user = $usersTable->newDefaultEntity();

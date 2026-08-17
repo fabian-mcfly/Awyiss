@@ -108,11 +108,16 @@ class ImageHandler {
 
 		/** @var \Awyiss\Model\Table $table */
 		$table = FactoryLocator::get('Table')->get('Media');
-		$media = $table->find('all')->where([
-			'path IN' => array_map(function (array $foundSource) {
-				return $foundSource['src'];
-			}, $foundSources),
-		])->all()->indexBy('path');
+		$media = $table
+			->find('all')
+			->where([
+				'path IN' => array_map(function (array $foundSource) {
+					return $foundSource['src'];
+				}, $foundSources),
+			])
+			->all()
+			->indexBy('path')
+		;
 
 		if (!$media->count()) {
 			return $value;
@@ -157,7 +162,11 @@ class ImageHandler {
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
 	 */
-	public static function rebuildSimpleImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
+	public static function rebuildSimpleImageTags(
+		EntityInterface $entity,
+		array $fields = [],
+		?EntityInterface $referenceEntity = null
+	): void {
 		$fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($fields as $field) {
@@ -256,9 +265,9 @@ class ImageHandler {
 			$attributes = json_decode($tag->textContent, true);
 
 			if (
-				!is_array($attributes) ||
-				!isset($attributes['mediaId']) ||
-				!isset($media[ $attributes['mediaId'] ])
+				!is_array($attributes)
+				|| !isset($attributes['mediaId'])
+				|| !isset($media[ $attributes['mediaId'] ])
 			) {
 				continue;
 			}
@@ -447,7 +456,8 @@ class ImageHandler {
 			$assignment = $mediaAssignmentsTable->newDefaultEntity();
 
 			$assignment->patch([
-				'mediaElementId' => 5, // 5 for `inlineImgTag`
+				// 5 for `inlineImgTag`
+				'mediaElementId' => 5,
 				'mediaElementSelectorIdentifier' => 'inlineImgTag',
 				'mediaId' => $mediaItem->id,
 				'scope' => Inflector::underscore($entity->getSource()),
@@ -486,9 +496,9 @@ class ImageHandler {
 		$attributes = json_decode($tag->textContent, true);
 
 		if (
-			!is_array($attributes) ||
-			!isset($attributes['mediaId']) ||
-			!isset($entity->mediaAssignments['inlineImgTag'][ $attributes['mediaId'] ])
+			!is_array($attributes)
+			|| !isset($attributes['mediaId'])
+			|| !isset($entity->mediaAssignments['inlineImgTag'][ $attributes['mediaId'] ])
 		) {
 			// Replace the node with an empty string
 			$tag->parentNode->replaceChild($dom->createTextNode(''), $tag);
@@ -523,7 +533,8 @@ class ImageHandler {
 		// If the entity has no attributes or the attributes are not an instance of Entity,
 		// the field is not valid
 		if (
-			!$entity->has('attributes') || !($entity->get('attributes') instanceof Entity)
+			!$entity->has('attributes')
+			|| !($entity->get('attributes') instanceof Entity)
 		) {
 			return false;
 		}

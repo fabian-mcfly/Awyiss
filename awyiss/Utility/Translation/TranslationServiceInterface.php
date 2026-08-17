@@ -46,7 +46,12 @@ interface TranslationServiceInterface {
 	 * @param array $options Additional service-specific options (e.g., formality, context)
 	 * @return \Awyiss\Utility\Translation\TranslationResult|false The translation result, or false on failure
 	 */
-	public function translateText(string $text, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): TranslationResult|false;
+	public function translateText(
+		string $text,
+		string $targetLanguage,
+		?string $sourceLanguage = null,
+		array $options = []
+	): TranslationResult|false;
 
 
 	/**
@@ -58,7 +63,8 @@ interface TranslationServiceInterface {
 	 * @param string $targetLanguage The target language code
 	 * @param string|null $sourceLanguage The source language code, or null for auto-detection
 	 * @param array $options Additional service-specific options
-	 * @return array<\Awyiss\Utility\Translation\TranslationResult>|false Array of TranslationResult objects, keyed by the original array keys or false on failure
+	 * @return array<\Awyiss\Utility\Translation\TranslationResult>|false Array of TranslationResult objects,
+	 *  keyed by the original array keys or false on failure
 	 */
 	public function translateBatch(array $texts, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): array|false;
 

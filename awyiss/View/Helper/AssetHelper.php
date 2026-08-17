@@ -168,18 +168,27 @@ class AssetHelper extends Helper {
 	 * - priority: An integer indicating the priority of the asset. Higher numbers indicate higher priority.
 	 * The minified option defaults to true for production environments, false for development environments.
 	 *
-	 * @param array|string $asset The asset to add. This can be either a string representing the asset, or an array with the asset as the key and an array of options as the value.
+	 * @param array|string $asset The asset to add. This can be either a string representing the asset,
+	 *  or an array with the asset as the key and an array of options as the value.
 	 * @param array $attributes
 	 * @param bool $critical (optional) Whether the asset is critical. Defaults to false.
 	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
 	 * @param int $priority (optional) The priority of the asset. Defaults to 10.
 	 * @return void
-	 * @noinspection DuplicatedCode*/
-	public function add(array|string $asset, array $attributes = [], bool $critical = false, ?bool $minified = null, int $priority = 10): void {
+	 * @noinspection DuplicatedCode
+	 */
+	public function add(
+		array|string $asset,
+		array $attributes = [],
+		bool $critical = false,
+		?bool $minified = null,
+		int $priority = 10
+	): void {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
 		$minified ??= $this->getAutoMinify();
 
-		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset
+		// as the key and an array of options as the value.
 		$assets = is_array($asset) ? $asset : [$asset];
 
 		// Iterate over each asset
@@ -269,7 +278,8 @@ class AssetHelper extends Helper {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
 		$minified ??= $this->getAutoMinify();
 
-		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset
+		// as the key and an array of options as the value.
 		$assets = is_array($asset) ? $asset : [$asset];
 
 		foreach ($assets as $key => $value) {
@@ -316,9 +326,11 @@ class AssetHelper extends Helper {
 	 * Removes an asset from the assets array.
 	 * This method removes an asset from the assets array. It first checks if the asset is an array or a string.
 	 * If the asset is a string, it is converted to an array. The method then iterates over each asset in the array.
-	 * For each asset, it determines the extension of the asset. If the extension is not recognized, it tries to determine it from the URL, if it's a URL.
+	 * For each asset, it determines the extension of the asset. If the extension is not recognized,
+	 *  it tries to determine it from the URL, if it's a URL.
 	 * If the asset is a font file (with extension 'woff', 'woff2', or 'ttf'), the extension is set to 'font'.
-	 * The method then removes the asset from the 'all', 'critical', and 'nonCritical' arrays in the assets array, using the asset's extension and name.
+	 * The method then removes the asset from the 'all', 'critical', and 'nonCritical' arrays in the assets array,
+	 *  using the asset's extension and name.
 	 *
 	 * @param array|string $asset The asset to remove. This can be either a string representing the asset, or an array of assets.
 	 * @return void
@@ -367,7 +379,8 @@ class AssetHelper extends Helper {
 	 * If the 'critical'-option of the asset is true, the tag is generated without the `onload`-attribute.
 	 *
 	 * @param string $assetPath The path to the asset. This should be a full URL.
-	 * @param array $options An array of options for the asset. This should include a 'critical' key with a boolean value indicating whether the asset is critical.
+	 * @param array $options An array of options for the asset. This should include a 'critical' key with a boolean value
+	 *  indicating whether the asset is critical.
 	 * @param bool $lazyLoad (optional) Whether to generate a lazy loading tag for the asset. Defaults to true.
 	 * @return string An HTML tag for the asset.
 	 */
@@ -381,10 +394,18 @@ class AssetHelper extends Helper {
 		// Get the nonce from the request attributes
 		$nonce = '';
 		if ($extension === 'js') {
-			$nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+			$nonce = $this
+				->getView()
+				->getRequest()
+				->getAttribute('cspScriptNonce')
+			;
 		}
 		elseif ($extension === 'css') {
-			$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+			$nonce = $this
+				->getView()
+				->getRequest()
+				->getAttribute('cspStyleNonce')
+			;
 		}
 
 		if ($nonce) {
@@ -394,7 +415,9 @@ class AssetHelper extends Helper {
 		// If the extension is a font type, generate a <link> tag with rel="preload" for the font
 		if ($extension === 'woff' || $extension === 'woff2' || $extension === 'ttf') {
 			// Generate a <link> tag with rel="preload" for the font
-			return '<link' . $nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $extension . '" crossorigin' . $additionalAttributes . '>' . PHP_EOL;
+			return '<link' . $nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $extension . '" crossorigin'
+				. $additionalAttributes . '>' . PHP_EOL
+			;
 		}
 
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
@@ -417,7 +440,9 @@ class AssetHelper extends Helper {
 
 		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
 		if ($lazyLoad) {
-			return '<link' . $nonce . ' rel="preload" href="' . $assetPath . '" as="style"' . $additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
+			return '<link' . $nonce . ' rel="preload" href="' . $assetPath . '" as="style"'
+				. $additionalAttributes . ' data-lazyload="true">' . PHP_EOL
+			;
 		}
 
 		// If none of the above conditions are met, generate a <link> tag with rel="stylesheet" for the asset
@@ -448,7 +473,11 @@ class AssetHelper extends Helper {
 		}
 		$layer = rtrim($layer, ', ');
 
-		$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+		$nonce = $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspStyleNonce')
+		;
 
 		return '<style' . ($nonce ? ' nonce="' . $nonce . '"' : '') . '>' . $layer . ';</style>' . PHP_EOL;
 	}
@@ -557,7 +586,8 @@ class AssetHelper extends Helper {
 	 * Optionally includes a <noscript> tag with tags for non-JavaScript assets.
 	 *
 	 * @param string $type The type of assets to generate tags for. Defaults to 'all'.
-	 * @param bool|null $critical (optional) Whether to generate tags for critical assets. If null, tags are generated for all assets. Defaults to null.
+	 * @param bool|null $critical (optional) Whether to generate tags for critical assets. If null, tags are generated for all assets.
+	 *  Defaults to null.
 	 * @param bool $includeNoScript (optional) Whether to include a <noscript> tag with tags for non-JavaScript assets. Defaults to true.
 	 * @return string A string of HTML tags for the specified type of assets.
 	 * @throws \Exception
@@ -609,7 +639,11 @@ class AssetHelper extends Helper {
 			$assetTags .= $this->getNoScriptTags();
 		}
 
-		$nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+		$nonce = $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspScriptNonce')
+		;
 
 		if ($nonce) {
 			$nonce = ' nonce="' . $nonce . '"';
@@ -618,8 +652,10 @@ class AssetHelper extends Helper {
 		// If there is at least one CSS tag, append the JavaScript code
 		if ($hasLazyloadCss && $assetTags) {
 			$assetTags .= '<script' . $nonce . '>
-				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
-			</script>' . PHP_EOL;
+				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource")'
+				. '.some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});'
+				. '</script>' . PHP_EOL
+			;
 		}
 
 
@@ -686,7 +722,8 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function inlineStyles(array|string $asset, array $options = []): string {
-		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key
+		// and an array of options as the value.
 		$assets = is_array($asset) ? $asset : [$asset];
 		$output = '';
 
@@ -715,7 +752,11 @@ class AssetHelper extends Helper {
 			}
 		}
 
-		$nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+		$nonce = $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspStyleNonce')
+		;
 
 		return '<style' . ($nonce ? ' nonce="' . $nonce . '"' : '') . '>' . $output . '</style>';
 	}
@@ -732,8 +773,8 @@ class AssetHelper extends Helper {
 	 * - `as`: A string indicating the name to use for the module in the import map. If not provided, the module name will be used.
 	 * - `fallback`: A string indicating a fallback for the module. This is used if the module cannot be loaded.
 	 *
-	 * @param array|string $module The module to add. This can be either a string representing the module, or an array with the module as the key and an array of options as the
-	 * 	value.
+	 * @param array|string $module The module to add. This can be either a string representing the module,
+	 *  or an array with the module as the key and an array of options as the value.
 	 * @param bool|null $minified (optional) Whether the module is minified. Defaults to the opposite of the debug configuration.
 	 * @return void
 	 */
@@ -803,7 +844,7 @@ class AssetHelper extends Helper {
 	 *
 	 * @param bool $includeScriptTag Determines whether to wrap the import map in a script tag. Defaults to true.
 	 * @return string The import map as a string. If `includeScriptTag` is true, the import map is wrapped in a script tag.
-	 * 	Otherwise, the import map is returned as a JSON string.
+	 *  Otherwise, the import map is returned as a JSON string.
 	 * @throws \Exception
 	 */
 	public function createImportMap(bool $includeScriptTag = true): string {
@@ -855,7 +896,11 @@ class AssetHelper extends Helper {
 
 		// If includeScriptTag is true, wrap the import map in a script tag
 		if ($includeScriptTag) {
-			$nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+			$nonce = $this
+				->getView()
+				->getRequest()
+				->getAttribute('cspScriptNonce')
+			;
 
 			if ($nonce) {
 				$nonce = ' nonce="' . $nonce . '"';
@@ -906,7 +951,11 @@ class AssetHelper extends Helper {
 	 * @return string|null
 	 */
 	public function getScriptNonce(): ?string {
-		return $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+		return $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspScriptNonce')
+		;
 	}
 
 
@@ -916,7 +965,11 @@ class AssetHelper extends Helper {
 	 * @return string|null
 	 */
 	public function getStyleNonce(): ?string {
-		return $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+		return $this
+			->getView()
+			->getRequest()
+			->getAttribute('cspStyleNonce')
+		;
 	}
 
 
@@ -1134,7 +1187,8 @@ class AssetHelper extends Helper {
 	 *
 	 * The higher the priority, the earlier the asset will be loaded.
 	 *
-	 * @param array $assets The assets array to sort. This is an associative array where the keys are asset names and the values are arrays of options for each asset.
+	 * @param array $assets The assets array to sort. This is an associative array where the keys are asset names
+	 *  and the values are arrays of options for each asset.
 	 * @return array The sorted assets array.
 	 */
 	protected function sortAssetsByPriority(array $assets): array {
@@ -1149,13 +1203,16 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Minifies the asset file located at the given source path and saves the minified content to the target path.
-	 * This method uses the `MatthiasMullie\Minify` library to minify CSS and JavaScript files. The type of minifier used depends on the type of the asset file.
+	 * This method uses the `MatthiasMullie\Minify` library to minify CSS and JavaScript files. The type of minifier
+	 *  used depends on the type of the asset file.
 	 *
-	 * If the type is 'css', a Minify\CSS minifier is used. If the type is 'js', a Minify\JS minifier is used. If the type is neither 'css' nor 'js', no minification is performed.
-	 * The method first creates a new instance of the appropriate minifier for the asset type, passing the source path to the minifier's constructor.
+	 * If the type is 'css', a Minify\CSS minifier is used. If the type is 'js', a Minify\JS minifier is used. If the type
+	 *  is neither 'css' nor 'js', no minification is performed.
+	 * The method first creates a new instance of the appropriate minifier for the asset type, passing the source path
+	 *  to the minifier's constructor.
 	 *
-	 * If the minifier instance is not null, the method calls the minifier's minify method, passing the target path. The minify method minifies the asset file and saves the
-	 * minified content to the target path.
+	 * If the minifier instance is not null, the method calls the minifier's minify method, passing the target path.
+	 *  The minify method minifies the asset file and saves the minified content to the target path.
 	 *
 	 * @param string $sourcePath The path to the asset file to minify. This should be a full filesystem path.
 	 * @param string $targetPath The path where the minified asset content should be saved. This should be a full filesystem path.
@@ -1208,7 +1265,10 @@ class AssetHelper extends Helper {
 	 */
 	protected function buildOptions(array $options, array $attributes, bool $minified, bool $critical, int $priority): array {
 		// Merge the options with a default options array to ensure all keys are present
-		$options = array_merge(['minified' => $minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority], $options);
+		$options = array_merge(
+			['minified' => $minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority],
+			$options
+		);
 
 		if (!is_array($options['attributes'])) {
 			$options['attributes'] = [];

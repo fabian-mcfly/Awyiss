@@ -27,10 +27,6 @@ class ConfigOptionsProvider {
 	 */
 	protected static array $datatables;
 	/**
-	 * @var array<string, \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRole>
-	 */
-	protected static array $loadedConfigOptions = [];
-	/**
 	 * @var bool
 	 */
 	protected static bool $foundAll = false;
@@ -38,6 +34,10 @@ class ConfigOptionsProvider {
 	 * @var bool
 	 */
 	protected static bool $loadedAll = false;
+	/**
+	 * @var array<string, \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRole>
+	 */
+	protected static array $loadedConfigOptions = [];
 
 
 	/**
@@ -85,7 +85,10 @@ class ConfigOptionsProvider {
 	 * @param bool $returnLoaded
 	 * @return \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRoleEnumInterface|string|null
 	 */
-	public static function getConfigOptionsFile(string $scope, bool $returnLoaded = false): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
+	public static function getConfigOptionsFile(
+		string $scope,
+		bool $returnLoaded = false
+	): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
 		$scope = static::sanitizeScope($scope);
 
 		if (!isset(static::$configOptions[ $scope ])) {
@@ -170,7 +173,13 @@ class ConfigOptionsProvider {
 	 * @return string|bool
 	 * @noinspection PhpUnused
 	 */
-	public static function validateConfigValue(string $scope, string $realm, string $identifier, mixed $value, ?string $languageShortcode = null): bool|string {
+	public static function validateConfigValue(
+		string $scope,
+		string $realm,
+		string $identifier,
+		mixed $value,
+		?string $languageShortcode = null
+	): bool|string {
 		$configuration = static::loadConfigOptions($scope);
 
 		if (!$configuration) {
@@ -287,11 +296,11 @@ class ConfigOptionsProvider {
 
 			if (
 				//Skip if the config scope is already set
-				isset(static::$configOptions[ $configScope ]) ||
-				(
+				isset(static::$configOptions[ $configScope ])
+				|| (
 					// or if the config scope is not the same as the provided scope
-					$className !== '*' &&
-					$configScope !== $cleanedScope
+					$className !== '*'
+					&& $configScope !== $cleanedScope
 				)
 			) {
 				continue;
@@ -309,19 +318,27 @@ class ConfigOptionsProvider {
 			 * load the config options due to the UserConfiguration.
 			 */
 			$connection = ConnectionManager::get('default');
-			$results = $connection->selectQuery('*', 'datatables')->where(['deleted' => 0])->execute()->fetchAll('assoc');
+			$results = $connection
+				->selectQuery('*', 'datatables')
+				->where(['deleted' => 0])
+				->execute()
+				->fetchAll('assoc')
+			;
 
-			static::$datatables = collection($results)->indexBy(function (array $record) {
-				return static::sanitizeScope($record['identifier']);
-			})->map(function (array $record) {
-				return new GenericDatatablesConfigOptions($record['identifier']);
-			})->toArray();
+			static::$datatables = collection($results)
+				->indexBy(function (array $record) {
+					return static::sanitizeScope($record['identifier']);
+				})
+				->map(function (array $record) {
+					return new GenericDatatablesConfigOptions($record['identifier']);
+				})
+				->toArray()
+			;
 		}
 
 		if ($cleanedScope) {
 			if (
-				!isset(static::$configOptions[ $cleanedScope ]) &&
-				isset(static::$datatables[ $cleanedScope ])
+				!isset(static::$configOptions[ $cleanedScope ]) && isset(static::$datatables[ $cleanedScope ])
 			) {
 				static::$configOptions[ $cleanedScope ] = static::$datatables[ $cleanedScope ];
 			}

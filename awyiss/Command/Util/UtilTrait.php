@@ -76,7 +76,6 @@ trait UtilTrait {
 				$reflection = new ReflectionClass($classLoader);
 
 				$property = $reflection->getProperty('prefixDirsPsr4');
-				/** @noinspection PhpExpressionResultUnusedInspection */
 				$property->setAccessible(true);
 
 				$prefixDirsPsr4 = $property->getValue($classLoader);

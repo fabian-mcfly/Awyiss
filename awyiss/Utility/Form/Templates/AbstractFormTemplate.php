@@ -49,7 +49,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		foreach ($fields as $field) {
 			$methodName = 'add' . Inflector::camelize($field);
 
-			$elements[] = static::$methodName($mainLocale, $i18n, $languages) + [
+			$default = [
 				'identifier' => null,
 				'type' => 'text',
 				'titleEmail' => null,
@@ -64,6 +64,8 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 				'required' => false,
 				'systemOrder' => count($elements) + 1,
 			];
+
+			$elements[] = static::$methodName($mainLocale, $i18n, $languages) + $default;
 		}
 
 		return $elements;
@@ -160,6 +162,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 
 		return $settings;
 	}
+
 
 	/**
 	 * @param string $mainLocale
@@ -309,8 +312,8 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 				$translation = __d('Forms', 'form_template_' . Inflector::underscore($string));
 
 				if (
-					str_contains($translation, '::') &&
-					isset(static::$staticTranslations[ $language->shortcode ][ $string ])
+					str_contains($translation, '::')
+					&& isset(static::$staticTranslations[ $language->shortcode ][ $string ])
 				) {
 					$translation = static::$staticTranslations[ $language->shortcode ][ $string ];
 				}
@@ -386,7 +389,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 			$builtOptions[] = $option;
 		}
 
-		 return $builtOptions;
+		return $builtOptions;
 	}
 
 
@@ -397,7 +400,12 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param string $property
 	 * @return array
 	 */
-	protected static function getTranslations(string $field, array $languages, bool $setOptional = false, string $property = 'title'): array {
+	protected static function getTranslations(
+		string $field,
+		array $languages,
+		bool $setOptional = false,
+		string $property = 'title'
+	): array {
 		$translations = [];
 
 		foreach ($languages as $language) {

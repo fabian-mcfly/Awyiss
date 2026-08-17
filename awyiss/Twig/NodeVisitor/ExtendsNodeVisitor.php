@@ -70,10 +70,10 @@ class ExtendsNodeVisitor implements NodeVisitorInterface {
 		}
 
 		if (
-			$currentTemplateName !== $targetTemplateName ||
-			(
-				!str_starts_with($targetTemplateName, '@Frontend/') &&
-				!str_starts_with($targetTemplateName, '@Backend/')
+			$currentTemplateName !== $targetTemplateName
+			|| (
+				!str_starts_with($targetTemplateName, '@Frontend/')
+				&& !str_starts_with($targetTemplateName, '@Backend/')
 			)
 		) {
 			return $node;

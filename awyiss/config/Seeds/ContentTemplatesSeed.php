@@ -51,6 +51,9 @@ class ContentTemplatesSeed extends BaseSeed {
 		];
 
 		$table = $this->table('content_templates');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

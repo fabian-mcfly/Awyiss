@@ -100,9 +100,10 @@ class HtmlHelper extends BaseHtmlHelper {
 		$value = $entity->has($field) ? $entity->get($field) : null;
 
 		if (
-			$attributeOptions &&
-			$attributeOptions->getAttributeOption($field)
+			$attributeOptions
+			&& $attributeOptions->getAttributeOption($field)
 		) {
+			/** @noinspection PhpParamsInspection */
 			return $this->formatAttributeOptionValue($value, $attributeOptions->getAttributeOption($field), $baseEntity);
 		}
 
@@ -120,7 +121,10 @@ class HtmlHelper extends BaseHtmlHelper {
 	 * @return bool True if this is a special field
 	 */
 	protected function formatSpecialField(string $field, EntityInterface $entity, mixed $value, ?string &$result): bool {
-		static $languages = $this->getView()->get('languages') ?? $this->getView()->getTwig()->getGlobals()['languages'] ?? [];
+		static $languages = $this->getView()->get('languages') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['languages'] ?? [];
 
 		// Language shortcode
 		if ($field === 'languageShortcode') {
@@ -220,27 +224,33 @@ class HtmlHelper extends BaseHtmlHelper {
 	 * @throws \Exception
 	 */
 	public function formatValueByType(mixed $value, string $columnType, array $options = []): string {
-		static $dateFormat = $this->getView()->get('dateFormat') ?? $this->getView()->getTwig()->getGlobals()['dateFormat'] ?? 'Y-m-d';
-		static $timeFormat = $this->getView()->get('timeFormat') ?? $this->getView()->getTwig()->getGlobals()['timeFormat'] ?? 'H:i:s';
+		static $dateFormat = $this->getView()->get('dateFormat') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['dateFormat'] ?? 'Y-m-d';
+		static $timeFormat = $this->getView()->get('timeFormat') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['timeFormat'] ?? 'H:i:s';
 
 		// Handle boolean values
 		if (
-			$value === true ||
-			$value === 'true' ||
-			(
-				$columnType === 'boolean' &&
-				!empty($value)
+			$value === true
+			|| $value === 'true'
+			|| (
+				$columnType === 'boolean'
+				&& !empty($value)
 			)
 		) {
 			return '<i class="las la-check">' . __('true') . '</i>';
 		}
 
 		if (
-			$value === false ||
-			$value === 'false' ||
-			(
-				$columnType === 'boolean' &&
-				empty($value)
+			$value === false
+			|| $value === 'false'
+			|| (
+				$columnType === 'boolean'
+				&& empty($value)
 			)
 		) {
 			return '<i class="las la-times">' . __('false') . '</i>';

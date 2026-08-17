@@ -62,9 +62,18 @@ class AppointmentFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	protected static array $strings = [
-		'title', 'titleMr', 'titleMs', 'titleDiverse',
-		'name', 'email', 'phone', 'datetime', 'message',
-		'privacyAccepted', 'privacyAcceptedYes', 'privacyAcceptedText',
+		'title',
+		'titleMr',
+		'titleMs',
+		'titleDiverse',
+		'name',
+		'email',
+		'phone',
+		'datetime',
+		'message',
+		'privacyAccepted',
+		'privacyAcceptedYes',
+		'privacyAcceptedText',
 		'submit',
 	];
 	/**

@@ -346,7 +346,10 @@ class I18nSeed extends BaseSeed {
 		];
 
 		$table = $this->table('i18n');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }
 

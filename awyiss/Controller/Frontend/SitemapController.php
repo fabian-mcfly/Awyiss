@@ -30,17 +30,18 @@ class SitemapController extends AppController {
 		/**
 		 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
-		$query = $pagesTable->find('threaded', skipPageRoleCheck: true)->find('published')->where([
-			'active' => true,
-			'parentsActive' => true,
-		])->contain([
-			'Contents' => function (SelectQuery $query) {
-				/**
-				 * @see \Awyiss\Model\Table\ContentsTable::findLatestForPages()
-				 */
-				return $query->find('latestForPages');
-			},
-		]);
+		$query = $pagesTable
+			->find('threaded', skipPageRoleCheck: true)
+			->find('published')
+			->where([
+				'active' => true,
+				'parentsActive' => true,
+			])
+			->contain([
+				/** @see \Awyiss\Model\Table\ContentsTable::findLatestForPages() */
+				'Contents' => fn(SelectQuery $query) => $query->find('latestForPages'),
+			])
+		;
 
 		$pages = $query->all();
 
@@ -50,9 +51,7 @@ class SitemapController extends AppController {
 		 * returns all records in the tree, even if a record's
 		 * parent is not active or not published.
 		 */
-		$pages = $pages->filter(function (Page $page): bool {
-			return $page->parentId === null;
-		});
+		$pages = $pages->filter(fn(Page $page) => $page->parentId === null);
 
 		$pages = $pages->listNested()->indexBy('id');
 
@@ -80,25 +79,27 @@ class SitemapController extends AppController {
 
 			if (isset($firstPagesOfLanguage[ $page->languageShortcode ])) {
 				if ($includeLanguageShortcode) {
-					$url = Router::url(['lang' => $page->languageShortcode, 'slug' => $page->slug, '_full' => true]);
+					$urlParts = ['lang' => $page->languageShortcode, 'slug' => $page->slug, '_full' => true];
 				}
 				else {
-					$url = Router::url(['slug' => $page->slug, '_full' => true]);
+					$urlParts = ['slug' => $page->slug, '_full' => true];
 				}
 			}
 			else {
 				$firstPagesOfLanguage[ $page->languageShortcode ] = true;
 
 				if ($page->languageShortcode === $firstLanguage->shortcode) {
-					$url = Router::url(['_full' => true, '_name' => 'FrontendRoot']);
+					$urlParts = ['_full' => true, '_name' => 'FrontendRoot'];
 				}
 				elseif ($includeLanguageShortcode) {
-					$url = Router::url(['lang' => $page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot']);
+					$urlParts = ['lang' => $page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot'];
 				}
 				else {
-					$url = Router::url(['slug' => $page->slug, '_full' => true]);
+					$urlParts = ['slug' => $page->slug, '_full' => true];
 				}
 			}
+
+			$url = Router::url($urlParts);
 
 			$urls[] = [
 				'loc' => $url,
@@ -109,7 +110,11 @@ class SitemapController extends AppController {
 		}
 
 		// Define a custom root node in the generated document.
-		$this->viewBuilder()->setOption('rootNode', 'urlset')->setOption('serialize', ['xmlns:', 'url']);
+		$this
+			->viewBuilder()
+			->setOption('rootNode', 'urlset')
+			->setOption('serialize', ['xmlns:', 'url'])
+		;
 		/** @noinspection HttpUrlsUsage */
 		$this->set([
 			// Define an attribute on the root node.
@@ -128,7 +133,11 @@ class SitemapController extends AppController {
 	public function robots(): Response {
 		// Generate absolute sitemap URL based on routing
 		$sitemapUrl = $this->request->getAttribute('webroot') . 'sitemap.xml';
-		$sitemapUrl = $this->request->getUri()->withPath($sitemapUrl)->__toString();
+		$sitemapUrl = $this->request
+			->getUri()
+			->withPath($sitemapUrl)
+			->__toString()
+		;
 
 		$content = "User-agent: *\n";
 		$content .= "Disallow:\n";

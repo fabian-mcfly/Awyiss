@@ -21,11 +21,12 @@ use Cake\ORM\Query\SelectQuery;
 class SearchComponent extends Component {
 	/**
 	 * @inheritDoc
-	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
-		'autoload' => ['overview'], //can be a boolean value or an array containing all action names for which the settings should get autoloaded
-		'blocklistedColumns' => [], //columns that should not be included in the filter form
+		// Can be a boolean value or an array containing all action names for which the settings should get autoloaded
+		'autoload' => ['overview'],
+		// Columns that should not be included in the filter form
+		'blocklistedColumns' => [],
 	];
 
 
@@ -41,14 +42,14 @@ class SearchComponent extends Component {
 
 		//Shall we autoload the records?
 		if (
-			$autoload === true ||
-			(
-				is_array($autoload) &&
-				in_array($action, $autoload)
-			) ||
-			(
-				is_string($autoload) &&
-				$action === $autoload
+			$autoload === true
+			|| (
+				is_array($autoload)
+				&& in_array($action, $autoload)
+			)
+			|| (
+				is_string($autoload)
+				&& $action === $autoload
 			)
 		) {
 			$this->setFilterVars($controller->getName());
@@ -61,8 +62,11 @@ class SearchComponent extends Component {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function filterQuery(SelectQuery $query): SelectQuery {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $query->getRepository()->getBehavior('Search')->filterQuery($query);
+		return $query
+			->getRepository()
+			->getBehavior('Search')
+			->filterQuery($query)
+		;
 	}
 
 
@@ -73,6 +77,7 @@ class SearchComponent extends Component {
 	 */
 	public function setFilterVars(string $tableName, array $blocklistedColumns = []): void {
 		$controller = $this->getController();
+		/** @var \Awyiss\Model\Table $table */
 		$table = $this->getController()->fetchTable($tableName);
 
 		if (!$table->hasBehavior('Search')) {
@@ -86,13 +91,12 @@ class SearchComponent extends Component {
 		if (!$filterSettings) {
 			$filterSettings = [
 				// Unset the regex operator. Regex to the database isn't quiet secure
-				'operators' => array_filter(ComparisonOperator::cases(), fn ($operator) => $operator !== ComparisonOperator::Regexp),
+				'operators' => array_filter(ComparisonOperator::cases(), fn($operator) => $operator !== ComparisonOperator::Regexp),
 			];
 		}
 
 		$name = Inflector::underscore($tableName);
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$vars = $table->getFilterColumns($blocklistedColumns);
 
 		// Handle post or already saved filter settings
@@ -205,10 +209,10 @@ class SearchComponent extends Component {
 			$value = $columnSettings['value'] ?? null;
 
 			if (
-				$value === '' ||
-				(
-					$value === 'all' &&
-					$vars[ $column ]['type'] === 'boolean'
+				$value === ''
+				|| (
+					$value === 'all'
+					&& $vars[ $column ]['type'] === 'boolean'
 				)
 			) {
 				$value = null;

@@ -111,14 +111,18 @@ class SurveyController extends AppController {
 		$contents = $surveyRenderer->getSurveyBody($options);
 
 		// Set the view variables
-		$this->set([
-			'contents' => $contents,
-			'survey' => $survey,
-		] + $options);
+		$this->set(
+			[
+				'contents' => $contents,
+				'survey' => $survey,
+			] + $options
+		);
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->disableAutoLayout()
-			->setTemplate('ajax_step');
+			->setTemplate('ajax_step')
+		;
 	}
 
 

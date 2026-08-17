@@ -78,13 +78,23 @@ class ControllerCommand extends BaseControllerCommand {
 			$pluginPath .= '.';
 		}
 
-		if ($this->getTableLocator()->exists($pluginPath . $currentModelName)) {
-			$model = $this->getTableLocator()->get($pluginPath . $currentModelName);
+		if (
+			$this
+				->getTableLocator()
+				->exists($pluginPath . $currentModelName)
+		) {
+			$model = $this
+				->getTableLocator()
+				->get($pluginPath . $currentModelName)
+			;
 		}
 		else {
-			$model = $this->getTableLocator()->get($pluginPath . $currentModelName, [
-				'connectionName' => $this->connection,
-			]);
+			$model = $this
+				->getTableLocator()
+				->get($pluginPath . $currentModelName, [
+					'connectionName' => $this->connection,
+				])
+			;
 		}
 
 		$pluralName = $this->_variableName($currentModelName);
@@ -149,7 +159,11 @@ class ControllerCommand extends BaseControllerCommand {
 			'pluginPath' => null,
 		];
 
-		$contents = $this->createTemplateRenderer()->set($data)->generate('Controller/controller');
+		$contents = $this
+			->createTemplateRenderer()
+			->set($data)
+			->generate('Controller/controller')
+		;
 
 		$path = $this->getPath($args);
 		$fileName = $path . $controllerName . 'Controller.php';

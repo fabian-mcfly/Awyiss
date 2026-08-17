@@ -35,14 +35,14 @@ class UserConfiguration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $defaultValues = [
-		'scope' => 'System',
+	protected array $_virtual = [ // phpcs:ignore
+		'printableValue',
 	];
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [ // phpcs:ignore
-		'printableValue',
+	protected array $defaultValues = [
+		'scope' => 'System',
 	];
 
 

@@ -39,7 +39,9 @@ class StringTemplate extends BaseStringTemplate {
 	 */
 	public function formatAttributes(?array $options, ?array $exclude = null): string {
 		if (isset($options['value']) && $options['value'] instanceof DateTime) {
-			$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+			$timezone = $options['timezone'] ?? null
+				?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone')
+					?: date_default_timezone_get(); // phpcs:ignore
 
 			if ($timezone === 'auto') {
 				$language = $options['language'] ?? LocaleMiddleware::getLanguage(null);

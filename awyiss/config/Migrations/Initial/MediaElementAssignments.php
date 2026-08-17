@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class MediaElementAssignments
  */
@@ -29,39 +28,53 @@ class MediaElementAssignments {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('media_element_assignments')) {
-			$this->migration->table('media_element_assignments')->drop()->save();
+			$this->migration
+				->table('media_element_assignments')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('media_element_assignments')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('media_element_id', 'integer', [
-			'limit' => 11,
-			'null' => false,
-		])->addColumn('scope', 'string', [
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('foreign_key', 'integer', [
-			'default' => null,
-			'limit' => 11,
-			'null' => true,
-		])->addIndex(
-			[
-				'media_element_id',
-			], [
-				'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_MEDIA_ELEMENT_ID',
-			]
-		)->addIndex(
-			[
-				'scope',
-				'foreign_key',
-			], [
-				'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
-			]
-		)->create();
+		$this->migration
+			->table('media_element_assignments')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('media_element_id', 'integer', [
+				'limit' => 11,
+				'null' => false,
+			])
+			->addColumn('scope', 'string', [
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('foreign_key', 'integer', [
+				'default' => null,
+				'limit' => 11,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'media_element_id',
+				], [
+					'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_MEDIA_ELEMENT_ID',
+				]
+			)
+			->addIndex(
+				[
+					'scope',
+					'foreign_key',
+				], [
+					'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -71,6 +84,10 @@ class MediaElementAssignments {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('media_element_assignments')->drop()->save();
+		$this->migration
+			->table('media_element_assignments')
+			->drop()
+			->save()
+		;
 	}
 }

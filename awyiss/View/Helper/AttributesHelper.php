@@ -31,21 +31,9 @@ class AttributesHelper extends Helper {
 
 
 	/**
-	 * Default config for this helper.
-	 *
-	 * @var array<string, mixed>
+	 * @var array
 	 */
-	protected array $_defaultConfig = [ // phpcs:ignore
-		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $helpers = ['Form'];
-	/**
-	 * @var \Cake\View\Form\ContextInterface|null
-	 */
-	protected ?ContextInterface $context = null;
+	protected static array $attributeOptions = [];
 	/**
 	 * @var array|null
 	 */
@@ -58,10 +46,24 @@ class AttributesHelper extends Helper {
 	 * @var array
 	 */
 	protected static array $initiatedSources = [];
+
+
 	/**
-	 * @var array
+	 * Default config for this helper.
+	 *
+	 * @var array<string, mixed>
 	 */
-	protected static array $attributeOptions = [];
+	protected array $_defaultConfig = [ // phpcs:ignore
+		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
+	];
+	/**
+	 * @var \Cake\View\Form\ContextInterface|null
+	 */
+	protected ?ContextInterface $context = null;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $helpers = ['Form'];
 
 
 	/**
@@ -237,7 +239,12 @@ class AttributesHelper extends Helper {
 	 * @return array<string, array>
 	 * @throws \Exception
 	 */
-	protected function prepareField(string $fieldName, array $options, array $attributeFields, ?AttributeOptionsCollectionInterface $attributeOptions): array {
+	protected function prepareField(
+		string $fieldName,
+		array $options,
+		array $attributeFields,
+		?AttributeOptionsCollectionInterface $attributeOptions
+	): array {
 		if (!array_key_exists($fieldName, $attributeFields)) {
 			return [];
 		}
@@ -257,9 +264,12 @@ class AttributesHelper extends Helper {
 		$this->prepareValue($fieldName, $options);
 
 		if (
-			$attributeOptions &&
-			empty($options['options']) &&
-			in_array($options['type'], ['checkbox', 'multicheckbox', 'select', 'selectMultiple'])
+			$attributeOptions
+			&& empty($options['options'])
+			&& in_array(
+				$options['type'],
+				['checkbox', 'multicheckbox', 'select', 'selectMultiple']
+			)
 		) {
 			$options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $options, $this->getContext());
 
@@ -297,7 +307,9 @@ class AttributesHelper extends Helper {
 
 			$categoryFieldName = null;
 			if ($categoryIdentifier) {
-				$categoryOptions = $this->getView()->get('_categories', [])[ Inflector::variable(Inflector::pluralize($categoryIdentifier)) ]['config'] ?? [];
+				$categoryOptions = $this->getView()->get('_categories', [])[ Inflector::variable(
+					Inflector::pluralize($categoryIdentifier)
+				) ]['config'] ?? [];
 				$categoryFieldName = Inflector::underscore($categoryOptions['field']);
 			}
 		}
@@ -389,15 +401,14 @@ class AttributesHelper extends Helper {
 			return;
 		}
 
-		$groupedByFieldset = new Collection($attributes)->combine(
-			'identifier',
-			function (Attribute $entity) {
-				return $entity;
-			},
-			function (Attribute $entity) {
-				return $entity->fieldset;
-			}
-		)->toArray();
+		$groupedByFieldset = new Collection($attributes)
+			->combine(
+				'identifier',
+				fn(Attribute $entity) => $entity,
+				fn(Attribute $entity) => $entity->fieldset
+			)
+			->toArray()
+		;
 
 		static::$attributesByFieldset = $groupedByFieldset;
 	}
@@ -452,7 +463,9 @@ class AttributesHelper extends Helper {
 			}
 
 			if (in_array($options['type'], ['datetime', 'datetime-local'])) {
-				$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+				$timezone = $options['timezone'] ?? null
+					?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone')
+						?: date_default_timezone_get();
 
 				if ($timezone === 'auto') {
 					$timezone = $language->timezone;
@@ -550,7 +563,9 @@ class AttributesHelper extends Helper {
 			return $options;
 		}
 
-		$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+		$timezone = $options['timezone'] ?? null
+			?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone')
+				?: date_default_timezone_get();
 
 		if ($timezone === 'auto') {
 			$language = $options['language'] ?? LocaleMiddleware::getLanguage(null);
@@ -596,7 +611,11 @@ class AttributesHelper extends Helper {
 	protected function getSource(): string {
 		$this->context ??= $this->Form->context();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$source = $this->getContext()?->entity()->getSource();
+		$source = $this
+			->getContext()
+			?->entity()
+			->getSource()
+		;
 
 		if (!$source) {
 			throw new RuntimeException('No form context set.');

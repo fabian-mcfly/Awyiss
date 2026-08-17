@@ -78,10 +78,10 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 			//If the db entry of the user changed,
 			if (
 				(
-					!$user->changedOn &&
-					$reidentifiedUser->changedOn
-				) ||
-				$reidentifiedUser->changedOn?->notEquals($user->changedOn)
+					!$user->changedOn
+					&& $reidentifiedUser->changedOn
+				)
+				|| $reidentifiedUser->changedOn?->notEquals($user->changedOn)
 			) {
 				// If the class implements `IdentityPermissionsInterface`, we need to reset the permissions
 				if ($user instanceof IdentityPermissionsInterface) {

@@ -60,6 +60,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 		Awyiss::REALM_FRONTEND => [],
 		Awyiss::REALM_BACKEND => [],
 	];
+	/**
+	 * @var bool
+	 */
 	protected static bool $languagesLoaded = false;
 	/**
 	 * @var array<string, array{frontend: ?Language[], backend: ?Language[]}>
@@ -156,15 +159,15 @@ class LocaleMiddleware implements MiddlewareInterface {
 			$translateBehavior = $table->getBehavior('Translate');
 
 			if (
-				$frontendLanguage &&
-				$translateBehavior->getConfig('realm') === Awyiss::REALM_FRONTEND
+				$frontendLanguage
+				&& $translateBehavior->getConfig('realm') === Awyiss::REALM_FRONTEND
 			) {
 				$translateBehavior->setLocale($frontendLanguage->shortcode);
 			}
 
 			if (
-				$backendLanguage &&
-				$translateBehavior->getConfig('realm', LocaleMiddleware::getRealm()) === Awyiss::REALM_BACKEND
+				$backendLanguage
+				&& $translateBehavior->getConfig('realm', LocaleMiddleware::getRealm()) === Awyiss::REALM_BACKEND
 			) {
 				$translateBehavior->setLocale($backendLanguage->shortcode);
 			}
@@ -190,7 +193,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 		$realm = $realm ?: static::getRealm();
 
 		if (!isset(static::$retrievalStrategy[ $realm ])) {
-			throw new RuntimeException(sprintf('Cannot use auto-detection of the retrievel strategy. No retrievel strategy defined for realm `%s`.', $realm));
+			throw new RuntimeException(
+				sprintf('Cannot use auto-detection of the retrievel strategy. No retrievel strategy defined for realm `%s`.', $realm)
+			);
 		}
 
 		$retrievalStategy = static::$retrievalStrategy[ $realm ];
@@ -324,7 +329,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 			/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
 			$languagesTable = $tableLocator->get('Languages');
 		}
-		catch (Exception $e) {
+		catch (Exception) {
 			// If the table cannot be loaded, we are likely in the middle of a migration where the languages table is not yet created
 			// In this case, we just return early and will try to load the languages again on the next request
 			return;

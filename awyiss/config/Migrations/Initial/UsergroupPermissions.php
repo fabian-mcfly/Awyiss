@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class UsergroupPermissions
  */
@@ -23,70 +22,91 @@ class UsergroupPermissions {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('usergroup_permissions')) {
-			$this->migration->table('usergroup_permissions')->drop()->save();
+			$this->migration
+				->table('usergroup_permissions')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('usergroup_permissions')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('usergroup_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('scope', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('identifier', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('access', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('settings', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'usergroup_id',
-			], [
-				'name' => 'USERGROUP_PERMISSIONS_USERGROUP_ID',
-			]
-		)->addIndex(
-			[
-				'scope',
-			], [
-				'name' => 'USERGROUP_PERMISSIONS_SCOPE',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'USERGROUP_PERMISSIONS_IDENTIFIER',
-			]
-		)->create();
+		$this->migration
+			->table('usergroup_permissions')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('usergroup_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('scope', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('identifier', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('access', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('settings', 'text', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'usergroup_id',
+				], [
+					'name' => 'USERGROUP_PERMISSIONS_USERGROUP_ID',
+				]
+			)
+			->addIndex(
+				[
+					'scope',
+				], [
+					'name' => 'USERGROUP_PERMISSIONS_SCOPE',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'USERGROUP_PERMISSIONS_IDENTIFIER',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('usergroup_permissions')->drop()->save();
+		$this->migration
+			->table('usergroup_permissions')
+			->drop()
+			->save()
+		;
 	}
 }

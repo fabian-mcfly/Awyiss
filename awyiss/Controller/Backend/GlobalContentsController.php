@@ -28,6 +28,10 @@ use Cake\ORM\Query\SelectQuery;
  */
 class GlobalContentsController extends Controller {
 	/**
+	 * @var CollectionInterface
+	 */
+	protected CollectionInterface $globalContentTemplates;
+	/**
 	 * @var string|null Session identifier for the selected identifier
 	 */
 	protected ?string $selectedIdentifierSessionIdentifier = null;
@@ -35,10 +39,6 @@ class GlobalContentsController extends Controller {
 	 * @var string|null Session identifier for the selected parentId
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
-	/**
-	 * @var CollectionInterface
-	 */
-	protected CollectionInterface $globalContentTemplates;
 	/**
 	 * @var CollectionInterface
 	 */
@@ -51,8 +51,13 @@ class GlobalContentsController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedIdentifierSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.identifier';
-		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
+		$this->selectedIdentifierSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.identifier'
+		;
+
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.parentId'
+		;
 	}
 
 
@@ -61,7 +66,13 @@ class GlobalContentsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->GlobalContents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['GlobalContentTemplates']);
+		$query = $this->GlobalContents
+			->find('mediaAssignments', useMediaEntity: true)
+			->where($this->getOverviewWhere())
+			->contain(
+				['GlobalContentTemplates']
+			)
+		;
 		$this->Search->filterQuery($query);
 
 		return $query;
@@ -79,26 +90,30 @@ class GlobalContentsController extends Controller {
 
 		$query = $this->getOverviewQuery();
 
-		$globalContents = $query->formatResults(function (Collection $result): Collection {
-			/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
-			foreach ($result as $globalContent) {
-				$globalContent->class = $globalContent->column['width']->getCssClass();
+		$globalContents = $query
+			->formatResults(function (Collection $result): Collection {
+				/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+				foreach ($result as $globalContent) {
+					$globalContent->class = $globalContent->column['width']->getCssClass();
 
-				if ($globalContent->column['indent']) {
-					$globalContent->class .= ' ' . $globalContent->column['indent']->getCssClass();
+					if ($globalContent->column['indent']) {
+						$globalContent->class .= ' ' . $globalContent->column['indent']->getCssClass();
+					}
+
+					if ($globalContent->columnRtl) {
+						$globalContent->class .= ' Column-RTL';
+					}
+
+					if ($globalContent->columnLast) {
+						$globalContent->class .= ' Column-Last';
+					}
 				}
 
-				if ($globalContent->columnRtl) {
-					$globalContent->class .= ' Column-RTL';
-				}
-
-				if ($globalContent->columnLast) {
-					$globalContent->class .= ' Column-Last';
-				}
-			}
-
-			return $result;
-		})->find('threaded')->all();
+				return $result;
+			})
+			->find('threaded')
+			->all()
+		;
 
 		$globalContents = $globalContents->groupBy('identifier')->toArray();
 		ksort($globalContents);
@@ -106,10 +121,17 @@ class GlobalContentsController extends Controller {
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->GlobalContents->getColumnSystemClass();
 
-		$globalContentTemplates = $this->getGlobalContentTemplates()->indexBy('id')->toArray();
+		$globalContentTemplates = $this
+			->getGlobalContentTemplates()
+			->indexBy('id')
+			->toArray()
+		;
 		array_map(function (GlobalContentTemplate $globalContentTemplate) {
 			// Build an array of assigned content elements, indexed by their identifier
-			$globalContentTemplate->globalContentTemplateElements = collection($globalContentTemplate->globalContentTemplateElements)->indexBy('identifier')->toArray();
+			$globalContentTemplate->globalContentTemplateElements = collection($globalContentTemplate->globalContentTemplateElements)
+				->indexBy('identifier')
+				->toArray()
+			;
 		}, $globalContentTemplates);
 
 		$this->set([
@@ -162,7 +184,13 @@ class GlobalContentsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$globalContent = $this->GlobalContents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$globalContent = $this->GlobalContents
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$globalContent) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -174,9 +202,11 @@ class GlobalContentsController extends Controller {
 		}
 
 		if ($this->request->getParam('mode') === 'frontendEditor') {
-			$this->viewBuilder()
-			->setTemplate('edit_frontend_editor')
-			->setLayout('frontend_editor');
+			$this
+				->viewBuilder()
+				->setTemplate('edit_frontend_editor')
+				->setLayout('frontend_editor')
+			;
 		}
 
 		$this->setViewVars($globalContent);
@@ -438,15 +468,17 @@ class GlobalContentsController extends Controller {
 	 */
 	protected function getGlobalContentTemplates(): CollectionInterface {
 		if (!isset($this->globalContentTemplates)) {
-			$query = $this->GlobalContents->GlobalContentTemplates->find(
-				'active',
-			)->select([
-				'id',
-				'title',
-				'active',
-			])->contain([
-				'GlobalContentTemplateElements',
-			]);
+			$query = $this->GlobalContents->GlobalContentTemplates
+				->find('active')
+				->select([
+					'id',
+					'title',
+					'active',
+				])
+				->contain([
+					'GlobalContentTemplateElements',
+				])
+			;
 
 			$this->globalContentTemplates = $query->all()->indexBy('id');
 		}
@@ -468,9 +500,13 @@ class GlobalContentsController extends Controller {
 				return new Collection([]);
 			}
 
-			$query = $this->GlobalContents->find()->find('mediaAssignments', useMediaEntity: true)->where([
-				'identifier' => $globalContent->identifier,
-			]);
+			$query = $this->GlobalContents
+				->find()
+				->find('mediaAssignments', useMediaEntity: true)
+				->where([
+					'identifier' => $globalContent->identifier,
+				])
+			;
 
 			$this->threadedGlobalContents = $this->GlobalContents->listNested($query);
 		}
@@ -486,18 +522,28 @@ class GlobalContentsController extends Controller {
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
-	protected function ensurePossibleParentId(GlobalContent $globalContent, CollectionInterface $threadedGlobalContents, ?GlobalContentTemplate $selectedGlobalContentTemplate): void {
+	protected function ensurePossibleParentId(
+		GlobalContent $globalContent,
+		CollectionInterface $threadedGlobalContents,
+		?GlobalContentTemplate $selectedGlobalContentTemplate
+	): void {
 		// Extract all possible parent ids
 		$possibleParentIds = $threadedGlobalContents->extract('id')->toList();
 
 		// Build an array of assigned global content elements, indexed by their identifier
-		$assignedGlobalContentElements = $selectedGlobalContentTemplate ? collection($selectedGlobalContentTemplate->globalContentTemplateElements)->indexBy('identifier')->toArray() : [];
+		$assignedGlobalContentElements = $selectedGlobalContentTemplate
+			? collection($selectedGlobalContentTemplate->globalContentTemplateElements)->indexBy('identifier')->toArray()
+			: [];
 
 		$globalContent->setDirty('parentId', false);
 
 		// If the parentId is not in the list of possible parent ids or the parentId is not assigned to the selected content template
 		if (
-			$globalContent->parentId && (!in_array($globalContent->parentId, $possibleParentIds) || !isset($assignedGlobalContentElements['parentId']))
+			$globalContent->parentId
+			&& (
+				!in_array($globalContent->parentId, $possibleParentIds)
+				|| !isset($assignedGlobalContentElements['parentId'])
+			)
 		) {
 			// Remember the errors
 			$errors = $globalContent->getError('parentId');
@@ -532,7 +578,10 @@ class GlobalContentsController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleTemplate(GlobalContent $globalContent, CollectionInterface $globalContentTemplates): void {
-		if (!$globalContent->globalContentTemplateId || !$globalContentTemplates->firstMatch(['id' => $globalContent->globalContentTemplateId])) {
+		if (
+			!$globalContent->globalContentTemplateId
+			|| !$globalContentTemplates->firstMatch(['id' => $globalContent->globalContentTemplateId])
+		) {
 			$errors = $globalContent->getError('globalContentTemplateId');
 
 			$globalContent->globalContentTemplate = $globalContentTemplates->first();
@@ -612,12 +661,16 @@ class GlobalContentsController extends Controller {
 
 		$globalContentElementsByFieldset = [];
 		if (!empty($selectedGlobalContentTemplate->globalContentTemplateElements)) {
-			$globalContentElementsByFieldset = collection($selectedGlobalContentTemplate->globalContentTemplateElements)->groupBy('fieldset')->toArray();
+			$globalContentElementsByFieldset = collection($selectedGlobalContentTemplate->globalContentTemplateElements)
+				->groupBy('fieldset')
+				->toArray()
+			;
 
 			foreach ($globalContentElementsByFieldset as $fieldset => $contentElements) {
-				$globalContentElementsByFieldset[ $fieldset ] = collection($contentElements)->indexBy(function (GlobalContentTemplateElement $entity) {
-					return Inflector::variable($entity->identifier);
-				})->toArray();
+				$globalContentElementsByFieldset[ $fieldset ] = collection($contentElements)
+					->indexBy(fn(GlobalContentTemplateElement $entity) => Inflector::variable($entity->identifier))
+					->toArray()
+				;
 			}
 		}
 
@@ -640,10 +693,16 @@ class GlobalContentsController extends Controller {
 			'columnWidths' => $columnWidths,
 			'columnIndents' => $columnIndents,
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'forms' => $this->GlobalContents->Forms->find('active')->orderByAsc('title')->all(),
+			'forms' => $this->GlobalContents->Forms
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'surveys' => $this->GlobalContents->Surveys->find('active')->orderByAsc('title')->all(),
+			'surveys' => $this->GlobalContents->Surveys
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);
 	}
@@ -694,16 +753,27 @@ class GlobalContentsController extends Controller {
 	protected function findLinkablePages(): CollectionInterface {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->find('active')
+			->where(['includeInLinklist' => true])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
 		$pagesTable = $this->fetchTable('Pages');
-		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'pageRoleId IN' => array_keys($pageRoles),
-		]);
+		$query = $pagesTable
+			->find('active')
+			->find('forCurrentLanguage', skipPageRoleCheck: true)
+			->where([
+				'pageRoleId IN' => array_keys($pageRoles),
+			])
+		;
 
 		return $pagesTable->listNested($query);
 	}

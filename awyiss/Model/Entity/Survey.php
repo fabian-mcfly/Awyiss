@@ -155,8 +155,8 @@ class Survey extends Entity {
 		}
 
 		if (
-			!isset($this->questionsByIdentifier[ $identifier ]) ||
-			!array_key_exists($identifier, $this->progressData)
+			!isset($this->questionsByIdentifier[ $identifier ])
+			|| !array_key_exists($identifier, $this->progressData)
 		) {
 			throw new InvalidArgumentException(sprintf('The question with identifier `%s` does not exist in the survey.', $identifier));
 		}
@@ -197,6 +197,7 @@ class Survey extends Entity {
 			'SurveyQuestions' => [
 				'queryBuilder' => function (SelectQuery $query): SelectQuery {
 					$query->find($this->isPreview ? 'all' : 'active');
+
 					return $query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 				},
 			],
@@ -205,15 +206,20 @@ class Survey extends Entity {
 				'SurveyAnswers' => [
 					'queryBuilder' => function (SelectQuery $query): SelectQuery {
 						$query->find($this->isPreview ? 'all' : 'active');
+
 						return $query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 					},
 				],
 			],
 		]);
 
-		$questions = $query->where([
-			'surveyId' => $this->id,
-		])->all()->compile();
+		$questions = $query
+			->where([
+				'surveyId' => $this->id,
+			])
+			->all()
+			->compile()
+		;
 
 		if (!$questions->count()) {
 			$this->questions = collection([]);
@@ -263,15 +269,15 @@ class Survey extends Entity {
 	 */
 	public function setCurrentAction(SurveySurveyQuestion|BackedEnum|false|null $action): static {
 		if (
-			$action instanceof SurveySurveyQuestion &&
-			!$this->questions->contains($action)
+			$action instanceof SurveySurveyQuestion
+			&& !$this->questions->contains($action)
 		) {
 			throw new InvalidArgumentException('The provided question is not part of the survey.');
 		}
 
 		if (
-			$action instanceof BackedEnum &&
-			!in_array($action, $this->getNextActionEnum()::cases(), true)
+			$action instanceof BackedEnum
+			&& !in_array($action, $this->getNextActionEnum()::cases(), true)
 		) {
 			throw new InvalidArgumentException(sprintf('The provided action is invalid. `%s` given.', $action->name));
 		}
@@ -300,7 +306,10 @@ class Survey extends Entity {
 	 * @param array|string|int|null $answer
 	 * @return \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|null
 	 */
-	public function getNextAction(?SurveySurveyQuestion $question = null, array|string|int|null $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
+	public function getNextAction(
+		?SurveySurveyQuestion $question = null,
+		array|string|int|null $answer = null
+	): SurveySurveyQuestion|BackedEnum|false|null {
 		$action = $question ?? $this->getCurrentAction();
 
 		if ($answer === null && $action instanceof SurveySurveyQuestion) {
@@ -354,7 +363,7 @@ class Survey extends Entity {
 			// If the next actions array only contains false, return false.
 			// Any null value means that an answer does not define a next action,
 			// so the question defines the next action.
-			if (count(array_filter($nextActions, fn ($x) => $x !== false)) === 0) {
+			if (count(array_filter($nextActions, fn($x) => $x !== false)) === 0) {
 				return false;
 			}
 		}
@@ -397,10 +406,10 @@ class Survey extends Entity {
 		$givenAnswer = $answer ?? $this->progressData[ $question->identifier ] ?? null;
 
 		if (
-			$givenAnswer &&
-			(
-				$answer instanceof SurveySurveyAnswer ||
-				isset($question->surveySurveyAnswers[ $givenAnswer ])
+			$givenAnswer
+			&& (
+				$answer instanceof SurveySurveyAnswer
+				|| isset($question->surveySurveyAnswers[ $givenAnswer ])
 			)
 		) {
 			$surveySurveyAnswer = $answer instanceof SurveySurveyAnswer ? $answer : $question->surveySurveyAnswers[ $givenAnswer ];
@@ -480,7 +489,10 @@ class Survey extends Entity {
 	 * @return \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|false|null
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	protected function evaluateNextAction(SurveySurveyQuestion $question, ?SurveySurveyAnswer $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
+	protected function evaluateNextAction(
+		SurveySurveyQuestion $question,
+		?SurveySurveyAnswer $answer = null
+	): SurveySurveyQuestion|BackedEnum|false|null {
 		$entity = $answer ?? $question;
 
 		if ($entity->nextAction === $this->getNextActionEnum()::Abort) {
@@ -572,20 +584,20 @@ class Survey extends Entity {
 			}
 
 			if (
-				$answer === 'custom' &&
-				(
-					$question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice ||
-					$question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText
-				) &&
-				isset($customData[ $identifier ])
+				$answer === 'custom'
+				&& (
+					$question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice
+					|| $question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText
+				)
+				&& isset($customData[ $identifier ])
 			) {
 				$this->customAnswers[ $identifier ] = $customData[ $identifier ];
 			}
 
 			if (
-				$question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice &&
-				in_array('custom', $answer) &&
-				isset($customData[ $identifier ])
+				$question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice
+				&& in_array('custom', $answer)
+				&& isset($customData[ $identifier ])
 			) {
 				// If the multi-choice question has a custom answer,
 				// we store it in the custom answers array.
@@ -610,7 +622,11 @@ class Survey extends Entity {
 	 * @param \Awyiss\Model\Entity\SurveySurveyQuestion|null $previousQuestion
 	 * @return bool
 	 */
-	protected function validateProgress(string $identifier, array|string|int|null $answer, ?SurveySurveyQuestion $previousQuestion = null): bool {
+	protected function validateProgress(
+		string $identifier,
+		array|string|int|null $answer,
+		?SurveySurveyQuestion $previousQuestion = null
+	): bool {
 		if (!isset($this->questionsByIdentifier[ $identifier ])) {
 			return false;
 		}
@@ -700,8 +716,8 @@ class Survey extends Entity {
 				$question = collection($questionsByIdentifier)
 					->filter(function (SurveySurveyQuestion $entity) use ($node): bool {
 						if (
-							$entity->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-							$entity->nextActionTarget === $node
+							$entity->nextAction === $this->getNextActionEnum()::SpecificQuestion
+							&& $entity->nextActionTarget === $node
 						) {
 							return true;
 						}
@@ -710,13 +726,16 @@ class Survey extends Entity {
 							return false;
 						}
 
-						return collection($entity->surveySurveyAnswers)
-							->some(function (SurveySurveyAnswer $answer) use ($node): bool {
-								return $answer->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-									$answer->nextActionTarget === $node;
-							});
+						return collection($entity->surveySurveyAnswers)->some(
+							function (SurveySurveyAnswer $answer) use ($node): bool {
+								return $answer->nextAction === $this->getNextActionEnum()::SpecificQuestion
+									&& $answer->nextActionTarget === $node;
+							}
+						)
+						;
 					})
-					->first();
+					->first()
+				;
 
 				if (!$question) {
 					$question = $questionsByIdentifier[ $node ];
@@ -755,10 +774,8 @@ class Survey extends Entity {
 
 		$visited[ $node ] = $stack[ $node ] = true;
 
-		foreach ($graph[ $node ] ?? [] as $nextNode) {
-			if ($this->detectCycle($nextNode, $graph, $visited, $stack)) {
-				return true;
-			}
+		if (array_any($graph[ $node ] ?? [], fn($nextNode) => $this->detectCycle($nextNode, $graph, $visited, $stack))) {
+			return true;
 		}
 
 		unset($stack[ $node ]);
@@ -795,10 +812,11 @@ class Survey extends Entity {
 				 * - any answer has no next action specified
 				 * the action of the question will be used to determine the next step.
 				 */
-				$inheritingAnswer = $question->allowCustomAnswer || collection($question->surveySurveyAnswers)
-					->some(function (SurveySurveyAnswer $answer): bool {
+				$inheritingAnswer = $question->allowCustomAnswer
+					|| collection($question->surveySurveyAnswers)->some(function (SurveySurveyAnswer $answer): bool {
 						return empty($answer->nextAction);
-					});
+					})
+				;
 
 				// If no answer inherits the next action, the action of the question is never used.
 				if (!$inheritingAnswer) {
@@ -808,15 +826,15 @@ class Survey extends Entity {
 
 			// If the next action is the next question and a next question exists, add that to the graph.
 			if (
-				$question->nextAction === $this->getNextActionEnum()::NextQuestion &&
-				isset($this->surveySurveyQuestions[ $key + 1 ])
+				$question->nextAction === $this->getNextActionEnum()::NextQuestion
+				&& isset($this->surveySurveyQuestions[ $key + 1 ])
 			) {
 				$questionsGraph[ $question->identifier ][] = $this->surveySurveyQuestions[ $key + 1 ]->identifier;
 			}
 			// If the next action is a specific question, add that to the graph.
 			elseif (
-				$question->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-				isset($questionsByIdentifier[ $question->nextActionTarget ])
+				$question->nextAction === $this->getNextActionEnum()::SpecificQuestion
+				&& isset($questionsByIdentifier[ $question->nextActionTarget ])
 			) {
 				$questionsGraph[ $question->identifier ][] = $questionsByIdentifier[ $question->nextActionTarget ]->identifier;
 			}
@@ -846,15 +864,15 @@ class Survey extends Entity {
 		foreach ($answers as $answer) {
 			// If the next action is the next question and a next question exists, add that to the graph.
 			if (
-				$answer->nextAction === $this->getNextActionEnum()::NextQuestion &&
-				isset($questions[ $currentQuestionKey + 1 ])
+				$answer->nextAction === $this->getNextActionEnum()::NextQuestion
+				&& isset($questions[ $currentQuestionKey + 1 ])
 			) {
 				$answersGraph[] = $questions[ $currentQuestionKey + 1 ]->identifier;
 			}
 			// If the next action is a specific question, add that to the graph.
 			elseif (
-				$answer->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-				isset($questionsByIdentifier[ $answer->nextActionTarget ])
+				$answer->nextAction === $this->getNextActionEnum()::SpecificQuestion
+				&& isset($questionsByIdentifier[ $answer->nextActionTarget ])
 			) {
 				$answersGraph[] = $questionsByIdentifier[ $answer->nextActionTarget ]->identifier;
 			}
@@ -867,9 +885,9 @@ class Survey extends Entity {
 	/**
 	 * Build an array containing all possible paths in the form of
 	 * `[
-	 * 	[questionId => answerId, questionId => answerId, ...],
-	 * 	[questionId => answerId, questionId => answerId, ...],
-	 * 	...,
+	 *    [questionId => answerId, questionId => answerId, ...],
+	 *    [questionId => answerId, questionId => answerId, ...],
+	 *    ...,
 	 * ]`
 	 *
 	 * @return array<int, array<int, int>>
@@ -906,10 +924,10 @@ class Survey extends Entity {
 			$result .= $questionId . ':';
 			if (is_array($answer)) {
 				// If the answer is an array, join the values with a comma
-				$result .= implode(',', array_map(
-					fn ($answer) => $answer ?? 'null',
-					$answer
-				));
+				$result .= implode(
+					',',
+					array_map(fn($answer) => $answer ?? 'null', $answer)
+				);
 			}
 			elseif ($answer === null) {
 				// Skip null answers. Those are usually InfoText questions and have no
@@ -986,6 +1004,7 @@ class Survey extends Entity {
 
 				if ($next instanceof SurveySurveyQuestion) {
 					$this->traverseResultsPaths($next, $newPath, $results);
+
 					return;
 				}
 
@@ -1003,6 +1022,7 @@ class Survey extends Entity {
 
 		if ($next instanceof SurveySurveyQuestion) {
 			$this->traverseResultsPaths($next, $newPath, $results);
+
 			return;
 		}
 

@@ -17,6 +17,7 @@
 		"ext-zip": "*",
 		"ext-zlib": "*",
 		"altcha-org/altcha": "^2.1",
+		"awyiss/phpcs-sniffs": "^0.5.0",
 		"cakephp/authentication": "^4.2.1",
 		"cakephp/bake": "^3.8.1",
 		"cakephp/cakephp": "^5.4.1",

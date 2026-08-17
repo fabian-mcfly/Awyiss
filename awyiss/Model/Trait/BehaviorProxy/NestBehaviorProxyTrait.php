@@ -91,7 +91,11 @@ trait NestBehaviorProxyTrait {
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Awyiss\Model\Behavior\NestBehavior::listNested()
 	 */
-	public function listNested(SelectQuery|TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc'): CollectionInterface {
+	public function listNested(
+		SelectQuery|TreeIterator $query,
+		string $nestingKey = 'children',
+		string $direction = 'desc'
+	): CollectionInterface {
 		return $this->getBehavior('Nest')->listNested($query, $nestingKey, $direction);
 	}
 }

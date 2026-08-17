@@ -28,7 +28,8 @@ class DuplicateCheckFormProtection implements FormProtectionInterface {
 	 * @var array
 	 */
 	protected array $defaultOptions = [
-		'checkTimeout' => 86_400, // 24 hours
+		// 24 hours
+		'checkTimeout' => 86_400,
 	];
 	/**
 	 * @var \Awyiss\Model\Entity\Form

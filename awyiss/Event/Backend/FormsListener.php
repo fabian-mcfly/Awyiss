@@ -50,11 +50,13 @@ class FormsListener implements EventListenerInterface {
 		$originalEntity = $entity->originalEntity;
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$elements = $formsTable->FormElements->find('threaded', nestingKey: 'childFormElements')
+		$elements = $formsTable->FormElements
+			->find('threaded', nestingKey: 'childFormElements')
 			->find('mediaAssignments', formatResult: false)
 			->find('translations')
 			->where(['formId' => $originalEntity->id])
-			->all();
+			->all()
+		;
 
 		$listedElements = $elements->listNested('desc', 'childFormElements');
 		/** @var \Awyiss\Model\Entity\FormElement $formElement */

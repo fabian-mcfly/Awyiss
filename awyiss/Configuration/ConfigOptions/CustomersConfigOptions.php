@@ -90,7 +90,9 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 						$profiles = [];
 
 						foreach (TransportFactory::configured() ?: [] as $profile) {
-							$config = TransportFactory::get($profile)->getConfig();
+							$config = TransportFactory::get($profile)
+								->getConfig()
+							;
 							unset($config['url'], $config['password']);
 
 							$label = __d('Forms', 'transport_profile_' . $profile, $config);
@@ -119,11 +121,16 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::ListKey,
 					values: function (): array {
 						/** @var \Awyiss\Model\Table\MenusTable $menusTable */
-						$menusTable = $this->getTableLocator()->get('Menus');
+						$menusTable = $this
+							->getTableLocator()
+							->get('Menus')
+						;
 
-						$menus = $menusTable->find('list', keyField: 'identifier')
+						$menus = $menusTable
+							->find('list', keyField: 'identifier')
 							->where(['active' => true])
-							->toArray();
+							->toArray()
+						;
 
 						Arrays::naturalSort($menus);
 
@@ -168,11 +175,16 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::ValueCollection,
 					values: function (): array {
 						/** @var \Awyiss\Model\Table\CustomerGroupsTable $customerGroupsTable */
-						$customerGroupsTable = $this->getTableLocator()->get('CustomerGroups');
+						$customerGroupsTable = $this
+							->getTableLocator()
+							->get('CustomerGroups')
+						;
 
-						$customerGroups = $customerGroupsTable->find('list')
+						$customerGroups = $customerGroupsTable
+							->find('list')
 							->where(['active' => true])
-							->toArray();
+							->toArray()
+						;
 
 						Arrays::naturalSort($customerGroups);
 

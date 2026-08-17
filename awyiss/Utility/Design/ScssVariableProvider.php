@@ -103,9 +103,9 @@ class ScssVariableProvider {
 
 		foreach ($this->scssFiles as $scssFile) {
 			if (
-				!str_ends_with($scssFile, '.scss') ||
-				!file_exists($scssFile) ||
-				!is_file($scssFile)
+				!str_ends_with($scssFile, '.scss')
+				|| !file_exists($scssFile)
+				|| !is_file($scssFile)
 			) {
 				throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $scssFile));
 			}
@@ -213,7 +213,11 @@ class ScssVariableProvider {
 		}
 		elseif (is_a($value, ColorExpression::class)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$options['value'] = $value->getValue()->getFormat()->getOriginal();
+			$options['value'] = $value
+				->getValue()
+				->getFormat()
+				->getOriginal()
+			;
 		}
 		elseif (is_a($value, NumberExpression::class)) {
 			$options['value'] = $value->getValue();
@@ -224,15 +228,19 @@ class ScssVariableProvider {
 			$options['quotes'] = $value->hasQuotes() ? '\'' : null;
 		}
 		elseif (is_a($value, ListExpression::class)) {
-			$options['value'] = implode($value->getSeparator()->getSeparator(), array_map(function (Expression $item) {
-				$options = $this->normalizeValue($item);
+			$options['value'] = implode(
+				$value->getSeparator()->getSeparator(),
+				array_map(function (Expression $item) {
+					$options = $this->normalizeValue($item);
 
-				if ($options['quotes']) {
-					$options['value'] = $options['quotes'] . $options['value'] . $options['quotes'];
-				}
+					if ($options['quotes']) {
+						$options['value'] = $options['quotes'] . $options['value'] . $options['quotes'];
+					}
 
-				return $options['value'];
-			}, $value->getContents()));
+					return $options['value'];
+				},
+				$value->getContents())
+			);
 		}
 		elseif (is_a($value, FunctionExpression::class)) {
 			$options['value'] = $this->normalizeFunctionCall($value);
@@ -327,12 +335,8 @@ class ScssVariableProvider {
 		if (in_array($key, $blocklistedVariables)) {
 			return true;
 		}
-		else {
-			foreach ($blocklistedVariables as $blocklistedVariable) {
-				if (preg_match('/^' . $blocklistedVariable . '$/', $key)) {
-					return true;
-				}
-			}
+		elseif (array_any($blocklistedVariables, fn($blocklistedVariable) => preg_match('/^' . $blocklistedVariable . '$/', $key))) {
+			return true;
 		}
 
 		return false;

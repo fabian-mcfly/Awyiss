@@ -193,8 +193,8 @@ class SurveyAnswersTable extends Table {
 		 */
 		foreach ($this->getBehavior('Categories')->getCategories(true) as $category) {
 			if (
-				$category->type === $surveyQuestionTypeEnum::FreeText ||
-				$category->type === $surveyQuestionTypeEnum::InfoText
+				$category->type === $surveyQuestionTypeEnum::FreeText
+				|| $category->type === $surveyQuestionTypeEnum::InfoText
 			) {
 				$disabled[] = $category->id;
 			}

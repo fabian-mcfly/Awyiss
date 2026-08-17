@@ -61,7 +61,12 @@ trait CategoriesBehaviorProxyTrait {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
 	 */
-	public function groupResult(SelectQuery $query, ?string $column = null, ?string $associationName = null, bool $sortByAssociation = true): SelectQuery {
+	public function groupResult(
+		SelectQuery $query,
+		?string $column = null,
+		?string $associationName = null,
+		bool $sortByAssociation = true
+	): SelectQuery {
 		return $this->getBehavior('Categories')->groupResult($query, $column, $associationName, $sortByAssociation);
 	}
 

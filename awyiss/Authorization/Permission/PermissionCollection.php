@@ -34,8 +34,14 @@ class PermissionCollection {
 
 
 	/**
+	 * @phpstan-type PermissionInput \Awyiss\Model\Entity\UsergroupPermission|array{
+	 *     scope: string,
+	 *     identifier: string,
+	 *     access: mixed,
+	 *     settings: mixed
+	 * }
 	 * @param AuthorizationService|null $authorizationService
-	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $permissions
+	 * @param array<int, PermissionInput> $permissions
 	 */
 	public function __construct(?AuthorizationService $authorizationService, array $permissions = []) {
 		$this->authorizationService = $authorizationService;
@@ -222,7 +228,9 @@ class PermissionCollection {
 
 		foreach ($permissions as $permission) {
 			if (!($permission instanceof Permission)) {
-				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($permission)));
+				throw new RuntimeException(
+					sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($permission))
+				);
 			}
 
 			$accessible[] = $permission->isAccessible($additionalData, $this);

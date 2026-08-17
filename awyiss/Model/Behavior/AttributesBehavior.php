@@ -45,11 +45,15 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * The attributes table is name "attributes_<name>" with <name> being the current table's name.
-	 *
-	 * @var string
+	 * @var array<string, string|\Awyiss\Attribute\AttributeOptionsCollectionInterface>
 	 */
-	protected string $attributesTable;
+	protected static array $attributeOptions;
+	/**
+	 * @var array<string, array<string, \Awyiss\Model\Entity\Attribute>>
+	 */
+	protected static array $attributes;
+
+
 	/**
 	 * Default configuration
 	 *
@@ -83,21 +87,17 @@ class AttributesBehavior extends Behavior {
 		'sourceTable' => null,
 	];
 	/**
+	 * The attributes table is name "attributes_<name>" with <name> being the current table's name.
+	 *
+	 * @var string
+	 */
+	protected string $attributesTable;
+	/**
 	 * A boolean value, indicating if the table has a corresponding attributes table.
 	 *
 	 * @var bool
 	 */
 	protected bool $hasAttributes = false;
-
-
-	/**
-	 * @var array<string, string|\Awyiss\Attribute\AttributeOptionsCollectionInterface>
-	 */
-	protected static array $attributeOptions;
-	/**
-	 * @var array<string, array<string, \Awyiss\Model\Entity\Attribute>>
-	 */
-	protected static array $attributes;
 
 
 	/**
@@ -120,13 +120,16 @@ class AttributesBehavior extends Behavior {
 		}
 
 		$this->hasAttributes = true;
-		$this->table()->hasOne($identifier, [
-			'cascadeCallbacks' => true,
-			//'className' => $attributesClass,
-			'dependent' => true,
-			'foreignKey' => $this->getConfig('foreignKey'),
-			'propertyName' => 'attributes',
-		]);
+		$this
+			->table()
+			->hasOne($identifier, [
+				'cascadeCallbacks' => true,
+				//'className' => $attributesClass,
+				'dependent' => true,
+				'foreignKey' => $this->getConfig('foreignKey'),
+				'propertyName' => 'attributes',
+			])
+		;
 
 		$finders = $this->getConfig('implementedFinders');
 
@@ -219,7 +222,11 @@ class AttributesBehavior extends Behavior {
 		}
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $this->table()->getAssociation($this->getAttributesTableName(true))?->getTarget();
+		return $this
+			->table()
+			->getAssociation($this->getAttributesTableName(true))
+			?->getTarget()
+		;
 	}
 
 
@@ -270,9 +277,14 @@ class AttributesBehavior extends Behavior {
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$attributesQuery = $attributesTable->find('all');
 
-		static::$attributes = $attributesQuery->all()->groupBy('scope')->map(function (array $attributes): array {
-			return collection($attributes)->indexBy('identifier')->toArray();
-		})->toArray();
+		static::$attributes = $attributesQuery
+			->all()
+			->groupBy('scope')
+			->map(function (array $attributes): array {
+				return collection($attributes)->indexBy('identifier')->toArray();
+			})
+			->toArray()
+		;
 
 		return static::$attributes[ $scope ] ?? [];
 	}
@@ -311,9 +323,11 @@ class AttributesBehavior extends Behavior {
 				/**
 				 * Filter out all empty values
 				 */
-				$data[ $attribute->identifier ] = array_values(array_filter($unmappedData[ $attribute->identifier ], function (mixed $value): bool {
-					return !empty($value) || $value === '0' || $value === 0;
-				}));
+				$data[ $attribute->identifier ] = array_values(
+					array_filter($unmappedData[ $attribute->identifier ], function (mixed $value): bool {
+						return !empty($value) || $value === '0' || $value === 0;
+					})
+				);
 
 				continue;
 			}
@@ -324,8 +338,16 @@ class AttributesBehavior extends Behavior {
 			 * if the value is set.
 			 */
 			$data[ $attribute->identifier ] = array_filter($unmappedData[ $attribute->identifier ], function (array $value): bool {
-				return (!empty($value['key']) || $value['key'] === '0' || $value['key'] === 0) ||
-					(!empty($value['value']) || $value['value'] === '0' || $value['value'] === 0);
+				return (
+						!empty($value['key'])
+						|| $value['key'] === '0'
+						|| $value['key'] === 0
+					)
+					|| (
+						!empty($value['value'])
+						|| $value['value'] === '0'
+						|| $value['value'] === 0
+					);
 			});
 
 			// If the data isn't empty, combine the key and value into a single array
@@ -596,9 +618,13 @@ class AttributesBehavior extends Behavior {
 		/** @var \Awyiss\Model\Table|\Awyiss\ORM\Association\HasOne $attributesTable */
 		$attributesTable = $pageRoleTable->{$pageRoleTable->getAttributesTableName(true)};
 
-		$attributes = $attributesTable->find('all')->where([
-			$attributesTable->getForeignKey() => $entity->id,
-		])->first();
+		$attributes = $attributesTable
+			->find('all')
+			->where([
+				$attributesTable->getForeignKey() => $entity->id,
+			])
+			->first()
+		;
 
 		$entity->attributes = $attributes ?? $attributesTable->newDefaultEntity();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -620,7 +646,6 @@ class AttributesBehavior extends Behavior {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param mixed|null $date
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection SpellCheckingInspection
 	 */
 	protected function _dynamicFinder(string $method, SelectQuery $query, mixed $date = null): SelectQuery {
 		$method = Inflector::underscore($method);
@@ -634,7 +659,7 @@ class AttributesBehavior extends Behavior {
 		$comparator = $matches[1] === 'future' ? ' >=' : ' <=';
 
 		return $query->where([
-			$attributesTable . '.'  . $field . $comparator => $now,
+			$attributesTable . '.' . $field . $comparator => $now,
 		]);
 	}
 

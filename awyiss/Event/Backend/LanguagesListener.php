@@ -35,9 +35,9 @@ class LanguagesListener implements EventListenerInterface {
 	 */
 	public function afterSaveCommit(Event $event, Language $entity): void {
 		if (
-			$entity->isNew() ||
-			$entity->isDirty('realm') ||
-			$entity->isDirty('shortcode')
+			$entity->isNew()
+			|| $entity->isDirty('realm')
+			|| $entity->isDirty('shortcode')
 		) {
 			/**
 			 * Trigger the creation of the custom configuration

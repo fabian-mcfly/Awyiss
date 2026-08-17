@@ -37,7 +37,10 @@ class GlobalContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, FrontendView $view, array $options = []): void {
-		DebugTimer::start('GlobalContentsCell::display', sprintf('GlobalContentsCell::display: Rendering global contents area "%s"', $identifier));
+		DebugTimer::start(
+			'GlobalContentsCell::display',
+			sprintf('GlobalContentsCell::display: Rendering global contents area "%s"', $identifier)
+		);
 
 		$this->View = $view;
 
@@ -57,7 +60,11 @@ class GlobalContentsCell extends Cell {
 		$currentRoute = $this->request->getRequestTarget();
 		if ($renderedGlobalContents && $currentRoute !== '/' && str_contains($renderedGlobalContents, 'href="#')) {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$renderedGlobalContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . trim($currentRoute, '/') . '/$1"', $renderedGlobalContents);
+			$renderedGlobalContents = preg_replace(
+				'/href=[\'"](#[^\'"]+)[\'"]/',
+				'href="' . trim($currentRoute, '/') . '/$1"',
+				$renderedGlobalContents
+			);
 		}
 
 		// Set the view variables
@@ -84,19 +91,31 @@ class GlobalContentsCell extends Cell {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
-		DebugTimer::start('GlobalContentsCell::renderElement' . $entity->id, sprintf('GlobalContentsCell::renderElement: Rendering global content #%d with template "%s"', $entity->id, $entity->globalContentTemplate->fileName));
+		DebugTimer::start(
+			'GlobalContentsCell::renderElement' . $entity->id,
+			sprintf(
+				'GlobalContentsCell::renderElement: Rendering global content #%d with template "%s"',
+				$entity->id,
+				$entity->globalContentTemplate->fileName
+			)
+		);
 
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->getView()->get('fullWidth', 1920),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
-			columnWidth: $entity->realColumnWidth,
-			selector: '#GlobalContent' . $entity->id,
-			singleColumnBreakpoint: $this->getView()->get('singleColumnBreakpoint'),
-		);
+		$mediaRenderOptions = $this
+			->getView()
+			->helpers()
+			->get('Media')
+			->mediaRenderOptions(
+				baseWidth: $this->getView()->get('fullWidth', 1920),
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $entity->realColumnWidth,
+				selector: '#GlobalContent' . $entity->id,
+				singleColumnBreakpoint: $this->getView()->get('singleColumnBreakpoint'),
+			)
+		;
 
 		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
@@ -109,12 +128,16 @@ class GlobalContentsCell extends Cell {
 			$fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the global content cell. -->';
 		}
 
+		$result = $fullWidthMissingWarning;
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$result = $fullWidthMissingWarning . $this->getView()->globalContent($entity->globalContentTemplate->fileName, [
-			'globalContent' => $entity,
-			'children' => $children,
-			'mediaRenderOptions' => $mediaRenderOptions,
-		]);
+		$result .= $this
+			->getView()
+			->globalContent($entity->globalContentTemplate->fileName, [
+				'globalContent' => $entity,
+				'children' => $children,
+				'mediaRenderOptions' => $mediaRenderOptions,
+			])
+		;
 
 		DebugTimer::stop('GlobalContentsCell::renderElement' . $entity->id);
 
@@ -128,7 +151,10 @@ class GlobalContentsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedGlobalContents(string $identifier, bool $isPreview = false): CollectionInterface {
-		DebugTimer::start('GlobalContentsCell::getThreadedGlobalContents', sprintf('GlobalContentsCell::getThreadedGlobalContents: Loading global contents for identifier "%s"', $identifier));
+		DebugTimer::start(
+			'GlobalContentsCell::getThreadedGlobalContents',
+			sprintf('GlobalContentsCell::getThreadedGlobalContents: Loading global contents for identifier "%s"', $identifier)
+		);
 
 		/** @var \Awyiss\Model\Table\GlobalContentsTable $globalContentsTable */
 		$globalContentsTable = $this->fetchTable('GlobalContents');
@@ -145,7 +171,8 @@ class GlobalContentsCell extends Cell {
 			$query = $globalContentsTable
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		$query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
@@ -168,9 +195,12 @@ class GlobalContentsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		$globalContents = $globalContents->filter(function (GlobalContent $globalContent) {
-			return $globalContent->parentId === null;
-		})->compile();
+		$globalContents = $globalContents
+			->filter(function (GlobalContent $globalContent) {
+				return $globalContent->parentId === null;
+			})
+			->compile()
+		;
 
 		DebugTimer::stop('GlobalContentsCell::getThreadedGlobalContents');
 

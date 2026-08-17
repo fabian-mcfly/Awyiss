@@ -42,7 +42,7 @@ class AttributesListener implements EventListenerInterface {
 		}
 
 		if (in_array($data['inputType'], ['inputList', 'inputKeyValueList'], true)) {
-			// Force the database type of inputList and inputKeyValueList to be json
+			// Force the database type of inputList and inputKeyValueList to be JSON
 			$data['type'] = 'json';
 			$data['required'] = false;
 		}
@@ -78,7 +78,8 @@ class AttributesListener implements EventListenerInterface {
 			return !is_string($table);
 		}));
 
-		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
+		// Contents, Menu Entries and all types of pages don't need to have translatable
+		// attributes since they all are translations themselves
 		if (in_array($entity->scope, array_merge($pageRoles, ['Contents', 'MenuEntries', 'Pages']))) {
 			$entity->translatable = false;
 		}
@@ -149,7 +150,9 @@ class AttributesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\ContentTemplateElementsTable|\Awyiss\Model\Table\GlobalContentTemplateElementsTable $templateElementsTable */
+		/**
+		 * @var \Awyiss\Model\Table\ContentTemplateElementsTable|\Awyiss\Model\Table\GlobalContentTemplateElementsTable $templateElementsTable
+		 */
 		$templateElementsTable = $tableLocator->get($tableName);
 
 		// Update all template elements that reference the old attribute identifier

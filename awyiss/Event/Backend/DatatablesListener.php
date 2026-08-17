@@ -44,7 +44,10 @@ class DatatablesListener implements EventListenerInterface {
 	public function beforeSave(Event $event, Datatable $entity): void {
 		//If the datatable has an attributes table and there is a table change in progress, stop the event.
 		$attributesTableName = 'attributes_' . $entity->identifier;
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
@@ -137,7 +140,10 @@ class DatatablesListener implements EventListenerInterface {
 		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 
 		$attributesTableName = 'attributes_' . $entity->identifier;
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Awyiss\Model\Table $attributesTable */
 			$attributesTable = $tableLocator->get('Attributes');
@@ -168,7 +174,9 @@ class DatatablesListener implements EventListenerInterface {
 		}
 
 		//Bake a `drop`-migration
-		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations'
+		;
 
 		//Migrate all the newly baked migrations
 		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
@@ -177,7 +185,9 @@ class DatatablesListener implements EventListenerInterface {
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the seed of the datatables table
-		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables'
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+		;
 
 		//Queue the job.
 		$queuedJobsTable->createJob('Queue.Execute', [
@@ -231,10 +241,15 @@ class DatatablesListener implements EventListenerInterface {
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the model
-		$commands[] = 'bin' . DS . 'cake bake model ' . $entity->identifier . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable';
+		$commands[] = 'bin' . DS . 'cake bake model ' . $entity->identifier
+			. ' --namespace ' . CUSTOM_NAMESPACE
+			. ' --no-fixture --no-test --update --force --is-datatable'
+		;
 
 		//Bake the seed of the datatables table
-		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables'
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+		;
 
 		$tableLocator = FactoryLocator::get('Table');
 		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */

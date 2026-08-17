@@ -101,10 +101,15 @@ class PageRolesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$pageRole = $this->PageRoles
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$pageRole) {
 			$this->Flash->error(__('record_not_found'));
-
 
 			return $this->redirect(['action' => 'overview']);
 		}

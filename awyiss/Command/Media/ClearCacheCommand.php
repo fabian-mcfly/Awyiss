@@ -21,7 +21,9 @@ class ClearCacheCommand extends Command {
 	 * @inheritDoc
 	 */
 	public static function getDescription(): string {
-		return 'Removes files (resized, previews, effects, avif, webp), deleted folders, and resets the database status (preview, avif, webp) of media records';
+		return 'Removes files (resized, previews, effects, avif, webp), deleted folders,'
+			. ' and resets the database status (preview, avif, webp) of media records'
+		;
 	}
 
 
@@ -151,23 +153,38 @@ class ClearCacheCommand extends Command {
 			$cases = [];
 
 			if (in_array($type, ['all', 'previews'])) {
-				$previewCases = $expression->case()->when([
-					'preview !=' => ProcessStatus::NotRequired->value,
-				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$previewCases = $expression
+					->case()
+					->when([
+						'preview !=' => ProcessStatus::NotRequired->value,
+					])
+					->then(ProcessStatus::Undefined->value, 'integer')
+					->else(ProcessStatus::NotRequired->value, 'integer')
+				;
 				$cases['preview'] = $previewCases;
 			}
 
 			if (in_array($type, ['all', 'avif'])) {
-				$avifCases = $expression->case()->when([
-					'avif !=' => ProcessStatus::NotRequired->value,
-				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$avifCases = $expression
+					->case()
+					->when([
+						'avif !=' => ProcessStatus::NotRequired->value,
+					])
+					->then(ProcessStatus::Undefined->value, 'integer')
+					->else(ProcessStatus::NotRequired->value, 'integer')
+				;
 				$cases['avif'] = $avifCases;
 			}
 
 			if (in_array($type, ['all', 'webp'])) {
-				$webpCases = $expression->case()->when([
-					'webp !=' => ProcessStatus::NotRequired->value,
-				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$webpCases = $expression
+					->case()
+					->when([
+						'webp !=' => ProcessStatus::NotRequired->value,
+					])
+					->then(ProcessStatus::Undefined->value, 'integer')
+					->else(ProcessStatus::NotRequired->value, 'integer')
+				;
 				$cases['webp'] = $webpCases;
 			}
 

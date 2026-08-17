@@ -39,6 +39,9 @@ class AuditBehavior extends Behavior {
 	use LocatorAwareTrait;
 
 
+	/**
+	 * @var array
+	 */
 	protected array $auditData = [];
 	/**
 	 * Default configuration
@@ -236,22 +239,27 @@ class AuditBehavior extends Behavior {
 	protected function auditDataQuery(EntityInterface $entity): SelectQuery {
 		$auditModel = $this->getTableLocator()->get('Audit');
 
-		return $auditModel->find('all')->where([
-			'OR' => [
-				[
-					'scope' => Inflector::camelize($this->table()->getTable()),
-					'foreignKey' => $entity->get('id'),
+		return $auditModel
+			->find('all')
+			->where([
+				'OR' => [
+					[
+						'scope' => Inflector::camelize($this->table()->getTable()),
+						'foreignKey' => $entity->get('id'),
+					],
+					[
+						'subjectLeftTable' => Inflector::camelize($this->table()->getTable()),
+						'subjectLeftForeignKey' => $entity->get('id'),
+					],
+					[
+						'subjectRightTable' => Inflector::camelize($this->table()->getTable()),
+						'subjectRightForeignKey' => $entity->get('id'),
+					],
 				],
-				[
-					'subjectLeftTable' => Inflector::camelize($this->table()->getTable()),
-					'subjectLeftForeignKey' => $entity->get('id'),
-				],
-				[
-					'subjectRightTable' => Inflector::camelize($this->table()->getTable()),
-					'subjectRightForeignKey' => $entity->get('id'),
-				],
-			],
-		])->contain(['Users'])->orderBy(['Audit.createdOn' => 'DESC']);
+			])
+			->contain(['Users'])
+			->orderBy(['Audit.createdOn' => 'DESC'])
+		;
 	}
 
 
@@ -363,7 +371,13 @@ class AuditBehavior extends Behavior {
 				$this->setUpdateInfo($entity, $identityId, $schema);
 			}
 		}
-		elseif ($schema->getColumn('deleted') && (!$entity->hasOriginal('deleted') || $entity->get('deleted') != $entity->getOriginal('deleted'))) {
+		elseif (
+			$schema->getColumn('deleted')
+			&& (
+				!$entity->hasOriginal('deleted')
+				|| $entity->get('deleted') != $entity->getOriginal('deleted')
+			)
+		) {
 			// A soft delete will set the `deleted`-property. If this happens, and the config wants it, set the delete-info on this entity
 			if ($schema->getColumn('deletedOn') && $queryOtions['setTimeOnDelete']) {
 				$this->setDeleteInfo($entity, $identityId, $schema);
@@ -371,10 +385,10 @@ class AuditBehavior extends Behavior {
 		}
 
 		if (
-			!$entity->allowsAudit() ||
-			(
-				$entity->isNew() &&
-				!$this->getConfig('isPivotTable')
+			!$entity->allowsAudit()
+			|| (
+				$entity->isNew()
+				&& !$this->getConfig('isPivotTable')
 			)
 		) {
 			return;
@@ -397,10 +411,10 @@ class AuditBehavior extends Behavior {
 		}
 
 		if (
-			!$entity->allowsAudit() ||
-			(
-				$entity->isNew() &&
-				!$this->getConfig('isPivotTable')
+			!$entity->allowsAudit()
+			|| (
+				$entity->isNew()
+				&& !$this->getConfig('isPivotTable')
 			)
 		) {
 			return;
@@ -415,12 +429,12 @@ class AuditBehavior extends Behavior {
 		$entityData = $this->auditData[ $entity->get('id') ] ?? [];
 		//No difference? Do nothing.
 		if (
-			!$this->getConfig('isPivotTable') &&
-			(
-				empty($entityData) ||
-				(
-					empty($entityData['changes']['old']) &&
-					empty($entityData['changes']['new'])
+			!$this->getConfig('isPivotTable')
+			&& (
+				empty($entityData)
+				|| (
+					empty($entityData['changes']['old'])
+					&& empty($entityData['changes']['new'])
 				)
 			)
 		) {
@@ -479,6 +493,7 @@ class AuditBehavior extends Behavior {
 
 		unset($this->auditData[ $entity->get('id') ]);
 	}
+
 
 	/**
 	 * Create the actual audit entry after the entity has been deleted.
@@ -592,12 +607,12 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function auditAssociation(Entity $entity, string $field, Association|false $association, array $entityData): array {
 		if (
-			!$association ||
-			(
-				!$association instanceof BelongsToMany &&
-				$association->getCascadeCallbacks() &&
-				$association->hasBehavior('Audit') &&
-				$association->getBehavior('Audit')->getConfig('enabled')
+			!$association
+			|| (
+				!$association instanceof BelongsToMany
+				&& $association->getCascadeCallbacks()
+				&& $association->hasBehavior('Audit')
+				&& $association->getBehavior('Audit')->getConfig('enabled')
 			)
 		) {
 			/**
@@ -719,8 +734,8 @@ class AuditBehavior extends Behavior {
 		$oldData = $newData = ['start' => ['dateTime' => null], 'end' => ['dateTime' => null]];
 		// If the entity has no original publication data, the data hasn't changed
 		if (
-			!$entity->hasOriginal('_publicationData') ||
-			$entity->get('_publicationData') === $entity->getOriginal('_publicationData')
+			!$entity->hasOriginal('_publicationData')
+			|| $entity->get('_publicationData') === $entity->getOriginal('_publicationData')
 		) {
 			unset($entityData['changes']['old']['_publicationData'], $entityData['changes']['new']['_publicationData']);
 
@@ -740,7 +755,9 @@ class AuditBehavior extends Behavior {
 
 		/** @var \Awyiss\Model\Entity\PublicationData $publicationData */
 		foreach ($entity->getOriginal('_publicationData') ?? [] as $publicationData) {
-			$date = $publicationData->hasOriginal('dateTime') ? $publicationData->getOriginal('dateTime') : $publicationData->get('dateTime');
+			$date = $publicationData->hasOriginal('dateTime')
+				? $publicationData->getOriginal('dateTime')
+				: $publicationData->get('dateTime');
 
 			if ($date) {
 				$date = $date->format('Y-m-d H:i:s');
@@ -799,7 +816,12 @@ class AuditBehavior extends Behavior {
 		}
 
 		if (!$translateFields) {
-			unset($entityData['old']['_translations'], $entityData['new']['_translations'], $entityData['changes']['old']['_translations'], $entityData['changes']['new']['_translations']);
+			unset(
+				$entityData['old']['_translations'],
+				$entityData['new']['_translations'],
+				$entityData['changes']['old']['_translations'],
+				$entityData['changes']['new']['_translations']
+			);
 
 			return $entityData;
 		}
@@ -830,7 +852,7 @@ class AuditBehavior extends Behavior {
 					$oldTranslations[ $languageShortcode ][ $field ] = $value;
 				}
 
-				if (!array_filter($oldTranslations[ $languageShortcode ], fn ($value) => $value !== null)) {
+				if (!array_filter($oldTranslations[ $languageShortcode ], fn($value) => $value !== null)) {
 					// If the translations only contain null values, remove them
 					unset($oldTranslations[ $languageShortcode ]);
 				}
@@ -838,7 +860,7 @@ class AuditBehavior extends Behavior {
 		}
 
 		// If old translations only contain null values, remove them
-		if (!array_filter($oldTranslations, fn ($value) => $value !== null)) {
+		if (!array_filter($oldTranslations, fn($value) => $value !== null)) {
 			$oldTranslations = null;
 		}
 
@@ -869,7 +891,7 @@ class AuditBehavior extends Behavior {
 			$translations[ $shortcode ] = array_diff_key($translatedEntity->toArray(), array_flip($translatedEntity->getVirtual()));
 
 			// If the translations only contain null values, remove them
-			if (array_filter($translations[ $shortcode ], fn ($value) => $value !== null) === []) {
+			if (array_filter($translations[ $shortcode ], fn($value) => $value !== null) === []) {
 				unset($translations[ $shortcode ]);
 			}
 		}
@@ -975,7 +997,12 @@ class AuditBehavior extends Behavior {
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function cleanHasOneAssociationData(Entity $entity, string $field, Association|HasOne $association, array $entityData): array {
+	protected function cleanHasOneAssociationData(
+		Entity $entity,
+		string $field,
+		Association|HasOne $association,
+		array $entityData
+	): array {
 		/** @noinspection DuplicatedCode */
 		$keys = (array)$association->getBindingKey();
 
@@ -1066,7 +1093,12 @@ class AuditBehavior extends Behavior {
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function cleanHasManyAssociationData(Entity $entity, string $field, Association|HasMany $association, array $entityData): array {
+	protected function cleanHasManyAssociationData(
+		Entity $entity,
+		string $field,
+		Association|HasMany $association,
+		array $entityData
+	): array {
 		$keys = [];
 
 		$foreignKeys = (array)$association->getForeignKey();
@@ -1148,7 +1180,12 @@ class AuditBehavior extends Behavior {
 	 * @return array
 	 * @noinspection PhpFunctionCyclomaticComplexityInspection
 	 */
-	protected function cleanBelongsToManyAssociationData(Entity $entity, string $field, Association|BelongsToMany $association, array $entityData): array {
+	protected function cleanBelongsToManyAssociationData(
+		Entity $entity,
+		string $field,
+		Association|BelongsToMany $association,
+		array $entityData
+	): array {
 		$keys = (array)$association->getBindingKey();
 		if (count($keys) > 1) {
 			dd('ohoh', $keys, __FILE__, __LINE__);
@@ -1342,7 +1379,12 @@ class AuditBehavior extends Behavior {
 	 * @param array $blocklistedFields
 	 * @return array
 	 */
-	protected function buildMediaAssignment(array $data, string|int $elementIdentifier, array $elementAssignments, array $blocklistedFields): array {
+	protected function buildMediaAssignment(
+		array $data,
+		string|int $elementIdentifier,
+		array $elementAssignments,
+		array $blocklistedFields
+	): array {
 		foreach ($elementAssignments as $selectorIdentifier => $selectorAssignments) {
 			if ($selectorAssignments instanceof Entity) {
 				$values = $selectorAssignments->extract();

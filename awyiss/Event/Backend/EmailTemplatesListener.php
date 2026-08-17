@@ -79,7 +79,11 @@ class EmailTemplatesListener implements EventListenerInterface {
 
 		$filePath = $folderPath . $fileName . $extension;
 
-		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
+		if (
+			!($options['isCopy'] ?? false)
+			&& $entity->hasOriginal('fileName')
+			&& $entity->get('fileName') !== $entity->getOriginal('fileName')
+		) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$currentFilePath = $folderPath . $currentFileName . $extension;
@@ -94,7 +98,9 @@ class EmailTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontend email templates
 		if (!$fileExists) {
-			$commands[] = 'bin' . DS . 'cake bake template email_templates email_template ' . $fileName . ' --prefix Frontend --controller email';
+			$commands[] = 'bin' . DS . 'cake bake template email_templates email_template '
+				. $fileName . ' --prefix Frontend --controller email'
+			;
 			$commands[] = 'chmod 0755 ' . $filePath;
 		}
 

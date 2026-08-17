@@ -7,6 +7,9 @@ namespace Awyiss\Validation;
 use Cake\Validation\Validation as BaseValidation;
 
 
+/**
+ * Extends CakePHP's Validation class with additional validation methods.
+ */
 class Validation extends BaseValidation {
 	/**
 	 * Check if the given value is not a boolean.

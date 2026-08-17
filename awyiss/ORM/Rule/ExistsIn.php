@@ -28,7 +28,7 @@ class ExistsIn extends BaseExistsIn {
 	/**
 	 * Re-implemented to
 	 * - honor the `withMatchingAttributes`-finder that allows checking for the existence of entities using attributes
-	 * 	using the `attributeFieldsAreDirty()` method
+	 *    using the `attributeFieldsAreDirty()` method
 	 * - get the finder of the target association if it is not set in the options
 	 * - pass the options to the `exists()` method
 	 *
@@ -86,10 +86,10 @@ class ExistsIn extends BaseExistsIn {
 			$schema = $source->getSchema();
 			foreach ($fields as $i => $field) {
 				if (
-					!$schema->hasColumn($field) ||
-					(
-						$schema->isNullable($field) &&
-						$entity->get($field) === null
+					!$schema->hasColumn($field)
+					|| (
+						$schema->isNullable($field)
+						&& $entity->get($field) === null
 					)
 				) {
 					unset($bindingKey[ $i ], $fields[ $i ]);

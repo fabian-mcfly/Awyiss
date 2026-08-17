@@ -28,11 +28,11 @@ class ErrorController extends AppController {
 	/**
 	 * @var bool
 	 */
-	protected bool $templatePathSet = false;
+	protected bool $layoutSet = false;
 	/**
 	 * @var bool
 	 */
-	protected bool $layoutSet = false;
+	protected bool $templatePathSet = false;
 
 
 	/**
@@ -44,7 +44,9 @@ class ErrorController extends AppController {
 	public function beforeRender(EventInterface $event): void {
 		parent::beforeRender($event);
 
-		$isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
+		$isPreview = !!(Router::getRequest()
+			?->getSession()
+			->read('previewMode.enabled', false));
 		if (Configure::read('debug') && !$isPreview) {
 			return;
 		}
@@ -185,7 +187,6 @@ class ErrorController extends AppController {
 	}
 
 
-
 	/**
 	 * Find a page by slug and language
 	 *
@@ -206,7 +207,8 @@ class ErrorController extends AppController {
 		$query = $pagesTable
 			->find('active')
 			->find('published', skipPageRoleCheck: true)
-			->find('mediaAssignments', useMediaEntity: true);
+			->find('mediaAssignments', useMediaEntity: true)
+		;
 
 		if ($where) {
 			$query->where($where);
@@ -305,8 +307,9 @@ class ErrorController extends AppController {
 		$this
 			->viewBuilder()
 			//->setLayout('default')
-			->setTemplate($page->pageTemplate->fileName)
-			->setTemplatePath('Frontend/page');
+				->setTemplate($page->pageTemplate->fileName)
+				->setTemplatePath('Frontend/page')
+		;
 
 		$this->templatePathSet = true;
 		$this->layoutSet = true;
@@ -316,7 +319,11 @@ class ErrorController extends AppController {
 
 		ResizedImageManager::addMediaItemsFromEntity($page);
 
-		$designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
+		$designVariables = $this
+			->getRequest()
+			->getAttribute('design')
+			->getDesignVariables()
+		;
 
 		/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $className */
 		$className = App::className('MediaRenderOptions', 'Utility/Media');
@@ -349,6 +356,7 @@ class ErrorController extends AppController {
 		}
 		else {
 			DebugTimer::stop('ErrorController::track404');
+
 			return;
 		}
 
@@ -358,25 +366,26 @@ class ErrorController extends AppController {
 
 		// Don't track resized and preview images and assets
 		if (
-			$slug === '/apple-touch-icon-precomposed.png' ||
-			$slug === '/apple-touch-icon.png' ||
-			$slug === '/favicon.png' ||
-			$slug === '/backup' ||
-			$slug === '/new' ||
-			$slug === '/old' ||
-			$slug === '/test' ||
-			$slug === '/temp' ||
-			str_contains($slug, '/_resized') ||
-			str_contains($slug, '_preview/') ||
-			str_starts_with($slug, '/.git/') ||
-			str_starts_with($slug, '/assets/') ||
-			str_starts_with($slug, '/awyiss/assets/') ||
-			str_starts_with($slug, '/config/') ||
-			str_starts_with($slug, '//google') ||
-			str_starts_with($slug, '/wordpress') ||
-			str_starts_with($slug, '/wp-admin')
+			$slug === '/apple-touch-icon-precomposed.png'
+			|| $slug === '/apple-touch-icon.png'
+			|| $slug === '/favicon.png'
+			|| $slug === '/backup'
+			|| $slug === '/new'
+			|| $slug === '/old'
+			|| $slug === '/test'
+			|| $slug === '/temp'
+			|| str_contains($slug, '/_resized')
+			|| str_contains($slug, '_preview/')
+			|| str_starts_with($slug, '/.git/')
+			|| str_starts_with($slug, '/assets/')
+			|| str_starts_with($slug, '/awyiss/assets/')
+			|| str_starts_with($slug, '/config/')
+			|| str_starts_with($slug, '//google')
+			|| str_starts_with($slug, '/wordpress')
+			|| str_starts_with($slug, '/wp-admin')
 		) {
 			DebugTimer::stop('ErrorController::track404');
+
 			return;
 		}
 
@@ -393,6 +402,7 @@ class ErrorController extends AppController {
 
 			if (preg_match('/' . $pattern . '/', trim($slug, '/'))) {
 				DebugTimer::stop('ErrorController::track404');
+
 				return;
 			}
 		}
@@ -406,6 +416,7 @@ class ErrorController extends AppController {
 		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
 		if ($urlsNotFoundTable->exists(['url' => $slug, 'createdOn >' => new DateTime('-5 minutes')])) {
 			DebugTimer::stop('ErrorController::track404');
+
 			return;
 		}
 

@@ -74,17 +74,20 @@ class EnumCommand extends BaseBakeEnumCommand {
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);
 
-		$parser->addOption('namespace', [
-			'choices' => [
-				'Awyiss',
-				CUSTOM_NAMESPACE,
-			],
-			'default' => 'Awyiss',
-			'help' => 'The namespace for the model.',
-		])->addOption('is-pagerole', [
-			'boolean' => true,
-			'help' => 'Does the enum reflect pagerole values?',
-		]);
+		$parser
+			->addOption('namespace', [
+				'choices' => [
+					'Awyiss',
+					CUSTOM_NAMESPACE,
+				],
+				'default' => 'Awyiss',
+				'help' => 'The namespace for the model.',
+			])
+			->addOption('is-pagerole', [
+				'boolean' => true,
+				'help' => 'Does the enum reflect pagerole values?',
+			])
+		;
 
 
 		return $parser;

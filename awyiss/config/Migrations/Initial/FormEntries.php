@@ -28,103 +28,131 @@ class FormEntries {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('form_entries')) {
-			$this->migration->table('form_entries')->drop()->save();
+			$this->migration
+				->table('form_entries')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('form_entries')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('form_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('page_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('subject', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('subject_confirmation', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('body', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('body_confirmation', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('data', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('ip_hash', 'char', [
-			'default' => null,
-			'limit' => 40,
-			'null' => false,
-		])->addColumn('post_hash', 'char', [
-			'default' => null,
-			'limit' => 40,
-			'null' => false,
-		])->addColumn('identifier', 'char', [
-			'default' => null,
-			'limit' => 40,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'form_id',
-			], [
-				'name' => 'FORM_ENTRIES_FORM_ID',
-			]
-		)->addIndex(
-			[
-				'page_id',
-			], [
-				'name' => 'FORM_ENTRIES_PAGE_ID',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'FORM_ENTRIES_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'FORM_ENTRIES_DELETED',
-			]
-		)->addIndex(
-			[
-				'created_on',
-			], [
-				'name' => 'FORM_ENTRIES_CREATED_ON',
-			]
-		)->create();
+		$this->migration
+			->table('form_entries')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('form_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('page_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('subject', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('subject_confirmation', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('body', 'text', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('body_confirmation', 'text', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('data', 'text', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('ip_hash', 'char', [
+				'default' => null,
+				'limit' => 40,
+				'null' => false,
+			])
+			->addColumn('post_hash', 'char', [
+				'default' => null,
+				'limit' => 40,
+				'null' => false,
+			])
+			->addColumn('identifier', 'char', [
+				'default' => null,
+				'limit' => 40,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'form_id',
+				], [
+					'name' => 'FORM_ENTRIES_FORM_ID',
+				]
+			)
+			->addIndex(
+				[
+					'page_id',
+				], [
+					'name' => 'FORM_ENTRIES_PAGE_ID',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'FORM_ENTRIES_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'FORM_ENTRIES_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'created_on',
+				], [
+					'name' => 'FORM_ENTRIES_CREATED_ON',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -134,6 +162,10 @@ class FormEntries {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('form_entries')->drop()->save();
+		$this->migration
+			->table('form_entries')
+			->drop()
+			->save()
+		;
 	}
 }

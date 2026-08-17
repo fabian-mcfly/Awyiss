@@ -98,7 +98,13 @@ class LanguagesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$language = $this->Languages
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$language) {
 			$this->Flash->error(__('record_not_found'));
 

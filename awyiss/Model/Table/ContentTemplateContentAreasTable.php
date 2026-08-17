@@ -144,10 +144,14 @@ class ContentTemplateContentAreasTable extends Table {
 			$pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
 
 
-			return (bool)$pageTemplateContentAreasTable->find()->where([
-				'pageTemplateId' => $entity->pageTemplateId,
-				'contentAreaId' => $entity->contentAreaId,
-			])->first();
+			return (bool)$pageTemplateContentAreasTable
+				->find()
+				->where([
+					'pageTemplateId' => $entity->pageTemplateId,
+					'contentAreaId' => $entity->contentAreaId,
+				])
+				->first()
+			;
 		}, 'contentTemplateContentAreas', [
 			'errorField' => '_general',
 			'message' => __df($this->getI18nDomain(), 'Validation', 'error_page_template_content_area_exists'),

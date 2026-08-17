@@ -20,6 +20,10 @@ class CurlResolver implements ResolverInterface {
 
 
 	/**
+	 * Accept content type 'application/json'
+	 */
+	final public const string ACCEPT_JSON = 'application/json';
+	/**
 	 * Request type 'get'
 	 */
 	final public const string TYPE_GET = 'GET';
@@ -27,10 +31,8 @@ class CurlResolver implements ResolverInterface {
 	 * Request type 'post'
 	 */
 	final public const string TYPE_POST = 'POST';
-	/**
-	 * Accept content type 'application/json'
-	 */
-	final public const string ACCEPT_JSON = 'application/json';
+
+
 	/**
 	 * Default configuration.
 	 * - `acceptType` The content type to use for the request

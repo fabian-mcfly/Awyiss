@@ -25,7 +25,12 @@ abstract class AbstractWidget implements WidgetInterface {
 	 *
 	 * @return array<string, string|array<string, mixed>>
 	 */
-	abstract protected static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array;
+	abstract protected static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array;
 
 
 	/**

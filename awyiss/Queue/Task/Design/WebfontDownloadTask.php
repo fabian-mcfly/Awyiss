@@ -16,11 +16,11 @@ class WebfontDownloadTask extends Task {
 	/**
 	 * @inheritDoc
 	 */
-	public ?int $timeout = 60;
+	public ?int $retries = 3;
 	/**
 	 * @inheritDoc
 	 */
-	public ?int $retries = 3;
+	public ?int $timeout = 60;
 
 
 	/**
@@ -56,8 +56,19 @@ class WebfontDownloadTask extends Task {
 				$fonts[ $key ]['variants'][ $variantKey ] = $font['variants'][ $variantKey ];
 
 				if (
-					file_exists($fontPath . DS . $font['id'] . '-' . $font['version'] . '-latin-' . $font['variants'][ $variantKey ] . '.woff2') ||
-					file_exists($fontPath . DS . $font['id'] . '-' . $font['version'] . '-latin_latin-ext-' . $font['variants'][ $variantKey ] . '.woff2')
+					file_exists(
+						$fontPath . DS . $font['id'] . '-' . $font['version'] . '-latin-' . $font['variants'][ $variantKey ] . '.woff2'
+					)
+					|| file_exists(
+						$fontPath
+						. DS
+						. $font['id']
+						. '-'
+						. $font['version']
+						. '-latin_latin-ext-'
+						. $font['variants'][ $variantKey ]
+						. '.woff2'
+					)
 				) {
 					// Remove the variant from the list if it already exists
 					unset($font['variants'][ $variantKey ]);
@@ -130,7 +141,18 @@ EOT;
 				$fontStyle = str_ends_with($variant, 'italic') ? 'italic' : 'normal';
 				$fileName = $font['id'] . '-' . $font['version'] . '-latin_latin-ext-' . $font['variants'][ $variantKey ] . '.woff2';
 
-				if (!file_exists($fontPath . DS . $font['id'] . '-' . $font['version'] . '-latin_latin-ext-' . $font['variants'][ $variantKey ] . '.woff2')) {
+				if (
+					!file_exists(
+						$fontPath
+						. DS
+						. $font['id']
+						. '-'
+						. $font['version']
+						. '-latin_latin-ext-'
+						. $font['variants'][ $variantKey ]
+						. '.woff2'
+					)
+				) {
 					$fileName = $font['id'] . '-' . $font['version'] . '-latin-' . $font['variants'][ $variantKey ] . '.woff2';
 				}
 

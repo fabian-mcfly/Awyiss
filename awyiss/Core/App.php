@@ -21,7 +21,6 @@ class App extends BaseApp {
 	protected static array $classNamesCache = [];
 
 
-
 	/**
 	 * Return the class name namespaced.
 	 *
@@ -106,7 +105,7 @@ class App extends BaseApp {
 	 * @param string $folder The folder of the class, e.g. 'Attribute/AttributeOptionsCollection', 'Event/Backend', 'Form'
 	 * @param string $suffix The suffix of the class, e.g. 'AttributeOptionsCollection', 'Listener', 'FormOptions'
 	 * @param string|null $interface The interface the class should implement. If set, the class will be checked
-	 * 	for it and an exception will be thrown if it does not implement the interface.
+	 *    for it and an exception will be thrown if it does not implement the interface.
 	 * @param string|null $subfolders Subfolders to check for the class that are not namespaces on their own, like console commands
 	 * @param array $blocklistedClassNames Class names that should be ignored, like Abstract classes or interfaces
 	 * @return array
@@ -160,9 +159,9 @@ class App extends BaseApp {
 				$className = str_replace(DS, '\\', $className);
 
 				if (
-					str_starts_with($className, '_') ||
-					str_starts_with($className, 'Abstract') ||
-					in_array($className, $blocklistedClassNames)
+					str_starts_with($className, '_')
+					|| str_starts_with($className, 'Abstract')
+					|| in_array($className, $blocklistedClassNames)
 				) {
 					continue;
 				}
@@ -170,8 +169,8 @@ class App extends BaseApp {
 				$fqClassName = $namespace . $className;
 
 				if (
-					$interface &&
-					!in_array($interface, class_implements($fqClassName) ?: [])
+					$interface
+					&& !in_array($interface, class_implements($fqClassName) ?: [])
 				) {
 					if ($name === '*') {
 						continue;

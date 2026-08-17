@@ -66,6 +66,7 @@ abstract class GenericDatatablesTable extends Table {
 		parent::__construct($config);
 	}
 
+
 	/**
 	 * @inheritDoc
 	 */

@@ -37,6 +37,7 @@ class SurveyHelper extends Helper {
 		return false;
 	}
 
+
 	/**
 	 * @param array<\Awyiss\Model\Entity\SurveySurveyQuestion> $questions
 	 * @param string $identifier
@@ -109,10 +110,11 @@ class SurveyHelper extends Helper {
 		}
 
 		if (is_string($label)) {
-			return '<span class="Label" title="' . htmlentities($label, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) . '">' .
-				$customLabel .
-				$this->safeSubstr(htmlentities($label, ENT_COMPAT, 'UTF-8', false), 50) .
-				'</span>';
+			return '<span class="Label" title="' . htmlentities($label, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) . '">'
+				. $customLabel
+				. $this->safeSubstr(htmlentities($label, ENT_COMPAT, 'UTF-8', false), 50)
+				. '</span>'
+			;
 		}
 
 		$return = '<ul>';

@@ -41,12 +41,9 @@ class EavStrategy extends BaseEavStrategy {
 		$association->setForeignKey('foreignKey');
 	}
 
+
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Event\EventInterface $event
-	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param \ArrayObject $options
-	 * @return void
 	 */
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
 		$queryOptions = Hash::get($options, 'translate', []);
@@ -63,10 +60,6 @@ class EavStrategy extends BaseEavStrategy {
 	 * {@inheritDoc}
 	 *
 	 * Implemented here nearly 1:1 without removing the dirty flag on translatable fields
-	 *
-	 * @param EventInterface $event The beforeSave event that was fired
-	 * @param EntityInterface $entity The entity that is going to be saved
-	 * @param ArrayObject $options the options passed to the save method
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
@@ -133,12 +126,19 @@ class EavStrategy extends BaseEavStrategy {
 
 		$preexistentValues = [];
 		if ($key) {
-			$preexistentValues = $this->translationTable->find()->select(['id', 'field'])->where([
-				'field IN' => $fields,
-				'locale' => $locale,
-				'foreignKey' => $key,
-				'model' => $modelName,
-			])->all()->indexBy('field')->toArray();
+			$preexistentValues = $this->translationTable
+				->find()
+				->select(['id', 'field'])
+				->where([
+					'field IN' => $fields,
+					'locale' => $locale,
+					'foreignKey' => $key,
+					'model' => $modelName,
+				])
+				->all()
+				->indexBy('field')
+				->toArray()
+			;
 		}
 
 		$newValues = $this->prepareTranslationEntities($preexistentValues, $values, $locale, $modelName);
@@ -146,10 +146,6 @@ class EavStrategy extends BaseEavStrategy {
 		$entity->set('_i18n', array_merge($bundled, $newValues));
 		$entity->set('_locale', $locale, ['setter' => false]);
 		$entity->setDirty('_locale', false);
-		/* With those lines, the main language would not find its way in the db
-		foreach ($fields as $field) {
-			$entity->setDirty($field, false);
-		}*/
 	}
 
 
@@ -167,11 +163,16 @@ class EavStrategy extends BaseEavStrategy {
 
 		if (!empty($translationsDiff)) {
 			$primaryKey = (array)$this->table->getPrimaryKey();
-			$this->translationTable->deleteQuery()->delete()->where([
-				'locale IN' => array_keys($translationsDiff),
-				'foreignKey' => $entity->get(current($primaryKey)),
-				'model' => $this->_config['referenceName'],
-			])->execute();
+			$this->translationTable
+				->deleteQuery()
+				->delete()
+				->where([
+					'locale IN' => array_keys($translationsDiff),
+					'foreignKey' => $entity->get(current($primaryKey)),
+					'model' => $this->_config['referenceName'],
+				])
+				->execute()
+			;
 		}
 
 		//Check if there are keys in the translation entities that aren't set in the config
@@ -188,12 +189,17 @@ class EavStrategy extends BaseEavStrategy {
 		//Delete unused entries for fields that aren't set in the config
 		if ($unusedKeys) {
 			$primaryKey = (array)$this->table->getPrimaryKey();
-			$this->translationTable->deleteQuery()->delete()->where([
-				'locale IN' => array_keys($entity->get('_translations')),
-				'foreignKey' => $entity->get(current($primaryKey)),
-				'field IN' => $unusedKeys,
-				'model' => $this->_config['referenceName'],
-			])->execute();
+			$this->translationTable
+				->deleteQuery()
+				->delete()
+				->where([
+					'locale IN' => array_keys($entity->get('_translations')),
+					'foreignKey' => $entity->get(current($primaryKey)),
+					'field IN' => $unusedKeys,
+					'model' => $this->_config['referenceName'],
+				])
+				->execute()
+			;
 		}
 
 		$entity->unset('_i18n');

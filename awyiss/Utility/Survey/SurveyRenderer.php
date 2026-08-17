@@ -40,6 +40,11 @@ class SurveyRenderer {
 
 
 	/**
+	 * @var \Awyiss\View\FrontendView
+	 * @noinspection PhpPropertyNamingConventionInspection
+	 */
+	protected FrontendView $View;
+	/**
 	 * @var \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|false|null
 	 */
 	protected SurveySurveyQuestion|BackedEnum|false|null $currentAction;
@@ -92,11 +97,6 @@ class SurveyRenderer {
 	 * @var string|null
 	 */
 	protected ?string $surveyEntryHash = null;
-	/**
-	 * @var \Awyiss\View\FrontendView
-	 * @noinspection PhpPropertyNamingConventionInspection
-	 */
-	protected FrontendView $View;
 
 
 	/**
@@ -160,7 +160,7 @@ class SurveyRenderer {
 
 		$this->survey->initialize(
 			$this->View,
-			$requestData['survey'][ $this->survey->identifier] ?? [],
+			$requestData['survey'][ $this->survey->identifier ] ?? [],
 			$this->page,
 			$this->isPreview(),
 		);
@@ -185,14 +185,15 @@ class SurveyRenderer {
 		$this->currentAction = $this->survey->getCurrentAction();
 
 		if (
-			($this->requestData['_surveyIdentifier'] ?? null) === $this->survey->identifier &&
-			!isset($this->requestData['_formIdentifier']) &&
-			in_array($this->currentAction, [
+			($this->requestData['_surveyIdentifier'] ?? null) === $this->survey->identifier
+			&& !isset($this->requestData['_formIdentifier'])
+			&& in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
 			$this->saveEntryAndRedirect();
+
 			return;
 		}
 
@@ -314,10 +315,14 @@ class SurveyRenderer {
 		$surveyEntryHash = $entryHash;
 
 		/** @var \Awyiss\Model\Entity\SurveyEntry|null $entry */
-		$entry = $surveyEntriesTable->find('all')->where([
-			'identifier' => $surveyEntryHash,
-			'surveyId' => $surveyId,
-		])->first();
+		$entry = $surveyEntriesTable
+			->find('all')
+			->where([
+				'identifier' => $surveyEntryHash,
+				'surveyId' => $surveyId,
+			])
+			->first()
+		;
 
 		return $entry;
 	}
@@ -344,12 +349,16 @@ class SurveyRenderer {
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->View->get('fullWidth', 1920),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
-			columnWidth: $options['columnWidth'] ?? 100.00,
-			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
-		);
+		$mediaRenderOptions = $this->View
+			->helpers()
+			->get('Media')
+			->mediaRenderOptions(
+				baseWidth: $this->View->get('fullWidth', 1920),
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $options['columnWidth'] ?? 100.00,
+				singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
+			)
+		;
 
 		$currentQuestion = '';
 		$hasNextAction = false;
@@ -358,16 +367,20 @@ class SurveyRenderer {
 
 			// Regular questions (single choice, multi choice, free user input) always have a next action.
 			// Other question types need to have a specific next action defined.
-			$hasNextAction = in_array($this->currentAction->surveyQuestion->type, [
-				$this->survey->getQuestionTypeEnum()::SingleChoice,
-				$this->survey->getQuestionTypeEnum()::MultiChoice,
-				$this->survey->getQuestionTypeEnum()::FreeText,
-			]) || $this->survey->hasNextAction();
+			$hasNextAction = in_array(
+				$this->currentAction->surveyQuestion->type,
+				[
+					$this->survey->getQuestionTypeEnum()::SingleChoice,
+					$this->survey->getQuestionTypeEnum()::MultiChoice,
+					$this->survey->getQuestionTypeEnum()::FreeText,
+				]
+			)
+			|| $this->survey->hasNextAction();
 		}
 
 		if (
-			$this->savedEntry === false &&
-			in_array($this->currentAction, [
+			$this->savedEntry === false
+			&& in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
@@ -393,28 +406,33 @@ class SurveyRenderer {
 
 		$successMessage = null;
 		if (
-			$this->savedEntry && in_array($this->currentAction, [
+			$this->savedEntry
+			&& in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
 			$this->parseWidgets($this->survey, $mediaRenderOptions, 'successMessage');
-			$successMessage = $this->results?->getFinalResult($this->survey->successMessage, $mediaRenderOptions) ?? $this->survey->successMessage;
+			$successMessage = $this->results?->getFinalResult($this->survey->successMessage, $mediaRenderOptions)
+				?? $this->survey->successMessage;
 		}
 
-		return $this->getView()->element('survey/survey', [
-			'survey' => $this->survey,
-			'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
-			'currentQuestion' => $currentQuestion,
-			'currentAction' => $this->currentAction,
-			'hasNextAction' => $hasNextAction,
-			'customAnswers' => $this->survey->getCustomAnswers(),
-			'progress' => $this->survey->getProgress(),
-			'successMessage' => $successMessage,
-			'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
-			'nextActionEnum' => $this->survey->getNextActionEnum(),
-			'savedEntry' => $this->savedEntry,
-		]);
+		return $this
+			->getView()
+			->element('survey/survey', [
+				'survey' => $this->survey,
+				'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
+				'currentQuestion' => $currentQuestion,
+				'currentAction' => $this->currentAction,
+				'hasNextAction' => $hasNextAction,
+				'customAnswers' => $this->survey->getCustomAnswers(),
+				'progress' => $this->survey->getProgress(),
+				'successMessage' => $successMessage,
+				'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
+				'nextActionEnum' => $this->survey->getNextActionEnum(),
+				'savedEntry' => $this->savedEntry,
+			])
+		;
 	}
 
 
@@ -452,15 +470,15 @@ class SurveyRenderer {
 
 		if (
 			(
-				$this->savedEntry === true &&
-				in_array($this->currentAction, [
+				$this->savedEntry === true
+				&& in_array($this->currentAction, [
 					$this->survey->getNextActionEnum()::SaveAndShowForm,
 					$this->survey->getNextActionEnum()::ShowFormAndSave,
 				])
-			) ||
-			(
-				$this->savedEntry === null &&
-				in_array($this->currentAction, [
+			)
+			|| (
+				$this->savedEntry === null
+				&& in_array($this->currentAction, [
 					$this->survey->getNextActionEnum()::ShowForm,
 					$this->survey->getNextActionEnum()::ShowFormAndSave,
 				])
@@ -473,11 +491,10 @@ class SurveyRenderer {
 			return false;
 		}
 
-		$this->getFormRenderer()->initForm(
-			$form,
-			$this->requestData,
-			$this->page
-		);
+		$this
+			->getFormRenderer()
+			->initForm($form, $this->requestData, $this->page)
+		;
 
 		if (!$form->isSubmitted()) {
 			return true;
@@ -524,24 +541,32 @@ class SurveyRenderer {
 	 */
 	protected function renderForm(array $options): string {
 		$formRenderer = $this->getFormRenderer();
-		$formElements = $formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
-			return !empty($element->identifier);
-		})->indexBy('identifier')->toArray();
+		$formElements = $formRenderer
+			->getForm()
+			->getFormElements()
+			->listNested()
+			->filter(fn(FormElement $element): bool => !empty($element->identifier))
+			->indexBy('identifier')
+			->toArray()
+		;
 
-		return $this->getView()->element('survey/form', [
-			'form' => $formRenderer->getForm(),
-			'formBody' => $formRenderer->getFormBody($options),
-			'formElements' => $formElements,
-			'formSent' => $this->formSent,
-			'survey' => $this->survey,
-			'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
-			'currentAction' => $this->currentAction,
-			'customAnswers' => $this->survey->getCustomAnswers(),
-			'progress' => $this->survey->getProgress(),
-			'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
-			'nextActionEnum' => $this->survey->getNextActionEnum(),
-			'savedEntry' => $this->savedEntry,
-		]);
+		return $this
+			->getView()
+			->element('survey/form', [
+				'form' => $formRenderer->getForm(),
+				'formBody' => $formRenderer->getFormBody($options),
+				'formElements' => $formElements,
+				'formSent' => $this->formSent,
+				'survey' => $this->survey,
+				'surveyHash' => $this->survey ? md5(json_encode($this->survey->toArray())) : null,
+				'currentAction' => $this->currentAction,
+				'customAnswers' => $this->survey->getCustomAnswers(),
+				'progress' => $this->survey->getProgress(),
+				'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
+				'nextActionEnum' => $this->survey->getNextActionEnum(),
+				'savedEntry' => $this->savedEntry,
+			])
+		;
 	}
 
 
@@ -589,6 +614,7 @@ class SurveyRenderer {
 		// Save the survey entry
 		if ($this->surveyEntriesTable->save($surveyEntry, ['allowFrontendSave' => true])) {
 			$this->savedEntry = true;
+
 			return $surveyEntry->identifier;
 		}
 
@@ -671,7 +697,9 @@ class SurveyRenderer {
 		}
 
 		if (!is_subclass_of($className, SurveyResultsInterface::class)) {
-			throw new RuntimeException(sprintf('The survey results class "%s" must extend "%s".', $className, SurveyResultsInterface::class));
+			throw new RuntimeException(
+				sprintf('The survey results class "%s" must extend "%s".', $className, SurveyResultsInterface::class)
+			);
 		}
 
 		$this->results = new $className(
@@ -789,17 +817,23 @@ class SurveyRenderer {
 		$this->parseAwyissImageTags($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
 		$result = null;
-		if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
+		if (
+			$this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText
+			&& !$this->survey->hasNextAction()
+		) {
 			$result = $this->results?->getStepResult($this->currentAction->identifier, $mediaRenderOptions);
 		}
 
 		// Parse the widgets
 		$this->parseWidgets($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
-		return $this->getView()->element('survey/' . $element, [
-			'survey' => $this->survey,
-			'question' => $this->currentAction,
-			'result' => $result,
-		]);
+		return $this
+			->getView()
+			->element('survey/' . $element, [
+				'survey' => $this->survey,
+				'question' => $this->currentAction,
+				'result' => $result,
+			])
+		;
 	}
 }

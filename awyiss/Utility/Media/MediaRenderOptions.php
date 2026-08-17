@@ -25,8 +25,14 @@ class MediaRenderOptions {
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
-	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy:
-	 *     \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
+	 * @param array<float, array{
+	 *     baseWidth: float|null,
+	 *     breakpoint: float,
+	 *     columnWidth: float|null,
+	 *     width: float|null,
+	 *     height: float|null,
+	 *     resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null
+	 * }> $breakpoints
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
 	 * @param bool $include2x
@@ -415,6 +421,7 @@ class MediaRenderOptions {
 	 * @param string|float|int $key
 	 * @param array|float|int $value
 	 * @return array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
+	 * @noinspection LongLine
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$options = [

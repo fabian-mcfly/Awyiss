@@ -97,15 +97,20 @@ class PageTemplatesTable extends Table {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
-		return $query->enableAutoFields()->select([
-			'usedForPages' => $query->func()->count('Pages.id'),
-		])->leftJoinWith('Pages', function (SelectQuery $query) {
-			return $query->applyOptions([
-				'attributes' => [
-					'skip' => true,
-				],
-			]);
-		})->groupBy('PageTemplates.id');
+		return $query
+			->enableAutoFields()
+			->select([
+				'usedForPages' => $query->func()->count('Pages.id'),
+			])
+			->leftJoinWith('Pages', function (SelectQuery $query) {
+				return $query->applyOptions([
+					'attributes' => [
+						'skip' => true,
+					],
+				]);
+			})
+			->groupBy('PageTemplates.id')
+		;
 	}
 
 
@@ -192,23 +197,26 @@ class PageTemplatesTable extends Table {
 		);
 
 
-		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($rules): bool {
-			if (
-				($options['isCopy'] ?? false) === true ||
-				!$entity->hasOriginal('pageRoleId') ||
-				$entity->get('pageRoleId') === $entity->getOriginal('pageRoleId')
-			) {
-				return true;
-			}
+		$rules->addUpdate(
+			function (PageTemplate $entity, array $options) use ($rules): bool {
+				if (
+					($options['isCopy'] ?? false) === true
+					|| !$entity->hasOriginal('pageRoleId')
+					|| $entity->get('pageRoleId') === $entity->getOriginal('pageRoleId')
+				) {
+					return true;
+				}
 
-			$linkedTo = $rules->isNotLinkedTo(
-				'Pages',
-				'pageRoleId',
-				__df($this->getI18nDomain(), 'Validation', 'error_no_linked_pages')
-			);
+				$linkedTo = $rules->isNotLinkedTo(
+					'Pages',
+					'pageRoleId',
+					__df($this->getI18nDomain(), 'Validation', 'error_no_linked_pages')
+				);
 
-			return $linkedTo($entity, $options);
-		}, 'noLinkedPageTemplates');
+				return $linkedTo($entity, $options);
+			},
+			'noLinkedPageTemplates'
+		);
 
 
 		$rules->addDelete(

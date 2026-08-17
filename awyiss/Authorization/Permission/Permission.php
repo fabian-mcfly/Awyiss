@@ -129,7 +129,9 @@ class Permission {
 	public function setPolicyClass(string|PolicyInterface|AbstractGenericPolicy|null $policyClass = null): static {
 		if (is_string($policyClass)) {
 			if (!in_array(PolicyInterface::class, class_implements($policyClass))) {
-				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $policyClass, PolicyInterface::class));
+				throw new RuntimeException(
+					sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $policyClass, PolicyInterface::class)
+				);
 			}
 		}
 
@@ -200,7 +202,12 @@ class Permission {
 	 * @return static
 	 */
 	public static function createFromArray(array $permission): static {
-		return new static($permission['scope'] ?? '', $permission['identifier'] ?? '', $permission['access'] ?? null, $permission['settings'] ?? null);
+		return new static(
+			$permission['scope'] ?? '',
+			$permission['identifier'] ?? '',
+			$permission['access'] ?? null,
+			$permission['settings'] ?? null
+		);
 	}
 
 

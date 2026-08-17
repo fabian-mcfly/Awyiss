@@ -110,7 +110,10 @@ abstract class AbstractGenericPolicy {
 
 		$permissions->add('delete', SimplePermissionOption::class);
 
-		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope()) || ConfigOptionsProvider::getConfigOptionsFile('GenericDatatables')) {
+		if (
+			ConfigOptionsProvider::getConfigOptionsFile($this->getScope())
+			|| ConfigOptionsProvider::getConfigOptionsFile('GenericDatatables')
+		) {
 			$permissions->add('configure', SimplePermissionOption::class);
 		}
 

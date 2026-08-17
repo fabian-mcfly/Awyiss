@@ -36,7 +36,7 @@ class PolicyCommand extends BakeCommand {
 	 */
 	public string $pathFragment = 'Authorization/Policy/';
 	/**
-	 * @var array|array<string> Table names that must never have permissions
+	 * @var array<string> Table names that must never have permissions
 	 */
 	private array $blocklistedNames = [
 		AuditTable::TABLE,
@@ -117,7 +117,11 @@ class PolicyCommand extends BakeCommand {
 			'prefix' => $prefix,
 		];
 
-		$contents = $this->createTemplateRenderer()->set($data)->generate('Policy/policy');
+		$contents = $this
+			->createTemplateRenderer()
+			->set($data)
+			->generate('Policy/policy')
+		;
 
 		$path = $this->getPath($args);
 		$filePath = $path . $policyName . 'Policy.php';
@@ -135,20 +139,23 @@ class PolicyCommand extends BakeCommand {
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = $this->_setCommonOptions($parser);
 
-		$parser->setDescription(
-			'Bake a policy skeleton.'
-		)->addArgument('name', [
-			'help' => 'Name of the policy to bake (without the `Policy` suffix).',
-		])->addOption('namespace', [
-			'choices' => [
-				'Awyiss',
-				CUSTOM_NAMESPACE,
-			],
-			'default' => 'Awyiss',
-			'help' => 'The namespace for the policy.',
-		])->addOption('prefix', [
-			'help' => 'The routing prefix to use.',
-		]);
+		$parser
+			->setDescription('Bake a policy skeleton.')
+			->addArgument('name', [
+				'help' => 'Name of the policy to bake (without the `Policy` suffix).',
+			])
+			->addOption('namespace', [
+				'choices' => [
+					'Awyiss',
+					CUSTOM_NAMESPACE,
+				],
+				'default' => 'Awyiss',
+				'help' => 'The namespace for the policy.',
+			])
+			->addOption('prefix', [
+				'help' => 'The routing prefix to use.',
+			])
+		;
 
 
 		return $parser;

@@ -22,6 +22,12 @@ class Address implements AddressInterface {
 	 */
 	protected ?string $country;
 	/**
+	 * Additional data related to the address
+	 *
+	 * @var array
+	 */
+	protected array $data;
+	/**
 	 * House number of the address
 	 *
 	 * @var string|null
@@ -57,12 +63,6 @@ class Address implements AddressInterface {
 	 * @var string|null
 	 */
 	protected ?string $street;
-	/**
-	 * Additional data related to the address
-	 *
-	 * @var array
-	 */
-	protected array $data;
 
 
 	/**
@@ -276,6 +276,7 @@ class Address implements AddressInterface {
 
 		return $this;
 	}
+
 
 	/**
 	 * @inheritDoc

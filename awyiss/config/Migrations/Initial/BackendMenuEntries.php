@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class BackendMenuEntries
  */
@@ -23,132 +22,166 @@ class BackendMenuEntries {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('backend_menu_entries')) {
-			$this->migration->table('backend_menu_entries')->drop()->save();
+			$this->migration
+				->table('backend_menu_entries')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('backend_menu_entries')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('parent_id', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => true,
-		])->addColumn('insert_after_id', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => true,
-		])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => false,
-		])->addColumn('link', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('access', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => true,
-		])->addColumn('external', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('active', 'boolean', [
-			'default' => true,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'parent_id',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_PARENT_ID',
-			]
-		)->addIndex(
-			[
-				'insert_after_id',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_INSERT_AFTER_ID',
-			]
-		)->addIndex(
-			[
-				'active',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_ACTIVE',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_DELETED',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'BACKEND_MENU_ENTRIES_DELETED_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('backend_menu_entries')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('parent_id', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => true,
+			])
+			->addColumn('insert_after_id', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => true,
+			])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => false,
+			])
+			->addColumn('link', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('access', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => true,
+			])
+			->addColumn('external', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('active', 'boolean', [
+				'default' => true,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'parent_id',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_PARENT_ID',
+				]
+			)
+			->addIndex(
+				[
+					'insert_after_id',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_INSERT_AFTER_ID',
+				]
+			)
+			->addIndex(
+				[
+					'active',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_ACTIVE',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'BACKEND_MENU_ENTRIES_DELETED_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('backend_menu_entries')->drop()->save();
+		$this->migration
+			->table('backend_menu_entries')
+			->drop()
+			->save()
+		;
 	}
 }

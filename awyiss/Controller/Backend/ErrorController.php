@@ -42,9 +42,11 @@ class ErrorController extends Controller {
 		parent::beforeRender($event);
 
 		if (!Configure::read('debug')) {
-			$this->viewBuilder()
+			$this
+				->viewBuilder()
 				->setTemplatePath('Backend/Error')
-				->setClassName('Backend');
+				->setClassName('Backend')
+			;
 		}
 	}
 }

@@ -51,7 +51,12 @@ class DashboardController extends Controller {
 		$lastLogin = $session->read('Backend.lastLogin');
 
 		$dashboardElements = [];
-		foreach ($this->fetchTable('DashboardElements')->find('active')->all() as $dashboardElement) {
+		foreach (
+			$this
+				->fetchTable('DashboardElements')
+				->find('active')
+				->all() as $dashboardElement
+		) {
 			$dashboardElements[ $dashboardElement->id ] = $this->buildDashboardElement($dashboardElement);
 		}
 		$dashboardElements = array_filter($dashboardElements);
@@ -138,8 +143,8 @@ class DashboardController extends Controller {
 			}
 
 			if (
-				in_array($association->getProperty(), ['attributes', '_publicationStart', '_publicationEnd']) ||
-				str_starts_with($association->getProperty(), 'parent_')
+				in_array($association->getProperty(), ['attributes', '_publicationStart', '_publicationEnd'])
+				|| str_starts_with($association->getProperty(), 'parent_')
 			) {
 				continue;
 			}
@@ -149,9 +154,7 @@ class DashboardController extends Controller {
 				$key = reset($key);
 			}
 
-			if (
-				in_array($key, $selectedFields, true)
-			) {
+			if (in_array($key, $selectedFields, true)) {
 				$query->contain($association->getName());
 			}
 		}
@@ -259,21 +262,25 @@ class DashboardController extends Controller {
 		$associationTable = $association->getTarget();
 
 		if (
-			!$associationTable->hasBehavior('Translate') ||
-			!in_array(
+			!$associationTable->hasBehavior('Translate')
+			|| !in_array(
 				$displayField,
 				$associationTable->getBehavior('Translate')->getConfig('fields')
 			)
 		) {
 			$field = $associationTable->aliasField($displayField);
 			$query->orderBy([$field => $direction]);
+
 			return $query;
 		}
 
-		$expr = $query->func()->coalesce([
-			new IdentifierExpression($associationName . '_' . $displayField . '_translation.content'),
-			new IdentifierExpression($associationName . '.' . $displayField),
-		]);
+		$expr = $query
+			->func()
+			->coalesce([
+				new IdentifierExpression($associationName . '_' . $displayField . '_translation.content'),
+				new IdentifierExpression($associationName . '.' . $displayField),
+			])
+		;
 
 		if ($direction === 'asc') {
 			$query->orderByAsc($expr);

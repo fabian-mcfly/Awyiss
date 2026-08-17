@@ -64,11 +64,19 @@ enum ConfigOptionType {
 				catch (Exception | TypeError) {
 					return false;
 				}
+
 				return is_array($value);
 
 			case self::Enum:
 			case self::ValueCollection:
-				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
+				throw new RuntimeException(
+					sprintf(
+						'Cannot validate case `%s` in `%s` in the enum directly.'
+							. ' Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.',
+						$this->name,
+						self::class
+					)
+				);
 
 			case self::String:
 				return is_string($value);

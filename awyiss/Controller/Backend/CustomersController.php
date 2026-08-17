@@ -92,7 +92,10 @@ class CustomersController extends Controller {
 
 		$this->set([
 			'customer' => $customer,
-			'customerGroups' => $this->Customers->CustomerGroups->find()->all()->toArray(),
+			'customerGroups' => $this->Customers->CustomerGroups
+				->find()
+				->all()
+				->toArray(),
 		]);
 	}
 
@@ -112,7 +115,14 @@ class CustomersController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$customer = $this->Customers->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['CustomerGroups'])->first();
+		$customer = $this->Customers
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain(['CustomerGroups'])
+			->first()
+		;
 		if (!$customer) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -130,7 +140,10 @@ class CustomersController extends Controller {
 
 		$this->set([
 			'customer' => $customer,
-			'customerGroups' => $this->Customers->CustomerGroups->find()->all()->toArray(),
+			'customerGroups' => $this->Customers->CustomerGroups
+				->find()
+				->all()
+				->toArray(),
 		]);
 	}
 
@@ -226,7 +239,8 @@ class CustomersController extends Controller {
 
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the customer.
-					 * Otherwise the next redirect to the overview would show a site without the modified customer, which could be a bit confusing.
+					 * Otherwise the next redirect to the overview would show a site without the modified customer,
+					 *  which could be a bit confusing.
 					 */
 					$this->Categories->verifySelection(null, $customerGroups);
 

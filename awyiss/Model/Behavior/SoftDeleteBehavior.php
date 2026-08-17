@@ -58,7 +58,12 @@ class SoftDeleteBehavior extends Behavior {
 		parent::initialize($config);
 
 		//If the behavior is loaded for a table without a 'deleted'-column, disable it.
-		if (!$this->table()->getSchema()->getColumn('deleted')) {
+		if (
+			!$this
+				->table()
+				->getSchema()
+				->getColumn('deleted')
+		) {
 			$this->setConfig('enabled', false);
 		}
 	}
@@ -78,11 +83,16 @@ class SoftDeleteBehavior extends Behavior {
 			return $query;
 		}
 
-		$query->where([
-			$this->table()->getAlias() . '.deleted' => true,
-		])->applyOptions([
-			'softDelete' => ['includeDeleted' => true],
-		] + $options);
+		$query
+			->where([
+				$this->table()->getAlias() . '.deleted' => true,
+			])
+			->applyOptions(
+				[
+					'softDelete' => ['includeDeleted' => true],
+				] + $options
+			)
+		;
 
 
 		return $query;
@@ -103,11 +113,16 @@ class SoftDeleteBehavior extends Behavior {
 			return $query;
 		}
 
-		$query->where([
-			$this->table()->getAlias() . '.deleted IN' => [false, true],
-		])->applyOptions([
-			'softDelete' => ['includeDeleted' => true],
-		] + $options);
+		$query
+			->where([
+				$this->table()->getAlias() . '.deleted IN' => [false, true],
+			])
+			->applyOptions(
+				[
+					'softDelete' => ['includeDeleted' => true],
+				] + $options
+			)
+		;
 
 
 		return $query;
@@ -130,8 +145,14 @@ class SoftDeleteBehavior extends Behavior {
 		$rules->addUpdate(function (EntityInterface $entity, array $options): ?bool {
 			// If the entity is deleted, we don't allow updating it.
 			if (
-				($entity->has('deleted') && $entity->get('deleted')) ||
-				($entity->hasOriginal('deleted') && $entity->getOriginal('deleted') === true)
+				(
+					$entity->has('deleted')
+					&& $entity->get('deleted')
+				)
+				|| (
+					$entity->hasOriginal('deleted')
+					&& $entity->getOriginal('deleted') === true
+				)
 			) {
 				return false;
 			}
@@ -209,10 +230,13 @@ class SoftDeleteBehavior extends Behavior {
 		}
 
 		// Dispatch the afterSoftDeleteCommit event
-		$this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
-			'entity' => $entity,
-			'options' => $queryOptions,
-		]);
+		$this
+			->table()
+			->dispatchEvent('Model.afterSoftDeleteCommit', [
+				'entity' => $entity,
+				'options' => $queryOptions,
+			])
+		;
 	}
 
 

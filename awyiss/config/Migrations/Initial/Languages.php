@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class Languages
  */
@@ -23,144 +22,180 @@ class Languages {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('languages')) {
-			$this->migration->table('languages')->drop()->save();
+			$this->migration
+				->table('languages')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('languages')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('realm', 'string', [
-			'default' => null,
-			'limit' => 20,
-			'null' => false,
-		])->addColumn('shortcode', 'char', [
-			'default' => null,
-			'limit' => 2,
-			'null' => false,
-		])->addColumn('timezone', 'string', [
-			'default' => null,
-			'limit' => 32,
-			'null' => false,
-		])->addColumn('locale', 'string', [
-			'default' => null,
-			'limit' => 5,
-			'null' => false,
-		])->addColumn('date_format', 'string', [
-			'default' => null,
-			'limit' => 30,
-			'null' => true,
-		])->addColumn('time_format', 'string', [
-			'default' => null,
-			'limit' => 30,
-			'null' => true,
-		])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('active', 'boolean', [
-			'default' => true,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'realm',
-			], [
-				'name' => 'LANGUAGES_REALM',
-			]
-		)->addIndex(
-			[
-				'shortcode',
-			], [
-				'name' => 'LANGUAGES_SHORTCODE',
-			]
-		)->addIndex(
-			[
-				'active',
-			], [
-				'name' => 'LANGUAGES_ACTIVE',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'LANGUAGES_DELETED',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'LANGUAGES_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'LANGUAGES_DELETED_ORDER',
-			]
-		)->addIndex(
-			[
-				'active',
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'LANGUAGES_ACTIVE_DELETED_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('languages')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('realm', 'string', [
+				'default' => null,
+				'limit' => 20,
+				'null' => false,
+			])
+			->addColumn('shortcode', 'char', [
+				'default' => null,
+				'limit' => 2,
+				'null' => false,
+			])
+			->addColumn('timezone', 'string', [
+				'default' => null,
+				'limit' => 32,
+				'null' => false,
+			])
+			->addColumn('locale', 'string', [
+				'default' => null,
+				'limit' => 5,
+				'null' => false,
+			])
+			->addColumn('date_format', 'string', [
+				'default' => null,
+				'limit' => 30,
+				'null' => true,
+			])
+			->addColumn('time_format', 'string', [
+				'default' => null,
+				'limit' => 30,
+				'null' => true,
+			])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('active', 'boolean', [
+				'default' => true,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'realm',
+				], [
+					'name' => 'LANGUAGES_REALM',
+				]
+			)
+			->addIndex(
+				[
+					'shortcode',
+				], [
+					'name' => 'LANGUAGES_SHORTCODE',
+				]
+			)
+			->addIndex(
+				[
+					'active',
+				], [
+					'name' => 'LANGUAGES_ACTIVE',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'LANGUAGES_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'LANGUAGES_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'LANGUAGES_DELETED_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'active',
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'LANGUAGES_ACTIVE_DELETED_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('languages')->drop()->save();
+		$this->migration
+			->table('languages')
+			->drop()
+			->save()
+		;
 	}
 }

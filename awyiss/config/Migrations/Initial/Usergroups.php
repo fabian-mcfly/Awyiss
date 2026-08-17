@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class Usergroups
  */
@@ -23,82 +22,106 @@ class Usergroups {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('usergroups')) {
-			$this->migration->table('usergroups')->drop()->save();
+			$this->migration
+				->table('usergroups')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('usergroups')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => false,
-		])->addColumn('active', 'boolean', [
-			'default' => true,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'active',
-			], [
-				'name' => 'USERGROUPS_ACTIVE',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'USERGROUPS_DELETED',
-			]
-		)->create();
+		$this->migration
+			->table('usergroups')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => false,
+			])
+			->addColumn('active', 'boolean', [
+				'default' => true,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'active',
+				], [
+					'name' => 'USERGROUPS_ACTIVE',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'USERGROUPS_DELETED',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('usergroups')->drop()->save();
+		$this->migration
+			->table('usergroups')
+			->drop()
+			->save()
+		;
 	}
 }

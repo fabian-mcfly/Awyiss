@@ -72,7 +72,9 @@ class DefaultValuesBehavior extends Behavior {
 	public function newDefaultEntity(array $additionalData = [], array $options = []): EntityInterface {
 		if (!$this->getConfig('enabled')) {
 			// Calling this method when the behavior is disabled results in an exception
-			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
+			throw new RuntimeException(
+				sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class)
+			);
 		}
 
 		// Retrieve the class that's used by the table for the creation of new entities
@@ -96,9 +98,9 @@ class DefaultValuesBehavior extends Behavior {
 		$this->typecastDefaults($defaults, $schema);
 
 		if (
-			$table->hasBehavior('Categories') &&
-			$table->getBehavior('Categories')->getConfig('enabled') === true &&
-			($options['includeCategory'] ?? true) === true
+			$table->hasBehavior('Categories')
+			&& $table->getBehavior('Categories')->getConfig('enabled') === true
+			&& ($options['includeCategory'] ?? true) === true
 		) {
 			$this->addCategoryDefault($defaults, $table, $attributesTable ?? null);
 		}
@@ -111,12 +113,6 @@ class DefaultValuesBehavior extends Behavior {
 
 			// Check if any of the attribute columns are part of the additional data directly
 			foreach ($attributeColumns as $column) {
-				if (array_key_exists($column, $additionalData)) {
-					$attributeData[ $column ] = $additionalData[ $column ];
-					unset($additionalData[ $column ]);
-					continue;
-				}
-
 				if (array_key_exists($column, $additionalData)) {
 					$attributeData[ $column ] = $additionalData[ $column ];
 					unset($additionalData[ $column ]);
@@ -167,7 +163,10 @@ class DefaultValuesBehavior extends Behavior {
 
 		try {
 			$categoryKeys = array_combine(
-				array_map(fn (mixed $key) => is_string($key) ? Inflector::variable($key) : $key, array_keys($categories->getCategories() ?? [])),
+				array_map(
+					fn(mixed $key) => is_string($key) ? Inflector::variable($key) : $key,
+					array_keys($categories->getCategories() ?? [])
+				),
 				array_keys($categories->getCategories() ?? []),
 			);
 		}
@@ -424,6 +423,12 @@ class DefaultValuesBehavior extends Behavior {
 			};
 		}
 
-		return $dbType->toPHP($default, $this->table()->getConnection()->getDriver());
+		return $dbType->toPHP(
+			$default,
+			$this
+				->table()
+				->getConnection()
+				->getDriver()
+		);
 	}
 }

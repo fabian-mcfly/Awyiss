@@ -164,9 +164,9 @@ class PagesListener implements EventListenerInterface {
 		}
 
 		if (
-			!$entity->isDirty('slug') &&
-			!$entity->isDirty('languageShortcode') &&
-			!$entity->isDirty('parentId')
+			!$entity->isDirty('slug')
+			&& !$entity->isDirty('languageShortcode')
+			&& !$entity->isDirty('parentId')
 		) {
 			//If neither the slug, the language nor the parent id have changed, skip the slug logic
 			return;
@@ -191,13 +191,15 @@ class PagesListener implements EventListenerInterface {
 		$languageShortcode = $entity->languageShortcode;
 
 		$originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : $slug;
-		$originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
+		$originalLanguageShortcode = $entity->hasOriginal('languageShortcode')
+			? $entity->getOriginal('languageShortcode')
+			: $entity->languageShortcode;
 
 		// When the slug or the language has changed, or if it's a new entity, ensure the slug is unique
 		if (
-			$entity->isNew() ||
-			$slug != $originalSlug ||
-			$languageShortcode != $originalLanguageShortcode
+			$entity->isNew()
+			|| $slug != $originalSlug
+			|| $languageShortcode != $originalLanguageShortcode
 		) {
 			$field = $pagesTable->getAlias() . '.slug';
 
@@ -266,9 +268,9 @@ class PagesListener implements EventListenerInterface {
 		$pagesTable = $event->getSubject();
 
 		if (
-			($options['_primary'] ?? false) === true &&
-			($options['copyDescendantsWithDifferentPageRole'] ?? false) === true &&
-			$entity->childPages
+			($options['_primary'] ?? false) === true
+			&& ($options['copyDescendantsWithDifferentPageRole'] ?? false) === true
+			&& $entity->childPages
 		) {
 			$this->transferAttributes($entity);
 		}
@@ -280,11 +282,13 @@ class PagesListener implements EventListenerInterface {
 		$originalEntity = $entity->originalEntity;
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$entries = $pagesTable->Contents->find('threaded', nestingKey: 'childContents')
+		$entries = $pagesTable->Contents
+			->find('threaded', nestingKey: 'childContents')
 			->find('mediaAssignments', formatResult: false)
 			->find('translations')
 			->where(['pageId' => $originalEntity->id])
-			->all();
+			->all()
+		;
 
 		$listedEntries = $entries->listNested('desc', 'childContents');
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -434,11 +438,15 @@ class PagesListener implements EventListenerInterface {
 			$testSlug = $entity->languageShortcode . '/';
 			$testSlug .= substr($entity->slug, 0, strrpos($entity->slug, '/'));
 
-			$records = $menuEntriesTable->find()->where([
-				'languageShortcode' => $entity->languageShortcode,
-				'link' => $testSlug,
-				'menuId' => $menuId,
-			])->all();
+			$records = $menuEntriesTable
+				->find()
+				->where([
+					'languageShortcode' => $entity->languageShortcode,
+					'link' => $testSlug,
+					'menuId' => $menuId,
+				])
+				->all()
+			;
 
 			if ($records->count()) {
 				/** @var \Awyiss\Model\Entity\MenuEntry $existingEntry */
@@ -478,9 +486,13 @@ class PagesListener implements EventListenerInterface {
 		]);
 
 		// Find all pages whose slug starts with the original slug of the provided page
-		$records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($slug) {
-			return $expression->like('slug', $slug . '/%');
-		})->all();
+		$records = $table
+			->find('all', skipPageRoleCheck: true)
+			->where(function (QueryExpression $expression) use ($slug) {
+				return $expression->like('slug', $slug . '/%');
+			})
+			->all()
+		;
 
 		if (!$records->count()) {
 			$query->execute();
@@ -519,8 +531,8 @@ class PagesListener implements EventListenerInterface {
 	 */
 	protected function detectLanguageChange(Page $entity, ArrayObject $options): void {
 		if (
-			Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto' ||
-			!isset($options['transactionId'])
+			Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto'
+			|| !isset($options['transactionId'])
 		) {
 			return;
 		}
@@ -534,9 +546,13 @@ class PagesListener implements EventListenerInterface {
 		];
 
 		if ($this->checkedTransactions[ $transactionId ]['languageChanged'] === null) {
-			$this->checkedTransactions[ $transactionId ]['languageChanged'] = $entity->hasOriginal('languageShortcode') &&
-																				 $entity->getOriginal('languageShortcode') !== $entity->languageShortcode;
-			$this->checkedTransactions[ $transactionId ]['sourceLanguage'] = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : null;
+			$this->checkedTransactions[ $transactionId ]['languageChanged'] = $entity->hasOriginal('languageShortcode')
+				&& $entity->getOriginal('languageShortcode') !== $entity->languageShortcode;
+
+			$this->checkedTransactions[ $transactionId ]['sourceLanguage'] = $entity->hasOriginal('languageShortcode')
+				? $entity->getOriginal('languageShortcode')
+				: null;
+
 			$this->checkedTransactions[ $transactionId ]['targetLanguage'] = $entity->languageShortcode;
 		}
 
@@ -653,27 +669,33 @@ class PagesListener implements EventListenerInterface {
 		bool $activeChanged,
 		bool $parentsActiveChanged
 	): void {
-		$query = $table->updateQuery()->where([
-			'languageShortcode' => $originalLanguage ?? $entity->languageShortcode,
-		]);
+		$query = $table
+			->updateQuery()
+			->where([
+				'languageShortcode' => $originalLanguage ?? $entity->languageShortcode,
+			])
+		;
 
 		if ($slugChanged) {
 			/**
 			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8')))
 			 *
 			 * @noinspection PhpUndefinedMethodInspection
-			 * @noinspection SpellCheckingInspection
 			 */
-			$query->set('slug', $query->expr($query->func()->concat([
-				$entity->slug,
-				$query->func()->substr([
-					'slug' => 'identifier',
-					mb_strlen($originalSlug) + 1,
-				], [
-					null,
-					'integer',
-				]),
-			])));
+			$query->set('slug', $query->expr($query
+				->func()
+				->concat([
+					$entity->slug,
+					$query
+						->func()
+						->substr([
+							'slug' => 'identifier',
+							mb_strlen($originalSlug) + 1,
+						], [
+							null,
+							'integer',
+						]),
+				])));
 		}
 
 		$subQuery = null;
@@ -685,19 +707,25 @@ class PagesListener implements EventListenerInterface {
 				 * When updating all pages with the same slug (LIKE 'oldslug/%'),
 				 * do not set the parentsActive to true for pages that
 				 * are descendants of inactive sites.
-				 *
-				 * @noinspection SpellCheckingInspection
 				 */
-				$subPages = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalSlug) {
-					return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
-				})->where(['active' => false])->all();
+				$subPages = $table
+					->find('all', skipPageRoleCheck: true)
+					->where(
+						function (QueryExpression $expression) use ($entity, $originalSlug) {
+							return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
+						}
+					)
+					->where(['active' => false])
+					->all()
+				;
 
 				$subQuery = $slugChanged ? clone $query : null;
 
 				foreach ($subPages as $subPage) {
 					($subQuery ?? $query)->where(function (QueryExpression $expression/*, Query $query*/) use ($subPage) {
 						return $expression->notLike('slug', $subPage->slug . '/%');
-					});
+					})
+					;
 				}
 			}
 
@@ -706,10 +734,8 @@ class PagesListener implements EventListenerInterface {
 
 		/**
 		 * WHERE slug LIKE 'oldslug/%'
-		 *
-		 * @noinspection SpellCheckingInspection
 		 */
-		$where = function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalSlug) {
+		$where = function (QueryExpression $expression) use ($entity, $originalSlug) {
 			return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
 		};
 
@@ -738,38 +764,35 @@ class PagesListener implements EventListenerInterface {
 		 * UPDATE menu_entries SET link = (CONCAT('de/newslug', substr(link, '12')))
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
-		 * @noinspection SpellCheckingInspection
 		 */
-		$query->set('link', $query->expr($query->func()->concat([
-			$entity->languageShortcode . '/' . $entity->slug,
-			$query->func()->substr([
-				'link' => 'identifier',
-				mb_strlen($slug) + 4,
-			], [
-				null,
-				'integer',
-			]),
-		])));
+		$query->set('link', $query->expr($query
+			->func()
+			->concat([
+				$entity->languageShortcode . '/' . $entity->slug,
+				$query
+					->func()
+					->substr([
+						'link' => 'identifier',
+						mb_strlen($slug) + 4,
+					], [
+						null,
+						'integer',
+					]),
+			])));
 
 		/**
 		 * WHERE
-		 * 	link LIKE 'xx/oldslug/%'
+		 *    link LIKE 'xx/oldslug/%'
 		 * OR
-		 * 	link LIKE 'xx/oldslug#%'
+		 *    link LIKE 'xx/oldslug#%'
 		 * OR
-		 * 	link = 'xx/oldslug'
+		 *    link = 'xx/oldslug'
 		 * with xx being the old language
-		 *
-		 * @noinspection SpellCheckingInspection
 		 */
 		$query->where([
 			'OR' => [
-				function (QueryExpression $expression/*, Query $query*/) use ($entity, $languageShortcode, $slug) {
-					return $expression->like('link', $languageShortcode . '/' . ($slug ?? $entity->slug) . '/%');
-				},
-				function (QueryExpression $expression/*, Query $query*/) use ($entity, $languageShortcode, $slug) {
-					return $expression->like('link', $languageShortcode . '/' . ($slug ?? $entity->slug) . '#%');
-				},
+				fn(QueryExpression $expression) => $expression->like('link', $languageShortcode . '/' . ($slug ?? $entity->slug) . '/%'),
+				fn(QueryExpression $expression) => $expression->like('link', $languageShortcode . '/' . ($slug ?? $entity->slug) . '#%'),
 				[
 					'link' => $languageShortcode . '/' . ($slug ?? $entity->slug),
 				],
@@ -798,12 +821,13 @@ class PagesListener implements EventListenerInterface {
 		 * Filter child pages to only include those with different page roles and original entities
 		 * This ensures we only process pages that need attribute transfer due to page role differences
 		 */
-		$children = collection($entity->childPages)->listNested('desc', 'childPages')->filter(function (Page $page) use ($entity): bool {
-			return isset($page->originalEntity) && $page->pageRoleId !== $entity->pageRoleId;
-		})->groupBy(function (Page $page) {
+		$children = collection($entity->childPages)
+			->listNested('desc', 'childPages')
+			->filter(fn(Page $page): bool => isset($page->originalEntity) && $page->pageRoleId !== $entity->pageRoleId)
 			// Group by page role ID value
-			return $page->pageRoleId->value;
-		})->toArray();
+			->groupBy(fn(Page $page) => $page->pageRoleId->value)
+			->toArray()
+		;
 
 		// Early return if no child pages with different page roles are found
 		if (!$children) {
@@ -836,7 +860,13 @@ class PagesListener implements EventListenerInterface {
 
 			// Retrieve all attributes for the original pages
 			$attributesTable = $this->fetchTable($pageRoleTable->getAttributesTableName(true));
-			$attributes = $attributesTable->find()->where(['pageId IN' => $originalIds])->all()->indexBy('pageId')->toArray();
+			$attributes = $attributesTable
+				->find()
+				->where(['pageId IN' => $originalIds])
+				->all()
+				->indexBy('pageId')
+				->toArray()
+			;
 
 			// Skip if no attributes are found for any of the original pages
 			if (!$attributes) {

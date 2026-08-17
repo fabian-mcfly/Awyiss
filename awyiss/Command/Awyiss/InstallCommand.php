@@ -30,19 +30,6 @@ class InstallCommand extends Command {
 
 
 	/**
-	 * @var bool Whether the installation is a dry run
-	 */
-	protected bool $dryRun = false;
-	/**
-	 * @var \Symfony\Component\Filesystem\Filesystem The filesystem
-	 */
-	protected Filesystem $filesystem;
-	/**
-	 * @var \Cake\Console\ConsoleIo The console I/O
-	 * @noinspection PhpPropertyNamingConventionInspection
-	 */
-	protected ConsoleIo $io;
-	/**
 	 * @var bool Whether the database connection is valid
 	 */
 	protected bool $connectionValid = false;
@@ -51,9 +38,21 @@ class InstallCommand extends Command {
 	 */
 	protected string $customerName;
 	/**
+	 * @var bool Whether the installation is a dry run
+	 */
+	protected bool $dryRun = false;
+	/**
+	 * @var \Symfony\Component\Filesystem\Filesystem The filesystem
+	 */
+	protected Filesystem $filesystem;
+	/**
 	 * @var string The environment of the installation
 	 */
 	protected string $installEnvironment;
+	/**
+	 * @var \Cake\Console\ConsoleIo The console I/O
+	 */
+	protected ConsoleIo $io;
 
 
 	/**
@@ -167,7 +166,8 @@ class InstallCommand extends Command {
 		]);
 
 		$parser->addOption('dry-run', [
-			'help' => 'Perform a dry run of the installation process. This will output the commands that would be executed without actually running them.',
+			'help' => 'Perform a dry run of the installation process.'
+				. ' This will output the commands that would be executed without actually running them.',
 			'boolean' => true,
 			'short' => 'x',
 		]);
@@ -228,8 +228,7 @@ class InstallCommand extends Command {
 	protected function copyDummyFolder(): void {
 		if ($this->dryRun) {
 			if (
-				file_exists(ROOT . DS . $this->customerName) ||
-				!is_writable(dirname(ROOT . DS . $this->customerName))
+				file_exists(ROOT . DS . $this->customerName) || !is_writable(dirname(ROOT . DS . $this->customerName))
 			) {
 				$this->io->abort('Cannot copy skeleton folder. Target folder already exists or is not writable.');
 			}
@@ -292,6 +291,7 @@ class InstallCommand extends Command {
 		// Run the migrations
 		if ($this->dryRun) {
 			$this->io->out('Skipping database migrations in dry run mode.');
+
 			return;
 		}
 
@@ -331,7 +331,10 @@ class InstallCommand extends Command {
 		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 			try {
 				$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
-				$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
+				$this->filesystem->symlink(
+					ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce',
+					WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce'
+				);
 				$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
 			}
 			catch (IOExceptionInterface) {
@@ -340,7 +343,13 @@ class InstallCommand extends Command {
 				$this->io->out('Please create the symlinks manually:');
 
 				$this->io->comment('ln -s ' . ROOT . DS . 'awyiss' . DS . 'assets ' . WWW_ROOT . 'awyiss' . DS . 'assets');
-				$this->io->comment('ln -s ' . ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce ' . WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
+				$this->io->comment(
+					'ln -s'
+					. ' '
+					. ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce'
+					. ' '
+					. WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce'
+				);
 				$this->io->comment('ln -s ' . ROOT . DS . $this->customerName . DS . 'assets ' . WWW_ROOT . 'assets');
 
 				return false;
@@ -415,15 +424,18 @@ class InstallCommand extends Command {
 			$this->io->abort('Invalid customer name.');
 		}
 
-		if (preg_match('/[^a-z0-9_-]/', $this->customerName)) {
-			$cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
+		if (!preg_match('/[^a-z0-9_-]/', $this->customerName)) {
+			return;
+		}
 
-			if ($this->io->askChoice('Invalid customer name. Do you want to use "' . $cleanedName . '" instead?', ['y', 'n'], 'y') === 'y') {
-				$this->customerName = $cleanedName;
-			}
-			else {
-				$this->io->abort('Invalid customer name.');
-			}
+		$cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
+
+		$choice = $this->io->askChoice('Invalid customer name. Do you want to use "' . $cleanedName . '" instead?', ['y', 'n'], 'y');
+		if ($choice === 'y') {
+			$this->customerName = $cleanedName;
+		}
+		else {
+			$this->io->abort('Invalid customer name.');
 		}
 	}
 
@@ -466,7 +478,12 @@ class InstallCommand extends Command {
 		}
 
 		$finder = new Finder();
-		$finder->files()->in(ROOT . DS . $this->customerName)->name('.gitkeep')->ignoreDotFiles(false);
+		$finder
+			->files()
+			->in(ROOT . DS . $this->customerName)
+			->name('.gitkeep')
+			->ignoreDotFiles(false)
+		;
 
 		foreach ($finder as $file) {
 			$this->filesystem->remove($file->getRealPath());

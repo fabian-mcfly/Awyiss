@@ -28,7 +28,12 @@ class ResetPasswordCommand extends Command {
 	public function execute(Arguments $args, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Table\UsersTable $usersTable */
 		$usersTable = $this->fetchTable('Users');
-		$users = $usersTable->find('all')->all()->indexBy('username')->toArray();
+		$users = $usersTable
+			->find('all')
+			->all()
+			->indexBy('username')
+			->toArray()
+		;
 
 		$username = $io->askChoice('Please enter the username of the user you want to reset the password for', array_keys($users));
 

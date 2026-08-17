@@ -28,7 +28,9 @@ trait PreviewTrait {
 			return static::$isPreview;
 		}
 
-		static::$isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
+		static::$isPreview = !!(Router::getRequest()
+			?->getSession()
+			->read('previewMode.enabled', false));
 
 		return static::$isPreview;
 	}

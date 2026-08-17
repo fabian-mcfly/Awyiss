@@ -33,6 +33,8 @@ class SurveySurveyQuestionsTable extends Table {
 	 * @inheritDoc
 	 */
 	public const string TABLE = 'survey_survey_questions';
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -51,6 +53,7 @@ class SurveySurveyQuestionsTable extends Table {
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
+
 
 	/**
 	 * @inheritDoc

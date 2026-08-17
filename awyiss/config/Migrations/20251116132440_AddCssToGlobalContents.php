@@ -18,15 +18,16 @@ class AddCssToGlobalContents extends BaseMigration {
 	 *
 	 * More information on this method is available here:
 	 * https://book.cakephp.org/migrations/5/guides/writing-migrations/migration-methods.html#the-change-method
+	 *
 	 * @return void
 	 */
 	public function change(): void {
 		$table = $this->table('global_contents');
 		$table->addColumn('css', 'text', [
-            'default' => null,
-            'null' => true,
+			'default' => null,
+			'null' => true,
 			'after' => 'css_class',
-        ]);
+		]);
 		if ($table->hasIndexByName('BY_CSS')) {
 			$table->removeIndexByName('BY_CSS');
 		}

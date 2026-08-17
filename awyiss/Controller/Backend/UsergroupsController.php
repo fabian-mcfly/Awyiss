@@ -112,7 +112,14 @@ class UsergroupsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($contain)->first();
+		$usergroup = $this->Usergroups
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain($contain)
+			->first()
+		;
 		if (!$usergroup) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -276,12 +283,20 @@ class UsergroupsController extends Controller {
 
 		$authorizationPolicies = $this->Usergroups->getAuthorizationPolicies();
 
-		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $authorizationPolicy */
 		foreach ($authorizationPolicies as $authorizationPolicy) {
-			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
-			foreach ((!is_object($authorizationPolicy) ? $authorizationPolicy::getPermissionOptions() : $authorizationPolicy->getPermissionOptions()) as $permission) {
-				$scope = !is_object($authorizationPolicy) ? $authorizationPolicy::getScope() : $authorizationPolicy->getScope();
+			if (is_string($authorizationPolicy)) {
+				/** @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $authorizationPolicy */
+				$permissionOptionCollection = $authorizationPolicy::getPermissionOptions();
+				$scope = $authorizationPolicy::getScope();
+			}
+			else {
+				/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy $authorizationPolicy */
+				$permissionOptionCollection = $authorizationPolicy->getPermissionOptions();
+				$scope = $authorizationPolicy->getScope();
+			}
 
+			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
+			foreach ($permissionOptionCollection as $permission) {
 				$identifier = $permission->getConfig('identifier');
 				$identifier = Inflector::variable($identifier);
 
@@ -365,18 +380,30 @@ class UsergroupsController extends Controller {
 	protected function setViewVars(Usergroup $usergroup, bool $usersScopeIsAccessible): void {
 		$users = [];
 		if ($usersScopeIsAccessible) {
-			$users = $this->Usergroups->Users->find()->all()->toArray();
+			$users = $this->Usergroups->Users
+				->find()
+				->all()
+				->toArray()
+			;
 		}
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
 		$datatablesTable = $this->fetchTable('Datatables');
-		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		$datatables = $datatablesTable
+			->findAllAndCache()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = $this->fetchTable('PageRoles');
-		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
-		})->toArray();
+		$pageRoles = $pageRolesTable
+			->findAllAndCache()
+			->indexBy(function (PageRole $pageRole) {
+				return Inflector::pluralize($pageRole->identifier);
+			})
+			->toArray()
+		;
 
 		$authorizationPolicies = [];
 		/**

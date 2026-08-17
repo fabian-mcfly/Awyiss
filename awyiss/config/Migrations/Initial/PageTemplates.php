@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class PageTemplates
  */
@@ -23,106 +22,132 @@ class PageTemplates {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('page_templates')) {
-			$this->migration->table('page_templates')->drop()->save();
+			$this->migration
+				->table('page_templates')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('page_templates')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('page_role_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => false,
-		])->addColumn('file_name', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => false,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('active', 'boolean', [
-			'default' => true,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'page_role_id',
-			], [
-				'name' => 'PAGE_TEMPLATES_PAGE_ROLE_ID',
-			]
-		)->addIndex(
-			[
-				'active',
-			], [
-				'name' => 'PAGE_TEMPLATES_ACTIVE',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'PAGE_TEMPLATES_DELETED',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'PAGE_TEMPLATES_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'PAGE_TEMPLATES_DELETED_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('page_templates')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('page_role_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => false,
+			])
+			->addColumn('file_name', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => false,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('active', 'boolean', [
+				'default' => true,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'page_role_id',
+				], [
+					'name' => 'PAGE_TEMPLATES_PAGE_ROLE_ID',
+				]
+			)
+			->addIndex(
+				[
+					'active',
+				], [
+					'name' => 'PAGE_TEMPLATES_ACTIVE',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'PAGE_TEMPLATES_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'PAGE_TEMPLATES_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'PAGE_TEMPLATES_DELETED_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -132,6 +157,10 @@ class PageTemplates {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('page_templates')->drop()->save();
+		$this->migration
+			->table('page_templates')
+			->drop()
+			->save()
+		;
 	}
 }

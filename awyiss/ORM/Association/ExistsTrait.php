@@ -20,7 +20,11 @@ trait ExistsTrait {
 	 * @inheritDoc
 	 */
 	public function exists(ExpressionInterface|Closure|array|string|null $conditions, array $options = []): bool {
-		$conditions = $this->find()->where($conditions)->clause('where');
+		$conditions = $this
+			->find()
+			->where($conditions)
+			->clause('where')
+		;
 
 		/** @var \Awyiss\Model\Table $table */
 		$table = $this->getTarget();

@@ -90,7 +90,11 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
+	public function getAttributeOptionsAttributes(
+		string $identifier,
+		array $currentOptions = [],
+		?ContextInterface $context = null
+	): array {
 		$identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
 		/** @var \Awyiss\Attribute\AttributeOption $attributeOptions */

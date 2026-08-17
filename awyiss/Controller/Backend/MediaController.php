@@ -130,9 +130,14 @@ class MediaController extends Controller {
 			$paginated = $this->paginate['enabled'];
 		}
 
-		$query->enableAutoFields()->select([
-			'usageCount' => $query->func()->count('MediaAssignments.id'),
-		])->leftJoinWith('MediaAssignments')->groupBy('Media.id');
+		$query
+			->enableAutoFields()
+			->select([
+				'usageCount' => $query->func()->count('MediaAssignments.id'),
+			])
+			->leftJoinWith('MediaAssignments')
+			->groupBy('Media.id')
+		;
 
 		if ($paginated) {
 			$media = $this->paginate($query);
@@ -145,7 +150,11 @@ class MediaController extends Controller {
 		 * @uses \Awyiss\Model\Table::findActive()
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 */
-		$mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
+		$mediaFoldersQuery = $this->Media->MediaFolders
+			->find('active')
+			->find('threaded')
+			->find('forCurrentLanguage')
+		;
 
 		$where = [];
 		if (!$this->request->getParam('includeHidden', false)) {
@@ -158,21 +167,33 @@ class MediaController extends Controller {
 		// Exclude hidden folders but include the selected one
 		$mediaFoldersQuery->where($where);
 
-		$mediaFolders = $mediaFoldersQuery->all()->groupBy(function (MediaFolder $element) {
-			if ($element->hidden) {
-				return 'hidden';
-			}
+		$mediaFolders = $mediaFoldersQuery
+			->all()
+			->groupBy(function (MediaFolder $element) {
+				if ($element->hidden) {
+					return 'hidden';
+				}
 
-			return $element->languageShortcode ?? '';
-		})->toArray();
+				return $element->languageShortcode ?? '';
+			})
+			->toArray()
+		;
 
 		$currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
 		uksort($mediaFolders, function (string $a, string $b) use ($currentLanguageShortcode): int {
 			if (
-				($a === 'hidden' && $b === 'hidden') ||
-				($a === '' && $b === '') ||
-				($a === $currentLanguageShortcode && $b === $currentLanguageShortcode)
+				(
+					$a === 'hidden'
+					&& $b === 'hidden'
+				)
+				|| (
+					$a === ''
+					&& $b === ''
+				)
+				|| (
+					$a === $currentLanguageShortcode
+					&& $b === $currentLanguageShortcode)
 			) {
 				return 0;
 			}
@@ -290,7 +311,11 @@ class MediaController extends Controller {
 			 * @var \Awyiss\Model\Entity\Media $media
 			 * @uses \Awyiss\Model\Table::findTranslations()
 			 */
-			$media = $this->Media->findById($id)->find('translations')->first();
+			$media = $this->Media
+				->findById($id)
+				->find('translations')
+				->first()
+			;
 
 			if (!$media) {
 				$this->Flash->error(__('record_not_found'));
@@ -298,7 +323,11 @@ class MediaController extends Controller {
 				return $this->redirect(['action' => 'overview']);
 			}
 
-			$media->usageCount = $this->Media->MediaAssignments->find()->where(['mediaId' => $media->id, 'deleted' => 0])->count();
+			$media->usageCount = $this->Media->MediaAssignments
+				->find()
+				->where(['mediaId' => $media->id, 'deleted' => 0])
+				->count()
+			;
 
 			if ($this->request->is(['patch', 'post', 'put'])) {
 				$this->save($media, 'edit', $this->request->is('ajax'));
@@ -315,10 +344,10 @@ class MediaController extends Controller {
 		 * set the view class to JSON, disable the auto layout and render the response
 		 */
 		if (
-			$this->request->is(['patch', 'post', 'put']) &&
-			$this->request->is('ajax') &&
-			!$this->request->getData('reloadForm') &&
-			!$this->request->getParam('ajaxForm')
+			$this->request->is(['patch', 'post', 'put'])
+			&& $this->request->is('ajax')
+			&& !$this->request->getData('reloadForm')
+			&& !$this->request->getParam('ajaxForm')
 		) {
 			$errorMessage = $this->getErrorMessage($media);
 
@@ -389,7 +418,6 @@ class MediaController extends Controller {
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
-
 
 
 	/**
@@ -490,21 +518,31 @@ class MediaController extends Controller {
 		if ($this->request->getData('elements')) {
 			if ($type === 'preview') {
 				// Get the media files that do not have a preview image yet
-				$query = $this->Media->find()->where([
-					'id IN' => $this->request->getData('elements'),
-				]);
+				$query = $this->Media
+					->find()
+					->where([
+						'id IN' => $this->request->getData('elements'),
+					])
+				;
 			}
 			elseif ($type === 'resize') {
 				// Get the media files that do not have resized images yet
-				$query = $this->Media->MediaResizedImages->find()->where([
-					'id IN' => $this->request->getData('elements'),
-				]);
+				$query = $this->Media->MediaResizedImages
+					->find()
+					->where([
+						'id IN' => $this->request->getData('elements'),
+					])
+				;
 			}
 			else {
 				throw new InvalidArgumentException('Invalid type');
 			}
 
-			$lastRecords = $query->all()->indexBy('id')->toArray();
+			$lastRecords = $query
+				->all()
+				->indexBy('id')
+				->toArray()
+			;
 		}
 
 		ignore_user_abort(true);
@@ -526,27 +564,37 @@ class MediaController extends Controller {
 
 			if ($type === 'preview') {
 				// Get the media files that do not have a preview image yet
-				$query = $this->Media->find()->where([
-					'preview IN' => [
-						ProcessStatus::Undefined,
-						ProcessStatus::InProgress,
-					],
-				]);
+				$query = $this->Media
+					->find()
+					->where([
+						'preview IN' => [
+							ProcessStatus::Undefined,
+							ProcessStatus::InProgress,
+						],
+					])
+				;
 			}
 			elseif ($type === 'resize') {
 				// Get the media files that do not have resized images yet
-				$query = $this->Media->MediaResizedImages->find()->where([
-					'status IN' => [
-						ProcessStatus::Undefined,
-						ProcessStatus::InProgress,
-					],
-				]);
+				$query = $this->Media->MediaResizedImages
+					->find()
+					->where([
+						'status IN' => [
+							ProcessStatus::Undefined,
+							ProcessStatus::InProgress,
+						],
+					])
+				;
 			}
 			else {
 				throw new InvalidArgumentException('Invalid type');
 			}
 
-			$currentRecords = $query->all()->indexBy('id')->toArray();
+			$currentRecords = $query
+				->all()
+				->indexBy('id')
+				->toArray()
+			;
 
 			// Initialize arrays to store the completed and failed records
 			$completed = [];
@@ -615,10 +663,18 @@ class MediaController extends Controller {
 		}
 
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->where($where)->all();
-		$mediaFolders = $mediaFolders->groupBy(function (MediaFolder $element) {
-			return $element->languageShortcode ?? '';
-		})->toArray();
+		$mediaFolders = $this->Media->MediaFolders
+			->find('active')
+			->find('threaded')
+			->where($where)
+			->all()
+		;
+		$mediaFolders = $mediaFolders
+			->groupBy(function (MediaFolder $element) {
+				return $element->languageShortcode ?? '';
+			})
+			->toArray()
+		;
 
 		$currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
@@ -674,9 +730,12 @@ class MediaController extends Controller {
 			}
 		}
 
-		$affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-			'mediaFolderId' => (int)$folderid,
-		]);
+		$affectedRows = $this->Media
+			->getBehavior('SystemOrder')
+			->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
+				'mediaFolderId' => (int)$folderid,
+			])
+		;
 
 		if ($this->request->is('ajax')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
@@ -754,10 +813,14 @@ class MediaController extends Controller {
 		}
 
 		/** @var \Awyiss\Model\Entity\Media $media */
-		$media = $this->Media->findById($id)->contain([
-			'MediaAssignments.MediaElements',
-			'MediaAssignments.MediaElementSelectors',
-		])->first();
+		$media = $this->Media
+			->findById($id)
+			->contain([
+				'MediaAssignments.MediaElements',
+				'MediaAssignments.MediaElementSelectors',
+			])
+			->first()
+		;
 		if (!$media) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -766,13 +829,21 @@ class MediaController extends Controller {
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
 		$datatablesTable = $this->fetchTable('Datatables');
-		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		$datatables = $datatablesTable
+			->findAllAndCache()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = $this->fetchTable('PageRoles');
-		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::pluralize($pageRole->identifier);
-		})->toArray();
+		$pageRoles = $pageRolesTable
+			->findAllAndCache()
+			->indexBy(function (PageRole $pageRole) {
+				return Inflector::pluralize($pageRole->identifier);
+			})
+			->toArray()
+		;
 
 		$inaccessibleAssignments = [];
 		$usedScopes = $this->getUsedScopes($media, $pageRoles, $datatables);
@@ -780,7 +851,8 @@ class MediaController extends Controller {
 		// Reorder the media assignments by their scope
 		$mediaAssignments = collection($media->mediaAssignments ?? [])
 			->groupBy('scope')
-			->toArray();
+			->toArray()
+		;
 
 		if (isset($mediaAssignments['Contents'])) {
 			$this->groupAssignmentsByPageRole($mediaAssignments, $usedScopes, $inaccessibleAssignments, $pageRoles);
@@ -820,12 +892,12 @@ class MediaController extends Controller {
 			$options = [];
 
 			if (
-				$isAjax &&
-				(
-					!$media->isDirty('mediaFolderId') ||
-					(
-						$media->hasOriginal('mediaFolderId') &&
-						$media->mediaFolderId == $media->getOriginal('mediaFolderId')
+				$isAjax
+				&& (
+					!$media->isDirty('mediaFolderId')
+					|| (
+						$media->hasOriginal('mediaFolderId')
+						&& $media->mediaFolderId == $media->getOriginal('mediaFolderId')
 					)
 				)
 			) {
@@ -942,15 +1014,18 @@ class MediaController extends Controller {
 			$error = __('no_records_selected');
 		}
 		else {
-			$query = $this->Media->find()->where([
-				'id IN' => $ids,
-				'mediaFolderId' => (int)$mediaFolderId,
-			]);
+			$query = $this->Media
+				->find()
+				->where([
+					'id IN' => $ids,
+					'mediaFolderId' => (int)$mediaFolderId,
+				])
+			;
 			$media = $query->all();
 
 			if (
-				!$media->count() ||
-				!$this->Media->deleteMany($media, [
+				!$media->count()
+				|| !$this->Media->deleteMany($media, [
 					'atomic' => false,
 					'systemOrder' => ['skip' => $media->count() > 1],
 				])
@@ -959,9 +1034,12 @@ class MediaController extends Controller {
 			}
 			elseif ($media->count() > 1) {
 				// Rebuild the system order if multiple records were deleted
-				$this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-					'mediaFolderId' => (int)$mediaFolderId,
-				]);
+				$this->Media
+					->getBehavior('SystemOrder')
+					->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
+						'mediaFolderId' => (int)$mediaFolderId,
+					])
+				;
 			}
 		}
 
@@ -971,9 +1049,11 @@ class MediaController extends Controller {
 				'success' => $error === null,
 			];
 
-			return $this->response->withStatus($error ? 400 : 200, $error ? 'Bad Request' : 'OK')
+			return $this->response
+				->withStatus($error ? 400 : 200, $error ? 'Bad Request' : 'OK')
 				->withType('application/json')
-				->withStringBody(json_encode($response));
+				->withStringBody(json_encode($response))
+			;
 		}
 
 		if ($error) {
@@ -996,22 +1076,24 @@ class MediaController extends Controller {
 	 */
 	protected function ensureValidFile(string $method, Media $media, ?UploadedFile $uploadedFile): void {
 		if (
-			$method === 'edit' &&
-			(
-				$this->request->is('ajax') || // When editing via AJAX, no file upload is allowed
-				!$this->Authorization->isAccessible('create') // When in normal edit mode, no file upload is allowed if the user does not have the create permission
+			$method === 'edit'
+			&& (
+				// When editing via AJAX, no file upload is allowed
+				$this->request->is('ajax')
+				// When in normal edit mode, no file upload is allowed if the user does not have the create permission
+				|| !$this->Authorization->isAccessible('create')
 			)
 		) {
 			$media->file = null;
 
-			if ($media->originalExtension && !str_ends_with($media->name, $media->originalExtension)) {
+			if ($media->originalExtension && !str_ends_with($media->name, '.' . $media->originalExtension)) {
 				$media->name .= '.' . $media->originalExtension;
 			}
 		}
 		elseif (
-			!$uploadedFile ||
-			$uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
-			$uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
+			!$uploadedFile
+			|| $uploadedFile->getError() === UPLOAD_ERR_INI_SIZE
+			|| $uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
 		) {
 			$media->setError(
 				'file',
@@ -1068,10 +1150,10 @@ class MediaController extends Controller {
 		else {
 			// If crop values and resize values are the same as the original values, set crop to null
 			if (
-				$media->width === (float)$requestData['crop']['width'] &&
-				$media->width === (float)$requestData['crop']['resizeWidth'] &&
-				$media->height === (float)$requestData['crop']['height'] &&
-				$media->height === (float)$requestData['crop']['resizeHeight']
+				$media->width === (float)$requestData['crop']['width']
+				&& $media->width === (float)$requestData['crop']['resizeWidth']
+				&& $media->height === (float)$requestData['crop']['height']
+				&& $media->height === (float)$requestData['crop']['resizeHeight']
 			) {
 				$requestData['crop'] = null;
 			}
@@ -1113,25 +1195,37 @@ class MediaController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function groupAssignmentsByPageRole(array &$mediaAssignments, array &$usedScopes, array &$inaccessibleAssignments, array $pageRoles): void {
+	protected function groupAssignmentsByPageRole(
+		array &$mediaAssignments,
+		array &$usedScopes,
+		array &$inaccessibleAssignments,
+		array $pageRoles
+	): void {
 		// Contents need to be grouped by their page's role
 		$contentIds = array_column($mediaAssignments['Contents'], 'foreignKey');
 
 		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
 		$contentsTable = $this->fetchTable('Contents');
 		$contentsTable->forPageRole($pageRoles['pages']);
-		$contents = $contentsTable->find('mediaAssignments', useMediaEntity: true)->where([
-			'id IN' => $contentIds,
-		])->contain([
-			'Pages' => [
-				'finder' => [
-					'all' => [
-						'skipPageRoleCheck' => true,
+		$contents = $contentsTable
+			->find('mediaAssignments', useMediaEntity: true)
+			->where([
+				'id IN' => $contentIds,
+			])
+			->contain([
+				'Pages' => [
+					'finder' => [
+						'all' => [
+							'skipPageRoleCheck' => true,
+						],
 					],
+					'PageRoles',
 				],
-				'PageRoles',
-			],
-		])->all()->indexBy('id')->toArray();
+			])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		$groupedAssignments = [];
 		/**
@@ -1174,6 +1268,7 @@ class MediaController extends Controller {
 
 		if (!$groupedAssignments) {
 			unset($usedScopes['Contents'], $mediaAssignments['Contents']);
+
 			return;
 		}
 

@@ -12,10 +12,6 @@ class Route implements RouteInterface {
 	/**
 	 * @var \Awyiss\Utility\Route\AddressInterface
 	 */
-	protected AddressInterface $start;
-	/**
-	 * @var \Awyiss\Utility\Route\AddressInterface
-	 */
 	protected AddressInterface $end;
 	/**
 	 * @var array{
@@ -26,6 +22,10 @@ class Route implements RouteInterface {
 	 * }
 	 */
 	protected array $geoJson;
+	/**
+	 * @var \Awyiss\Utility\Route\AddressInterface
+	 */
+	protected AddressInterface $start;
 
 
 	/**

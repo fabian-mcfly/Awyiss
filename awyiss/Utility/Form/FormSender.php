@@ -41,13 +41,6 @@ class FormSender {
 	 */
 	protected array $emailBody = ['email' => '', 'confirmation' => ''];
 	/**
-	 * Stores the identifier of the saved form entry.
-	 * The value is a md5 hash of the form entry id and the post-hash.
-	 *
-	 * @var string|null $formEntryIdentifier
-	 */
-	protected ?string $formEntryIdentifier = null;
-	/**
 	 * @var array $errors
 	 */
 	protected array $errors = [];
@@ -60,6 +53,13 @@ class FormSender {
 	 */
 	protected FormEntriesTable $formEntriesTable;
 	/**
+	 * Stores the identifier of the saved form entry.
+	 * The value is a md5 hash of the form entry id and the post-hash.
+	 *
+	 * @var string|null $formEntryIdentifier
+	 */
+	protected ?string $formEntryIdentifier = null;
+	/**
 	 * @var \Awyiss\Model\Entity\Page|null
 	 */
 	protected readonly ?Page $page;
@@ -70,10 +70,40 @@ class FormSender {
 	 */
 	protected array $phrasingOnlyTags = [
 		// Phrasing-only
-		'a','abbr','b','bdi','bdo','cite','code','data','dfn','em','i','kbd',
-		'label','mark','output','q','ruby','rp','rt','s','samp','small','span',
-		'strong','sub','sup','time','u','var','button',
-		'p', 'legend', 'caption', 'summary',
+		'a',
+		'abbr',
+		'b',
+		'bdi',
+		'bdo',
+		'cite',
+		'code',
+		'data',
+		'dfn',
+		'em',
+		'i',
+		'kbd',
+		'label',
+		'mark',
+		'output',
+		'q',
+		'ruby',
+		'rp',
+		'rt',
+		's',
+		'samp',
+		'small',
+		'span',
+		'strong',
+		'sub',
+		'sup',
+		'time',
+		'u',
+		'var',
+		'button',
+		'p',
+		'legend',
+		'caption',
+		'summary',
 	];
 	/**
 	 * @var \Awyiss\View\FrontendView $view
@@ -112,12 +142,11 @@ class FormSender {
 	 *
 	 * Replaces all placeholders in the form fields with
 	 * the actual form data.
-
 	 * If neither `sendEmail` nor `sendConfirmationEmail` are enabled,
 	 * just save the form data in the database and return true,
 	 * otherwise save the form data in the database and send the email(s).
 	 *
-	 * Returns
+	 * Returns true if the form was handled successfully, false otherwise.
 	 *
 	 * @return bool
 	 */
@@ -134,6 +163,7 @@ class FormSender {
 
 		if ($event->isStopped()) {
 			DebugTimer::stop('FormSender::handle');
+
 			return false;
 		}
 
@@ -149,11 +179,11 @@ class FormSender {
 
 		// If either mail was sent and the other did not result in an error, return true.
 		if (
-			(!$this->form->sendEmail || $sentEmail) &&
-			(!$this->form->sendConfirmationEmail || $sentConfirmationEmail)
+			(!$this->form->sendEmail || $sentEmail) && (!$this->form->sendConfirmationEmail || $sentConfirmationEmail)
 		) {
 			$result = $this->saveFormEntry();
 			DebugTimer::stop('FormSender::handle');
+
 			return $result;
 		}
 
@@ -188,6 +218,7 @@ class FormSender {
 
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendEmail');
+
 			return false;
 		}
 
@@ -200,12 +231,14 @@ class FormSender {
 			])
 		) {
 			DebugTimer::stop('FormSender::sendEmail');
+
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendEmail');
+
 			return false;
 		}
 
@@ -215,9 +248,14 @@ class FormSender {
 
 		$mailer->setTransport($this->form->transportProfile);
 
-		$mailer->setSubject(html_entity_decode($this->form->subject))
-		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
-		->setTo(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix', 'Awyiss CMS')));
+		$mailer
+			->setSubject(html_entity_decode($this->form->subject))
+			->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
+			->setTo(
+				html_entity_decode($this->form->ownerEmail),
+				html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix', 'Awyiss CMS'))
+			)
+		;
 
 		if ($this->form->cc) {
 			foreach ($this->form->cc as $cc) {
@@ -250,12 +288,14 @@ class FormSender {
 			])
 		) {
 			DebugTimer::stop('FormSender::sendEmail');
+
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendEmail');
+
 			return false;
 		}
 
@@ -286,7 +326,10 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function sendConfirmationEmail(): bool {
-		DebugTimer::start('FormSender::sendConfirmationEmail', sprintf('FormSender::sendConfirmationEmail: Sending confirmation email for form "%s"', $this->form->identifier));
+		DebugTimer::start(
+			'FormSender::sendConfirmationEmail',
+			sprintf('FormSender::sendConfirmationEmail: Sending confirmation email for form "%s"', $this->form->identifier)
+		);
 
 		// Build the mail body
 		$bodyHtml = $this->createBody($this->form->confirmationEmailTemplate, 'html', 'confirmation');
@@ -294,6 +337,7 @@ class FormSender {
 
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 			return false;
 		}
 
@@ -306,12 +350,14 @@ class FormSender {
 			])
 		) {
 			DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 			return false;
 		}
 
@@ -321,9 +367,14 @@ class FormSender {
 
 		$mailer->setTransport($this->form->transportProfile);
 
-		$mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
-		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
-		->setTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
+		$mailer
+			->setSubject(html_entity_decode($this->form->subjectConfirmation))
+			->setFrom(
+				html_entity_decode($this->form->ownerEmail),
+				html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'))
+			)
+			->setTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
+		;
 
 		$this->setSafeSender(
 			$mailer,
@@ -342,12 +393,14 @@ class FormSender {
 			])
 		) {
 			DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
 			DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 			return false;
 		}
 
@@ -378,7 +431,10 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function saveFormEntry(): bool {
-		DebugTimer::start('FormSender::saveFormEntry', sprintf('FormSender::saveFormEntry: Saving form entry for form "%s"', $this->form->identifier));
+		DebugTimer::start(
+			'FormSender::saveFormEntry',
+			sprintf('FormSender::saveFormEntry: Saving form entry for form "%s"', $this->form->identifier)
+		);
 
 		$formData = $this->getFormData();
 		$formData = array_filter($formData, function (mixed $key): bool {
@@ -555,7 +611,10 @@ class FormSender {
 	 * @return void
 	 */
 	public function replacePlaceholdersInForm(): void {
-		DebugTimer::start('FormSender::replacePlaceholdersInForm', sprintf('FormSender::replacePlaceholdersInForm: Replacing placeholders in form "%s"', $this->form->identifier));
+		DebugTimer::start(
+			'FormSender::replacePlaceholdersInForm',
+			sprintf('FormSender::replacePlaceholdersInForm: Replacing placeholders in form "%s"', $this->form->identifier)
+		);
 
 		$blocklistedFields = ['active', '_translations', '_publicationData', 'mediaAssignments', 'mediaElementAssignments'];
 		$formFields = array_keys(array_filter($this->form->getAccessible()));
@@ -566,9 +625,9 @@ class FormSender {
 
 		foreach ($formFields as $field) {
 			if (
-				in_array($field, $blocklistedFields) ||
-				!$this->form->has($field) ||
-				!is_string($this->form->get($field))
+				in_array($field, $blocklistedFields)
+				|| !$this->form->has($field)
+				|| !is_string($this->form->get($field))
 			) {
 				continue;
 			}
@@ -608,25 +667,29 @@ class FormSender {
 		$pattern = '/\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}/U';
 		preg_match_all($pattern, $string, $matches, PREG_SET_ORDER);
 		if (!empty($matches)) {
-			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacedPlaceholdersOrAlternative($match, $values, $safeList), $string);
+			$string = preg_replace_callback(
+				$pattern,
+				fn(array $match) => $this->replacedPlaceholdersOrAlternative($match, $values, $safeList),
+				$string
+			);
 		}
 
 		if (isset($this->page)) {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or under_scored format
 			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
 			$pageVars = $this->underscoreKeys($this->page->extract());
-			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
+			$string = preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or under_scored format
 		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
 		$formVars = $this->underscoreKeys($this->form->extract());
-		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
+		$string = preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
 
 		// Find all placeholders in the form of `$identifier`
 		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
 
-		return preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
+		return preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
 	}
 
 
@@ -688,16 +751,16 @@ class FormSender {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or underscored format
 			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
 			$pageVars = $this->underscoreKeys($this->page->extract());
-			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
+			$string = preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $pageVars, $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or underscored format
 		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
 		$formVars = $this->underscoreKeys($this->form->extract());
-		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
+		$string = preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $formVars, $safeList), $string);
 
 		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
-		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
+		$string = preg_replace_callback($pattern, fn(array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
 
 		if (str_contains($string, '$') && $alternative !== null) {
 			return $alternative;
@@ -742,16 +805,19 @@ class FormSender {
 		$template = $type === 'email' ? $this->form->emailTemplate : $this->form->confirmationEmailTemplate;
 
 		$mailer->setRenderer(new FormMailRenderer());
-		$mailer->viewBuilder()->setVars([
-			'textHtml' => $bodyHtml,
-			'textPlain' => $bodyPlain,
-			'layout' => 'email/' . $template->layout,
-			'form' => $this->form,
-			'page' => $this->page,
-			'formData' => $this->getFormData(),
-		])
-		->setTemplate('Frontend/email/' . $template->fileName)
-		->setLayout('email/' . str_replace('.twig', '', $template->layout));
+		$mailer
+			->viewBuilder()
+			->setVars([
+				'textHtml' => $bodyHtml,
+				'textPlain' => $bodyPlain,
+				'layout' => 'email/' . $template->layout,
+				'form' => $this->form,
+				'page' => $this->page,
+				'formData' => $this->getFormData(),
+			])
+			->setTemplate('Frontend/email/' . $template->fileName)
+			->setLayout('email/' . str_replace('.twig', '', $template->layout))
+		;
 
 		try {
 			$sendData = $mailer->deliver();
@@ -793,7 +859,10 @@ class FormSender {
 	 * @return string
 	 */
 	protected function unwrapDataString(string $body): string {
-		DebugTimer::start('FormSender::unwrapDataString', sprintf('FormSender::unwrapDataString: Unwrapping {{$data}} in form "%s"', $this->form->identifier));
+		DebugTimer::start(
+			'FormSender::unwrapDataString',
+			sprintf('FormSender::unwrapDataString: Unwrapping {{$data}} in form "%s"', $this->form->identifier)
+		);
 
 		// Recursively unwrap {{$data}} from phrasingOnlyTags parents
 		$phrasingTagsPattern = implode('|', array_map(preg_quote(...), $this->phrasingOnlyTags));
@@ -822,11 +891,11 @@ class FormSender {
 	 * a placeholder to close and reopen those tags, while recursively removing any empty tags.
 	 *
 	 * @param array $matches An array containing matches from a regular expression. It should include:
-	 *                       - `$matches[1]`: Tag name (e.g., 'p', 'span', etc.)
-	 *                       - `$matches[2]`: Attributes for the wrapping tag.
-	 *                       - `$matches[3]`: Content before the `{{$data}}` placeholder.
-	 *                       - `$matches[4]`: The `{{$data}}` placeholder itself.
-	 *                       - `$matches[5]`: Content after the `{{$data}}` placeholder.
+	 *  - `$matches[1]`: Tag name (e.g., 'p', 'span', etc.)
+	 *  - `$matches[2]`: Attributes for the wrapping tag.
+	 *  - `$matches[3]`: Content before the `{{$data}}` placeholder.
+	 *  - `$matches[4]`: The `{{$data}}` placeholder itself.
+	 *  - `$matches[5]`: Content after the `{{$data}}` placeholder.
 	 * @return string The restructured and cleaned HTML string with proper wrapping and placeholder integration.
 	 */
 	protected function _unwrapDataString(array $matches): string {
@@ -904,8 +973,8 @@ class FormSender {
 
 		foreach ($formElements as $formElement) {
 			if (
-				isset($formData[ $formElement->identifier ]) &&
-				in_array($formElement->type, ['date', 'time', 'datetime'])
+				isset($formData[ $formElement->identifier ])
+				&& in_array($formElement->type, ['date', 'time', 'datetime'])
 			) {
 				$date = new DateTime($formData[ $formElement->identifier ]);
 
@@ -944,7 +1013,9 @@ class FormSender {
 		$result = $event->getResult();
 		if ($result !== null) {
 			if (!is_array($result)) {
-				throw new InvalidArgumentException(sprintf('Expected an array as result of the event "%s", `%s` given', $eventName, gettype($result)));
+				throw new InvalidArgumentException(
+					sprintf('Expected an array as result of the event "%s", `%s` given', $eventName, gettype($result))
+				);
 			}
 
 			foreach ($result as $key => $value) {
@@ -976,7 +1047,8 @@ class FormSender {
 		if ($safeRealSender) {
 			$mailer
 				->setSender($safeRealSender, html_entity_decode($senderName))
-				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName));
+				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName))
+			;
 		}
 
 		// Ensure a valid return-path is set

@@ -90,8 +90,8 @@ class Table extends BaseTable {
 	/**
 	 * Allows \Awyiss\Model\Table\AttributesTable to set attributes for this table.
 	 *
-	 * @var bool
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
+	 * @var bool
 	 */
 	public const bool ATTRIBUTABLE = true;
 	/**
@@ -229,10 +229,12 @@ class Table extends BaseTable {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
-		parent::__construct($config + [
-			'behaviors' => new BehaviorRegistry(),
-			'eventManager' => new EventManager(),
-		]);
+		parent::__construct(
+			$config + [
+				'behaviors' => new BehaviorRegistry(),
+				'eventManager' => new EventManager(),
+			]
+		);
 	}
 
 
@@ -301,10 +303,10 @@ class Table extends BaseTable {
 			}
 
 			if (
-				!str_starts_with($this->getTable(), 'media_') &&
-				!str_starts_with($this->getTable(), 'customer_group_') &&
-				!str_starts_with($this->getTable(), 'customer_groups_') &&
-				!in_array($this->getTable(), [
+				!str_starts_with($this->getTable(), 'media_')
+				&& !str_starts_with($this->getTable(), 'customer_group_')
+				&& !str_starts_with($this->getTable(), 'customer_groups_')
+				&& !in_array($this->getTable(), [
 					AttributesTable::TABLE,
 					AuditTable::TABLE,
 					DesignsTable::TABLE,
@@ -406,13 +408,19 @@ class Table extends BaseTable {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param string|false|null $languageShortcode A language shortcode to filter by, null to use the current language, or false to not filter by language.
+	 * @param string|false|null $languageShortcode A language shortcode to filter by, null to use the current language, or false to not
+	 *     filter by language.
 	 * @param \Awyiss\Model\Entity\MediaFolder|null $entity
 	 * @param bool $includeGlobal
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $query, string|false|null $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
+	public function findForCurrentLanguage(
+		SelectQuery $query,
+		string|false|null $languageShortcode = null,
+		?Entity $entity = null,
+		bool $includeGlobal = true
+	): SelectQuery {
 		$languageShortcode ??= LocaleMiddleware::getLanguage()->shortcode;
 
 		if ($languageShortcode === false) {
@@ -561,12 +569,14 @@ class Table extends BaseTable {
 		$options = array_merge($finderOptions, $options);
 		unset($options['finder']);
 
-		$results = $this->unhydratedFind($finder, ...$options)
+		$results = $this
+			->unhydratedFind($finder, ...$options)
 			->applyOptions($options)
 			->select(['existing' => 1])
 			->where($conditions)
 			->limit(1)
-			->toArray();
+			->toArray()
+		;
 
 
 		return (bool)count($results);
@@ -629,15 +639,23 @@ class Table extends BaseTable {
 			}
 
 			if (
-				(is_string($callable) && !method_exists($instance, $callable)) ||
-				(!is_string($callable) && !is_callable($callable))
+				(
+					is_string($callable)
+					&& !method_exists($instance, $callable)
+				)
+				|| (
+					!is_string($callable)
+					&& !is_callable($callable)
+				)
 			) {
 				continue;
 			}
 
 			if (is_numeric($eventName)) {
 				if (!is_string($callable)) {
-					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName)));
+					throw new RuntimeException(
+						sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName))
+					);
 				}
 				$eventName = 'Model.' . $callable;
 			}
@@ -755,8 +773,10 @@ class Table extends BaseTable {
 
 		//Add field to the nested related columns
 		if (
-			!in_array($fieldName, $this->nest['relatedColumns'] ?? []) &&
-			Inflector::underscore($fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parentId')
+			!in_array($fieldName, $this->nest['relatedColumns'] ?? [])
+			&& Inflector::underscore($fieldName) !== Inflector::underscore(
+				$this->nest['parent']['foreignKey'] ?? 'parentId'
+			)
 		) {
 			$this->nest['relatedColumns'][] = $fieldName;
 		}
@@ -775,12 +795,11 @@ class Table extends BaseTable {
 	 */
 	public function addTranslateBehavior(?Language $translateLanguage = null): void {
 		if (
-			!$translateLanguage &&
-			$this->getTable() !== 'languages'
+			!$translateLanguage
+			&& $this->getTable() !== 'languages'
+			&& Awyiss::hasRealm()
 		) {
-			if (Awyiss::hasRealm()) {
-				$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
-			}
+			$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
 		}
 
 		if (!$translateLanguage) {
@@ -875,7 +894,7 @@ class Table extends BaseTable {
 		);
 
 		$success = $this->_executeTransaction(
-			fn () => $this->_processDelete($entity, $options),
+			fn() => $this->_processDelete($entity, $options),
 			$options['atomic'],
 		);
 
@@ -1037,6 +1056,7 @@ class Table extends BaseTable {
 			}
 
 			$entity->setErrors($errors);
+
 			return false;
 		}
 
@@ -1239,7 +1259,6 @@ class Table extends BaseTable {
 			}
 		}
 	}
-
 
 
 	/**

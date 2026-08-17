@@ -17,8 +17,8 @@ class ColumnParser extends BaseColumnParser {
 	/**
 	 * Regex used to parse the column definition passed through the shell
 	 *
-	 * @link https://regex101.com/r/aIrJ5T/1
 	 * @var string
+	 * @link https://regex101.com/r/aIrJ5T/1
 	 * @noinspection RegExpRedundantEscape
 	 */
 	protected string $regexpParseColumn = '/
@@ -38,10 +38,9 @@ class ColumnParser extends BaseColumnParser {
 	/**
 	 * Regex used to parse the field type and length
 	 *
-	 * @link https://regex101.com/r/9Poorq/2
 	 * @var string
-	 * @noinspection RegExpSingleCharAlternation
-	 * @noinspection RegExpRedundantEscape
+	 * @link https://regex101.com/r/9Poorq/2
+	 * @noinspection RegExpSingleCharAlternation,RegExpRedundantEscape
 	 */
 	protected string $regexpParseField = '/(\w+\??)(?=\[|\()(?:\[([0-9,]+)\])?(?:\((.*)\))?/';
 

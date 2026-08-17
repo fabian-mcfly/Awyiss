@@ -56,16 +56,16 @@ class FormCell extends Cell {
 
 		$formRenderer = new $className($this->createView('Frontend'));
 
-		$formRenderer
-			->initForm(
-				$identifier,
-				$this->request->getData(),
-				$this->page
-			);
+		$formRenderer->initForm(
+			$identifier,
+			$this->request->getData(),
+			$this->page
+		);
 
 		$form = $formRenderer->getForm();
 		if (!$form) {
 			DebugTimer::stop('FormCell::display');
+
 			return;
 		}
 

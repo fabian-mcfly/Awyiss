@@ -26,11 +26,12 @@ use Cake\View\ViewBuilder;
 class SystemOrderComponent extends Component {
 	/**
 	 * @inheritDoc
-	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
-		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
-		'entityName' => null, //singularized variable name of the entity that's used to autoload records
+		// Can be a boolean value or an array containing all action names for which the records should get autoloaded
+		'autoload' => ['add', 'edit'],
+		// Singularized variable name of the entity that's used to autoload records
+		'entityName' => null,
 		'field' => 'systemOrder',
 		'records' => null,
 		'tableName' => null,
@@ -68,15 +69,22 @@ class SystemOrderComponent extends Component {
 		$controller = $this->getController();
 		$view = $controller->viewBuilder();
 
-		if (!$this->getConfig('tableName') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
+		if (
+			!$this->getConfig('tableName')
+			|| Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder'
+		) {
 			return;
 		}
 
-		/** @var \Cake\ORM\Table $table */
+		/** @var \Awyiss\Model\Table $table */
 		$table = $controller->{$this->getConfig('tableName')} ?? null;
 
 		//Do nothing when no table's set or when the behavior is disabled
-		if (!$table || !$table->hasBehavior('SystemOrder') || !$table->getBehavior('SystemOrder')->getConfig('enabled')) {
+		if (
+			!$table
+			|| !$table->hasBehavior('SystemOrder')
+			|| !$table->getBehavior('SystemOrder')->getConfig('enabled')
+		) {
 			return;
 		}
 
@@ -119,7 +127,17 @@ class SystemOrderComponent extends Component {
 		$autoload = $this->getConfig('autoload');
 
 		//Shall we autoload the records?
-		if ($autoload !== true && (!is_array($autoload) || !in_array($action, $autoload)) && (!is_string($autoload) || $action !== $autoload)) {
+		if (
+			$autoload !== true
+			&& (
+				!is_array($autoload)
+				|| !in_array($action, $autoload)
+			)
+			&& (
+				!is_string($autoload)
+				|| $action !== $autoload
+			)
+		) {
 			return null;
 		}
 
@@ -209,7 +227,11 @@ class SystemOrderComponent extends Component {
 
 		$highestSystemOrder = $records->max('systemOrder')?->systemOrder ?? 0;
 
-		$requestData = $this->getController()->getRequest()->getData();
+		$requestData = $this
+			->getController()
+			->getRequest()
+			->getData()
+		;
 		$systemOrder = $entity->get('systemOrder');
 
 		if ($requestData['reloadForm'] ?? false) {
@@ -222,7 +244,9 @@ class SystemOrderComponent extends Component {
 				$entity->set('systemOrder');
 			}
 			else {
-				$requestData['systemOrder'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
+				$requestData['systemOrder'] = $entity->hasOriginal('systemOrder')
+					? $entity->getOriginal('systemOrder')
+					: $entity->get('systemOrder');
 			}
 		}
 

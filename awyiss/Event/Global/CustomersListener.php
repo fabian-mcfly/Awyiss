@@ -48,12 +48,14 @@ class CustomersListener implements EventListenerInterface {
 		// Find and delete unverified customers whose verification timeout has passed
 		$cutoffTime = DateTime::now()->subSeconds($verificationCodeValidity);
 
-		$unverifiedCustomers = $customersTable->find()
+		$unverifiedCustomers = $customersTable
+			->find()
 			->where([
 				'verified' => false,
 				'createdOn <' => $cutoffTime,
 			])
-			->all();
+			->all()
+		;
 
 		foreach ($unverifiedCustomers as $customer) {
 			$customersTable->delete($customer, [

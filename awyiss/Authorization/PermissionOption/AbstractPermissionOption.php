@@ -16,6 +16,17 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 
 
 	/**
+	 * Default config for this object.
+	 * - `preferredInput` The preferred form input to display when showing the permission-selection
+	 * - `identifier` The identifier used by this permission
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected array $_defaultConfig = [ // phpcs:ignore
+		'preferredInput' => PermissionOptionType::Radio,
+		'identifier' => null,
+	];
+	/**
 	 * @var array
 	 */
 	protected array $options = [];
@@ -27,17 +38,6 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @var string
 	 */
 	protected string $type;
-	/**
-	 * Default config for this object.
-	 * - `preferredInput` The preferred form input to display when showing the permission-selection
-	 * - `identifier` The identifier used by this permission
-	 *
-	 * @var array<string, mixed>
-	 */
-	protected array $_defaultConfig = [ // phpcs:ignore
-		'preferredInput' => PermissionOptionType::Radio,
-		'identifier' => null,
-	];
 
 
 	/**
@@ -79,7 +79,9 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @throws RuntimeException
 	 */
 	public function setOptions(array $options): static {
-		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class));
+		throw new RuntimeException(
+			sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class)
+		);
 	}
 
 

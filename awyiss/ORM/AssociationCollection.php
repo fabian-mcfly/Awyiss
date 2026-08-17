@@ -38,7 +38,13 @@ class AssociationCollection extends BaseAssociationCollection {
 	 *
 	 * @inheritDoc
 	 */
-	protected function _saveAssociations(Table $table, EntityInterface $entity, array $associations, array $options, bool $owningSide): bool {
+	protected function _saveAssociations(
+		Table $table,
+		EntityInterface $entity,
+		array $associations,
+		array $options,
+		bool $owningSide
+	): bool {
 		unset($options['associated']);
 		foreach ($associations as $alias => $nested) {
 			if (is_int($alias)) {
@@ -65,8 +71,8 @@ class AssociationCollection extends BaseAssociationCollection {
 			// Unset the `asCopy` and `isCopy` options, when saving associations that are not HasOne or HasMany, as
 			// elements cannot be saved as copies from the perspective of a child entity
 			if (
-				!$relation instanceof HasOne &&
-				!$relation instanceof HasMany
+				!$relation instanceof HasOne
+				&& !$relation instanceof HasMany
 			) {
 				unset($saveOptions['asCopy'], $saveOptions['isCopy']);
 			}

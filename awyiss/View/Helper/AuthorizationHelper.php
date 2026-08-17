@@ -196,9 +196,9 @@ class AuthorizationHelper extends Helper {
 	public function anyIsAccessible(array ...$actions): bool {
 		foreach ($actions as $action) {
 			if (
-				!is_array($action) ||
-				!isset($action['scope']) ||
-				!isset($action['identifier'])
+				!is_array($action)
+				|| !isset($action['scope'])
+				|| !isset($action['identifier'])
 			) {
 				throw new InvalidArgumentException('Invalid action provided. Must be an array with keys `scope` and `identifier`.');
 			}
@@ -232,7 +232,12 @@ class AuthorizationHelper extends Helper {
 	 * @param string|null $subDir
 	 * @return string
 	 */
-	public function permissionOptions(PermissionOptionInterface $permission, ?Entity $entity = null, ?string $fileName = null, ?string $subDir = null): string {
+	public function permissionOptions(
+		PermissionOptionInterface $permission,
+		?Entity $entity = null,
+		?string $fileName = null,
+		?string $subDir = null
+	): string {
 		$elementPath = 'authorization' . DS . 'permission_option';
 		if (!empty($subDir)) {
 			$elementPath = trim($subDir, DS) . DS . $elementPath;
@@ -266,14 +271,20 @@ class AuthorizationHelper extends Helper {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
-		$identity = $this->getView()->getRequest()->getAttribute(Awyiss::getRealm() . 'Identity');
+		$identity = $this
+			->getView()
+			->getRequest()
+			->getAttribute(Awyiss::getRealm() . 'Identity')
+		;
 
 		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');
 		}
 
 		if (!($identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
+			throw new RuntimeException(
+				sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class)
+			);
 		}
 
 

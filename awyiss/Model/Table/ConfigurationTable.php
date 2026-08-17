@@ -64,13 +64,21 @@ class ConfigurationTable extends Table {
 	public function buildCategories(): array {
 		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
 		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		$datatables = $datatablesTable
+			->findAllAndCache()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
-		})->toArray();
+		$pageRoles = $pageRolesTable
+			->findAllAndCache()
+			->indexBy(function (PageRole $pageRole) {
+				return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
+			})
+			->toArray()
+		;
 
 		$configScopes = [];
 		foreach ($this->getScopes() as $identifier => $className) {

@@ -62,11 +62,13 @@ class MenusListener implements EventListenerInterface {
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$entries = $menusTable->MenuEntries->find('threaded', nestingKey: 'childMenuEntries')
-		->find('mediaAssignments', formatResult: false)
-		->find('translations')
-		->where(['menuId' => $originalEntity->id])
-		->all();
+		$entries = $menusTable->MenuEntries
+			->find('threaded', nestingKey: 'childMenuEntries')
+			->find('mediaAssignments', formatResult: false)
+			->find('translations')
+			->where(['menuId' => $originalEntity->id])
+			->all()
+		;
 
 		$listedEntries = $entries->listNested('desc', 'childMenuEntries');
 		/** @var \Awyiss\Model\Entity\MenuEntry $menuEntry */

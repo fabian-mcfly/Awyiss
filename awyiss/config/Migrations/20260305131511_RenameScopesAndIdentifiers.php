@@ -7,7 +7,6 @@ declare(strict_types=1); // phpcs:ignore
 
 
 use Awyiss\Utility\Inflector;
-use Cake\Command\Helper\ProgressHelper;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Migrations\BaseMigration;
@@ -128,6 +127,7 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		],
 	];
 
+
 	/**
 	 * Traverse all specified tables and rename the values of each table
 	 * to the format specified in the $tableFields property.
@@ -139,7 +139,11 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		foreach (self::$tableFields as $tableName => $fields) {
 			/** @var \Awyiss\Model\Table $table */
 			$table = $tableLocator->get($tableName);
-			$entities = $table->find('all', softDelete: ['includeDeleted' => true])->disableResultsCasting()->toArray();
+			$entities = $table
+				->find('all', softDelete: ['includeDeleted' => true])
+				->disableResultsCasting()
+				->toArray()
+			;
 
 			/** @var \Cake\Datasource\EntityInterface $entity */
 			foreach ($entities as &$entity) {
@@ -174,7 +178,10 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 						$fieldCase = $expression->case();
 
 						foreach ($entities as $entity) {
-							$fieldCase->when(['id = ' . $entity->id])->then($entity->get($field), 'string');
+							$fieldCase
+								->when(['id = ' . $entity->id])
+								->then($entity->get($field), 'string')
+							;
 						}
 
 						$cases[ $field ] = $fieldCase;
@@ -182,7 +189,7 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 
 					return $cases;
 				}, [
-					'id IN' => array_map(static fn ($entity) => $entity->id, $entities)
+					'id IN' => array_map(static fn($entity) => $entity->id, $entities),
 				]);
 			}
 		}
@@ -191,7 +198,11 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		$configurationTable = $tableLocator->get('Configuration');
 
 		// In Configuration, set `protection.methods` to camelCased values for the Forms scope
-		$record = $configurationTable->find()->where(['scope' => 'Forms', 'identifier' => 'protection.methods'])->first();
+		$record = $configurationTable
+			->find()
+			->where(['scope' => 'Forms', 'identifier' => 'protection.methods'])
+			->first()
+		;
 		if ($record) {
 			$methods = json_decode($record->value, true);
 			if (is_array($methods)) {
@@ -208,7 +219,10 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		/**
 		 * In Configuration, set `systemOrder.field` to camelCased values
 		 */
-		$records = $configurationTable->find()->where(['identifier' => 'systemOrder.field']);
+		$records = $configurationTable
+			->find()
+			->where(['identifier' => 'systemOrder.field'])
+		;
 		if ($records->count()) {
 			foreach ($records as $record) {
 				$newValue = Inflector::variable($record->value);
@@ -221,7 +235,10 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 
 		// In Configuration, set `overview.displayedFields` to camelCased values
 		/** @noinspection DuplicatedCode */
-		$records = $configurationTable->find()->where(['identifier' => 'overview.displayedFields']);
+		$records = $configurationTable
+			->find()
+			->where(['identifier' => 'overview.displayedFields'])
+		;
 		if ($records->count()) {
 			foreach ($records as $record) {
 				if (empty($record->value)) {
@@ -243,7 +260,10 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 		// In UserConfiguration, set `overview.displayedFields` to camelCased values
 		$userConfigurationTable = $tableLocator->get('UserConfiguration');
 		/** @noinspection DuplicatedCode */
-		$records = $userConfigurationTable->find()->where(['identifier' => 'overview.displayedFields']);
+		$records = $userConfigurationTable
+			->find()
+			->where(['identifier' => 'overview.displayedFields'])
+		;
 		if ($records->count()) {
 			foreach ($records as $record) {
 				if (empty($record->value)) {
@@ -264,13 +284,16 @@ class RenameScopesAndIdentifiers extends BaseMigration {
 
 		// In DashboardElements, simply preg_replace all underscores in the `settings` JSON value to camelCase
 		$dashboardElementsTable = $tableLocator->get('DashboardElements');
-		$records = $dashboardElementsTable->find()->where(['settings IS NOT' => null]);
+		$records = $dashboardElementsTable
+			->find()
+			->where(['settings IS NOT' => null])
+		;
 		if ($records->count()) {
 			foreach ($records as $record) {
 				$record->settings = json_encode($record->settings);
 				$settings = preg_replace_callback(
 					'/(_([a-z]))/',
-					static function($matches) {
+					static function ($matches) {
 						return strtoupper($matches[2]);
 					},
 					$record->settings

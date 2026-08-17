@@ -124,10 +124,10 @@ class DashboardElementsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (DashboardElement $entity): bool {
 			if (
-				empty($entity->scope) ||
-				empty($entity->settings) ||
-				!is_array($entity->settings) ||
-				empty($entity->settings['fields'])
+				empty($entity->scope)
+				|| empty($entity->settings)
+				|| !is_array($entity->settings)
+				|| empty($entity->settings['fields'])
 			) {
 				return true;
 			}
@@ -139,7 +139,7 @@ class DashboardElementsTable extends Table {
 			$tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
 			unset($tableFields['pageRoleId']);
 
-			return array_all($entity->settings['fields'], fn ($field) => array_key_exists($field, $tableFields));
+			return array_all($entity->settings['fields'], fn($field) => array_key_exists($field, $tableFields));
 		}, 'validListFields', [
 			'errorField' => 'listFields',
 			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_list_fields'),
@@ -147,10 +147,10 @@ class DashboardElementsTable extends Table {
 
 		$rules->add(function (DashboardElement $entity): bool {
 			if (
-				empty($entity->scope) ||
-				empty($entity->settings) ||
-				!is_array($entity->settings) ||
-				empty($entity->settings['filter'])
+				empty($entity->scope)
+				|| empty($entity->settings)
+				|| !is_array($entity->settings)
+				|| empty($entity->settings['filter'])
 			) {
 				return true;
 			}
@@ -187,16 +187,17 @@ class DashboardElementsTable extends Table {
 				}
 
 				if (in_array($tableFilterColumns[ $column ]->type, ['date', 'datetime'], true)) {
-					return !empty($columnSettings['operator']) && (
-						in_array($columnSettings['operator'], $dateOperators, true) ||
-						in_array($columnSettings['operator'], $operators, true)
-					);
+					return !empty($columnSettings['operator'])
+						&& (
+							in_array($columnSettings['operator'], $dateOperators, true)
+							|| in_array($columnSettings['operator'], $operators, true)
+						);
 				}
 
 				if (
-					empty($columnSettings['operator']) ||
-					!in_array($columnSettings['operator'], $operators, true) ||
-					in_array($columnSettings['operator'], $tableFilterColumns[ $column ]->disabledOperators, true)
+					empty($columnSettings['operator'])
+					|| !in_array($columnSettings['operator'], $operators, true)
+					|| in_array($columnSettings['operator'], $tableFilterColumns[ $column ]->disabledOperators, true)
 				) {
 					return false;
 				}
@@ -210,10 +211,10 @@ class DashboardElementsTable extends Table {
 
 		$rules->add(function (DashboardElement $entity): bool {
 			if (
-				empty($entity->scope) ||
-				empty($entity->settings) ||
-				!is_array($entity->settings) ||
-				empty($entity->settings['sort'])
+				empty($entity->scope)
+				|| empty($entity->settings)
+				|| !is_array($entity->settings)
+				|| empty($entity->settings['sort'])
 			) {
 				return true;
 			}
@@ -225,15 +226,15 @@ class DashboardElementsTable extends Table {
 			$tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
 			foreach ($entity->settings['sort'] as $sortSettings) {
 				if (
-					empty($sortSettings['field']) ||
-					!array_key_exists($sortSettings['field'], $tableFields)
+					empty($sortSettings['field'])
+					|| !array_key_exists($sortSettings['field'], $tableFields)
 				) {
 					return false;
 				}
 
 				if (
-					empty($sortSettings['direction']) ||
-					!in_array(strtolower($sortSettings['direction']), ['asc', 'desc'], true)
+					empty($sortSettings['direction'])
+					|| !in_array(strtolower($sortSettings['direction']), ['asc', 'desc'], true)
 				) {
 					return false;
 				}
@@ -277,8 +278,8 @@ class DashboardElementsTable extends Table {
 			$tableName = Inflector::underscore(substr($tableName, 0, -5));
 
 			if (
-				str_starts_with($tableName, 'attributes_') ||
-				in_array($tableName, [
+				str_starts_with($tableName, 'attributes_')
+				|| in_array($tableName, [
 					AuditTable::TABLE,
 					ContentTemplateContentAreasTable::TABLE,
 					ContentTemplateElementsTable::TABLE,
@@ -306,29 +307,35 @@ class DashboardElementsTable extends Table {
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$pageRolesTable->findAllAndCache()->each(function (PageRole $pageRole): void {
-			$pageRoleName = Inflector::pluralize($pageRole->identifier);
-			$scopeName = Inflector::camelize($pageRoleName);
+		$pageRolesTable
+			->findAllAndCache()
+			->each(function (PageRole $pageRole): void {
+				$pageRoleName = Inflector::pluralize($pageRole->identifier);
+				$scopeName = Inflector::camelize($pageRoleName);
 
-			if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
-				return;
-			}
+				if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
+					return;
+				}
 
-			static::$scopes[ $scopeName ] = $pageRole->label;
-		});
+				static::$scopes[ $scopeName ] = $pageRole->label;
+			})
+		;
 
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $table */
 		$table = FactoryLocator::get('Table')->get('Datatables');
-		$table->findAllAndCache()->each(function (Datatable $datatable): void {
-			$scopeName = $datatable->identifier;
+		$table
+			->findAllAndCache()
+			->each(function (Datatable $datatable): void {
+				$scopeName = $datatable->identifier;
 
-			if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
-				return;
-			}
+				if (isset(static::$scopes[ $scopeName ]) && !str_contains(static::$scopes[ $scopeName ], '::')) {
+					return;
+				}
 
-			static::$scopes[ $scopeName ] = $datatable->label;
-		});
+				static::$scopes[ $scopeName ] = $datatable->label;
+			})
+		;
 
 		Arrays::naturalSort(static::$scopes);
 

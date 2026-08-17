@@ -147,7 +147,8 @@ class Form extends Entity {
 		$this
 			->loadFormOptions()
 			->loadFormElements()
-			->initProtectionMethods();
+			->initProtectionMethods()
+		;
 
 		return $this;
 	}
@@ -208,11 +209,18 @@ class Form extends Entity {
 			$query = $formElementsTable->find('active')->find('published');
 		}
 
-		$formElements = $query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->where([
-			'formId' => $this->id,
-		])->all()->filter(function (FormElement $content) {
-			return $content->parentId === null;
-		})->compile();
+		$formElements = $query
+			->find('threaded')
+			->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)
+			->where([
+				'formId' => $this->id,
+			])
+			->all()
+			->filter(function (FormElement $content) {
+				return $content->parentId === null;
+			})
+			->compile()
+		;
 
 		if (!$formElements->count()) {
 			return $this;
@@ -246,9 +254,15 @@ class Form extends Entity {
 	 * @return array
 	 */
 	public function getLinearFormElements(): array {
-		return $this->getFormElements()->listNested()->filter(function (FormElement $element): bool {
-			return !empty($element->identifier);
-		})->indexBy('identifier')->toArray();
+		return $this
+			->getFormElements()
+			->listNested()
+			->filter(function (FormElement $element): bool {
+				return !empty($element->identifier);
+			})
+			->indexBy('identifier')
+			->toArray()
+		;
 	}
 
 
@@ -330,10 +344,10 @@ class Form extends Entity {
 		// Validate the protection methods if forced (true)
 		// or if no other validation errors are present (null)
 		if (
-			$validateProtection === true ||
-			(
-				$validateProtection === null &&
-				!$this->getErrors()
+			$validateProtection === true
+			|| (
+				$validateProtection === null
+				&& !$this->getErrors()
 			)
 		) {
 			$this->validateProtection($formData ?? $this->getFormData());
@@ -364,12 +378,13 @@ class Form extends Entity {
 
 		if (!$protectionMethods) {
 			$this->protectionMethods = [];
+
 			return $this;
 		}
 
 		$formElements = $this->formElements ?? [];
 		if (!is_array($formElements)) {
-			$filteredFormElements = $formElements->listNested()->filter(fn (FormElement $element) => $element->identifier !== null);
+			$filteredFormElements = $formElements->listNested()->filter(fn(FormElement $element) => $element->identifier !== null);
 			$formElements = $filteredFormElements->indexBy('identifier')->toArray();
 		}
 
@@ -395,6 +410,7 @@ class Form extends Entity {
 
 		return $this;
 	}
+
 
 	/**
 	 * @return array<\Awyiss\Form\Protection\FormProtectionInterface>

@@ -30,7 +30,6 @@ class CategoriesHelper extends Helper {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection HtmlUnknownTarget
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'templateClass' => StringTemplate::class,
@@ -43,7 +42,8 @@ class CategoriesHelper extends Helper {
 	 */
 	protected array $defaultTemplates = [
 		// Link select element, used for selecting from a list of links.
-		'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
+		'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label>'
+			. '<ul class="List">{{options}}</ul></div>',
 		// Link select option element
 		'linkSelectOption' => '<li{{attrs}}><a href="{{link}}" title="{{title}}">{{levelPrefix}}{{title}}</a></li>',
 	];
@@ -155,8 +155,8 @@ class CategoriesHelper extends Helper {
 	 * @param string $identifier
 	 * @param array $attributes
 	 * @return string
-	 * @see \Cake\View\Helper\FormHelper::control()
 	 * @throws \Exception
+	 * @see \Cake\View\Helper\FormHelper::control()
 	 */
 	public function control(string $identifier, array $attributes = []): string {
 		$identifier = Inflector::variable($identifier);
@@ -190,7 +190,10 @@ class CategoriesHelper extends Helper {
 
 		if (!isset($attributes['val'])) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$attributes['val'] = $this->Form->context()->entity()->get($fieldName) ?? $this->getSelectedCategory($identifier, true);
+			$attributes['val'] = $this->Form
+				->context()
+				->entity()
+				->get($fieldName) ?? $this->getSelectedCategory($identifier, true);
 		}
 
 		if (empty($attributes['options'])) {
@@ -216,7 +219,9 @@ class CategoriesHelper extends Helper {
 				$attributes['options'] = [];
 				foreach ($groupedOptions as $key => $groupOptions) {
 					$groupLabel = $key ?: 'general';
-					$groupLabel = $attributes['groupLabels'][ $groupLabel ] ?? __(Inflector::underscore($fieldName) . '_grouplabel_' . $groupLabel);
+					$groupLabel = $attributes['groupLabels'][ $groupLabel ] ?? __(
+						Inflector::underscore($fieldName) . '_grouplabel_' . $groupLabel
+					);
 
 					$attributes['options'][ $groupLabel ] = $this->formatOptions($groupOptions, $attributes + ['buildNested' => true]);
 				}
@@ -398,7 +403,8 @@ class CategoriesHelper extends Helper {
 	 * For a list of given names, return the first found `selectedCategory`-value in the `categories`-view va
 	 *
 	 * @param string $identifier
-	 * @param bool $useOriginalValue Whether to return the actual value of the selected category instead of the one converted into variableCase
+	 * @param bool $useOriginalValue Whether to return the actual value of the selected category
+	 *  instead of the one converted into variableCase
 	 * @return mixed
 	 */
 	public function getSelectedCategory(string $identifier, bool $useOriginalValue = false): mixed {
@@ -652,30 +658,33 @@ class CategoriesHelper extends Helper {
 	 * @return array
 	 */
 	protected function groupOptions(CollectionInterface $options, string $groupBy, array &$attributes): array {
-		return $options->groupBy(function (mixed $element) use ($groupBy, &$attributes) {
-			$group = $element->$groupBy ?? $element[ $groupBy ] ?? null;
+		return $options
+			->groupBy(function (mixed $element) use ($groupBy, &$attributes) {
+				$group = $element->$groupBy ?? $element[ $groupBy ] ?? null;
 
-			if (is_array($group)) {
-				$path = implode(' - ', array_map(function (mixed $parent) {
-					if (is_scalar($parent)) {
-						return $parent;
-					}
+				if (is_array($group)) {
+					$path = implode(' - ', array_map(function (mixed $parent) {
+						if (is_scalar($parent)) {
+							return $parent;
+						}
 
-					if (!$parent instanceof EntityInterface) {
-						throw new RuntimeException('Cannot group by non-scalars or non-entities.');
-					}
+						if (!$parent instanceof EntityInterface) {
+							throw new RuntimeException('Cannot group by non-scalars or non-entities.');
+						}
 
-					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-					return $parent->label ?? $parent->title;
-				}, $group));
+						/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+						return $parent->label ?? $parent->title;
+					}, $group));
 
-				$attributes['groupLabels'][ $path ] ??= $path;
+					$attributes['groupLabels'][ $path ] ??= $path;
 
-				return $path;
-			}
+					return $path;
+				}
 
-			return $element[ $groupBy ] ?? '';
-		})->toArray();
+				return $element[ $groupBy ] ?? '';
+			})
+			->toArray()
+		;
 	}
 
 

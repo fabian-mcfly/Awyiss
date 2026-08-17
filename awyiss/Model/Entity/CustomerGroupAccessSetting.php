@@ -13,7 +13,7 @@ use Awyiss\Model\Entity;
  * @property int $id
  * @property string $scope
  * @property int|null $foreignKey
- * @property string $accessType
+ * @property \Awyiss\Model\Enum\CustomerGroupAccessType $accessType
  * @property bool $deleted
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn

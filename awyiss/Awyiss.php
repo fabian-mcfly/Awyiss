@@ -53,7 +53,7 @@ class Awyiss extends BaseApplication {
 	/**
 	 * The version of Awyiss
 	 */
-	final public const string VERSION = '0.2.7';
+	final public const string VERSION = '0.2.8';
 	/**
 	 * The name of the version
 	 */
@@ -161,7 +161,6 @@ class Awyiss extends BaseApplication {
 
 		$this->registerEvents();
 	}
-
 
 
 	/**

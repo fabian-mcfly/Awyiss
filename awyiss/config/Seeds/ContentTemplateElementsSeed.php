@@ -167,6 +167,9 @@ class ContentTemplateElementsSeed extends BaseSeed {
 		];
 
 		$table = $this->table('content_template_elements');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

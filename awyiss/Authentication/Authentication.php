@@ -36,14 +36,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * @var AuthenticationServiceInterface
-	 */
-	protected AuthenticationServiceInterface $service;
-	/**
-	 * @var string
-	 */
-	protected string $realm;
-	/**
 	 * @var array<string, array>
 	 */
 	protected static array $authenticators = [
@@ -57,6 +49,16 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		Awyiss::REALM_BACKEND => false,
 		Awyiss::REALM_FRONTEND => false,
 	];
+
+
+	/**
+	 * @var string
+	 */
+	protected string $realm;
+	/**
+	 * @var AuthenticationServiceInterface
+	 */
+	protected AuthenticationServiceInterface $service;
 
 
 	/**
@@ -139,7 +141,11 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			if (!$service->authenticators()->has($authenticator['name'])) {
+			if (
+				!$service
+					->authenticators()
+					->has($authenticator['name'])
+			) {
 				$service->loadAuthenticator($authenticator['name'], $authenticator['config']);
 			}
 		}
@@ -168,7 +174,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			],
 			'identify' => function (User $user): bool {
 				// Set last_login
-				$checkTime = DateTime::now()->subMinutes(1);
+				$checkTime = DateTime::now()
+					->subMinutes(1)
+				;
 				if ($checkTime >= $user->lastLogin) {
 					$user->set('lastLogin', DateTime::now());
 
@@ -193,7 +201,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 					'finder' => 'active',
 				],
 			],
-			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
+			'loginUrl' => $this
+				->dispatchEvent('Authentication.requestLoginUrl', [], $this)
+				->getResult(),
 		], 20);
 	}
 
@@ -212,7 +222,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			],
 			'identify' => function (Customer $customer): bool {
 				// Set last_login
-				$checkTime = DateTime::now()->subMinutes(1);
+				$checkTime = DateTime::now()
+					->subMinutes(1)
+				;
 				if ($checkTime >= $customer->lastLogin) {
 					$customer->set('lastLogin', DateTime::now());
 
@@ -255,7 +267,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 					'finder' => 'active',
 				],
 			],
-			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
+			'loginUrl' => $this
+				->dispatchEvent('Authentication.requestLoginUrl', [], $this)
+				->getResult(),
 		], 20);
 	}
 

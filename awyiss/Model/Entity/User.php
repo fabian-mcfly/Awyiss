@@ -144,7 +144,10 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *
 		 * @noinspection GrazieInspection
 		 */
-		$this->permissionCollection = new PermissionCollection($authorizationService, array_merge(...array_column($usergroups, 'usergroupPermissions')));
+		$this->permissionCollection = new PermissionCollection(
+			$authorizationService,
+			array_merge(...array_column($usergroups, 'usergroupPermissions'))
+		);
 
 		foreach (['read', 'create', 'update', 'delete'] as $identifier) {
 			$this->permissionCollection->add(Permission::createFromArray([
@@ -187,27 +190,40 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		}
 
 		$table = FactoryLocator::get('Table')->get('UserConfiguration');
-		$records = $table->find()->where(['userId' => $this->id])->all();
+		$records = $table
+			->find()
+			->where(['userId' => $this->id])
+			->all()
+		;
 
-		$this->userConfiguration = $records->groupBy(function (UserConfiguration $entity) {
-			return ConfigOptionsProvider::sanitizeScope($entity->scope);
-		})->map(function (array $records) {
-			return Hash::expand(collection($records)->indexBy(function (UserConfiguration $entity) {
-				$identifiers = array_map(function (string $identifier) {
-					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-				}, explode('.', $entity->identifier));
+		$this->userConfiguration = $records
+			->groupBy(function (UserConfiguration $entity) {
+				return ConfigOptionsProvider::sanitizeScope($entity->scope);
+			})
+			->map(function (array $records) {
+				return Hash::expand(
+					collection($records)
+						->indexBy(function (UserConfiguration $entity) {
+							$identifiers = array_map(function (string $identifier) {
+								return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+							}, explode('.', $entity->identifier));
 
 
-				return implode('.', $identifiers);
-			})->map(function (UserConfiguration $entity) {
-				return ConfigOptionsProvider::typecastConfigValue(
-					$entity->scope,
-					Awyiss::REALM_BACKEND,
-					$entity->identifier,
-					$entity->value
+							return implode('.', $identifiers);
+						})
+						->map(function (UserConfiguration $entity) {
+							return ConfigOptionsProvider::typecastConfigValue(
+								$entity->scope,
+								Awyiss::REALM_BACKEND,
+								$entity->identifier,
+								$entity->value
+							);
+						})
+						->toArray()
 				);
-			})->toArray());
-		})->toArray();
+			})
+			->toArray()
+		;
 
 		return $this->userConfiguration;
 	}
@@ -236,7 +252,8 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 		$table->loadInto($this, [
 			'Usergroups' => [
-				'finder' => 'active', //Only find active groups.
+				//Only find active groups.
+				'finder' => 'active',
 				'UsergroupPermissions',
 			],
 		]);

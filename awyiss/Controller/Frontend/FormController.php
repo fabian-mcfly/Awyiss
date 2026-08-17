@@ -100,10 +100,12 @@ class FormController extends AppController {
 		 * @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted()
 		 * @var \Awyiss\Model\Entity\Page $page
 		 */
-		$page = $this->fetchTable('Pages')
+		$page = $this
+			->fetchTable('Pages')
 			->find('withDeleted', ['skipPageRoleCheck' => true])
 			->where(['id' => $formEntry->pageId])
-			->first();
+			->first()
+		;
 
 		if (!$page) {
 			$languageShortcode = $this->request->getParam('lang');
@@ -112,10 +114,16 @@ class FormController extends AppController {
 			 * @var \Awyiss\Model\Entity\Page $page
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
-			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
-				'parentId IS' => null,
-				'languageShortcode' => $languageShortcode,
-			])->first();
+			$page = $this
+				->getTableLocator()
+				->get('Pages')
+				->find('active', ['skipPageRoleCheck' => true])
+				->where([
+					'parentId IS' => null,
+					'languageShortcode' => $languageShortcode,
+				])
+				->first()
+			;
 		}
 
 		$formRenderer->initForm($formEntry->formId, $this->request->getData(), $page);
@@ -154,7 +162,13 @@ class FormController extends AppController {
 
 		$pageId = $this->request->getData('_pageId');
 		/** @var \Awyiss\Model\Entity\Page $page */
-		$page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $pageId])->first();
+		$page = $this
+			->getTableLocator()
+			->get('Pages')
+			->find('all', ['skipPageRoleCheck' => true])
+			->where(['id' => $pageId])
+			->first()
+		;
 
 		if (!$page) {
 			$languageShortcode = $this->request->getParam('lang');
@@ -163,10 +177,16 @@ class FormController extends AppController {
 			 * @var \Awyiss\Model\Entity\Page $page
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
-			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
-				'parentId IS' => null,
-				'languageShortcode' => $languageShortcode,
-			])->first();
+			$page = $this
+				->getTableLocator()
+				->get('Pages')
+				->find('active', ['skipPageRoleCheck' => true])
+				->where([
+					'parentId IS' => null,
+					'languageShortcode' => $languageShortcode,
+				])
+				->first()
+			;
 		}
 
 		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $className */
@@ -359,11 +379,8 @@ class FormController extends AppController {
 	 * @return string
 	 */
 	public function readableRandomString(int $length = 6): string {
-		static $vowels = ['a', 'e', 'i', 'o', 'u'];
-		static $consonants = [
-			'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
-			'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
-		];
+		static $vowels = 'aeiou';
+		static $consonants = 'bcdfghjklmnprstvwxyz';
 
 		$string = '';
 

@@ -137,8 +137,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$this->setConfig('implementedEvents', [
-			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterSaveCommit' => 'resetHiddenMediaFolderLanguageAfterSave',
-			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterDeleteCommit' => 'resetHiddenMediaFolderLanguageAfterDelete',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterSaveCommit'
+				=> 'resetHiddenMediaFolderLanguageAfterSave',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterDeleteCommit'
+				=> 'resetHiddenMediaFolderLanguageAfterDelete',
 		]);
 	}
 
@@ -152,10 +154,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	public function resetHiddenMediaFolderLanguageAfterSave(Event $event, Configuration $configuration): void {
 		if (
-			!$configuration->isNew() &&
-			(
-				!$configuration->hasOriginal('value') ||
-				$configuration->getOriginal('value') === $configuration->value
+			!$configuration->isNew()
+			&& (
+				!$configuration->hasOriginal('value')
+				|| $configuration->getOriginal('value') === $configuration->value
 			)
 		) {
 			return;
@@ -194,11 +196,17 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param bool $includeElementSelector Whether to include the media selectors in the result
-	 * @param bool $useMediaEntity Whether to use the media entity instead of the media assignment entity as the value of the media assignment identifier
+	 * @param bool $useMediaEntity Whether to use the media entity instead of the media assignment entity as the value of the media
+	 *     assignment identifier
 	 * @param bool $formatResult Whether to format the result so that the media assignments are nested under the media element identifier
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false, bool $useMediaEntity = false, bool $formatResult = true): SelectQuery {
+	public function findMediaAssignments(
+		SelectQuery $query,
+		bool $includeElementSelector = false,
+		bool $useMediaEntity = false,
+		bool $formatResult = true
+	): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
@@ -218,7 +226,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		if ($formatResult) {
-			$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
+			$query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
 		}
 
 		return $query;
@@ -360,9 +368,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$identity = $this->getIdentity();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		if (
-			!$identity ||
-			!method_exists($identity, 'scopeIsAccessible') ||
-			!$identity->scopeIsAccessible('Media', [], 'read')
+			!$identity
+			|| !method_exists($identity, 'scopeIsAccessible')
+			|| !$identity->scopeIsAccessible('Media', [], 'read')
 		) {
 			return [
 				'mediaAssignments' => function (array $values): array {
@@ -471,23 +479,34 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return void
 	 */
 	protected function buildElements(): void {
-		$elements = $this->fetchTable('MediaElements')->find()->contain([
-			'MediaElementSelectors' => [
-				'MediaSelectors',
-			],
-		])->all()->indexBy('id');
+		$elements = $this
+			->fetchTable('MediaElements')
+			->find()
+			->contain([
+				'MediaElementSelectors' => [
+					'MediaSelectors',
+				],
+			])
+			->all()
+			->indexBy('id')
+		;
 
-		static::$mediaElements = $elements->each(function (MediaElement $entity): void {
-			$selectors = collection($entity->mediaElementSelectors);
-			$selectors = $selectors->indexBy(function (MediaElementSelector $selector): string {
-				return $selector->identifier;
-			})->map(function (MediaElementSelector $selector): MediaSelector {
-				return $selector->mediaSelector;
-			});
+		static::$mediaElements = $elements
+			->each(function (MediaElement $entity): void {
+				$selectors = collection($entity->mediaElementSelectors);
+				$selectors = $selectors
+					->indexBy(function (MediaElementSelector $selector): string {
+						return $selector->identifier;
+					})
+					->map(function (MediaElementSelector $selector): MediaSelector {
+						return $selector->mediaSelector;
+					})
+				;
 
-			/** @noinspection PhpUndefinedFieldInspection */
-			$entity->mediaSelectors = $selectors->toArray();
-		})->toArray();
+				$entity->mediaSelectors = $selectors->toArray();
+			})
+			->toArray()
+		;
 	}
 
 
@@ -502,9 +521,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
 			// If no media assignments are set, skip the processing
-			!$entity->has('mediaAssignments') ||
+			!$entity->has('mediaAssignments')
 			// If the options explicitly state to skip media assignments, skip the processing
-			($options['mediaAssignments']['skip'] ?? false) === true
+			|| ($options['mediaAssignments']['skip'] ?? false) === true
 		) {
 			return;
 		}
@@ -515,6 +534,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		if (!$identity?->scopeIsAccessible('Media', [], 'read')) {
 			unset($entity->mediaAssignments);
 			$entity->setDirty('mediaAssignments', false);
+
 			return;
 		}
 
@@ -564,12 +584,17 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 		/** @var \Awyiss\Model\Entity\MediaAssignment $existingAssignment */
-		$existingAssignment = $mediaAssignmentsTable->find()->where([
-			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hiddenFolder',
-			'foreignKey' => $entity->id,
-			'scope' => $this->getConfig('referenceName'),
-		])->contain(['MediaFolders'])->first();
+		$existingAssignment = $mediaAssignmentsTable
+			->find()
+			->where([
+				'mediaElementId' => 1,
+				'mediaElementSelectorIdentifier' => 'hiddenFolder',
+				'foreignKey' => $entity->id,
+				'scope' => $this->getConfig('referenceName'),
+			])
+			->contain(['MediaFolders'])
+			->first()
+		;
 
 		if ($existingAssignment) {
 			$folder = $existingAssignment->mediaFolder;
@@ -601,7 +626,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'title' => $entity->title ?? 'HiddenFolder' . $entity->id,
 		]);
 
-		$parentMediaFolderId = Configure::read(implode('.', ['Awyiss', $entity->getSource(), 'Frontend', 'mediaFolders', 'parentFolderId']));
+		$parentMediaFolderId = Configure::read(
+			implode('.', ['Awyiss', $entity->getSource(), 'Frontend', 'mediaFolders', 'parentFolderId'])
+		);
 		if ($parentMediaFolderId) {
 			$folder->parentId = $parentMediaFolderId;
 		}
@@ -670,20 +697,28 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$query->contain(['Media', 'MediaFolders']);
 
-		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query
+			->getConnection()
+			->getDriver()
+			->schemaDialect()
+		;
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-				$elementField => 'identifier',
-				implode(',', array_column(static::$mediaElements, 'id')),
-			])), true);
+			$query->orderByAsc($query->expr($query
+				->func()
+				->FIND_IN_SET([
+					$elementField => 'identifier',
+					implode(',', array_column(static::$mediaElements, 'id')),
+				])), true);
 
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-				$selectorField => 'identifier',
-				implode(',', $identifiers),
-			])));
+			$query->orderByAsc($query->expr($query
+				->func()
+				->FIND_IN_SET([
+					$selectorField => 'identifier',
+					implode(',', $identifiers),
+				])));
 
 			return $query;
 		}
@@ -751,12 +786,17 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 		/** @var \Awyiss\Model\Entity\MediaAssignment $existingAssignment */
-		$existingAssignment = $mediaAssignmentsTable->find()->where([
-			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hiddenFolder',
-			'foreignKey' => $entity->id,
-			'scope' => $this->getConfig('referenceName'),
-		])->contain(['MediaFolders'])->first();
+		$existingAssignment = $mediaAssignmentsTable
+			->find()
+			->where([
+				'mediaElementId' => 1,
+				'mediaElementSelectorIdentifier' => 'hiddenFolder',
+				'foreignKey' => $entity->id,
+				'scope' => $this->getConfig('referenceName'),
+			])
+			->contain(['MediaFolders'])
+			->first()
+		;
 
 		if ($existingAssignment) {
 			// Delete the folder as well
@@ -772,22 +812,40 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	protected function updateHiddenFolderSettings(bool $splitIntoLanguages): void {
 		/** @var array<\Awyiss\Model\Entity\Configuration> $records */
-		$records = $this->table()->find()->all()->indexBy('id')->toArray();
-		$configurationRecords = $this->fetchTable('Configuration')->find()->where([
-			'realm' => Awyiss::REALM_FRONTEND,
-			'scope' => Inflector::camelize($this->table()->getTable()),
-			'identifier' => 'mediaFolders.parentFolderId',
-		])->all()->indexBy(function (Configuration $configuration): string {
-			return $configuration->languageShortcode ?? 'global';
-		})->toArray();
+		$records = $this
+			->table()
+			->find()
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
+		$configurationRecords = $this
+			->fetchTable('Configuration')
+			->find()
+			->where([
+				'realm' => Awyiss::REALM_FRONTEND,
+				'scope' => Inflector::camelize($this->table()->getTable()),
+				'identifier' => 'mediaFolders.parentFolderId',
+			])
+			->all()
+			->indexBy(function (Configuration $configuration): string {
+				return $configuration->languageShortcode ?? 'global';
+			})
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$existingAssignments = $mediaAssignmentsTable->find()->where([
-			'mediaElementId' => 1,
-			'mediaElementSelectorIdentifier' => 'hiddenFolder',
-			'scope' => $this->getConfig('referenceName'),
-		])->contain(['MediaFolders'])->all();
+		$existingAssignments = $mediaAssignmentsTable
+			->find()
+			->where([
+				'mediaElementId' => 1,
+				'mediaElementSelectorIdentifier' => 'hiddenFolder',
+				'scope' => $this->getConfig('referenceName'),
+			])
+			->contain(['MediaFolders'])
+			->all()
+		;
 
 		if (!$existingAssignments->count()) {
 			return;

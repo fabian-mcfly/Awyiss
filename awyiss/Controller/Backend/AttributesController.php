@@ -30,6 +30,7 @@ class AttributesController extends Controller {
 	 */
 	protected array $attributeScopes;
 
+
 	/**
 	 * Called after the `__construct()` method
 	 *
@@ -59,7 +60,10 @@ class AttributesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->Attributes->find()->where($this->getOverviewWhere());
+		$query = $this->Attributes
+			->find()
+			->where($this->getOverviewWhere())
+		;
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($query);
 
@@ -83,9 +87,13 @@ class AttributesController extends Controller {
 		}
 		else {
 			$attributes = $query->all();
-			$attributesGroupedByFieldset = $query->all()->groupBy(function (Attribute $attribute): string {
-				return $attribute->fieldset ?: '';
-			})->toArray();
+			$attributesGroupedByFieldset = $query
+				->all()
+				->groupBy(function (Attribute $attribute): string {
+					return $attribute->fieldset ?: '';
+				})
+				->toArray()
+			;
 		}
 
 		$selectedScope = $this->Categories->getSelectedCategory();
@@ -142,7 +150,11 @@ class AttributesController extends Controller {
 		 * @var \Awyiss\Model\Entity\Attribute $attribute
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$attribute = $this->Attributes->findById($id)->find('translations')->first();
+		$attribute = $this->Attributes
+			->findById($id)
+			->find('translations')
+			->first()
+		;
 		if (!$attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -171,7 +183,10 @@ class AttributesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Attribute $attribute */
-		$attribute = $this->Attributes->findById($id)->first();
+		$attribute = $this->Attributes
+			->findById($id)
+			->first()
+		;
 		if (!$attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -300,8 +315,14 @@ class AttributesController extends Controller {
 			$systemOrderCase = $expression->case();
 
 			foreach ($orderData as $data) {
-				$fieldsetCase->when(['id' => $data['id']])->then($data['fieldset'], 'string');
-				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
+				$fieldsetCase
+					->when(['id' => $data['id']])
+					->then($data['fieldset'], 'string')
+				;
+				$systemOrderCase
+					->when(['id' => $data['id']])
+					->then($data['systemOrder'], 'integer')
+				;
 			}
 
 			return [

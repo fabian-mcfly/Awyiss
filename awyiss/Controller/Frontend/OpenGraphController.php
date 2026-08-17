@@ -91,10 +91,12 @@ class OpenGraphController extends AppController {
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setTemplate($page->pageRole->identifier)
 			->setTemplatePath('Frontend/open_graph')
-			->setLayout('open_graph');
+			->setLayout('open_graph')
+		;
 	}
 
 
@@ -124,10 +126,13 @@ class OpenGraphController extends AppController {
 		}
 
 		// Return the logo as response
-		return $this->getResponse()->withFile(
-			$logoPath,
-			['download' => false, 'name' => 'login-logo']
-		);
+		return $this
+			->getResponse()
+			->withFile(
+				$logoPath,
+				['download' => false, 'name' => 'login-logo']
+			)
+		;
 	}
 
 
@@ -153,6 +158,7 @@ class OpenGraphController extends AppController {
 		return null;
 	}
 
+
 	/**
 	 * Fetches the Open Graph image screenshot from screenshots.2f.media
 	 *
@@ -172,9 +178,9 @@ class OpenGraphController extends AppController {
 		$data = $response->getJson();
 
 		if (
-			!isset($data['screenshot']) ||
-			!isset($data['hash']) ||
-			!isset($data['signature'])
+			!isset($data['screenshot'])
+			|| !isset($data['hash'])
+			|| !isset($data['signature'])
 		) {
 			return false;
 		}
@@ -204,11 +210,13 @@ class OpenGraphController extends AppController {
 	 * @return \Awyiss\Model\Entity\Page|null
 	 */
 	protected function getPage(int $pageId): ?Page {
-		return $this->fetchTable('Pages')
+		return $this
+			->fetchTable('Pages')
 			->find('active', skipPageRoleCheck: true)
 			->find('published')
 			->where(['id' => $pageId])
 			->contain(['PageRoles'])
-			->first();
+			->first()
+		;
 	}
 }

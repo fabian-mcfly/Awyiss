@@ -43,7 +43,10 @@ class PageRolesListener implements EventListenerInterface {
 	public function beforeSave(Event $event, PageRole $entity): void {
 		// If the page role has an attributes table and there is a table change in progress, stop the event.
 		$attributesTableName = 'attributes_' . Inflector::tableize($entity->identifier);
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
@@ -75,10 +78,10 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function afterSaveCommit(Event $event, PageRole $entity): void {
 		if (
-			$entity->isNew() ||
-			(
-				$entity->hasOriginal('identifier') &&
-				$entity->get('identifier') !== $entity->getOriginal('identifier')
+			$entity->isNew()
+			|| (
+				$entity->hasOriginal('identifier')
+				&& $entity->get('identifier') !== $entity->getOriginal('identifier')
 			)
 		) {
 			$this->bakePageRoleEnum();
@@ -137,7 +140,10 @@ class PageRolesListener implements EventListenerInterface {
 		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 
 		$attributesTableName = 'attributes_' . Inflector::tableize($entity->identifier);
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Awyiss\Model\Table $attributesTable */
 			$attributesTable = $tableLocator->get('Attributes');
@@ -162,12 +168,17 @@ class PageRolesListener implements EventListenerInterface {
 			$commands[] = 'unlink ' . $filePath;
 		}
 
-		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
+		$filePath = implode(
+			DS,
+			[ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']
+		);
 		if (file_exists($filePath)) {
 			$commands[] = 'unlink ' . $filePath;
 		}
 
-		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+		;
 
 		//Queue the job.
 		$queuedJobsTable->createJob('Queue.Execute', [
@@ -200,7 +211,11 @@ class PageRolesListener implements EventListenerInterface {
 			$pageRoles[] = $pageRole->identifier . ':' . $pageRole->id;
 		}
 
-		$commands[] = 'bin' . DS . 'cake bake enum PageRole ' . implode(',', $pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
+		$commands[] = 'bin' . DS . 'cake bake enum PageRole '
+			. implode(',', $pageRoles)
+			. ' -i --namespace ' . CUSTOM_NAMESPACE
+			. ' --is-pagerole --force'
+		;
 
 		if (!empty($commands)) {
 			$data = [
@@ -255,7 +270,9 @@ class PageRolesListener implements EventListenerInterface {
 
 		$commands[] = $command;
 
-		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+		;
 
 		//Queue the job.
 		$queuedJobsTable->createJob('Queue.Execute', [

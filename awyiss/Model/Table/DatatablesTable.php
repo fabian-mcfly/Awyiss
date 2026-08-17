@@ -120,9 +120,9 @@ class DatatablesTable extends Table {
 		$rules->add(
 			function (Datatable $entity, array $options) use ($rules): bool|string {
 				if (
-					($options['isCopy'] ?? false) === false &&
-					$entity->hasOriginal('identifier') &&
-					$entity->get('identifier') !== $entity->getOriginal('identifier')
+					($options['isCopy'] ?? false) === false
+					&& $entity->hasOriginal('identifier')
+					&& $entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
 					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unchanged');
 				}
@@ -131,12 +131,12 @@ class DatatablesTable extends Table {
 				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 				if (
-					$entity->isDirty('identifier') &&
-					(
-						str_starts_with($entity->identifier, 'Attributes') ||
-						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
-						App::className($entity->identifier, 'Controller/Backend', 'Controller') ||
-						$pageRoleEnum::tryFromName($entity->identifier)
+					$entity->isDirty('identifier')
+					&& (
+						str_starts_with($entity->identifier, 'Attributes')
+						|| in_array($entity->identifier, $this->blocklistedIdentifiers)
+						|| App::className($entity->identifier, 'Controller/Backend', 'Controller')
+						|| $pageRoleEnum::tryFromName($entity->identifier)
 					)
 				) {
 					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_allowed');
@@ -175,7 +175,12 @@ class DatatablesTable extends Table {
 			 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 			 * @uses \Awyiss\Model\Table::findTranslations()
 			 */
-			static::$cachedDatatables = $this->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all();
+			static::$cachedDatatables = $this
+				->find('translations')
+				->find('mediaAssignments')
+				->find('mediaElementAssignments')
+				->all()
+			;
 		}
 
 

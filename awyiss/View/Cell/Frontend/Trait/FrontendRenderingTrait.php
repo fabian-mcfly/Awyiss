@@ -64,18 +64,23 @@ trait FrontendRenderingTrait {
 	 * @return array<\Awyiss\Model\Entity\Media>
 	 */
 	protected function cacheAssignedMediaItems(CollectionInterface $entities, string $scope): array {
-		DebugTimer::start('FrontendRenderingTrait::cacheAssignedMediaItems', sprintf('FrontendRenderingTrait::cacheAssignedMediaItems: Caching %d %s media items', $entities->count(), $scope));
+		DebugTimer::start(
+			'FrontendRenderingTrait::cacheAssignedMediaItems',
+			sprintf('FrontendRenderingTrait::cacheAssignedMediaItems: Caching %d %s media items', $entities->count(), $scope)
+		);
 
 		$entities = $entities->listNested()->compile(false);
 		$entityIds = $entities->extract('id')->toArray();
 
 		if (!$entityIds) {
 			DebugTimer::stop('FrontendRenderingTrait::cacheAssignedMediaItems');
+
 			return [];
 		}
 
 		$mediaTable = $this->fetchTable('Media');
-		$query = $mediaTable->find()
+		$query = $mediaTable
+			->find()
 			->matching('MediaAssignments', function (SelectQuery $query) use ($entityIds, $scope) {
 				return $query->where([
 					'MediaAssignments.foreignKey IN' => $entityIds,
@@ -83,13 +88,15 @@ trait FrontendRenderingTrait {
 				]);
 			})
 			->contain(['MediaResizedImages'])
-			->distinct('Media.id');
+			->distinct('Media.id')
+		;
 
 		$media = $query->all()->toList();
 
 		ResizedImageManager::setMediaItems($media);
 
 		DebugTimer::stop('FrontendRenderingTrait::cacheAssignedMediaItems');
+
 		return $media;
 	}
 
@@ -142,7 +149,10 @@ trait FrontendRenderingTrait {
 	 * @throws \Exception
 	 */
 	public function parseAwyissImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
-		DebugTimer::start('FrontendRenderingTrait::parseAwyissImageTags' . $entity->id, sprintf('FrontendRenderingTrait::parseAwyissImageTags: Parsing image tags for entity #%d', $entity->id));
+		DebugTimer::start(
+			'FrontendRenderingTrait::parseAwyissImageTags' . $entity->id,
+			sprintf('FrontendRenderingTrait::parseAwyissImageTags: Parsing image tags for entity #%d', $entity->id)
+		);
 
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $imageHandlerClass */
 		static $imageHandlerClass;
@@ -172,7 +182,10 @@ trait FrontendRenderingTrait {
 			return;
 		}
 
-		DebugTimer::start('FrontendRenderingTrait::parseWidgets' . $entity->id, sprintf('FrontendRenderingTrait::parseWidgets: Parsing widgets for entity #%d field "%s"', $entity->id, $field));
+		DebugTimer::start(
+			'FrontendRenderingTrait::parseWidgets' . $entity->id,
+			sprintf('FrontendRenderingTrait::parseWidgets: Parsing widgets for entity #%d field "%s"', $entity->id, $field)
+		);
 
 		if (!isset($widgets)) {
 			$widgets = WidgetsProvider::getWidgetFiles();
@@ -199,10 +212,19 @@ trait FrontendRenderingTrait {
 			/** @var class-string<\Awyiss\Widget\WidgetInterface> $widgetClass */
 			$widgetClass = $widgets[ $identifier ];
 
-			DebugTimer::start('FrontendRenderingTrait::parseWidget' . $identifier, sprintf('FrontendRenderingTrait::parseWidget: Rendering widget "%s" in entity #%d', $identifier, $entity->id));
+			DebugTimer::start(
+				'FrontendRenderingTrait::parseWidget' . $identifier,
+				sprintf('FrontendRenderingTrait::parseWidget: Rendering widget "%s" in entity #%d', $identifier, $entity->id)
+			);
 
 			/** @noinspection PhpParamsInspection */
-			$widgetOutput = $widgetClass::render($settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+			$widgetOutput = $widgetClass::render(
+				$settings,
+				$this->getView(),
+				$mediaRenderOptions,
+				$entity,
+				LocaleMiddleware::getLanguage()
+			);
 
 			DebugTimer::stop('FrontendRenderingTrait::parseWidget' . $identifier);
 
@@ -228,11 +250,14 @@ trait FrontendRenderingTrait {
 	 * @return void
 	 */
 	protected function setViewVars(array $options): void {
-		$this->getView()->set([
-			...$options['viewVars'],
-			'fullWidth' => $options['fullWidth'],
-			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
-		]);
+		$this
+			->getView()
+			->set([
+				...$options['viewVars'],
+				'fullWidth' => $options['fullWidth'],
+				'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
+			])
+		;
 	}
 
 

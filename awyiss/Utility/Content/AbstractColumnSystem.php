@@ -16,13 +16,13 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 */
 	protected static string $columnClassName = AwyissColumn::class;
 	/**
-	 * @var int The maximum denominator for the column system
-	 */
-	protected static int $maxDenominator = 6;
-	/**
 	 * @var array The column widths
 	 */
 	protected static array $columnWidths;
+	/**
+	 * @var int The maximum denominator for the column system
+	 */
+	protected static int $maxDenominator = 6;
 
 
 	/**

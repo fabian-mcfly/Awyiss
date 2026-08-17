@@ -94,12 +94,14 @@ class AwyissExtension extends AbstractExtension {
 					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Contents', [
-							'contentArea' => $name,
-							'page' => $context['page'],
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
+						return $context['_view']
+							->cell('Frontend/Contents', [
+								'contentArea' => $name,
+								'page' => $context['page'],
+								'view' => $context['_view'],
+								'options' => $options,
+							])
+							->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -208,12 +210,14 @@ class AwyissExtension extends AbstractExtension {
 					$options = Hash::merge(['viewVars' => $context, 'includeWrapper' => true], $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Form', [
-							'identifier' => $identifier,
-							'page' => $context['page'],
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
+						return $context['_view']
+							->cell('Frontend/Form', [
+								'identifier' => $identifier,
+								'page' => $context['page'],
+								'view' => $context['_view'],
+								'options' => $options,
+							])
+							->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -234,11 +238,13 @@ class AwyissExtension extends AbstractExtension {
 					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
-						return $context['_view']->cell('Frontend/GlobalContents', [
-							'identifier' => $name,
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
+						return $context['_view']
+							->cell('Frontend/GlobalContents', [
+								'identifier' => $name,
+								'view' => $context['_view'],
+								'options' => $options,
+							])
+							->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -270,7 +276,9 @@ class AwyissExtension extends AbstractExtension {
 
 					$return = [];
 					foreach ($data as $dataKey => $dataItem) {
-						$return[ $key === 'key' ? $dataKey : $dataItem[ $key ] ] = str_repeat($spacer, $dataItem['level'] - $levelOffset) . $dataItem[ $value ];
+						$return[ $key === 'key' ? $dataKey : $dataItem[ $key ] ] = str_repeat($spacer, $dataItem['level'] - $levelOffset)
+							. $dataItem[ $value ]
+						;
 					}
 
 
@@ -290,12 +298,14 @@ class AwyissExtension extends AbstractExtension {
 					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Menu', [
-							'identifier' => $name,
-							'languageShortcode' => $context['languageShortcode'],
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
+						return $context['_view']
+							->cell('Frontend/Menu', [
+								'identifier' => $name,
+								'languageShortcode' => $context['languageShortcode'],
+								'view' => $context['_view'],
+								'options' => $options,
+							])
+							->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -320,10 +330,10 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('staticCall', function (string|object $class, string $method, ...$args): mixed {
 				if (
 					(
-						(is_string($class) && class_exists($class)) ||
-						(is_object($class))
-					) &&
-					method_exists($class, $method)
+						(is_string($class) && class_exists($class))
+						|| (is_object($class))
+					)
+					&& method_exists($class, $method)
 				) {
 					return call_user_func_array([$class, $method], $args);
 				}
@@ -341,12 +351,14 @@ class AwyissExtension extends AbstractExtension {
 					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Survey', [
-							'identifier' => $identifier,
-							'page' => $context['page'],
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
+						return $context['_view']
+							->cell('Frontend/Survey', [
+								'identifier' => $identifier,
+								'page' => $context['page'],
+								'view' => $context['_view'],
+								'options' => $options,
+							])
+							->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -362,17 +374,38 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction(
 				'wordCount',
 				function (array $context, string $contents): int {
+					static $unwantedNodeNames = [
+						'.Widget-Breadcrumbs',
+						'footer',
+						'header',
+						'nav',
+						'template',
+						'style',
+						'script',
+						'nav',
+						'form',
+						'noscript',
+						'link',
+						'meta',
+						'picture',
+						'video',
+						'audio',
+						'img',
+						'input',
+						'select',
+						'textarea',
+						'button',
+						'canvas',
+						'iframe',
+						'svg',
+					];
+
 					$dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
 
 					$html = '';
 
 					$body = $dom->querySelector('body');
 
-					// Remove unwanted nodes
-					$unwantedNodeNames = [
-						'.Widget-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
-						'link', 'meta', 'picture', 'video', 'audio', 'img', 'input', 'select', 'textarea', 'button', 'canvas', 'iframe', 'svg',
-					];
 					foreach ($unwantedNodeNames as $unwantedNodeName) {
 						$unwantedNodes = $body->querySelectorAll($unwantedNodeName);
 						foreach ($unwantedNodes as $unwantedNode) {
@@ -392,6 +425,7 @@ class AwyissExtension extends AbstractExtension {
 					$cleanText = preg_replace('/[ ]+/', ' ', $cleanText);
 
 					$words = array_filter(explode(' ', $cleanText));
+
 					return count($words);
 				},
 				['needs_context' => true, 'is_safe' => ['all']]

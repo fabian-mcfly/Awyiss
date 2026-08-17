@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class UserConfiguration
  */
@@ -23,66 +22,86 @@ class UserConfiguration {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('user_configuration')) {
-			$this->migration->table('user_configuration')->drop()->save();
+			$this->migration
+				->table('user_configuration')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('user_configuration')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('user_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('scope', 'string', [
-			'default' => 'global',
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('identifier', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('value', 'string', [
-			'default' => null,
-			'limit' => 1024,
-			'null' => true,
-		])->addIndex(
-			[
-				'user_id',
-			], [
-				'name' => 'USER_CONFIGURATION_USER_ID',
-			]
-		)->addIndex(
-			[
-				'scope',
-			], [
-				'name' => 'USER_CONFIGURATION_SCOPE',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'USER_CONFIGURATION_IDENTIFIER',
-			]
-		)->create();
+		$this->migration
+			->table('user_configuration')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('user_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('scope', 'string', [
+				'default' => 'global',
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('identifier', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('value', 'string', [
+				'default' => null,
+				'limit' => 1024,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'user_id',
+				], [
+					'name' => 'USER_CONFIGURATION_USER_ID',
+				]
+			)
+			->addIndex(
+				[
+					'scope',
+				], [
+					'name' => 'USER_CONFIGURATION_SCOPE',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'USER_CONFIGURATION_IDENTIFIER',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('user_configuration')->drop()->save();
+		$this->migration
+			->table('user_configuration')
+			->drop()
+			->save()
+		;
 	}
 }

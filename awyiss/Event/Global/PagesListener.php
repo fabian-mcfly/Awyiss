@@ -50,6 +50,7 @@ class PagesListener implements EventListenerInterface {
 		return $events;
 	}
 
+
 	/**
 	 * Add a where-condition that limits all results to the page role set for this model
 	 *
@@ -64,22 +65,34 @@ class PagesListener implements EventListenerInterface {
 
 		if (($options['skipPageRoleCheck'] ?? false) !== true) {
 			$query->where(['pageRoleId' => $pagesTable->getPageRole()]);
+
 			return;
 		}
 
-		$pageRoles = $this->fetchTable('PageRoles')->findAllAndCache()->indexBy('identifier')->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->findAllAndCache()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		$prefixedColumn = $query->getRepository()->getAlias() . '.pageRoleId';
 
-		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query
+			->getConnection()
+			->getDriver()
+			->schemaDialect()
+		;
 
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-				$prefixedColumn => 'identifier',
-				implode(',', array_column($pageRoles, 'id')),
-			])));
+			$query->orderByAsc($query->expr($query
+				->func()
+				->FIND_IN_SET([
+					$prefixedColumn => 'identifier',
+					implode(',', array_column($pageRoles, 'id')),
+				])));
 
 			return;
 		}

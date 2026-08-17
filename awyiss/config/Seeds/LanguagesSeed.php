@@ -72,6 +72,9 @@ class LanguagesSeed extends BaseSeed {
 		];
 
 		$table = $this->table('languages');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

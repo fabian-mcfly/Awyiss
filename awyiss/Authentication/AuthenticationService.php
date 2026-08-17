@@ -75,9 +75,9 @@ class AuthenticationService extends BaseAuthenticationService {
 		$redirectUri = $uri->getPath();
 
 		if (
-			!str_ends_with($redirectUri, '/request-lock/') &&
-			!str_ends_with($redirectUri, '/release-lock/') &&
-			!str_contains($redirectUri, '/mode:frontend-editor/')
+			!str_ends_with($redirectUri, '/request-lock/')
+			&& !str_ends_with($redirectUri, '/release-lock/')
+			&& !str_contains($redirectUri, '/mode:frontend-editor/')
 		) {
 			/** @var \Cake\Http\Session $session */
 			$session = $request->getAttribute('session');

@@ -94,8 +94,6 @@ class Media extends Entity {
 		'systemOrder' => true,
 		'file' => true,
 	];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -206,13 +204,18 @@ class Media extends Entity {
 		}
 
 		// Find files with the same name but different extension or -xx pattern
-		$results = $table->find()->where([
-			'id !=' => $this->id,
-			'OR' => [
-				['name LIKE' => $name . '.%'],
-				['name LIKE' => $name . '-__.%'],
-			],
-		])->all()->toArray();
+		$results = $table
+			->find()
+			->where([
+				'id !=' => $this->id,
+				'OR' => [
+					['name LIKE' => $name . '.%'],
+					['name LIKE' => $name . '-__.%'],
+				],
+			])
+			->all()
+			->toArray()
+		;
 
 		return $results ?: null;
 	}
@@ -290,32 +293,48 @@ class Media extends Entity {
 
 		/**
 		 * UPDATE media_resized_images SET
-		 * 	name = (CONCAT('newname', substr(name, <strlen(oldname) + 1>))),
-		 * 	path = (CONCAT('newpath', substr(path, <strlen(oldpath) + 1>)))
+		 *    name = (CONCAT('newname', substr(name, <strlen(oldname) + 1>))),
+		 *    path = (CONCAT('newpath', substr(path, <strlen(oldpath) + 1>)))
 		 * WHERE mediaId = 1
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
-		 * @noinspection SpellCheckingInspection
 		 */
-		$query->update(MediaResizedImagesTable::TABLE)->set('name', $query->expr($query->func()->concat([
-			$fileName,
-			$query->func()->substr([
-				'name' => 'identifier',
-				mb_strlen($originalName) + 1,
-			], [
-				null,
-				'integer',
-			]),
-		])))->set('path', $query->expr($query->func()->concat([
-			$directory,
-			$query->func()->substr([
-				'path' => 'identifier',
-				mb_strlen($originalDirectory) + 1,
-			], [
-				null,
-				'integer',
-			]),
-		])))->where(['mediaId' => $this->id])->execute();
+		$query
+			->update(MediaResizedImagesTable::TABLE)
+			->set('name', $query->expr($query
+				->func()
+				->concat([
+					$fileName,
+					$query
+						->func()
+						->substr([
+							'name' => 'identifier',
+							mb_strlen($originalName) + 1,
+						], [
+							null,
+							'integer',
+						]),
+				])))
+			->set(
+				'path',
+				$query->expr($query
+					->func()
+					->concat([
+						$directory,
+						$query
+							->func()
+							->substr([
+								'path' => 'identifier',
+								mb_strlen($originalDirectory) + 1,
+							], [
+								null,
+								'integer',
+							]),
+					]))
+			)
+			->where(['mediaId' => $this->id])
+			->execute()
+		;
 
 		if ($this->isImage()) {
 			$baseName = $this->originalCleanName ?? $this->cleanName;
@@ -660,10 +679,10 @@ class Media extends Entity {
 	 */
 	protected function _getOriginalAvifPath(): ?string {
 		if (
-			!$this->hasOriginal('path') ||
-			(
-				$this->hasOriginal('mimeType') &&
-				$this->getOriginal('mimeType') === 'image/avif'
+			!$this->hasOriginal('path')
+			|| (
+				$this->hasOriginal('mimeType')
+				&& $this->getOriginal('mimeType') === 'image/avif'
 			)
 		) {
 			return null;
@@ -750,10 +769,10 @@ class Media extends Entity {
 	 */
 	protected function _getOriginalWebpPath(): ?string {
 		if (
-			!$this->hasOriginal('path') ||
-			(
-				$this->hasOriginal('mimeType') &&
-				$this->getOriginal('mimeType') === 'image/webp'
+			!$this->hasOriginal('path')
+			|| (
+				$this->hasOriginal('mimeType')
+				&& $this->getOriginal('mimeType') === 'image/webp'
 			)
 		) {
 			return null;

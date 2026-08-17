@@ -101,15 +101,18 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 				'modelLevel' => false,
 			]);
 
-			$this->table()->hasMany('MediaElementAssignments', [
-				'bindingKey' => 'identifier',
-				'cascadeCallbacks' => true,
-				'dependent' => true,
-				'foreignKey' => 'scope',
-				'propertyName' => 'mediaElementAssignments',
-				'saveStrategy' => 'replace',
-				'strategy' => $this->getConfig('strategy'),
-			]);
+			$this
+				->table()
+				->hasMany('MediaElementAssignments', [
+					'bindingKey' => 'identifier',
+					'cascadeCallbacks' => true,
+					'dependent' => true,
+					'foreignKey' => 'scope',
+					'propertyName' => 'mediaElementAssignments',
+					'saveStrategy' => 'replace',
+					'strategy' => $this->getConfig('strategy'),
+				])
+			;
 		}
 		else {
 			$reflection = new ReflectionClass($this->table());
@@ -128,17 +131,20 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			]);
 
 
-			$this->table()->hasMany('MediaElementAssignments', [
-				'conditions' => [
-					'MediaElementAssignments.scope' => $this->getScope($this->table()),
-				],
-				'cascadeCallbacks' => true,
-				'dependent' => true,
-				'foreignKey' => 'foreignKey',
-				'propertyName' => 'mediaElementAssignments',
-				'saveStrategy' => 'replace',
-				'strategy' => $this->getConfig('strategy'),
-			]);
+			$this
+				->table()
+				->hasMany('MediaElementAssignments', [
+					'conditions' => [
+						'MediaElementAssignments.scope' => $this->getScope($this->table()),
+					],
+					'cascadeCallbacks' => true,
+					'dependent' => true,
+					'foreignKey' => 'foreignKey',
+					'propertyName' => 'mediaElementAssignments',
+					'saveStrategy' => 'replace',
+					'strategy' => $this->getConfig('strategy'),
+				])
+			;
 		}
 
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaElementAssignments', ['allowFallbackClass' => false]);
@@ -212,7 +218,10 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 					$mediaElementAssignment = null;
 					if (!empty($data['id'])) {
 						// Find the existing entity, if any, in `mediaElementAssignments`
-						$mediaElementAssignment = array_filter($entity->mediaElementAssignments ?? [], fn(MediaElementAssignment $entity) => $entity->id === (int)$data['id'])[0] ?? null;
+						$mediaElementAssignment = array_filter(
+							$entity->mediaElementAssignments ?? [],
+							fn(MediaElementAssignment $entity) => $entity->id === (int)$data['id']
+						)[0] ?? null;
 					}
 
 					// If no existing entity was found, create a new one

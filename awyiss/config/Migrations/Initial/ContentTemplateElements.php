@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class ContentTemplateElements
  */
@@ -23,85 +22,109 @@ class ContentTemplateElements {
 
 	/**
 	 * Migrate Up.
-	 * 
+	 *
 	 * @return void
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('content_template_elements')) {
-			$this->migration->table('content_template_elements')->drop()->save();
+			$this->migration
+				->table('content_template_elements')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('content_template_elements')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('content_template_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('identifier', 'string', [
-			'default' => null,
-			'limit' => 61,
-			'null' => false,
-		])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 100,
-			'null' => true,
-		])->addColumn('fieldset', 'string', [
-			'default' => '',
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('column_span', 'string', [
-			'default' => '12/12',
-			'limit' => 5,
-			'null' => false,
-		])->addColumn('required', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addIndex(
-			[
-				'content_template_id',
-			], [
-				'name' => 'CONTENT_TEMPLATE_ELEMENTS_CONTENT_TEMPLATE_ID',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'CONTENT_TEMPLATE_ELEMENTS_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'fieldset',
-			], [
-				'name' => 'CONTENT_TEMPLATE_ELEMENTS_FIELDSET',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'CONTENT_TEMPLATE_ELEMENTS_SYSTEM_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('content_template_elements')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('content_template_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('identifier', 'string', [
+				'default' => null,
+				'limit' => 61,
+				'null' => false,
+			])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 100,
+				'null' => true,
+			])
+			->addColumn('fieldset', 'string', [
+				'default' => '',
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('column_span', 'string', [
+				'default' => '12/12',
+				'limit' => 5,
+				'null' => false,
+			])
+			->addColumn('required', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addIndex(
+				[
+					'content_template_id',
+				], [
+					'name' => 'CONTENT_TEMPLATE_ELEMENTS_CONTENT_TEMPLATE_ID',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'CONTENT_TEMPLATE_ELEMENTS_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'fieldset',
+				], [
+					'name' => 'CONTENT_TEMPLATE_ELEMENTS_FIELDSET',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'CONTENT_TEMPLATE_ELEMENTS_SYSTEM_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
 	/**
 	 * Migrate Down.
-	 * 
+	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('content_template_elements')->drop()->save();
+		$this->migration
+			->table('content_template_elements')
+			->drop()
+			->save()
+		;
 	}
 }

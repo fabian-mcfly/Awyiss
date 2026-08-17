@@ -28,130 +28,162 @@ class MediaAssignments {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('media_assignments')) {
-			$this->migration->table('media_assignments')->drop()->save();
+			$this->migration
+				->table('media_assignments')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('media_assignments')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('media_element_id', 'integer', [
-			'limit' => 11,
-			'null' => false,
-		])->addColumn('media_element_selector_identifier', 'string', [
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('media_id', 'integer', [
-			'default' => null,
-			'limit' => 11,
-			'null' => true,
-		])->addColumn('media_folder_id', 'integer', [
-			'default' => null,
-			'limit' => 11,
-			'null' => true,
-		])->addColumn('scope', 'string', [
-			'limit' => 50,
-			'null' => false,
-		])->addColumn('foreign_key', 'integer', [
-			'default' => null,
-			'limit' => 11,
-			'null' => true,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'media_element_id',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_ID',
-			]
-		)->addIndex(
-			[
-				'media_element_selector_identifier',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_SELECTOR_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'media_element_id',
-				'media_element_selector_identifier',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_MEDIA_ELEMENT_SELECTOR',
-			]
-		)->addIndex(
-			[
-				'scope',
-				'foreign_key',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
-			]
-		)->addIndex(
-			[
-				'media_id',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ID',
-			]
-		)->addIndex(
-			[
-				'media_folder_id',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_FOLDER_ID',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_DELETED',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'MEDIA_ASSIGNMENTS_DELETED_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('media_assignments')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('media_element_id', 'integer', [
+				'limit' => 11,
+				'null' => false,
+			])
+			->addColumn('media_element_selector_identifier', 'string', [
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('media_id', 'integer', [
+				'default' => null,
+				'limit' => 11,
+				'null' => true,
+			])
+			->addColumn('media_folder_id', 'integer', [
+				'default' => null,
+				'limit' => 11,
+				'null' => true,
+			])
+			->addColumn('scope', 'string', [
+				'limit' => 50,
+				'null' => false,
+			])
+			->addColumn('foreign_key', 'integer', [
+				'default' => null,
+				'limit' => 11,
+				'null' => true,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'media_element_id',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_ID',
+				]
+			)
+			->addIndex(
+				[
+					'media_element_selector_identifier',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_SELECTOR_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'media_element_id',
+					'media_element_selector_identifier',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_MEDIA_ELEMENT_SELECTOR',
+				]
+			)
+			->addIndex(
+				[
+					'scope',
+					'foreign_key',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
+				]
+			)
+			->addIndex(
+				[
+					'media_id',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ID',
+				]
+			)
+			->addIndex(
+				[
+					'media_folder_id',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_MEDIA_FOLDER_ID',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'MEDIA_ASSIGNMENTS_DELETED_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -161,6 +193,10 @@ class MediaAssignments {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('media_assignments')->drop()->save();
+		$this->migration
+			->table('media_assignments')
+			->drop()
+			->save()
+		;
 	}
 }

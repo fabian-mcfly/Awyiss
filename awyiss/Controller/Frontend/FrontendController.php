@@ -44,13 +44,13 @@ class FrontendController extends AppController {
 
 
 	/**
-	 * @var \Awyiss\Model\Entity\Page|null $firstPage Cache for the first page per language
-	 */
-	protected static ?Page $firstPage = null;
-	/**
 	 * @var \Awyiss\Model\Entity\Page|null $currentPage The current page being viewed
 	 */
 	protected static ?Page $currentPage = null;
+	/**
+	 * @var \Awyiss\Model\Entity\Page|null $firstPage Cache for the first page per language
+	 */
+	protected static ?Page $firstPage = null;
 
 
 	/**
@@ -76,7 +76,11 @@ class FrontendController extends AppController {
 
 		$this->viewBuilder()->setClassName('Frontend');
 
-		$this->previewMode = !!$this->getRequest()->getSession()->read('previewMode.enabled', false);
+		$this->previewMode = !!$this
+			->getRequest()
+			->getSession()
+			->read('previewMode.enabled', false)
+		;
 
 		DebugTimer::stop('FrontendController::initialize');
 	}
@@ -107,13 +111,16 @@ class FrontendController extends AppController {
 				$query
 					->find('accessible')
 					->find('active')
-					->find('published');
+					->find('published')
+				;
 			}
 
-			$children = $query->find('mediaAssignments', useMediaEntity: true)
+			$children = $query
+				->find('mediaAssignments', useMediaEntity: true)
 				->where(['parentId' => $page->id])
 				->all()
-				->toArray();
+				->toArray()
+			;
 
 			$this->set('childPages', $children);
 		}
@@ -150,7 +157,8 @@ class FrontendController extends AppController {
 				 */
 				$newCategoryQuery
 					->find('active')
-					->find('published');
+					->find('published')
+				;
 			}
 
 			$newCategoryQuery->where(['id' => $page->parentId]);
@@ -169,7 +177,8 @@ class FrontendController extends AppController {
 			$newerNewsQuery
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		$newerNews = $newerNewsQuery
@@ -180,7 +189,8 @@ class FrontendController extends AppController {
 			])
 			->orderBy(['systemOrder' => 'DESC'])
 			->limit(1)
-			->first();
+			->first()
+		;
 
 		if ($newerNews) {
 			ResizedImageManager::addMediaItemsFromEntity($newerNews);
@@ -198,7 +208,8 @@ class FrontendController extends AppController {
 			$olderNewsQuery
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		$olderNews = $olderNewsQuery
@@ -209,7 +220,8 @@ class FrontendController extends AppController {
 			])
 			->orderBy(['systemOrder' => 'ASC'])
 			->limit(1)
-			->first();
+			->first()
+		;
 
 		if ($olderNews) {
 			ResizedImageManager::addMediaItemsFromEntity($olderNews);
@@ -272,7 +284,8 @@ class FrontendController extends AppController {
 
 		$query = $pagesTable
 			->find('all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true)
-			->find('mediaAssignments', useMediaEntity: true);
+			->find('mediaAssignments', useMediaEntity: true)
+		;
 
 		if (!$this->previewMode) {
 			/**
@@ -281,7 +294,8 @@ class FrontendController extends AppController {
 			 */
 			$query
 				->find('accessible')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		/**
@@ -446,11 +460,11 @@ class FrontendController extends AppController {
 		 * If there isn't, find the 410 page for the current language.
 		 */
 		if (
-			$page &&
-			(
-				$page->deleted ||
-				$page->pageRole->deleted ||
-				$page->language?->deleted
+			$page
+			&& (
+				$page->deleted
+				|| $page->pageRole->deleted
+				|| $page->language?->deleted
 			)
 		) {
 			// Try to find an entry in the slug history
@@ -459,8 +473,14 @@ class FrontendController extends AppController {
 			// If the page or the language was deleted more than 6 months ago,
 			// use the 404 instead by throwing NotFoundException and letting the ErrorController handle it
 			if (
-				($page->deletedOn && $page->deletedOn->diff(new DateTime())->days > 180) ||
-				($page->language->deletedOn && $page->language->deletedOn->diff(new DateTime())->days > 180)
+				(
+					$page->deletedOn
+					&& $page->deletedOn->diff(new DateTime())->days > 180
+				)
+				|| (
+					$page->language->deletedOn
+					&& $page->language->deletedOn->diff(new DateTime())->days > 180
+				)
 			) {
 				throw new NotFoundException();
 			}
@@ -481,16 +501,16 @@ class FrontendController extends AppController {
 		 * as long as we're not in preview mode.
 		 */
 		if (
-			!$page ||
-			(
-				(
-					!$page->active ||
-					!$page->parentsActive ||
-					!$page->pageRole->active ||
-					!$page->language?->active ||
-					!$this->parentsAreAccessible($page)
-				) &&
+			!$page
+			|| (
 				!$this->previewMode
+				&& (
+					!$page->active
+					|| !$page->parentsActive
+					|| !$page->pageRole->active
+					|| !$page->language?->active
+					|| !$this->parentsAreAccessible($page)
+				)
 			)
 		) {
 			throw new NotFoundException();
@@ -540,7 +560,11 @@ class FrontendController extends AppController {
 
 		ResizedImageManager::addMediaItemsFromEntity($page);
 
-		$designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
+		$designVariables = $this
+			->getRequest()
+			->getAttribute('design')
+			->getDesignVariables()
+		;
 		$designPreviewVariables = $this->loadDesignPreview();
 
 		/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $className */
@@ -549,7 +573,11 @@ class FrontendController extends AppController {
 		$mediaRenderOptions = new $className(
 			baseWidth: intval($designPreviewVariables['pageWidth'] ?? $designVariables['pageWidth'] ?? 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
-			singleColumnBreakpoint: intval($designPreviewVariables['singleColumnBreakpoint'] ?? $designVariables['singleColumnBreakpoint'] ?? 768),
+			singleColumnBreakpoint: intval(
+				$designPreviewVariables['singleColumnBreakpoint']
+				?? $designVariables['singleColumnBreakpoint']
+				?? 768
+			),
 		);
 
 		$this->set([
@@ -569,7 +597,12 @@ class FrontendController extends AppController {
 		$this->setRequest($request);
 		Router::setRequest($request);
 
-		if ($this->getRequest()->getSession()->read('Backend.Auth')) {
+		if (
+			$this
+				->getRequest()
+				->getSession()
+				->read('Backend.Auth')
+		) {
 			$this->loadFrontendEditor($page);
 		}
 
@@ -588,9 +621,11 @@ class FrontendController extends AppController {
 			$page->pageTemplate->set('fileName', $fileName, ['setter' => false]);
 		}
 
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setTemplate($page->pageTemplate->fileName)
-			->setTemplatePath('Frontend/page');
+			->setTemplatePath('Frontend/page')
+		;
 
 		// Call the page role specific method
 		$methodName = Inflector::variable($page->pageRoleId->name);
@@ -664,6 +699,7 @@ class FrontendController extends AppController {
 				static::$firstPage ??= $page;
 
 				DebugTimer::stop('FrontendController::redirectIfNotNormalized');
+
 				return;
 			}
 			else {
@@ -700,10 +736,10 @@ class FrontendController extends AppController {
 
 		// If the URL does not match the normalized URL, redirect to the normalized URL
 		if (
-			!str_ends_with($this->getRequest()->getPath(), '/') ||
-			(
-				$testUrl !== $currentUrl &&
-				!in_array($currentUrl, ['', '/', '//'], true)
+			!str_ends_with($this->getRequest()->getPath(), '/')
+			|| (
+				$testUrl !== $currentUrl
+				&& !in_array($currentUrl, ['', '/', '//'], true)
 			)
 		) {
 			if (!trim($currentUrl, '/')) {
@@ -768,6 +804,7 @@ class FrontendController extends AppController {
 			}
 
 			DebugTimer::stop('FrontendController::redirectIfNotNormalizedNoLanguage');
+
 			return;
 		}
 
@@ -817,22 +854,36 @@ class FrontendController extends AppController {
 		$urls = array_filter($urls);
 		if (!$urls) {
 			DebugTimer::stop('FrontendController::historyRedirect');
+
 			return;
 		}
 
-		$query = $historyTable->find('all')
+		$query = $historyTable
+			->find('all')
 			->where(['url IN' => $urls])
 			->contain(['Media', 'Pages'])
-			->limit(1);
+			->limit(1)
+		;
 
-		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query
+			->getConnection()
+			->getDriver()
+			->schemaDialect()
+		;
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
-				'UrlHistory.url' => 'identifier',
-				implode(',', $urls),
-			])), true);
+			$query->orderByAsc(
+				$query->expr(
+					$query
+						->func()
+						->FIND_IN_SET([
+							'UrlHistory.url' => 'identifier',
+							implode(',', $urls),
+						])
+				),
+				true
+			);
 		}
 		else {
 			$query->orderBy(function ($exp) use ($urls) {
@@ -857,6 +908,7 @@ class FrontendController extends AppController {
 
 		if (!$record) {
 			DebugTimer::stop('FrontendController::historyRedirect');
+
 			return;
 		}
 
@@ -869,6 +921,7 @@ class FrontendController extends AppController {
 			// If the resulting url is one of the checked urls, do not redirect to itself
 			if (in_array(trim($realUrl, '/'), $urls)) {
 				DebugTimer::stop('FrontendController::historyRedirect');
+
 				return;
 			}
 
@@ -904,6 +957,7 @@ class FrontendController extends AppController {
 
 		if ($page->pageRoleId === $pageRoleEnum::Page) {
 			DebugTimer::stop('FrontendController::ensureCorrectEntityType');
+
 			return $page;
 		}
 
@@ -919,10 +973,15 @@ class FrontendController extends AppController {
 			 */
 			$query
 				->find('accessible')
-				->find('published');
+				->find('published')
+			;
 		}
 
-		$query->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
+		$query
+			->find('mediaAssignments', useMediaEntity: true)
+			->where(['id' => $page->id])
+			->limit(1)
+		;
 
 		$contain = [
 			'Languages',
@@ -931,7 +990,7 @@ class FrontendController extends AppController {
 
 		// Only contain the DuplicateOf relation when the page is a duplicate
 		if ($page->duplicateOf) {
-			$contain['DuplicateOf' . $page->pageRoleId->name ] = [
+			$contain[ 'DuplicateOf' . $page->pageRoleId->name ] = [
 				'fields' => ['id', 'languageShortcode', 'slug'],
 				'finder' => [
 					'withDeleted' => [
@@ -961,30 +1020,49 @@ class FrontendController extends AppController {
 		DebugTimer::start('FrontendController::loadDesignPreview');
 
 		if ($this->getRequest()->getParam('designPreview')) {
-			$this->getRequest()->getSession()->write('designPreviewIdentifier', $this->getRequest()->getParam('designPreview'));
+			$this
+				->getRequest()
+				->getSession()
+				->write('designPreviewIdentifier', $this->getRequest()->getParam('designPreview'))
+			;
 		}
 
-		$designPreviewIdentifier = $this->getRequest()->getSession()->read('designPreviewIdentifier');
+		$designPreviewIdentifier = $this
+			->getRequest()
+			->getSession()
+			->read('designPreviewIdentifier')
+		;
 
 		if (!$designPreviewIdentifier) {
 			DebugTimer::stop('FrontendController::loadDesignPreview');
+
 			return [];
 		}
 
 		if ($this->getRequest()->getData('awyissDesignPreview') === 'cancel') {
-			$this->getRequest()->getSession()->delete('designPreviewIdentifier');
+			$this
+				->getRequest()
+				->getSession()
+				->delete('designPreviewIdentifier')
+			;
 
 			throw new RedirectException(Router::url(['_name' => $this->getRequest()->getParam('_name')]));
 		}
 
 		$designTable = $this->fetchTable('Designs');
-		$design = $designTable->find('all')->where([
-			'identifier' => $designPreviewIdentifier,
-			'inUse' => false,
-		])->first();
+		/** @var \Awyiss\Model\Entity\Design $design */
+		$design = $designTable
+			->find('all')
+			->where([
+				'identifier' => $designPreviewIdentifier,
+				'inUse' => false,
+			])
+			->first()
+		;
 
 		if (!$design) {
 			DebugTimer::stop('FrontendController::loadDesignPreview');
+
 			return [];
 		}
 
@@ -1021,13 +1099,19 @@ class FrontendController extends AppController {
 
 		if (!Configure::read('Awyiss.System.Frontend.editor')) {
 			DebugTimer::stop('FrontendController::loadFrontendEditor');
+
 			return;
 		}
 
-		$identity = $this->getRequest()->getSession()->read('Backend.Auth');
+		$identity = $this
+			->getRequest()
+			->getSession()
+			->read('Backend.Auth')
+		;
 
 		if (!$identity instanceof IdentityPermissionsInterface) {
 			DebugTimer::stop('FrontendController::loadFrontendEditor');
+
 			return;
 		}
 
@@ -1038,12 +1122,13 @@ class FrontendController extends AppController {
 		$menuEntriesEditable = $permissionCollection->scopeIsAccessible('Menus', [], 'read');
 
 		if (
-			!$contentsEditable &&
-			!$formElementsEditable &&
-			!$globalContentsEditable &&
-			!$menuEntriesEditable
+			!$contentsEditable
+			&& !$formElementsEditable
+			&& !$globalContentsEditable
+			&& !$menuEntriesEditable
 		) {
 			DebugTimer::stop('FrontendController::loadFrontendEditor');
+
 			return;
 		}
 
@@ -1097,10 +1182,14 @@ class FrontendController extends AppController {
 
 		if (!$page->parentId) {
 			DebugTimer::stop('FrontendController::parentsAreAccessible');
+
 			return true;
 		}
 
-		$checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publicationData.checkAncestorPagesPublicationStatus', true);
+		$checkAncestorPagesPublicationStatus = Configure::read(
+			'Awyiss.System.Frontend.publicationData.checkAncestorPagesPublicationStatus',
+			true
+		);
 
 		$parts = explode('/', $page->slug);
 		// Remove the last part

@@ -25,6 +25,10 @@ abstract class MenuItem implements ArrayAccess {
 
 
 	/**
+	 * @var array
+	 */
+	protected array $_defaultConfig = []; // phpcs:ignore
+	/**
 	 * @var \Awyiss\Utility\Menu\MenuItemAccess|null
 	 */
 	protected ?MenuItemAccess $access = null;
@@ -39,11 +43,7 @@ abstract class MenuItem implements ArrayAccess {
 	/**
 	 * @var \Awyiss\Utility\Menu\Menu|null
 	 */
-	protected ?Menu $children = null;
-	/**
-	 * @var array
-	 */
-	protected array $_defaultConfig = []; // phpcs:ignore
+	protected ?Menu $children = null; // phpcs:ignore
 	/**
 	 * @var string|int|null
 	 */
@@ -88,9 +88,10 @@ abstract class MenuItem implements ArrayAccess {
 	/**
 	 * Checks if the menu item is accessible by a specific identity.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|\Awyiss\Authorization\IdentityGroupPermissionInterface|null $identity The identity to check accessibility for.
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|\Awyiss\Authorization\IdentityGroupPermissionInterface|null $identity
+	 *  The identity to check accessibility for.
 	 * @return bool|null Returns true if the menu item is accessible by the provided identity, false otherwise.
-	 * If the accessibility is not set, it returns null.
+	 *  If the accessibility is not set, it returns null.
 	 * @throws \ReflectionException
 	 */
 	public function isAccessibleBy(IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity = null): ?bool {
@@ -107,7 +108,11 @@ abstract class MenuItem implements ArrayAccess {
 			$identity = $this->identity;
 		}
 
-		return $identity->scopeIsAccessible($this->access->getScope(), $this->access->getAdditionalData() ?? [], $this->access->getIdentifier());
+		return $identity->scopeIsAccessible(
+			$this->access->getScope(),
+			$this->access->getAdditionalData() ?? [],
+			$this->access->getIdentifier()
+		);
 	}
 
 
@@ -150,12 +155,14 @@ abstract class MenuItem implements ArrayAccess {
 
 		if (empty($currentRoute)) {
 			$this->isCurrentRoute = false;
+
 			return false;
 		}
 
 		$testUrl = $this->getLink()?->getUrl();
 		if (!$testUrl) {
 			$this->isCurrentRoute = false;
+
 			return false;
 		}
 
@@ -177,6 +184,7 @@ abstract class MenuItem implements ArrayAccess {
 
 		if ($testUrl === $currentRoute) {
 			$this->isCurrentRoute = true;
+
 			return true;
 		}
 
@@ -210,6 +218,7 @@ abstract class MenuItem implements ArrayAccess {
 			$currentRoute = substr($currentRoute, 0, strrpos(rtrim($currentRoute, '/'), '/') + 1);
 			if ($testUrl === $currentRoute) {
 				$this->isCurrentRoute = true;
+
 				return true;
 			}
 		}
@@ -471,8 +480,8 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		/**
-		 * @var class-string<\Awyiss\Utility\Menu\MenuItemAccess> $menuItemAccessClass
 		 * @see \Awyiss\Utility\Menu\MenuItemAccess::__construct()
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItemAccess> $menuItemAccessClass
 		 */
 		$menuItemAccessClass = App::className('MenuItemAccess', 'Utility/Menu');
 
@@ -492,8 +501,8 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		/**
-		 * @var class-string<\Awyiss\Utility\Menu\MenuItem> $menuItemLinkClass
 		 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItem> $menuItemLinkClass
 		 */
 		$menuItemLinkClass = App::className('MenuItemLink', 'Utility/Menu');
 

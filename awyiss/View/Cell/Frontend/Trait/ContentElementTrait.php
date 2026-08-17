@@ -30,10 +30,14 @@ trait ContentElementTrait {
 	 */
 	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
 		$count = $entities->count();
-		DebugTimer::start('ContentElementTrait::prepareEntities', sprintf('ContentElementTrait::prepareEntities: Preparing %d entities', $count));
+		DebugTimer::start(
+			'ContentElementTrait::prepareEntities',
+			sprintf('ContentElementTrait::prepareEntities: Preparing %d entities', $count)
+		);
 
 		if (!$count) {
 			DebugTimer::stop('ContentElementTrait::prepareEntities');
+
 			return;
 		}
 
@@ -96,12 +100,16 @@ trait ContentElementTrait {
 	 * @param array $entities
 	 * @param bool $noContentRow Whether to render all elements without a content row
 	 * @param bool $autoSection Whether to automatically wrap first level content rows in a section
+	 * @param int $level
 	 * @return string
 	 * @throws \ReflectionException
 	 */
 	protected function buildContents(array $entities, bool $noContentRow = false, bool $autoSection = false, int $level = 0): string {
 		$count = count($entities);
-		DebugTimer::start('ContentElementTrait::buildContents' . $level, sprintf('ContentElementTrait::buildContents: Building %d entities for level %d', $count, $level));
+		DebugTimer::start(
+			'ContentElementTrait::buildContents' . $level,
+			sprintf('ContentElementTrait::buildContents: Building %d entities for level %d', $count, $level)
+		);
 
 		if (!$count) {
 			DebugTimer::stop('ContentElementTrait::buildContents' . $level);
@@ -220,13 +228,13 @@ trait ContentElementTrait {
 			}
 
 			if (
-				trim($renderedContent) &&
-				(
-					$entity instanceof Content ||
-					$entity instanceof GlobalContent
-				) &&
-				$entity->data &&
-				array_key_exists('contentrow-class', $entity->data)
+				trim($renderedContent)
+				&& (
+					$entity instanceof Content
+					|| $entity instanceof GlobalContent
+				)
+				&& $entity->data
+				&& array_key_exists('contentrow-class', $entity->data)
 			) {
 				$contentRowClasses = array_merge(
 					$contentRowClasses,
@@ -290,14 +298,22 @@ trait ContentElementTrait {
 	 * @param bool $autoSection
 	 * @return string
 	 */
-	protected function renderContentRow(string $contents, string $type = 'content', array $rowClasses = [], bool $autoSection = false): string {
+	protected function renderContentRow(
+		string $contents,
+		string $type = 'content',
+		array $rowClasses = [],
+		bool $autoSection = false
+	): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->getView()->element($type === 'form_element' ? 'form_row' : 'content_row', [
-			'contents' => $contents,
-			'class' => implode(' ', array_unique($rowClasses)),
-			'autoSection' => $autoSection,
-			'type' => $type,
-		]);
+		return $this
+			->getView()
+			->element($type === 'form_element' ? 'form_row' : 'content_row', [
+				'contents' => $contents,
+				'class' => implode(' ', array_unique($rowClasses)),
+				'autoSection' => $autoSection,
+				'type' => $type,
+			])
+		;
 	}
 
 
@@ -331,12 +347,19 @@ trait ContentElementTrait {
 			$entity instanceof GlobalContent => 'GlobalContent',
 		};
 		$entity->cssClass .= 'Element';
-		$entity->cssClass .= ($template ? ' Template-' . Inflector::ucparts(Inflector::underscore($entity->$template->fileName), false) : '');
+
+		if ($template) {
+			$entity->cssClass .= ' Template-' . Inflector::ucparts(Inflector::underscore($entity->$template->fileName), false);
+		}
+
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
 		if ($entity instanceof FormElement) {
 			$entity->cssClass .= ' FormElementType-' . Inflector::ucparts(Inflector::underscore($entity->type), false);
-			$entity->cssClass .= ' FormElement-' . Inflector::ucparts(Inflector::underscore($entity->identifier ?? (string)$entity->id), false);
+			$entity->cssClass .= ' FormElement-' . Inflector::ucparts(
+				Inflector::underscore($entity->identifier ?? (string)$entity->id),
+				false
+			);
 		}
 		elseif ($entity instanceof GlobalContent) {
 			$entity->cssClass .= ' GlobalContent-' . Inflector::ucparts(Inflector::underscore($entity->identifier), false);
@@ -355,14 +378,14 @@ trait ContentElementTrait {
 		}
 
 		if (
-			!$entity->active ||
-			(
-				$entity->publicationStart &&
-				$entity->publicationStart > $now
-			) ||
-			(
-				$entity->publicationEnd &&
-				$entity->publicationEnd < $now
+			!$entity->active
+			|| (
+				$entity->publicationStart
+				&& $entity->publicationStart > $now
+			)
+			|| (
+				$entity->publicationEnd
+				&& $entity->publicationEnd < $now
 			)
 		) {
 			$entity->cssClass .= ' ' . FrontendView::getPreviewModeElementClass();

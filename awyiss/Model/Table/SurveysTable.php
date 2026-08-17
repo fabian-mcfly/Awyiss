@@ -251,30 +251,36 @@ class SurveysTable extends Table {
 				 * or if any answer has a next action that is of type "Form",
 				 * then the survey must have a formId set.
 				 */
-				return !collection($entity->surveySurveyQuestions)->some(function (SurveySurveyQuestion $question) use ($surveyNextActionEnum): bool {
-					if (
-						in_array($question->nextAction, [
-							$surveyNextActionEnum::ShowForm,
-							$surveyNextActionEnum::SaveAndShowForm,
-							$surveyNextActionEnum::ShowFormAndSave,
-						]) &&
-						!$question->nextActionTarget
-					) {
-						return true;
-					}
+				return !collection($entity->surveySurveyQuestions)->some(
+					function (SurveySurveyQuestion $question) use ($surveyNextActionEnum): bool {
+						if (
+							in_array($question->nextAction, [
+								$surveyNextActionEnum::ShowForm,
+								$surveyNextActionEnum::SaveAndShowForm,
+								$surveyNextActionEnum::ShowFormAndSave,
+							])
+							&& !$question->nextActionTarget
+						) {
+							return true;
+						}
 
-					if (!$question->surveySurveyAnswers) {
-						return false;
-					}
+						if (!$question->surveySurveyAnswers) {
+							return false;
+						}
 
-					return collection($question->surveySurveyAnswers)->some(function (SurveySurveyAnswer $answer) use ($surveyNextActionEnum): bool {
-						return $answer->nextAction && in_array($answer->nextAction, [
-							$surveyNextActionEnum::ShowForm,
-							$surveyNextActionEnum::SaveAndShowForm,
-							$surveyNextActionEnum::ShowFormAndSave,
-						]) && !$answer->nextActionTarget;
-					});
-				});
+						return collection($question->surveySurveyAnswers)->some(
+							function (SurveySurveyAnswer $answer) use ($surveyNextActionEnum): bool {
+								return $answer->nextAction
+									&& in_array($answer->nextAction, [
+										$surveyNextActionEnum::ShowForm,
+										$surveyNextActionEnum::SaveAndShowForm,
+										$surveyNextActionEnum::ShowFormAndSave,
+									])
+									&& !$answer->nextActionTarget;
+							}
+						);
+					}
+				);
 			},
 			'formIdSetWhenRequired',
 			[
@@ -302,8 +308,7 @@ class SurveysTable extends Table {
 				$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
 				if (
-					$entity->type !== $surveyTypeEnum::Linear ||
-					!$entity->surveySurveyQuestions
+					$entity->type !== $surveyTypeEnum::Linear || !$entity->surveySurveyQuestions
 				) {
 					return true;
 				}
@@ -341,11 +346,9 @@ class SurveysTable extends Table {
 							continue;
 						}
 
-						foreach ($question->surveySurveyAnswers as $answer) {
-							// Answers must not have next actions set in linear surveys
-							if (!empty($answer->nextAction)) {
-								return false;
-							}
+						// Answers must not have next actions set in linear surveys
+						if (array_any($question->surveySurveyAnswers, fn($answer) => !empty($answer->nextAction))) {
+							return false;
 						}
 
 						continue;
@@ -354,9 +357,9 @@ class SurveysTable extends Table {
 					// For non-linear surveys, we need to check if the next action is valid
 					if (
 						// Empty next action is not allowed
-						!$question->nextAction ||
+						!$question->nextAction
 						// Neither is an unknown next action
-						!array_key_exists($question->nextAction->value, $this->availableNextActions())
+						|| !array_key_exists($question->nextAction->value, $this->availableNextActions())
 					) {
 						return false;
 					}
@@ -366,18 +369,21 @@ class SurveysTable extends Table {
 						continue;
 					}
 
-					foreach ($question->surveySurveyAnswers as $answer) {
-						// For answers, empty next action is allowed but
-						// unknown next action is not
-						if (
-							$answer->nextAction &&
-							(
-								!$answer->nextAction instanceof BackedEnum ||
-								!array_key_exists($answer->nextAction->value, $this->availableNextActions())
-							)
-						) {
-							return false;
-						}
+					// For answers, empty next action is allowed but unknown next action is not
+					if (
+						array_any(
+							$question->surveySurveyAnswers,
+							fn($answer) => $answer->nextAction
+								&& (
+									!$answer->nextAction instanceof BackedEnum
+									|| !array_key_exists(
+										$answer->nextAction->value,
+										$this->availableNextActions()
+									)
+								)
+						)
+					) {
+						return false;
 					}
 				}
 

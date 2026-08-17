@@ -34,6 +34,9 @@ class ContentAreasSeed extends BaseSeed {
 		];
 
 		$table = $this->table('content_areas');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

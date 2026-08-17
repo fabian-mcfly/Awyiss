@@ -185,7 +185,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				$row['_publicationData'] = array_filter($row['_publicationData']);
 
 				$row['_publicationData'] = array_combine(
-					array_map(fn (PublicationData $publicationData) => $publicationData->type->value, $row['_publicationData']),
+					array_map(fn(PublicationData $publicationData) => $publicationData->type->value, $row['_publicationData']),
 					$row['_publicationData']
 				);
 				$row->setDirty('_publicationData', false);
@@ -300,7 +300,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	/**
 	 * Finds records that have publication data for a given type
 	 * starting before or after a given date.
-
 	 * If `includeUndefined` is true, it will also include records
 	 * that have no publication data for the specified type.
 	 *
@@ -311,7 +310,13 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @param bool $includeUndefined
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function find(SelectQuery $query, ?DateTime $date, PublicationDataType $type, string $when, bool $includeUndefined): SelectQuery {
+	protected function find(
+		SelectQuery $query,
+		?DateTime $date,
+		PublicationDataType $type,
+		string $when,
+		bool $includeUndefined
+	): SelectQuery {
 		$alias = $this->_table->getAlias();
 		$date ??= new DateTime('now');
 		$operator = $when === 'before' ? '<=' : '>=';
@@ -325,11 +330,13 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			$query->select($this->_table->$name);
 		}
 
-		if ($query->getOptions()['_hasPublicationData' . $type->name] ?? false) {
-			throw new LogicException(sprintf(
-				'Cannot use the publish finder with type `%s` twice.',
-				$type->name
-			));
+		if ($query->getOptions()[ '_hasPublicationData' . $type->name ] ?? false) {
+			throw new LogicException(
+				sprintf(
+					'Cannot use the publish finder with type `%s` twice.',
+					$type->name
+				)
+			);
 		}
 
 		$query->applyOptions([
@@ -337,17 +344,23 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		if ($includeUndefined) {
-			return $query->leftJoinWith($name)->where([
-				'OR' => [
-					$name . '.dateTime ' . $operator => $date,
-					$name . '.dateTime IS' => null,
-				],
-			]);
+			return $query
+				->leftJoinWith($name)
+				->where([
+					'OR' => [
+						$name . '.dateTime ' . $operator => $date,
+						$name . '.dateTime IS' => null,
+					],
+				])
+			;
 		}
 
-		return $query->leftJoinWith($name)->where([
-			$name . '.dateTime ' . $operator => $date,
-		]);
+		return $query
+			->leftJoinWith($name)
+			->where([
+				$name . '.dateTime ' . $operator => $date,
+			])
+		;
 	}
 
 
@@ -420,7 +433,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	}
 
 
-
 	/**
 	 * Finds records that have publication data ending after
 	 * a given date.
@@ -442,7 +454,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 		return $this->find($query, $date, PublicationDataType::End, 'after', $includeUndefined);
 	}
-
 
 
 	/**
@@ -469,9 +480,9 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		$conditions = function (string $field, SelectQuery $query, array $select) {
 			return function (SelectQuery $q) use ($field, $query, $select) {
 				if (
-					$query->isAutoFieldsEnabled() !== false ||
-					in_array($field, $select, true) ||
-					in_array($this->_table->aliasField($field), $select, true)
+					$query->isAutoFieldsEnabled() !== false
+					|| in_array($field, $select, true)
+					|| in_array($this->_table->aliasField($field), $select, true)
 				) {
 					$q->select(['id', 'scope', 'foreignKey', 'type', 'dateTime']);
 				}
@@ -494,7 +505,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		$query->contain($contain);
-		$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
+		$query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
 	}
 
 

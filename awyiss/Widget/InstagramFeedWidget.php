@@ -39,7 +39,12 @@ class InstagramFeedWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+	public static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array {
 		return [
 			// A dropdown to select the homepage (for the current language)
 			'settings.items' => [
@@ -98,12 +103,14 @@ class InstagramFeedWidget extends AbstractWidget {
 
 			/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
 			$mediaTable = FactoryLocator::get('Table')->get('Media');
-			$mediaEntities = $mediaTable->find('all')
+			$mediaEntities = $mediaTable
+				->find('all')
 				->where(['id IN' => $mediaIds])
 				->contain(['MediaResizedImages'])
 				->all()
 				->indexBy('id')
-				->toArray();
+				->toArray()
+			;
 
 			/** @var \Instagram\Model\Media $mediaItem */
 			foreach ($media as $mediaItem) {
@@ -228,14 +235,14 @@ class InstagramFeedWidget extends AbstractWidget {
 			$content = file_get_contents($url);
 
 			if (!$content) {
-				unset($media[$key]);
+				unset($media[ $key ]);
 				continue;
 			}
 
 			$fileSaved = file_put_contents(WWW_ROOT . $path . $fileName, $content);
 
 			if (!$fileSaved) {
-				unset($media[$key]);
+				unset($media[ $key ]);
 				continue;
 			}
 
@@ -270,8 +277,12 @@ class InstagramFeedWidget extends AbstractWidget {
 					'height' => $mediaItem->getHeight(),
 					'createdOn' => $mediaItem->getDate(),
 					'preview' => $entity->isImage() ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
-					'avif' => in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
-					'webp' => in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
+					'avif' => in_array($entity->mimeType, ['image/avif', 'image/svg+xml'])
+						? ProcessStatus::NotRequired
+						: ProcessStatus::Undefined,
+					'webp' => in_array($entity->mimeType, ['image/webp', 'image/svg+xml'])
+						? ProcessStatus::NotRequired
+						: ProcessStatus::Undefined,
 				]);
 			}, [
 				'allowFrontendSave' => true,

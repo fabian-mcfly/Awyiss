@@ -27,7 +27,12 @@ class Arrays {
 	 * @param int $direction
 	 * @return void
 	 */
-	public static function naturalSort(array &$data, string|int|null $field = null, bool $orderByKey = false, int $direction = SORT_ASC): void {
+	public static function naturalSort(
+		array &$data,
+		string|int|null $field = null,
+		bool $orderByKey = false,
+		int $direction = SORT_ASC
+	): void {
 		$locale = I18n::getLocale();
 
 		if (!isset(static::$collators[ $locale ])) {
@@ -59,8 +64,8 @@ class Arrays {
 
 		uasort($data, function (mixed $a, mixed $b) use ($field, $collator, $direction): int {
 			if ($field !== null) {
-				$aValue = is_object($a) ? $a->{ $field } : $a[ $field ];
-				$bValue = is_object($b) ? $b->{ $field } : $b[ $field ];
+				$aValue = is_object($a) ? $a->{$field} : $a[ $field ];
+				$bValue = is_object($b) ? $b->{$field} : $b[ $field ];
 
 				if ($direction === SORT_DESC) {
 					return $collator->compare($bValue, $aValue);

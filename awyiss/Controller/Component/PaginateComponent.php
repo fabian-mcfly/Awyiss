@@ -35,13 +35,13 @@ class PaginateComponent extends Component {
 	 */
 	protected array $baseFields = [];
 	/**
-	 * @var bool
-	 */
-	protected bool $enabled = true;
-	/**
 	 * @var array
 	 */
 	protected array $defaultSortableFields = [];
+	/**
+	 * @var bool
+	 */
+	protected bool $enabled = true;
 	/**
 	 * @var array
 	 */
@@ -116,7 +116,11 @@ class PaginateComponent extends Component {
 		);
 		$paginator = new $paginatorClass();
 
-		$params = $this->getController()->getRequest()->getQueryParams();
+		$params = $this
+			->getController()
+			->getRequest()
+			->getQueryParams()
+		;
 
 		/** @var \Cake\Orm\Table $table */
 		$table = $object->getRepository();
@@ -167,13 +171,19 @@ class PaginateComponent extends Component {
 			return;
 		}
 
-		$this->getController()->set('paginate', array_merge(
-			$this->getConfig(),
-			[
-				'aliasedFields' => $this->aliasedFields,
-				'defaultSortableFields' => $this->defaultSortableFields,
-			]
-		));
+		$this
+			->getController()
+			->set(
+				'paginate',
+				array_merge(
+					$this->getConfig(),
+					[
+						'aliasedFields' => $this->aliasedFields,
+						'defaultSortableFields' => $this->defaultSortableFields,
+					]
+				)
+			)
+		;
 	}
 
 
@@ -219,10 +229,10 @@ class PaginateComponent extends Component {
 	 */
 	protected function checkCategoriesParam(RepositoryInterface|QueryInterface $object, array &$params, Table $table): void {
 		if (
-			!$object instanceof QueryInterface ||
-			!$table->hasBehavior('Categories') ||
-			$table->getBehavior('Categories')->getConfig('enabled') === false ||
-			empty($params['sort'])
+			!$object instanceof QueryInterface
+			|| !$table->hasBehavior('Categories')
+			|| $table->getBehavior('Categories')->getConfig('enabled') === false
+			|| empty($params['sort'])
 		) {
 			return;
 		}
@@ -259,7 +269,7 @@ class PaginateComponent extends Component {
 
 		// Make sure the sortableFields are set
 		if (empty($settings['sortableFields'])) {
-			$settings['sortableFields'] = array_merge($this->defaultSortableFields,	$table->getSchema()->columns());
+			$settings['sortableFields'] = array_merge($this->defaultSortableFields, $table->getSchema()->columns());
 
 			$settings['sortableFields'] = array_map(
 				fn($field) => Inflector::variable($field),
@@ -300,9 +310,9 @@ class PaginateComponent extends Component {
 
 
 		if (
-			$table->hasBehavior('Attributes') &&
-			$table->hasAttributes() &&
-			$table->getAttributesTable()->hasBehavior('Translate')
+			$table->hasBehavior('Attributes')
+			&& $table->hasAttributes()
+			&& $table->getAttributesTable()->hasBehavior('Translate')
 		) {
 			/** @noinspection PhpArgumentWithoutNamedIdentifierInspection */
 			$this->modifyTranslatedPaginateParams($params, $settings, $table->getAttributesTable()->getBehavior('Translate'), $tableAlias);

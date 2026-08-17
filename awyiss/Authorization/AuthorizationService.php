@@ -23,6 +23,10 @@ use Cake\Utility\Text;
  */
 class AuthorizationService implements AuthorizationServiceInterface {
 	/**
+	 * @var AuthenticationServiceInterface|null
+	 */
+	protected ?AuthenticationServiceInterface $authenticationService = null;
+	/**
 	 * @var array<string, \Awyiss\Model\Entity\Datatable>
 	 */
 	protected array $datatables;
@@ -30,10 +34,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @var array
 	 */
 	protected array $policies = [];
-	/**
-	 * @var AuthenticationServiceInterface|null
-	 */
-	protected ?AuthenticationServiceInterface $authenticationService = null;
 	/**
 	 * @var string
 	 */
@@ -142,11 +142,11 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 			if (
 				// Skip if the policy is already set
-				isset($this->policies[ $realm ][ $policyScope ]) ||
-				(
+				isset($this->policies[ $realm ][ $policyScope ])
+				|| (
 					// or if the policy scope is not the same as the provided scope
-					$className !== '*' &&
-					$policyScope !== $classScope
+					$className !== '*'
+					&& $policyScope !== $classScope
 				)
 			) {
 				continue;
@@ -162,19 +162,26 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			 *
 			 * @var \Awyiss\Model\Table\DatatablesTable $table
 			 */
-			$table = FactoryLocator::get('Table')->get('Datatables');
-			$this->datatables = $table->findAllAndCache()->indexBy(function (Datatable $datatable) {
-				return static::sanitizeScope($datatable->identifier);
-			})->map(function (Datatable $datatable) {
-				return new GenericDatatablesPolicy($datatable->identifier);
-			})->toArray();
+			$table = FactoryLocator::get('Table')
+				->get('Datatables')
+			;
+			$this->datatables = $table
+				->findAllAndCache()
+				->indexBy(function (Datatable $datatable) {
+					return static::sanitizeScope($datatable->identifier);
+				})
+				->map(function (Datatable $datatable) {
+					return new GenericDatatablesPolicy($datatable->identifier);
+				})
+				->toArray()
+			;
 		}
 
 
 		if ($classScope) {
 			if (
-				!isset($this->policies[ $realm ][ $classScope ]) &&
-				isset($this->datatables[ $classScope ])
+				!isset($this->policies[ $realm ][ $classScope ])
+				&& isset($this->datatables[ $classScope ])
 			) {
 				$this->policies[ $realm ][ $classScope ] = $this->datatables[ $classScope ];
 			}

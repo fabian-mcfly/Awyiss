@@ -106,7 +106,7 @@ class Validator extends BaseValidator {
 	 * translated arguments:
 	 * ```
 	 * $validator->add('password', [
-	 * 	'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
+	 *    'compareWith' => ['rule' => ['compareWith', 'passwordConfirm']],
 	 * ]);
 	 * ```
 	 * Result: `This value does not match the field "Confirm password"`
@@ -167,14 +167,16 @@ class Validator extends BaseValidator {
 				$param = is_string($param) ? $param : ($param[0] ?? 'Ymd');
 			}
 			elseif ($name == 'enum') {
-				$cases = array_map(fn ($case) => $case->value, $param::cases());
+				$cases = array_map(fn($case) => $case->value, $param::cases());
 				$param = '`' . implode('`, `', $cases) . '`';
 			}
 			elseif ($name == 'inList') {
 				$param = implode(', ', $param);
 			}
 			elseif (!is_scalar($param)) {
-				throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $name, print_r($param, true)));
+				throw new RuntimeException(
+					sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $name, print_r($param, true))
+				);
 			}
 
 			$pass[ $name ] = $param;

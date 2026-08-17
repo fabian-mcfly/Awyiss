@@ -108,15 +108,18 @@ class MediaElementsController extends Controller {
 		 * @var \Awyiss\Model\Entity\MediaElement $mediaElement
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$mediaElement = $this->MediaElements->findById($id)->find('translations')->contain([
-			'MediaElementAssignments',
-			'MediaElementSelectors' => [
-				'queryBuilder' => function (SelectQuery $query) {
+		$mediaElement = $this->MediaElements
+			->findById($id)
+			->find('translations')
+			->contain([
+				'MediaElementAssignments',
+				'MediaElementSelectors' => [
 					/** @uses \Awyiss\Model\Table::findTranslations() */
-					return $query->find('translations');
-				},
-			],
-		])->first();
+					'queryBuilder' => fn(SelectQuery $query) => $query->find('translations'),
+				],
+			])
+			->first()
+		;
 		if (!$mediaElement) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -264,7 +267,13 @@ class MediaElementsController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	protected function setViewVars(MediaElement $mediaElement): void {
-		$mediaSelectors = $this->fetchTable('MediaSelectors')->find()->all()->indexBy('id')->toArray();
+		$mediaSelectors = $this
+			->fetchTable('MediaSelectors')
+			->find()
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		$columnSpans = $this->MediaElements->getColumnSpans();
 		$columnSpans = array_map(function (ColumnInterface $column): string {

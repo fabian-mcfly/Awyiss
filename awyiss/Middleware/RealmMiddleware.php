@@ -19,7 +19,6 @@ class RealmMiddleware implements MiddlewareInterface {
 	 * @var string
 	 */
 	protected string $realm;
-	protected string $random;
 
 
 	/**

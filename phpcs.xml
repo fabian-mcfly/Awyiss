@@ -8,9 +8,10 @@
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./docs/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
-	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
-	<exclude-pattern>./tests/customer/config/awyiss.php</exclude-pattern>
+	<exclude-pattern>./tests/*</exclude-pattern>
 	<exclude-pattern>./vendor/*</exclude-pattern>
+
+	<rule ref="Awyiss"/>
 
 	<rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
 		<exclude-pattern>*/tests/comparisons/config/Migrations/*</exclude-pattern>
@@ -20,7 +21,6 @@
 	</rule>
 
 	<rule ref="PSR12">
-		<exclude name="Generic.Files.LineLength"/>
 		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
 
 		<exclude name="PSR2.Classes.ClassDeclaration"/>
@@ -56,14 +56,13 @@
 	<rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
 	<rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
 	<rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
-
 	<rule ref="Generic.Files.LineLength">
 		<properties>
 			<property name="lineLimit" value="140"/>
-			<property name="absoluteLineLimit" value="180"/>
+			<property name="absoluteLineLimit" value="140"/>
+			<property name="ignoreComments" value="true"/>
 		</properties>
 	</rule>
-
 	<rule ref="Generic.Formatting.SpaceAfterCast">
 		<properties>
 			<property name="spacing" value="0"/>
@@ -123,7 +122,7 @@
 	<rule ref="Squiz.WhiteSpace.CastSpacing"/>
 	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
 	<rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/>
-	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+	<!--<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>-->
 	<rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
 		<properties>
 			<property name="ignoreBlankLines" type="boolean" value="false"/>
@@ -251,6 +250,43 @@
 			<property name="nullPosition" value="last"/>
 		</properties>
 		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Classes.ClassStructure">
+		<properties>
+			<property name="groups" type="array">
+				<element value="uses"/>
+
+				<element value="public constants"/>
+				<element value="protected constants"/>
+				<element value="private constants"/>
+
+				<element value="public static properties"/>
+				<element value="protected static properties"/>
+				<element value="private static properties"/>
+
+				<element value="public properties"/>
+				<element value="protected properties"/>
+				<element value="private properties"/>
+
+				<element value="enum cases"/>
+
+				<element value="constructor "/>
+
+				<element value="methods "/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Classes.ConstantSpacing">
+		<properties>
+			<property name="minLinesCountBeforeWithComment" value="0"/>
+			<property name="maxLinesCountBeforeWithComment" value="0"/>
+
+			<property name="minLinesCountBeforeWithoutComment" value="0"/>
+			<property name="maxLinesCountBeforeWithoutComment" value="0"/>
+
+			<property name="minLinesCountBeforeMultiline" value="0"/>
+			<property name="maxLinesCountBeforeMultiline" value="0"/>
+		</properties>
 	</rule>
 	<rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
 	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>

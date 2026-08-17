@@ -69,34 +69,48 @@ class EmailTemplatesTable extends Table {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
-		return $query->enableAutoFields()->select([
-			'usedForEmails' => $query->func()->count('DISTINCT FormEmails.id'),
-			'usedForConfirmationEmails' => $query->func()->count('DISTINCT FormConfirmationEmails.id'),
-		])->leftJoinWith('FormEmails', function (SelectQuery $query) {
-			return $query->disableAutoFields()->select(['emailTemplateId'])->applyOptions([
-				'attributes' => [
-					'skip' => true,
-				],
-				'publicationData' => [
-					'skip' => true,
-				],
-				'translate' => [
-					'skip' => true,
-				],
-			]);
-		})->leftJoinWith('FormConfirmationEmails', function (SelectQuery $query) {
-			return $query->disableAutoFields()->select(['confirmationEmailTemplateId'])->applyOptions([
-				'attributes' => [
-					'skip' => true,
-				],
-				'publicationData' => [
-					'skip' => true,
-				],
-				'translate' => [
-					'skip' => true,
-				],
-			]);
-		})->groupBy('EmailTemplates.id');
+		return $query
+			->enableAutoFields()
+			->select([
+				'usedForEmails' => $query->func()->count('DISTINCT FormEmails.id'),
+				'usedForConfirmationEmails' => $query->func()->count('DISTINCT FormConfirmationEmails.id'),
+			])
+			->leftJoinWith('FormEmails', function (SelectQuery $query) {
+				return $query
+					->disableAutoFields()
+					->select(['emailTemplateId'])
+					->applyOptions([
+						'attributes' => [
+							'skip' => true,
+						],
+						'publicationData' => [
+							'skip' => true,
+						],
+						'translate' => [
+							'skip' => true,
+						],
+					])
+				;
+			})
+			->leftJoinWith('FormConfirmationEmails', function (SelectQuery $query) {
+				return $query
+					->disableAutoFields()
+					->select(['confirmationEmailTemplateId'])
+					->applyOptions([
+						'attributes' => [
+							'skip' => true,
+						],
+						'publicationData' => [
+							'skip' => true,
+						],
+						'translate' => [
+							'skip' => true,
+						],
+					])
+				;
+			})
+			->groupBy('EmailTemplates.id')
+		;
 	}
 
 

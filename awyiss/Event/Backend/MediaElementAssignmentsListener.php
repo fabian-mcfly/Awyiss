@@ -83,13 +83,14 @@ class MediaElementAssignmentsListener implements EventListenerInterface {
 				continue;
 			}
 
-			$entityIds = $targetTable->find('all')
+			$entityIds = $targetTable
+				->unhydratedFind('all')
 				->select($targetPrimaryKey)
 				->where([$foreignKey => $entity->foreignKey])
-				->disableHydration()
 				->all()
 				->extract($targetPrimaryKey)
-				->toList();
+				->toList()
+			;
 
 			if (!$entityIds) {
 				continue;
@@ -107,10 +108,14 @@ class MediaElementAssignmentsListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Table\MediaElementAssignmentsTable $mediaAssignmentsTable */
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$records = $mediaAssignmentsTable->find('all')->where([
-			'mediaElementId' => $entity->mediaElementId,
-			'OR' => $scopeConditions,
-		])->all();
+		$records = $mediaAssignmentsTable
+			->find('all')
+			->where([
+				'mediaElementId' => $entity->mediaElementId,
+				'OR' => $scopeConditions,
+			])
+			->all()
+		;
 
 		if (!$records->count()) {
 			return;

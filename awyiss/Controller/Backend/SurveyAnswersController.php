@@ -51,7 +51,11 @@ class SurveyAnswersController extends Controller {
 		$query = $this->getOverviewQuery();
 		$surveyAnswers = $query->all();
 
-		$question = $this->fetchTable('SurveyQuestions')->findById($this->Categories->getSelectedCategory())->first();
+		$question = $this
+			->fetchTable('SurveyQuestions')
+			->findById($this->Categories->getSelectedCategory())
+			->first()
+		;
 
 		$this->set([
 			'surveyAnswers' => $surveyAnswers,
@@ -97,7 +101,13 @@ class SurveyAnswersController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$surveyAnswer = $this->SurveyAnswers->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$surveyAnswer = $this->SurveyAnswers
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$surveyAnswer) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -168,7 +178,8 @@ class SurveyAnswersController extends Controller {
 			'validate' => !$this->request->getData('reloadForm'),
 		]);
 
-		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
+		//reloadForm is set when we need to reload options based on current values
+		if (!$this->request->getData('reloadForm')) {
 			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
 			if ($this->SurveyAnswers->save($surveyAnswer, ['asCopy' => $saveAsCopy])) {

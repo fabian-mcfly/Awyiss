@@ -39,6 +39,7 @@ class UrlHistoryController extends Controller {
 	 */
 	protected CollectionInterface $threadedPages;
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -57,10 +58,13 @@ class UrlHistoryController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->UrlHistory->find()->contain([
-			'Media',
-			'Pages',
-		]);
+		$query = $this->UrlHistory
+			->find()
+			->contain([
+				'Media',
+				'Pages',
+			])
+		;
 
 		$this->Search->filterQuery($query);
 
@@ -128,8 +132,14 @@ class UrlHistoryController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (! $urlHistory) {
+		$urlHistory = $this->UrlHistory
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
+		if (!$urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -157,7 +167,7 @@ class UrlHistoryController extends Controller {
 
 		/** @var \Awyiss\Model\Entity\UrlHistory $urlHistory */
 		$urlHistory = $this->UrlHistory->findById($id)->first();
-		if (! $urlHistory) {
+		if (!$urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -257,8 +267,16 @@ class UrlHistoryController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getDeletedPages(): CollectionInterface {
-		$historyPageIdQuery = $this->UrlHistory->find()->select('foreignKey')->where(['scope' => 'Pages']);
-		$pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
+		$historyPageIdQuery = $this->UrlHistory
+			->find()
+			->select('foreignKey')
+			->where(['scope' => 'Pages'])
+		;
+		$pagesSlugQuery = $this->UrlHistory
+			->find('all')
+			->disableAutoFields()
+			->select('url')
+		;
 
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 		$pagesTable = $this->fetchTable('Pages');
@@ -266,14 +284,17 @@ class UrlHistoryController extends Controller {
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
 		$query = $pagesTable->find('deleted', skipPageRoleCheck: true);
 
-		$pages = $query->where(function (QueryExpression $exp) use ($historyPageIdQuery, $pagesSlugQuery, $query) {
-			return $exp->notIn('id', $historyPageIdQuery)
-			->notIn(
-				$query->func()->concat(['languageShortcode' => 'identifier', '/', 'slug' => 'identifier']),
-				$pagesSlugQuery,
-				'string'
-			);
-		})->orderBy('title')->all();
+		$pages = $query
+			->where(fn(QueryExpression $exp) => $exp
+				->notIn('id', $historyPageIdQuery)
+				->notIn(
+					$query->func()->concat(['languageShortcode' => 'identifier', '/', 'slug' => 'identifier']),
+					$pagesSlugQuery,
+					'string'
+				))
+			->orderBy('title')
+			->all()
+		;
 
 		return $pages->each(function (Page $page) {
 			$page->set('title', $page->label . ' (' . $page->languageShortcode . '/' . $page->slug . ')');

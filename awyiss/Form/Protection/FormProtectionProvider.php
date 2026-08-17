@@ -16,13 +16,13 @@ use RuntimeException;
  */
 class FormProtectionProvider {
 	/**
-	 * @var bool
-	 */
-	protected static bool $foundAll = false;
-	/**
 	 * @var array<string, class-string<\Awyiss\Form\Protection\FormProtectionInterface>>
 	 */
 	protected static array $classes = [];
+	/**
+	 * @var bool
+	 */
+	protected static bool $foundAll = false;
 
 
 	/**

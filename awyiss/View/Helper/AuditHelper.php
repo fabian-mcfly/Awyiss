@@ -29,15 +29,17 @@ class AuditHelper extends Helper {
 
 
 	/**
-	 * @inheritDoc
-	 */
-	protected array $helpers = ['Html', 'Media', 'Time'];
-	/**
 	 * User cache
 	 *
 	 * @var array<int, \Awyiss\Model\Entity\User>|null
 	 */
 	protected static ?array $userCache = null;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $helpers = ['Html', 'Media', 'Time'];
 
 
 	/**
@@ -232,10 +234,10 @@ class AuditHelper extends Helper {
 
 		// Handle attribute options
 		if (
-			$attributeOptions &&
-			(
-				is_string($value) ||
-				is_int($value)
+			$attributeOptions
+			&& (
+				is_string($value)
+				|| is_int($value)
 			)
 		) {
 			return $attributeOptions[ $value ] ?? '';
@@ -305,7 +307,10 @@ class AuditHelper extends Helper {
 	 */
 	public function formatMediaEntities(mixed $value, array $settings): string {
 		$media = $settings['media'] ?? [];
-		$baseUrl = $settings['baseUrl'] ?? $this->getView()->get('baseUrl') ?? $this->getView()->getTwig()->getGlobals()['baseUrl'] ?? '';
+		$baseUrl = $settings['baseUrl'] ?? $this->getView()->get('baseUrl') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['baseUrl'] ?? '';
 
 		if (is_array($value)) {
 			$html = '';
@@ -423,8 +428,14 @@ class AuditHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function valuesDiffer(mixed $value1, mixed $value2, string $field, EntityInterface $entity, array $associations): bool {
-		static $dateFormat = $this->getView()->get('dateFormat') ?? $this->getView()->getTwig()->getGlobals()['dateFormat'] ?? 'Y-m-d';
-		static $timeFormat = $this->getView()->get('timeFormat') ?? $this->getView()->getTwig()->getGlobals()['timeFormat'] ?? 'H:i:s';
+		static $dateFormat = $this->getView()->get('dateFormat') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['dateFormat'] ?? 'Y-m-d';
+		static $timeFormat = $this->getView()->get('timeFormat') ?? $this
+			->getView()
+			->getTwig()
+			->getGlobals()['timeFormat'] ?? 'H:i:s';
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$columnType = $entity->getColumnType($field);

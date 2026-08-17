@@ -176,10 +176,10 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 		}
 
 		if (
-			$query->clause('select') &&
-			!$query->isAutoFieldsEnabled() &&
-			!in_array('id', $query->clause('select'), true) &&
-			!in_array($query->aliasField('id'), $query->clause('select'), true)
+			$query->clause('select')
+			&& !$query->isAutoFieldsEnabled()
+			&& !in_array('id', $query->clause('select'), true)
+			&& !in_array($query->aliasField('id'), $query->clause('select'), true)
 		) {
 			$query->select($query->aliasField('id'));
 		}
@@ -206,8 +206,8 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		// Skip if not enabled or explicitly skipped
 		if (
-			!$this->getConfig('enabled') ||
-			($options['customerGroupAssignments']['skip'] ?? false) === true
+			!$this->getConfig('enabled')
+			|| ($options['customerGroupAssignments']['skip'] ?? false) === true
 		) {
 			return;
 		}
@@ -267,7 +267,10 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findAccessible(SelectQuery $query, IdentityInterface|IdentityGroupPermissionInterface|null $identity = null): SelectQuery {
+	public function findAccessible(
+		SelectQuery $query,
+		IdentityInterface|IdentityGroupPermissionInterface|null $identity = null
+	): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
@@ -310,7 +313,8 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 				'foreignKey' => $entityId,
 				'deleted' => false,
 			])
-			->first();
+			->first()
+		;
 	}
 
 
@@ -354,10 +358,11 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 					$entity->setErrors(['customerGroupAccessSettings' => $settingErrors]);
 				}
 
-				$isDirty = $accessSettings->isNew() || (
-					$accessSettings->hasOriginal('accessType') &&
-					$accessSettings->accessType !== $accessSettings->getOriginal('accessType')
-				);
+				$isDirty = $accessSettings->isNew()
+					|| (
+						$accessSettings->hasOriginal('accessType')
+						&& $accessSettings->accessType !== $accessSettings->getOriginal('accessType')
+					);
 
 				$entity->setDirty('customerGroupAccessSettings', $isDirty);
 

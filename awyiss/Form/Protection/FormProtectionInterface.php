@@ -18,6 +18,10 @@ use Cake\View\View;
  */
 interface FormProtectionInterface {
 	/**
+	 * To place the protection after all form elements
+	 */
+	public const string POSITION_AFTER = 'after';
+	/**
 	 * To place the protection before the form elements
 	 */
 	public const string POSITION_BEFORE = 'before';
@@ -25,10 +29,6 @@ interface FormProtectionInterface {
 	 * To place the protection before the submit button
 	 */
 	public const string POSITION_BEFORE_SUBMIT = 'beforeSubmit';
-	/**
-	 * To place the protection after all form elements
-	 */
-	public const string POSITION_AFTER = 'after';
 
 
 	/**

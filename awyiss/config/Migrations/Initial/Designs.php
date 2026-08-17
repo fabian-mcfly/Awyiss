@@ -28,99 +28,126 @@ class Designs {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('designs')) {
-			$this->migration->table('designs')->drop()->save();
+			$this->migration
+				->table('designs')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('designs')->addColumn('id', 'integer', [
+		$this->migration
+			->table('designs')
+			->addColumn('id', 'integer', [
 				'autoIncrement' => true,
 				'default' => null,
 				'limit' => null,
 				'null' => false,
 				'signed' => true,
-			])->addPrimaryKey(['id'])->addColumn('identifier', 'char', [
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('identifier', 'char', [
 				'default' => null,
 				'limit' => 12,
 				'null' => false,
-			])->addColumn('title', 'string', [
+			])
+			->addColumn('title', 'string', [
 				'default' => null,
 				'limit' => 100,
 				'null' => false,
-			])->addColumn('description', 'string', [
+			])
+			->addColumn('description', 'string', [
 				'default' => null,
 				'limit' => 255,
 				'null' => true,
-			])->addColumn('settings', 'text', [
+			])
+			->addColumn('settings', 'text', [
 				'default' => null,
 				'limit' => 4294967295,
 				'null' => true,
-			])->addColumn('css', 'text', [
+			])
+			->addColumn('css', 'text', [
 				'default' => null,
 				'limit' => 4294967295,
 				'null' => true,
-			])->addColumn('in_use', 'boolean', [
+			])
+			->addColumn('in_use', 'boolean', [
 				'default' => false,
 				'limit' => null,
 				'null' => false,
-			])->addColumn('is_preview', 'boolean', [
+			])
+			->addColumn('is_preview', 'boolean', [
 				'default' => false,
 				'limit' => null,
 				'null' => false,
-			])->addColumn('deleted', 'boolean', [
+			])
+			->addColumn('deleted', 'boolean', [
 				'default' => false,
 				'limit' => null,
 				'null' => false,
-			])->addColumn('created_by', 'integer', [
+			])
+			->addColumn('created_by', 'integer', [
 				'default' => null,
 				'limit' => null,
 				'null' => true,
 				'signed' => true,
-			])->addColumn('created_on', 'datetime', [
+			])
+			->addColumn('created_on', 'datetime', [
 				'default' => null,
 				'limit' => null,
 				'null' => true,
-			])->addColumn('changed_by', 'integer', [
-				'default' => null,
-				'limit' => null,
-				'null' => true,
-				'signed' => true,
-			])->addColumn('changed_on', 'datetime', [
-				'default' => null,
-				'limit' => null,
-				'null' => true,
-			])->addColumn('deleted_by', 'integer', [
+			])
+			->addColumn('changed_by', 'integer', [
 				'default' => null,
 				'limit' => null,
 				'null' => true,
 				'signed' => true,
-			])->addColumn('deleted_on', 'datetime', [
+			])
+			->addColumn('changed_on', 'datetime', [
 				'default' => null,
 				'limit' => null,
 				'null' => true,
-			])->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'DESIGNS_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'in_use',
-			], [
-				'name' => 'DESIGNS_IN_USE',
-			]
-		)->addIndex(
-			[
-				'is_preview',
-			], [
-				'name' => 'DESIGNS_IS_PREVIEW',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'DESIGNS_DELETED',
-			]
-		)->create();
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'DESIGNS_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'in_use',
+				], [
+					'name' => 'DESIGNS_IN_USE',
+				]
+			)
+			->addIndex(
+				[
+					'is_preview',
+				], [
+					'name' => 'DESIGNS_IS_PREVIEW',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'DESIGNS_DELETED',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -130,6 +157,10 @@ class Designs {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('designs')->drop()->save();
+		$this->migration
+			->table('designs')
+			->drop()
+			->save()
+		;
 	}
 }

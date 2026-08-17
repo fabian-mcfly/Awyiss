@@ -107,7 +107,14 @@ class CustomerGroupsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$customerGroup = $this->CustomerGroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($contain)->first();
+		$customerGroup = $this->CustomerGroups
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain($contain)
+			->first()
+		;
 		if (!$customerGroup) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -225,7 +232,11 @@ class CustomerGroupsController extends Controller {
 	protected function setViewVars(CustomerGroup $customerGroup, bool $customersScopeIsAccessible): void {
 		$customers = [];
 		if ($customersScopeIsAccessible) {
-			$customers = $this->CustomerGroups->Customers->find()->all()->toArray();
+			$customers = $this->CustomerGroups->Customers
+				->find()
+				->all()
+				->toArray()
+			;
 		}
 
 		$this->set([

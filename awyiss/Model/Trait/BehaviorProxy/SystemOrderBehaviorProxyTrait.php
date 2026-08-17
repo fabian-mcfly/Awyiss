@@ -21,7 +21,11 @@ trait SystemOrderBehaviorProxyTrait {
 	 * @return \Cake\ORM\Query\SelectQuery|false
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
 	 */
-	public function addSystemOrderQueryConditions(?SelectQuery $query, EntityInterface $entity, bool $preferOriginal = false): SelectQuery|false {
+	public function addSystemOrderQueryConditions(
+		?SelectQuery $query,
+		EntityInterface $entity,
+		bool $preferOriginal = false
+	): SelectQuery|false {
 		return $this->getBehavior('SystemOrder')->addQueryConditions($query, $entity, $preferOriginal);
 	}
 

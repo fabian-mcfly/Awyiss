@@ -61,7 +61,11 @@ class MediaElementsCell extends Cell {
 		$identity = $this->_getIdentity();
 
 		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Backend/cell/MediaElements')->setTemplate('elements');
+		$this
+			->viewBuilder()
+			->setTemplatePath('Backend/cell/MediaElements')
+			->setTemplate('elements')
+		;
 
 		/** @var \Awyiss\Model\Table $table */
 		$table = $this->fetchTable($entity->getSource());
@@ -97,7 +101,14 @@ class MediaElementsCell extends Cell {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$mediaIds = array_column($entity->mediaAssignments, 'mediaId');
 			if ($mediaIds) {
-				$media = $this->fetchTable('Media')->find()->where(['id IN' => $mediaIds])->all()->indexBy('id')->toArray();
+				$media = $this
+					->fetchTable('Media')
+					->find()
+					->where(['id IN' => $mediaIds])
+					->all()
+					->indexBy('id')
+					->toArray()
+				;
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				foreach ($entity->mediaAssignments as $mediaAssignment) {
@@ -131,7 +142,11 @@ class MediaElementsCell extends Cell {
 	 */
 	public function elementAssignments(EntityInterface $entity): void {
 		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Backend/cell/MediaElements')->setTemplate('element_assignments');
+		$this
+			->viewBuilder()
+			->setTemplatePath('Backend/cell/MediaElements')
+			->setTemplate('element_assignments')
+		;
 
 		$availableElements = $this->getElements();
 		$assignedElements = $entity->mediaElementAssignments ?? false;
@@ -161,11 +176,10 @@ class MediaElementsCell extends Cell {
 	 */
 	protected function getElements(): Collection {
 		if (!isset(static::$elements)) {
-			/**
-			 * @uses \Awyiss\Model\Table::findActive()
-			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
-			 */
-			static::$elements = $this->fetchTable('MediaElements')->find('active')
+			/** @uses \Awyiss\Model\Table::findActive() */
+			static::$elements = $this
+				->fetchTable('MediaElements')
+				->find('active')
 				->where(['internal' => 0])
 				->contain([
 					'MediaElementSelectors' => [
@@ -173,7 +187,8 @@ class MediaElementsCell extends Cell {
 					],
 				])
 				->all()
-				->compile();
+				->compile()
+			;
 		}
 
 		return static::$elements;
@@ -227,7 +242,12 @@ class MediaElementsCell extends Cell {
 		if ($where) {
 			$mediaElementAssignmentsTable = $this->fetchTable('MediaElementAssignments');
 
-			$relatedEntityElements = $mediaElementAssignmentsTable->find()->where(['OR' => $where])->groupBy('mediaElementId')->all();
+			$relatedEntityElements = $mediaElementAssignmentsTable
+				->find()
+				->where(['OR' => $where])
+				->groupBy('mediaElementId')
+				->all()
+			;
 		}
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
@@ -247,7 +267,9 @@ class MediaElementsCell extends Cell {
 		}
 
 		if (!($identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
+			throw new RuntimeException(
+				sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class)
+			);
 		}
 
 

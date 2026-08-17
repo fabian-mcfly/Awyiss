@@ -236,32 +236,38 @@ class FormsTable extends Table {
 		$validator->add('userEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'email' => ['rule' => function (string $value): bool {
-				/**
-				 * String must be a valid email address or a placeholder like:
-				 * - `$identifier`
-				 * * - `{{$identifier}}`
-				 * * - `{{$identifier|Alternative Text}}`
-				 * * - `{{$identifier1 $identifier 2|Alternative Text}}`
-				 */
-				if (Validation::email($value)) {
-					return true;
-				}
-
-				/** @noinspection RegExpRedundantEscape */
-				if (
-					preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $matches) ||
-					preg_match('/^(\$(?<identifier>[A-Za-z0-9_]+))$/', $value, $matches)
-				) {
-					if (!empty($matches['alternative'])) {
-						return Validation::email($matches['alternative']);
+			'email' => [
+				'rule' => function (string $value): bool {
+					/**
+					 * String must be a valid email address or a placeholder like:
+					 * - `$identifier`
+					 * * - `{{$identifier}}`
+					 * * - `{{$identifier|Alternative Text}}`
+					 * * - `{{$identifier1 $identifier 2|Alternative Text}}`
+					 */
+					if (Validation::email($value)) {
+						return true;
 					}
 
-					return true;
-				}
+					/** @noinspection RegExpRedundantEscape */
+					if (
+						preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $matches)
+						|| preg_match(
+							'/^(\$(?<identifier>[A-Za-z0-9_]+))$/',
+							$value,
+							$matches
+						)
+					) {
+						if (!empty($matches['alternative'])) {
+							return Validation::email($matches['alternative']);
+						}
 
-				return false;
-			}],
+						return true;
+					}
+
+					return false;
+				},
+			],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -275,11 +281,13 @@ class FormsTable extends Table {
 
 		$validator->add('cc', [
 			'isArray' => ['rule' => 'isArray'],
-			'email' => ['rule' => function (array $value): bool {
-				return array_all($value, function (array $cc): bool {
-					return !empty($cc['email']) && is_string($cc['email']) && Validation::email($cc['email']);
-				});
-			}],
+			'email' => [
+				'rule' => function (array $value): bool {
+					return array_all($value, function (array $cc): bool {
+						return !empty($cc['email']) && is_string($cc['email']) && Validation::email($cc['email']);
+					});
+				},
+			],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
 					return strlen(json_encode($value)) <= 65535;
@@ -290,11 +298,13 @@ class FormsTable extends Table {
 
 		$validator->add('bcc', [
 			'isArray' => ['rule' => 'isArray'],
-			'email' => ['rule' => function (array $value): bool {
-				return array_all($value, function (array $bcc): bool {
-					return !empty($bcc['email']) && is_string($bcc['email']) && Validation::email($bcc['email']);
-				});
-			}],
+			'email' => [
+				'rule' => function (array $value): bool {
+					return array_all($value, function (array $bcc): bool {
+						return !empty($bcc['email']) && is_string($bcc['email']) && Validation::email($bcc['email']);
+					});
+				},
+			],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
 					return strlen(json_encode($value)) <= 65535;
@@ -353,11 +363,16 @@ class FormsTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
-			'inList' => ['rule' => ['inList', [
-				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
-				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL,
-				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST,
-			]]],
+			'inList' => [
+				'rule' => [
+					'inList',
+					[
+						FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
+						FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL,
+						FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST,
+					],
+				],
+			],
 		]);
 
 
@@ -412,13 +427,14 @@ class FormsTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'Validation', 'error_identifier_unique'),
 		]);
 
-		$rules->add(function (Form $entity): bool {
-			return array_key_exists($entity->transportProfile, $this->getTransportProfiles());
-		},
-		'transportProfileExists', [
-			'errorField' => 'transportProfile',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_transport_profile_exists'),
-		]);
+		$rules->add(
+			fn(Form $entity): bool => array_key_exists($entity->transportProfile, $this->getTransportProfiles()),
+			'transportProfileExists',
+			[
+				'errorField' => 'transportProfile',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_transport_profile_exists'),
+			]
+		);
 
 		$rules->addDelete(
 			$rules->isNotLinkedTo('Contents', 'contents'),

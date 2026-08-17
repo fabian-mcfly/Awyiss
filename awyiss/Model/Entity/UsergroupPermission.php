@@ -141,13 +141,25 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 		$tableLocator = FactoryLocator::get('Table');
 
 		if (!isset(static::$datatables)) {
-			static::$datatables = $tableLocator->get('Datatables')->findAllAndCache()->indexBy('identifier')->toArray();
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			static::$datatables = $tableLocator
+				->get('Datatables')
+				->findAllAndCache()
+				->indexBy('identifier')
+				->toArray()
+			;
 		}
 
 		if (!isset(static::$pageRoles)) {
-			static::$pageRoles = $tableLocator->get('PageRoles')->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-				return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
-			})->toArray();
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			static::$pageRoles = $tableLocator
+				->get('PageRoles')
+				->findAllAndCache()
+				->indexBy(function (PageRole $pageRole) {
+					return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
+				})
+				->toArray()
+			;
 		}
 
 		$scopeTitle = $this->scope ? __d($this->scope, 'headline_overview') : null;
@@ -160,9 +172,13 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 			}
 		}
 
-		$identifierTitle = $this->scope ? __df($this->scope, 'Usergroups', 'permission_' . Inflector::underscore($this->identifier)) : null;
+		$identifierTitle = $this->scope
+			? __df($this->scope, 'Usergroups', 'permission_' . Inflector::underscore($this->identifier))
+			: null;
 
-		$accessTitle = $this->access ? __d('Authorization', 'simple_permission_option_' . Inflector::underscore($this->access->name)) : null;
+		$accessTitle = $this->access
+			? __d('Authorization', 'simple_permission_option_' . Inflector::underscore($this->access->name))
+			: null;
 
 		return [
 			'scope' => $scopeTitle,

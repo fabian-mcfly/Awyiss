@@ -66,7 +66,9 @@ class EventTriggerBehavior extends Behavior {
 		foreach ($this->getConfig('events') as $eventName => $callable) {
 			if (is_numeric($eventName)) {
 				if (!is_string($callable)) {
-					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName)));
+					throw new RuntimeException(
+						sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName))
+					);
 				}
 				$eventName = 'Model.' . $callable;
 			}
@@ -143,7 +145,11 @@ class EventTriggerBehavior extends Behavior {
 	protected function dispatchEvent(string $name, Event $originalEvent, mixed ...$arguments): bool {
 		//Create a new event with the modified name and dispatch it.
 		$event = new Event('Model.' . $name, $this->table(), $arguments);
-		$this->table()->getEventManager()->dispatch($event);
+		$this
+			->table()
+			->getEventManager()
+			->dispatch($event)
+		;
 
 		//If the new event was stopped, stop the old one as well and set the result.
 		if ($event->isStopped()) {

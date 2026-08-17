@@ -75,7 +75,11 @@ class MenuEntriesController extends Controller {
 
 		if ($this->request->getParam('menuIdentifier')) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$menu = $this->fetchTable('Menus')->findByIdentifier(Inflector::variable($this->request->getParam('menuIdentifier')))->first();
+			$menu = $this
+				->fetchTable('Menus')
+				->findByIdentifier(Inflector::variable($this->request->getParam('menuIdentifier')))
+				->first()
+			;
 			if ($menu) {
 				throw new RedirectException(Router::url([
 					'action' => 'overview',
@@ -94,7 +98,11 @@ class MenuEntriesController extends Controller {
 			$menuEntries = $query->find('threaded')->all();
 		}
 
-		$menu = $this->fetchTable('Menus')->findById($this->Categories->getSelectedCategory())->first();
+		$menu = $this
+			->fetchTable('Menus')
+			->findById($this->Categories->getSelectedCategory())
+			->first()
+		;
 
 		$this->set([
 			'menuEntries' => $menuEntries,
@@ -153,7 +161,13 @@ class MenuEntriesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$menuEntry = $this->MenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$menuEntry = $this->MenuEntries
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -226,10 +240,13 @@ class MenuEntriesController extends Controller {
 	 */
 	protected function getPossibleParentMenuEntries(MenuEntry $menuEntry): CollectionInterface {
 		if (!isset($this->threadedMenuEntries)) {
-			$query = $this->MenuEntries->find()->where([
-				'languageShortcode' => $menuEntry->languageShortcode,
-				'menuId' => $menuEntry->menuId,
-			]);
+			$query = $this->MenuEntries
+				->find()
+				->where([
+					'languageShortcode' => $menuEntry->languageShortcode,
+					'menuId' => $menuEntry->menuId,
+				])
+			;
 
 			$this->threadedMenuEntries = $this->MenuEntries->listNested($query);
 		}
@@ -278,7 +295,10 @@ class MenuEntriesController extends Controller {
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $menuEntry->languageShortcode, 'id' => $menuEntry->id], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'edit', 'lang' => $menuEntry->languageShortcode, 'id' => $menuEntry->id], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {

@@ -55,34 +55,42 @@ class UrlsNotFoundController extends Controller {
 		 * @uses \Awyiss\Model\Table::findActive()
 		 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
-		$pagesQuery = $pagesTable->find('active', skipPageRoleCheck: true, customerGroupAccessSettings: ['skip' => true])
+		$pagesQuery = $pagesTable
+			->find('active', skipPageRoleCheck: true, customerGroupAccessSettings: ['skip' => true])
 			->disableAutoFields()
 			->find('published')
-			->select(function ($query) {
-				return ['slug' => $query->func()->concat(['/', 'languageShortcode' => 'identifier', '/', 'slug' => 'identifier'])];
-			}, true);
+			->select(fn($query) => [
+				'slug' => $query->func()->concat(['/', 'languageShortcode' => 'identifier', '/', 'slug' => 'identifier']),
+			], true)
+		;
 
 		$urlHistoryTable = $this->fetchTable('UrlHistory');
-		$urlHistoryQuery = $urlHistoryTable->find()
+		$urlHistoryQuery = $urlHistoryTable
+			->find()
 			->disableAutoFields()
 			->select(function ($query) {
 				return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
-			});
+			})
+		;
 
-		$query = $this->getOverviewQuery()
+		$query = $this
+			->getOverviewQuery()
 			->where(function ($exp) use ($pagesQuery, $urlHistoryQuery) {
 				return $exp->notIn('url', $pagesQuery)->notIn('url', $urlHistoryQuery);
-			});
+			})
+		;
 
 		$grouped = $this->request->getParam('grouped', false) === 'true';
 		if ($grouped) {
-			$query->select([
-				'occurrences' => $query->func()->count('*'),
-				'firstOccurrence' => $query->func()->min('createdOn', ['datetime']),
-				'lastOccurrence' => $query->func()->max('createdOn', ['datetime']),
-			])
-			->enableAutoFields()
-			->groupBy('url');
+			$query
+				->select([
+					'occurrences' => $query->func()->count('*'),
+					'firstOccurrence' => $query->func()->min('createdOn', ['datetime']),
+					'lastOccurrence' => $query->func()->max('createdOn', ['datetime']),
+				])
+				->enableAutoFields()
+				->groupBy('url')
+			;
 
 			array_unshift($this->paginate['order'], 'occurrences');
 

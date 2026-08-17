@@ -106,8 +106,8 @@ trait EntityAttributesTrait {
 	 */
 	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
 		if (
-			is_array($field) ||
-			in_array($field, ['_locale', '_translations'])
+			is_array($field)
+			|| in_array($field, ['_locale', '_translations'])
 		) {
 			/**
 			 * Let the parent method handle an array of fields
@@ -128,8 +128,8 @@ trait EntityAttributesTrait {
 		 * let the parent method handle it
 		 */
 		if (
-			!($this->_fields['attributes'] ?? null) instanceof Entity ||
-			!$this->_fields['attributes']->has($field)
+			!($this->_fields['attributes'] ?? null) instanceof Entity
+			|| !$this->_fields['attributes']->has($field)
 		) {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */
 			return parent::set($field, $value, $options);

@@ -76,10 +76,17 @@ class ContentsCell extends Cell {
 			/**
 			 * @var \Awyiss\Model\Entity\Page $page
 			 */
-			$page = $this->fetchTable('Pages')->find($this->isPreview() ? 'all' : 'active')->where(['id' => $options['pageId']])->firstOrFail();
+			$page = $this
+				->fetchTable('Pages')
+				->find($this->isPreview() ? 'all' : 'active')
+				->where(['id' => $options['pageId']])
+				->firstOrFail()
+			;
 		}
 
-		$this->threadedContents = $page && $contentArea ? $this->fetchThreadedContents($page, $contentArea, $this->isPreview()) : new Collection([]);
+		$this->threadedContents = $page && $contentArea
+			? $this->fetchThreadedContents($page, $contentArea, $this->isPreview())
+			: new Collection([]);
 
 		$this->cacheAssignedMediaItems($this->threadedContents, 'contents');
 
@@ -108,14 +115,21 @@ class ContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string $contentArea, Page $page, CollectionInterface $contents, array $options = []): void {
-		DebugTimer::start('ContentsCell::display', sprintf('ContentsCell::display: Rendering content area "%s" on page %d', $contentArea, $page->id));
+		DebugTimer::start(
+			'ContentsCell::display',
+			sprintf('ContentsCell::display: Rendering content area "%s" on page %d', $contentArea, $page->id)
+		);
 
 		$renderedContents = $this->buildContents($contents->toArray(), false, $options['autoSection'] ?? true);
 
 		$currentRoute = $this->request->getRequestTarget();
 		if ($renderedContents && $currentRoute !== '/') {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$renderedContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . trim($currentRoute, '/') . '/$1"', $renderedContents);
+			$renderedContents = preg_replace(
+				'/href=[\'"](#[^\'"]+)[\'"]/',
+				'href="' . trim($currentRoute, '/') . '/$1"',
+				$renderedContents
+			);
 		}
 
 		// Set the view variables
@@ -164,19 +178,31 @@ class ContentsCell extends Cell {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
-		DebugTimer::start('ContentsCell::renderElement' . $entity->id, sprintf('ContentsCell::renderElement: Rendering content #%d with template "%s"', $entity->id, $entity->contentTemplate->fileName));
+		DebugTimer::start(
+			'ContentsCell::renderElement' . $entity->id,
+			sprintf(
+				'ContentsCell::renderElement: Rendering content #%d with template "%s"',
+				$entity->id,
+				$entity->contentTemplate->fileName
+			)
+		);
 
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->getView()->get('fullWidth', 1920),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
-			columnWidth: $entity->realColumnWidth,
-			selector: '#Content' . $entity->id,
-			singleColumnBreakpoint: $this->getView()->get('singleColumnBreakpoint'),
-		);
+		$mediaRenderOptions = $this
+			->getView()
+			->helpers()
+			->get('Media')
+			->mediaRenderOptions(
+				baseWidth: $this->getView()->get('fullWidth', 1920),
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $entity->realColumnWidth,
+				selector: '#Content' . $entity->id,
+				singleColumnBreakpoint: $this->getView()->get('singleColumnBreakpoint'),
+			)
+		;
 
 		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
@@ -190,13 +216,17 @@ class ContentsCell extends Cell {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$result = $fullWidthMissingWarning . $this->getView()->content($entity->contentTemplate->fileName, [
-			'content' => $entity,
-			'children' => $children,
-			'mediaRenderOptions' => $mediaRenderOptions,
-		]);
+		$result = $fullWidthMissingWarning . $this
+			->getView()
+			->content($entity->contentTemplate->fileName, [
+				'content' => $entity,
+				'children' => $children,
+				'mediaRenderOptions' => $mediaRenderOptions,
+			])
+		;
 
 		DebugTimer::stop('ContentsCell::renderElement' . $entity->id);
+
 		return $result;
 	}
 
@@ -223,6 +253,7 @@ class ContentsCell extends Cell {
 
 		if (!$duplicatingEntities) {
 			DebugTimer::stop('ContentsCell::addDuplicates');
+
 			return;
 		}
 
@@ -232,7 +263,11 @@ class ContentsCell extends Cell {
 		$query->where([
 			'Contents.id IN' => $duplicatedIds,
 		]);
-		$duplicatedEntities = $query->all()->indexBy('id')->toArray();
+		$duplicatedEntities = $query
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Entity\Content $entity */
 		foreach ($duplicatingEntities as $entity) {
@@ -330,7 +365,14 @@ class ContentsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function fetchThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
-		DebugTimer::start('ContentsCell::getThreadedContents', sprintf('ContentsCell::getThreadedContents: Fetching threaded contents for content area "%s" on page %d', $contentArea, $page->id));
+		DebugTimer::start(
+			'ContentsCell::getThreadedContents',
+			sprintf(
+				'ContentsCell::getThreadedContents: Fetching threaded contents for content area "%s" on page %d',
+				$contentArea,
+				$page->id
+			)
+		);
 		/** @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible() */
 		$query = $this->getContentsQuery($isPreview)->find('accessible');
 
@@ -355,9 +397,10 @@ class ContentsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		$contents = $contents->filter(function (Content $content) {
-			return $content->parentId === null;
-		})->compile();
+		$contents = $contents
+			->filter(fn(Content $content) => $content->parentId === null)
+			->compile()
+		;
 
 		DebugTimer::stop('ContentsCell::getThreadedContents');
 

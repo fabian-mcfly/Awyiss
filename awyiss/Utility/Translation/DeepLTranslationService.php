@@ -34,9 +34,35 @@ class DeepLTranslationService extends AbstractTranslationService {
 	 * @var array Supported language codes
 	 */
 	protected array $supportedLanguages = [
-		'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr',
-		'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl',
-		'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh',
+		'bg',
+		'cs',
+		'da',
+		'de',
+		'el',
+		'en',
+		'es',
+		'et',
+		'fi',
+		'fr',
+		'hu',
+		'id',
+		'it',
+		'ja',
+		'ko',
+		'lt',
+		'lv',
+		'nb',
+		'nl',
+		'pl',
+		'pt',
+		'ro',
+		'ru',
+		'sk',
+		'sl',
+		'sv',
+		'tr',
+		'uk',
+		'zh',
 	];
 
 
@@ -73,7 +99,12 @@ class DeepLTranslationService extends AbstractTranslationService {
 	/**
 	 * @inheritDoc
 	 */
-	public function translateText(string $text, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): TranslationResult|false {
+	public function translateText(
+		string $text,
+		string $targetLanguage,
+		?string $sourceLanguage = null,
+		array $options = []
+	): TranslationResult|false {
 		$data = [
 			'text' => $text,
 			'target_lang' => $targetLanguage,

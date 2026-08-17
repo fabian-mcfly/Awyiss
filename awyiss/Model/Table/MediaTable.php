@@ -47,8 +47,6 @@ class MediaTable extends Table {
 		'fields' => ['alt'],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -205,7 +203,6 @@ class MediaTable extends Table {
 		$validator->add('webp', [
 			'enum' => ['rule' => ['enum', $processStatusEnumClass]],
 		]);
-
 
 
 		$validator->add('metaData', [
@@ -411,17 +408,17 @@ class MediaTable extends Table {
 	public function getMaxFileSize(): int {
 		$maxFileSize = ini_get('upload_max_filesize');
 		$maxFileSize = trim($maxFileSize);
-		$last = strtolower($maxFileSize[strlen($maxFileSize) - 1]);
+		$last = strtolower($maxFileSize[ strlen($maxFileSize) - 1 ]);
 
 		$maxFileSize = (int)substr($maxFileSize, 0, -1);
 
 		switch ($last) {
 			case 'g':
-				$maxFileSize *= 1024;
-				// no break
+				$maxFileSize *= 1024 ** 3;
+				break;
 			case 'm':
-				$maxFileSize *= 1024;
-				// no break
+				$maxFileSize *= 1024 ** 2;
+				break;
 			case 'k':
 				$maxFileSize *= 1024;
 		}
@@ -448,12 +445,15 @@ class MediaTable extends Table {
 
 		//Fallback if extension isn't known for the mimetype
 		$knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $mimeType), []);
-		$knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()), []);
+		$knownExtensionsForProvidedMimeType = Configure::read(
+			'MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()),
+			[]
+		);
 
 		// If both mime types contain the same, provided extension, return the provided mime type
 		if (
-			in_array($extension, $knownExtensionsForDetectedMimeType) &&
-			in_array($extension, $knownExtensionsForProvidedMimeType)
+			in_array($extension, $knownExtensionsForDetectedMimeType)
+			&& in_array($extension, $knownExtensionsForProvidedMimeType)
 		) {
 			return $uploadedFile->getClientMediaType();
 		}

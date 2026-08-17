@@ -176,7 +176,17 @@ interface AddressInterface {
 	/**
 	 * Convert the address object to an array representation.
 	 *
-	 * @return array{lat: float, lng: float, name: string, street?: string, houseNumber?: string, postalCode?: string, city?: string, country?: string, data: array}
+	 * @return array{
+	 *     lat: float,
+	 *     lng: float,
+	 *     name: string,
+	 *     street?: string,
+	 *     houseNumber?: string,
+	 *     postalCode?: string,
+	 *     city?: string,
+	 *     country?: string,
+	 *     data: array,
+	 *  }
 	 */
 	public function toArray(): array;
 }

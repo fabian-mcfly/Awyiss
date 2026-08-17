@@ -249,9 +249,7 @@ class Page extends Entity {
 
 		$parts = explode('\\', static::class);
 
-		return parent::defaultValues() + [
-			'pageRoleId' => $pageRoleEnum::tryFromName(end($parts)),
-		];
+		return parent::defaultValues() + ['pageRoleId' => $pageRoleEnum::tryFromName(end($parts))];
 	}
 
 
@@ -266,6 +264,6 @@ class Page extends Entity {
 			return null;
 		}
 
-		return array_any($this->pageTemplate->contentAreas, fn (ContentArea $contentArea) => $contentArea->contentTemplates);
+		return array_any($this->pageTemplate->contentAreas, fn(ContentArea $contentArea) => $contentArea->contentTemplates);
 	}
 }

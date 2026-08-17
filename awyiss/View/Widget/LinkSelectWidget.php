@@ -17,6 +17,9 @@ use Traversable;
  * it but can be used to generate standalone link selects.
  */
 class LinkSelectWidget extends BasicWidget {
+	/**
+	 * @var array<string, mixed>
+	 */
 	protected array $defaults = [
 		'class' => '',
 		'disabled' => false,
@@ -164,10 +167,10 @@ class LinkSelectWidget extends BasicWidget {
 
 		$disabled = null;
 		if (
-			isset($data['disabled']) &&
-			(
-				is_array($data['disabled']) ||
-				is_bool($data['disabled'])
+			isset($data['disabled'])
+			&& (
+				is_array($data['disabled'])
+				|| is_bool($data['disabled'])
 			)
 		) {
 			$disabled = $data['disabled'];
@@ -287,7 +290,13 @@ class LinkSelectWidget extends BasicWidget {
 	 * @param array $data
 	 * @return array
 	 */
-	protected function addClassesToOption(array $optionAttributes, mixed $key, mixed $selected, array|bool|null $disabled, array $data): array {
+	protected function addClassesToOption(
+		array $optionAttributes,
+		mixed $key,
+		mixed $selected,
+		array|bool|null $disabled,
+		array $data
+	): array {
 		$optionAttributes = $this->_templates->addClass($optionAttributes, 'Item');
 		$classText = 'Item-' . Text::slug(Inflector::camelize($optionAttributes['title']), ['replacement' => '']);
 		$optionAttributes = $this->_templates->addClass($optionAttributes, $classText);
@@ -350,7 +359,10 @@ class LinkSelectWidget extends BasicWidget {
 		];
 
 		return $this->_templates->format($templateName, [
-			'attrs' => $this->_templates->formatAttributes($optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
+			'attrs' => $this->_templates->formatAttributes(
+				$optionAttributes,
+				['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']
+			),
 			'templateVars' => $optionAttributes['templateVars'],
 			'title' => $escape ? h($optionAttributes['title']) : $optionAttributes['title'],
 			'levelPrefix' => $escape ? h($optionAttributes['levelPrefix']) : $optionAttributes['levelPrefix'],

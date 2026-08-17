@@ -38,6 +38,9 @@ class MediaFoldersSeed extends BaseSeed {
 		];
 
 		$table = $this->table('media_folders');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

@@ -35,9 +35,9 @@ class GeneralEventsListener implements EventListenerInterface {
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
-			!$entity instanceof Entity ||
-			$entity instanceof MediaResizedImage ||
-			($options['allowFrontendSave'] ?? false) === true
+			!$entity instanceof Entity
+			|| $entity instanceof MediaResizedImage
+			|| ($options['allowFrontendSave'] ?? false) === true
 		) {
 			return;
 		}

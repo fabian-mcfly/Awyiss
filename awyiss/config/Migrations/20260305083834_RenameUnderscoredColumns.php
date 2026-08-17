@@ -24,9 +24,15 @@ class RenameUnderscoredColumns extends BaseMigration {
 	 * @return void
 	 */
 	public function up(): void {
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		/** @var \Cake\Command\Helper\ProgressHelper $progressHelper */
-		$progressHelper = $this->getIo()->helper('Progress');
+		$progressHelper = $this
+			->getIo()
+			->helper('Progress')
+		;
 
 		$progressHelper->output([
 			'callback' => function (ProgressHelper $progressHelper) use (&$tables) {
@@ -34,6 +40,7 @@ class RenameUnderscoredColumns extends BaseMigration {
 
 				if (in_array($tableName, ['cake_migrations', 'phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
 					$progressHelper->increment();
+
 					return;
 				}
 
@@ -53,9 +60,14 @@ class RenameUnderscoredColumns extends BaseMigration {
 			'total' => count($tables),
 		]);
 
-		ConnectionManager::get('default')->getCacher()->clear();
+		ConnectionManager::get('default')
+			->getCacher()
+			->clear()
+		;
 
-		FactoryLocator::get('Table')->clear();
+		FactoryLocator::get('Table')
+			->clear()
+		;
 
 		$process = new Process([
 			'bin' . DS . 'cake',
@@ -66,15 +78,22 @@ class RenameUnderscoredColumns extends BaseMigration {
 		$process->run();
 	}
 
+
 	/**
 	 * Revert the changes made by the up() method, renaming columns from camelCase back to underscore format.
 	 *
 	 * @return void
 	 */
 	public function down(): void {
-		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('default')
+			->getSchemaCollection()
+			->listTables()
+		;
 		/** @var \Cake\Command\Helper\ProgressHelper $progressHelper */
-		$progressHelper = $this->getIo()->helper('Progress');
+		$progressHelper = $this
+			->getIo()
+			->helper('Progress')
+		;
 
 		$progressHelper->output([
 			'callback' => function (ProgressHelper $progressHelper) use (&$tables) {
@@ -82,6 +101,7 @@ class RenameUnderscoredColumns extends BaseMigration {
 
 				if (in_array($tableName, ['cake_migrations', 'phinxlog', 'queue_phinxlog', 'queue_processes', 'queued_jobs'], true)) {
 					$progressHelper->increment();
+
 					return;
 				}
 
@@ -100,9 +120,14 @@ class RenameUnderscoredColumns extends BaseMigration {
 			'total' => count($tables),
 		]);
 
-		ConnectionManager::get('default')->getCacher()->clear();
+		ConnectionManager::get('default')
+			->getCacher()
+			->clear()
+		;
 
-		FactoryLocator::get('Table')->clear();
+		FactoryLocator::get('Table')
+			->clear()
+		;
 
 		$process = new Process([
 			'bin' . DS . 'cake',

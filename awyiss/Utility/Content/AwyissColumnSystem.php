@@ -21,6 +21,7 @@ final class AwyissColumnSystem extends AbstractColumnSystem {
 		return 'Awyiss';
 	}
 
+
 	/**
 	 * @inheritDoc
 	 */

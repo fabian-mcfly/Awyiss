@@ -18,11 +18,11 @@ use Awyiss\Utility\Inflector;
 class MediaConfigOptions extends AbstractConfigOptions {
 	use TableFieldsTrait;
 
-	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Media';
 
+	/**
+	 * @var string Create historical paths when file or folder name changes
+	 */
+	final public const string CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
 	/**
 	 * @var string Create historical paths disabled
 	 */
@@ -36,21 +36,23 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	 */
 	final public const string CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE = 'folderNameChange';
 	/**
-	 * @var string Create historical paths when file or folder name changes
+	 * @var string Resize media file type avif
 	 */
-	final public const string CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
+	final public const string RESIZE_MEDIA_FILE_TYPE_AVIF = 'avif';
 	/**
 	 * @var string Resize media file type match source
 	 */
 	final public const string RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE = 'matchSource';
 	/**
-	 * @var string Resize media file type avif
-	 */
-	final public const string RESIZE_MEDIA_FILE_TYPE_AVIF = 'avif';
-	/**
 	 * @var string Resize media file type webp
 	 */
 	final public const string RESIZE_MEDIA_FILE_TYPE_WEBP = 'webp';
+
+
+	/**
+	 * @var string Scope of these options
+	 */
+	protected static string $scope = 'Media';
 
 
 	/**
@@ -113,9 +115,18 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					nullable: false,
 					type: ConfigOptionType::ListKey,
 					values: [
-						static::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => __d(Inflector::camelize(static::$scope), 'resize_media_file_type_match_source'),
-						static::RESIZE_MEDIA_FILE_TYPE_AVIF => __d(Inflector::camelize(static::$scope), 'resize_media_file_type_avif'),
-						static::RESIZE_MEDIA_FILE_TYPE_WEBP => __d(Inflector::camelize(static::$scope), 'resize_media_file_type_webp'),
+						static::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => __d(
+							Inflector::camelize(static::$scope),
+							'resize_media_file_type_match_source'
+						),
+						static::RESIZE_MEDIA_FILE_TYPE_AVIF => __d(
+							Inflector::camelize(static::$scope),
+							'resize_media_file_type_avif'
+						),
+						static::RESIZE_MEDIA_FILE_TYPE_WEBP => __d(
+							Inflector::camelize(static::$scope),
+							'resize_media_file_type_webp'
+						),
 					],
 				),
 				new ConfigOption(
@@ -126,6 +137,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Integer,
 					validate: function (int|string $value): bool {
 						$value = (int)$value;
+
 						return $value > 0 && $value <= 100;
 					},
 				),
@@ -140,10 +152,22 @@ class MediaConfigOptions extends AbstractConfigOptions {
 				nullable: false,
 				type: ConfigOptionType::ListKey,
 				values: [
-					static::CREATE_HISTORICAL_PATHS_DISABLED => __d(Inflector::camelize(static::$scope), 'create_historical_paths_disabled'),
-					static::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE => __d(Inflector::camelize(static::$scope), 'create_historical_paths_file_name_change'),
-					static::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE => __d(Inflector::camelize(static::$scope), 'create_historical_paths_folder_name_change'),
-					static::CREATE_HISTORICAL_PATHS_ALWAYS => __d(Inflector::camelize(static::$scope), 'create_historical_paths_always'),
+					static::CREATE_HISTORICAL_PATHS_DISABLED => __d(
+						Inflector::camelize(static::$scope),
+						'create_historical_paths_disabled'
+					),
+					static::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE => __d(
+						Inflector::camelize(static::$scope),
+						'create_historical_paths_file_name_change'
+					),
+					static::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE => __d(
+						Inflector::camelize(static::$scope),
+						'create_historical_paths_folder_name_change'
+					),
+					static::CREATE_HISTORICAL_PATHS_ALWAYS => __d(
+						Inflector::camelize(static::$scope),
+						'create_historical_paths_always'
+					),
 				],
 			),
 			new ConfigOption(

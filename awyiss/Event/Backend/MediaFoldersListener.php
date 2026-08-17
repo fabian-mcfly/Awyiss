@@ -66,10 +66,8 @@ class MediaFoldersListener implements EventListenerInterface {
 		}
 
 		if (
-			!$entity->isDirty('path') &&
-			!$entity->isDirty('languageShortcode') &&
-			!$entity->isDirty('parentId') &&
-			!$entity->isDirty('deleted')
+			!$entity->isDirty('path') && !$entity->isDirty('languageShortcode') && !$entity->isDirty('parentId')
+			&& !$entity->isDirty('deleted')
 		) {
 			// If neither the path, language, parent nor deleted have changed, skip the path logic
 			return;
@@ -94,7 +92,8 @@ class MediaFoldersListener implements EventListenerInterface {
 		$languageShortcode = $entity->languageShortcode;
 
 		$originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
-		$originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
+		$originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode')
+			: $entity->languageShortcode;
 
 		if (!str_starts_with($path, 'media/') && $path !== 'media') {
 			$path = 'media/' . $path;
@@ -102,9 +101,7 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		// When the path has changed
 		if (
-			$entity->isNew() ||
-			$path != $originalPath ||
-			$languageShortcode != $originalLanguageShortcode
+			$entity->isNew() || $path != $originalPath || $languageShortcode != $originalLanguageShortcode
 		) {
 			$path = $this->ensureUniquePath($mediaFoldersTable, $entity, $path, $fieldLength);
 		}
@@ -270,9 +267,13 @@ class MediaFoldersListener implements EventListenerInterface {
 		$urlHistoryTable = $this->fetchTable('UrlHistory');
 
 		// Find all media whose path starts with the original path of the provided folder
-		$records = $mediaTable->find()->where(function (QueryExpression $expression) use ($originalPath) {
-			return $expression->like('path', $originalPath . '/%');
-		})->all();
+		$records = $mediaTable
+			->find()
+			->where(function (QueryExpression $expression) use ($originalPath) {
+				return $expression->like('path', $originalPath . '/%');
+			})
+			->all()
+		;
 
 		if (!$records->count()) {
 			return;
@@ -312,25 +313,37 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function rebuildDatabasePath(string $table, MediaFolder $entity, string $originalPath): void {
-		$query = FactoryLocator::get('Table')->get(Inflector::camelize($table))->updateQuery();
+		$query = FactoryLocator::get('Table')
+			->get(Inflector::camelize($table))
+			->updateQuery()
+		;
 
 		/**
 		 * UPDATE media_folders SET path = (CONCAT('newpath', substr(path, '8'))) WHERE path LIKE 'oldpath/%'
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
-		$query->update($table)->set('path', $query->expr($query->func()->concat([
-			$entity->path,
-			$query->func()->substr([
-				'path' => 'identifier',
-				mb_strlen($originalPath) + 1,
-			], [
-				null,
-				'integer',
-			]),
-		])))->where(function (QueryExpression $expression/*, Query $query*/) use ($originalPath) {
-			return $expression->like('path', $originalPath . '/%');
-		})->execute();
+		$query
+			->update($table)
+			->set('path', $query->expr($query
+				->func()
+				->concat([
+					$entity->path,
+					$query
+						->func()
+						->substr([
+							'path' => 'identifier',
+							mb_strlen($originalPath) + 1,
+						], [
+							null,
+							'integer',
+						]),
+				])))
+			->where(function (QueryExpression $expression/*, Query $query*/) use ($originalPath) {
+				return $expression->like('path', $originalPath . '/%');
+			})
+			->execute()
+		;
 	}
 
 
@@ -353,13 +366,23 @@ class MediaFoldersListener implements EventListenerInterface {
 			 * When updating all media folders with the same path (LIKE 'oldpath/%'),
 			 * do not set the parentsActive to true for media folders that
 			 * are descendants of inactive folders.
+			 *
+			 * @var \Cake\Collection\Collection<\Awyiss\Model\Entity\MediaFolder> $subFolders
 			 */
-			$subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalPath) {
-				return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
-			})->where(['active' => false])->all();
+			$subFolders = $table
+				->find('all', skipPageRoleCheck: true)
+				->where(
+					function (QueryExpression $expression) use ($entity, $originalPath) {
+						return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
+					}
+				)
+				->where(['active' => false])
+				->all()
+			;
 
+			/** @var \Awyiss\Model\Entity\MediaFolder $subFolder */
 			foreach ($subFolders as $subFolder) {
-				$query->where(function (QueryExpression $expression/*, Query $query*/) use ($subFolder) {
+				$query->where(function (QueryExpression $expression) use ($subFolder) {
 					return $expression->notLike('path', $subFolder->path . '/%');
 				});
 			}
@@ -428,7 +451,11 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	protected function copyMediaEntities(MediaFolder $entity, MediaFolder $originalEntity, MediaFoldersTable $table): void {
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$files = $table->Media->find('translations')->where(['mediaFolderId' => $originalEntity->id])->all();
+		$files = $table->Media
+			->find('translations')
+			->where(['mediaFolderId' => $originalEntity->id])
+			->all()
+		;
 		/** @var \Awyiss\Model\Entity\Media $file */
 		foreach ($files as $file) {
 			$file->setNew(true);
@@ -467,11 +494,11 @@ class MediaFoldersListener implements EventListenerInterface {
 		 * path
 		 * ```
 		 * [
-		 *	"MediaFolders.path" => "new/path/of/the/current/mediafolder"
-		 * 	"languageShortcode" => "de"
-		 * 	"NOT" => [
-		 * 		"MediaFolders.id" => 1234
-		 * 	]
+		 *    'MediaFolders.path' => 'new/path/of/the/current/mediafolder',
+		 *    'languageShortcode' => 'de',
+		 *    'NOT' => [
+		 *        'MediaFolders.id' => 1234,
+		 *    ],
 		 * ]
 		 * ```
 		 */

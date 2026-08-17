@@ -36,6 +36,9 @@ class PageRolesSeed extends BaseSeed {
 		];
 
 		$table = $this->table('page_roles');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

@@ -54,7 +54,10 @@ class ProxyIdentifier extends AbstractIdentifier {
 		$this->setConfig('resolver', $this->getConfig('remoteResolver'));
 
 
-		return $this->getResolver()->find($credentials);
+		return $this
+			->getResolver()
+			->find($credentials)
+		;
 	}
 
 
@@ -68,6 +71,9 @@ class ProxyIdentifier extends AbstractIdentifier {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
 
 
-		return $this->getResolver()->find($credentials);
+		return $this
+			->getResolver()
+			->find($credentials)
+		;
 	}
 }

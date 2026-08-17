@@ -28,7 +28,7 @@ class ContentTemplateContentArea extends Entity {
 		'pageTemplateId' => true,
 	];
 	/**
-	 * @var array|array<string>
+	 * @var array
 	 */
 	protected array $_virtual = []; // phpcs:ignore
 }

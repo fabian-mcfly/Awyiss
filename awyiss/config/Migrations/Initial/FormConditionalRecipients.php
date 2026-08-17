@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-
 /**
  * Class FormConditionalRecipients
  */
@@ -29,85 +28,109 @@ class FormConditionalRecipients {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('form_conditional_recipients')) {
-			$this->migration->table('form_conditional_recipients')->drop()->save();
+			$this->migration
+				->table('form_conditional_recipients')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('form_conditional_recipients')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('form_id', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('type', 'string', [
-			'default' => null,
-			'limit' => 20,
-			'null' => false,
-		])->addColumn('field', 'string', [
-			'default' => null,
-			'limit' => 50,
-			'null' => true,
-		])->addColumn('operator', 'string', [
-			'default' => null,
-			'limit' => 30,
-			'null' => false,
-		])->addColumn('value', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('recipient', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => false,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'FORM_CONDITIONAL_RECIPIENTS_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'form_id',
-			], [
-				'name' => 'FORM_CONDITIONAL_RECIPIENTS_FORM_ID',
-			]
-		)->create();
+		$this->migration
+			->table('form_conditional_recipients')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('form_id', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('type', 'string', [
+				'default' => null,
+				'limit' => 20,
+				'null' => false,
+			])
+			->addColumn('field', 'string', [
+				'default' => null,
+				'limit' => 50,
+				'null' => true,
+			])
+			->addColumn('operator', 'string', [
+				'default' => null,
+				'limit' => 30,
+				'null' => false,
+			])
+			->addColumn('value', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('recipient', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => false,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'FORM_CONDITIONAL_RECIPIENTS_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'form_id',
+				], [
+					'name' => 'FORM_CONDITIONAL_RECIPIENTS_FORM_ID',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -117,6 +140,10 @@ class FormConditionalRecipients {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('form_conditional_recipients')->drop()->save();
+		$this->migration
+			->table('form_conditional_recipients')
+			->drop()
+			->save()
+		;
 	}
 }

@@ -22,7 +22,6 @@ use Cake\Event\EventInterface;
 class EventTriggerComponent extends Component {
 	/**
 	 * @inheritDoc
-	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,

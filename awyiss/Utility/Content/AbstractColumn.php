@@ -11,7 +11,7 @@ use JsonSerializable;
 /**
  * Class AwyissColumn
  */
-abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
+abstract class AbstractColumn implements ColumnInterface, JsonSerializable {
 	/**
 	 * @var string
 	 */
@@ -25,13 +25,13 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	 */
 	protected string $fraction;
 	/**
-	 * @var int
-	 */
-	protected int $numerator;
-	/**
 	 * @var string|null
 	 */
 	protected ?string $label = null;
+	/**
+	 * @var int
+	 */
+	protected int $numerator;
 
 
 	/**

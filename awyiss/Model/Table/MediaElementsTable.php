@@ -222,6 +222,7 @@ class MediaElementsTable extends Table {
 	 *
 	 * @param bool $includeEntities
 	 * @param bool $allowGrouping
+	 * @param bool $useCache
 	 * @return array
 	 * @throws \ReflectionException
 	 */
@@ -236,14 +237,25 @@ class MediaElementsTable extends Table {
 		$availableModels = [];
 
 		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$datatables = $useCache ? $datatablesTable->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all() : $datatablesTable->findAllAndCache();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$datatables = $useCache
+			? $datatablesTable
+				->find('translations')
+				->find('mediaAssignments')
+				->find('mediaElementAssignments')
+				->all()
+			: $datatablesTable->findAllAndCache();
 		$datatables = $datatables->indexBy('identifier')->toArray();
 
 		/**
 		 * @var \Cake\Collection\Collection $pageRoles
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$pageRoles = FactoryLocator::get('Table')->get('PageRoles')->findAllAndCache()->indexBy(fn($pageRole) => $pageRole->id);
+		$pageRoles = FactoryLocator::get('Table')
+			->get('PageRoles')
+			->findAllAndCache()
+			->indexBy(fn($pageRole) => $pageRole->id)
+		;
 		$pageRoles = $pageRoles->map(fn($pageRole) => $pageRole->label)->toArray();
 
 		$classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
@@ -272,7 +284,11 @@ class MediaElementsTable extends Table {
 			$entities = false;
 			if ($includeEntities && $entityLevel) {
 				$table = FactoryLocator::get('Table')->get(Inflector::camelize($tableName));
-				$entities = $table->find()->all()->indexBy('id');
+				$entities = $table
+					->find()
+					->all()
+					->indexBy('id')
+				;
 
 				if ($allowGrouping && $tableName === PageTemplatesTable::TABLE) {
 					$entities = $entities->groupBy(function (EntityInterface $entity) use ($pageRoles): string {
@@ -280,17 +296,23 @@ class MediaElementsTable extends Table {
 						return $pageRoles[ $entity->pageRoleId->value ];
 					});
 
-					$entities = $entities->map(fn (array $groupedEntities) => collection($groupedEntities)->indexBy('id')->map(function (EntityInterface $entity): string {
-						/** @var \Awyiss\Model\Entity $entity */
-						return $entity->label;
-					})->toArray())->toArray();
+					$entities = $entities
+						->map(
+							fn(array $groupedEntities) => collection($groupedEntities)
+								->indexBy('id')
+								/** @var \Awyiss\Model\Entity $entity */
+								->map(fn(EntityInterface $entity): string => $entity->label)
+								->toArray()
+						)
+						->toArray()
+					;
 
 					uksort($entities, function (string $key1, string $key2) use ($pageRoles) {
 						return array_search($key1, $pageRoles) <=> array_search($key2, $pageRoles);
 					});
 				}
 				else {
-					$entities = $entities->map(fn ($entity) => $entity->label)->toArray();
+					$entities = $entities->map(fn($entity) => $entity->label)->toArray();
 				}
 			}
 
@@ -298,7 +320,9 @@ class MediaElementsTable extends Table {
 			$availableModels[ $camelizedTableName ] = [
 				'entityLevel' => $entityLevel,
 				'modelLevel' => (bool)($attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
-				'label' => isset($datatables[ $camelizedTableName ]) ? $datatables[ $camelizedTableName ]->label : __d($tableName, 'headline_overview'),
+				'label' => isset($datatables[ $camelizedTableName ])
+					? $datatables[ $camelizedTableName ]->label
+					: __d($tableName, 'headline_overview'),
 				'entities' => $entities,
 			];
 		}

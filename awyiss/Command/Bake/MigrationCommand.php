@@ -61,7 +61,9 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		if (!$actions && count($fields)) {
 			/** @psalm-suppress PossiblyNullReference */
 			$this->io->abort(
-				'When applying fields the migration name should start with one of the following prefixes: `Create`, `Drop`, `Add`, `Remove`, `Alter`. See: https://book.cakephp.org/migrations/4/en/index.html#migrations-file-name'
+				'When applying fields the migration name should start with one of the following prefixes:'
+				. ' `Create`, `Drop`, `Add`, `Remove`, `Alter`.'
+				. ' See: https://book.cakephp.org/migrations/5/getting-started/creating-migrations.html#migration-file-names'
 			);
 		}
 
@@ -133,9 +135,14 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
 	 */
 	public function bake(string $name, Arguments $args, ConsoleIo $io): void {
-		EventManager::instance()->on('Bake.initialize', function (Event $event): void {
-			$event->getSubject()->loadHelper('Migrations.Migration');
-		});
+		EventManager::instance()
+			->on('Bake.initialize', function (Event $event): void {
+				$event
+					->getSubject()
+					->loadHelper('Migrations.Migration')
+				;
+			})
+		;
 		$this->_name = $name;
 
 		//Remember the name of the table
@@ -144,7 +151,10 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		$this->io = $io;
 		$this->args = $args;
 		if ($this->isReservedKeyword($name)) {
-			$prefix = $io->ask('Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.', 'Migration');
+			$prefix = $io->ask(
+				'Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.',
+				'Migration'
+			);
 			$this->_name = $prefix . ucfirst($name);
 		}
 

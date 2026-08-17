@@ -285,7 +285,8 @@ class MailSender {
 		$mailer
 			->setFrom($senderEmail, $this->senderName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'))
 			->setSubject($this->subject)
-			->setTo($this->recipientEmail, $this->recipientName);
+			->setTo($this->recipientEmail, $this->recipientName)
+		;
 
 		foreach ($this->cc as $cc) {
 			$mailer->addCc($cc['email'], $cc['name']);
@@ -299,7 +300,8 @@ class MailSender {
 		if ($this->safeRealSender && $senderEmail !== $this->safeRealSender) {
 			$mailer
 				->setFrom($this->safeRealSender, $this->senderName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'))
-				->setReplyTo($senderEmail, $this->senderName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
+				->setReplyTo($senderEmail, $this->senderName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'))
+			;
 		}
 
 		$mailer->setRenderer(new MailRenderer());
@@ -309,7 +311,8 @@ class MailSender {
 			->setTemplate($this->template)
 			->setTemplatePath($this->templatePath)
 			->setLayout('email/' . $this->layoutName)
-			->setVars($this->data);
+			->setVars($this->data)
+		;
 
 
 		if ($this->mailFormat !== 'both') {
@@ -338,7 +341,10 @@ class MailSender {
 	 * @param string $prefix
 	 * @return $this
 	 */
-	public function setTemplatePath(string $path, string $prefix = 'Frontend' . DIRECTORY_SEPARATOR . 'email' . DIRECTORY_SEPARATOR): static {
+	public function setTemplatePath(
+		string $path,
+		string $prefix = 'Frontend' . DIRECTORY_SEPARATOR . 'email' . DIRECTORY_SEPARATOR
+	): static {
 		$this->templatePath = $prefix . $path;
 
 		return $this;

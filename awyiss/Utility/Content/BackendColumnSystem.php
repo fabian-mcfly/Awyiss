@@ -9,13 +9,13 @@ namespace Awyiss\Utility\Content;
  */
 class BackendColumnSystem extends BootstrapColumnSystem {
 	/**
-	 * @var int The maximum denominator
-	 */
-	final protected static int $maxDenominator = 12;
-	/**
 	 * @var array<array> The column widths, indexed by the max denominator fraction
 	 */
 	protected static array $columnWidths = [];
+	/**
+	 * @var int The maximum denominator
+	 */
+	final protected static int $maxDenominator = 12;
 
 
 	/**

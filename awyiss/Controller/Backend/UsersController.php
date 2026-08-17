@@ -113,7 +113,10 @@ class UsersController extends Controller {
 
 		$this->set([
 			'user' => $user,
-			'usergroups' => $this->Users->Usergroups->find()->all()->toArray(),
+			'usergroups' => $this->Users->Usergroups
+				->find()
+				->all()
+				->toArray(),
 		]);
 	}
 
@@ -133,7 +136,14 @@ class UsersController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$user = $this->Users->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['Usergroups'])->first();
+		$user = $this->Users
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain(['Usergroups'])
+			->first()
+		;
 		if (!$user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -151,7 +161,10 @@ class UsersController extends Controller {
 
 		$this->set([
 			'user' => $user,
-			'usergroups' => $this->Users->Usergroups->find()->all()->toArray(),
+			'usergroups' => $this->Users->Usergroups
+				->find()
+				->all()
+				->toArray(),
 		]);
 	}
 
@@ -244,7 +257,11 @@ class UsersController extends Controller {
 			$username = $this->request->getData('username');
 			if ($username) {
 				/** @var \Awyiss\Model\Entity\User $user */
-				$user = $this->Users->find()->where(['username' => $username])->first();
+				$user = $this->Users
+					->find()
+					->where(['username' => $username])
+					->first()
+				;
 				if ($user) {
 					$user->patch([
 						'failedAttempts' => $user->failedAttempts + 1,
@@ -359,7 +376,8 @@ class UsersController extends Controller {
 
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
-					 * Otherwise the next redirect to the overview would show a site without the modified user, which could be a bit confusing.
+					 * Otherwise the next redirect to the overview would show a site without the modified user,
+					 * which could be a bit confusing.
 					 */
 					$this->Categories->verifySelection(null, $usergroups);
 

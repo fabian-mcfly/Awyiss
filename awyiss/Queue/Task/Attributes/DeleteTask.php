@@ -72,7 +72,9 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 		}
 
 		//Bake a `drop`-migration
-		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $attributesTableName . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $attributesTableName
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations'
+		;
 
 		//Migrate all the newly baked migrations
 		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
@@ -81,7 +83,9 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		// Bake the seed for the attributes table and truncate it beforehand.
-		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes'
+			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+		;
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [

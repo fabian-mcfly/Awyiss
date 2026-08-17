@@ -112,7 +112,6 @@ class AppView extends TwigView {
 	}
 
 
-
 	/**
 	 * Creates a magic helper class instance for each loaded helper
 	 *
@@ -271,7 +270,18 @@ class AppView extends TwigView {
 	 * @return \Awyiss\Model\Entity\Language
 	 */
 	protected function cleanLanguage(Language $language): Language {
-		$blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
+		$blocklistedProperties = [
+			'realm',
+			'systemOrder',
+			'active',
+			'deleted',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'deletedBy',
+			'deletedOn',
+		];
 
 		$language = clone $language;
 

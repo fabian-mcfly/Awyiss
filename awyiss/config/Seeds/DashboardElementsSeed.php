@@ -32,7 +32,7 @@ class DashboardElementsSeed extends BaseSeed {
 				'changedBy' => null,
 				'changedOn' => null,
 				'deletedBy' => null,
-				'deletedOn' => null
+				'deletedOn' => null,
 			],
 			[
 				'id' => 2,
@@ -48,11 +48,14 @@ class DashboardElementsSeed extends BaseSeed {
 				'changedBy' => null,
 				'changedOn' => null,
 				'deletedBy' => null,
-				'deletedOn' => null
-			]
+				'deletedOn' => null,
+			],
 		];
 
 		$table = $this->table('dashboard_elements');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

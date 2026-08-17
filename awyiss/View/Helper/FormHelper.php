@@ -35,6 +35,10 @@ class FormHelper extends BaseFormHelper {
 	 */
 	protected array $helpers = ['Attributes', 'Html', 'Locale', 'Media', 'Url'];
 	/**
+	 * @var mixed|string The realm for the translations
+	 */
+	protected string $languageRealm;
+	/**
 	 * @var array<string, \Awyiss\Model\Entity\Language> List of languages by realm
 	 */
 	protected array $languages = [];
@@ -42,10 +46,6 @@ class FormHelper extends BaseFormHelper {
 	 * @var array<string> List of fields that are translatable
 	 */
 	protected array $translatableFields = [];
-	/**
-	 * @var mixed|string The realm for the translations
-	 */
-	protected string $languageRealm;
 
 
 	/**
@@ -194,7 +194,9 @@ class FormHelper extends BaseFormHelper {
 
 			$options['realType'] = $options['type'] ?? null;
 			$options['type'] = 'translatableText';
-			$options['val'] = $this->getSourceValue($association . '_translations.' . array_key_first($this->languages) . '.' . $associationFieldName);
+			$options['val'] = $this->getSourceValue(
+				$association . '_translations.' . array_key_first($this->languages) . '.' . $associationFieldName
+			);
 
 			//If there's no translation for the main language, reset the val.
 			//We might need to use the untranslated table value.
@@ -221,7 +223,6 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	/**
 	 * This negates CakePHP's decision to remove the empty option
 	 * if a select is required.
 	 * Usability-wise it's not good to show any fields prepopulated as they
@@ -230,11 +231,15 @@ class FormHelper extends BaseFormHelper {
 	 * @inheritDoc
 	 */
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
-		return parent::select($fieldName, $options, $attributes + [
-			'empty' => !($attributes['multiple'] ?? false),
-			'data-filter-placeholder' => __d('System', 'select_filter_placeholder'),
-			'data-empty-label' => __d('System', 'select_empty_label'),
-		]);
+		return parent::select(
+			$fieldName,
+			$options,
+			$attributes + [
+				'empty' => !($attributes['multiple'] ?? false),
+				'data-filter-placeholder' => __d('System', 'select_filter_placeholder'),
+				'data-empty-label' => __d('System', 'select_empty_label'),
+			]
+		);
 	}
 
 
@@ -272,7 +277,7 @@ class FormHelper extends BaseFormHelper {
 		$formattedOptions = [];
 		foreach ($options as $title => $link) {
 			$formattedOptions[ (string)$title ] = [
-				'title'	=> (string)$title,
+				'title' => (string)$title,
 				'link' => (string)$link,
 			];
 		}
@@ -293,8 +298,8 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function textarea(string $fieldName, array $options = []): string {
 		if (
-			($options['data-editor'] ?? null) === true &&
-			$this->_getContext() instanceof EntityContext
+			($options['data-editor'] ?? null) === true
+			&& $this->_getContext() instanceof EntityContext
 		) {
 			$options['val'] ??= $this->getSourceValue($fieldName);
 			if (is_string($options['val'])) {
@@ -318,7 +323,9 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function translatableText(string $fieldName, array $options = []): string {
 		if (!isset($this->languageRealm)) {
-			throw new RuntimeException('The language realm is not set. Make sure to call FormHelper::create() before using translatable fields.');
+			throw new RuntimeException(
+				'The language realm is not set. Make sure to call FormHelper::create() before using translatable fields.'
+			);
 		}
 
 		if ((!in_array($fieldName, $this->translatableFields) || count($this->languages) < 2) && !str_contains($fieldName, '.')) {
@@ -657,13 +664,14 @@ class FormHelper extends BaseFormHelper {
 	 */
 	protected function setTimezoneOptions(string $fieldName, array $options): array {
 		if (
-			($options['type'] ?? null) !== 'datetime' &&
-			$this->_inputType($fieldName, $options) !== 'datetime'
+			($options['type'] ?? null) !== 'datetime' && $this->_inputType($fieldName, $options) !== 'datetime'
 		) {
 			return $options;
 		}
 
-		$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+		$timezone = $options['timezone'] ?? null
+			?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone')
+				?: date_default_timezone_get();
 
 		if ($timezone === 'auto') {
 			$language = $options['language'] ?? LocaleMiddleware::getLanguage(null);
@@ -692,7 +700,13 @@ class FormHelper extends BaseFormHelper {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	protected function processMultiLanguageControls(string $fieldName, array $options, array $baseOptions, string $realType, ?array $values = null): array {
+	protected function processMultiLanguageControls(
+		string $fieldName,
+		array $options,
+		array $baseOptions,
+		string $realType,
+		?array $values = null
+	): array {
 		$options += [
 			'placeholder' => null,
 			'required' => null,
@@ -727,7 +741,11 @@ class FormHelper extends BaseFormHelper {
 				'placeholder' => $options['placeholder'] ?? $options['val'] ?? null,
 				'required' => $options['required'] && !count($options['controls']),
 				'type' => $realType,
-				'val' => ($value !== false ? $value : $this->getSourceValue($association . '_translations.' . $shortcode . '.' . $plainFieldName)) ?? '',
+				'val' => ($value !== false
+						? $value
+						: $this->getSourceValue(
+							$association . '_translations.' . $shortcode . '.' . $plainFieldName
+						)) ?? '',
 			];
 			$translatableOptions += $baseOptions;
 			unset($translatableOptions['values']);
@@ -743,7 +761,10 @@ class FormHelper extends BaseFormHelper {
 				$options['controls'][] = $this->Attributes->control($plainFieldName, $translatableOptions);
 			}
 			else {
-				$options['controls'][] = $this->control($association . '_translations.' . $shortcode . '.' . $plainFieldName, $translatableOptions);
+				$options['controls'][] = $this->control(
+					$association . '_translations.' . $shortcode . '.' . $plainFieldName,
+					$translatableOptions
+				);
 			}
 		}
 

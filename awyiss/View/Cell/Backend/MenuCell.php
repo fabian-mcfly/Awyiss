@@ -31,7 +31,6 @@ class MenuCell extends Cell {
 	 * Options for the menu renderer
 	 *
 	 * @var array $rendererOptions
-	 * @noinspection HtmlUnknownAttribute
 	 */
 	protected array $rendererOptions = [
 		'formatters' => [],
@@ -83,13 +82,19 @@ class MenuCell extends Cell {
 			if ($time >= $identity->changedOn) {
 				$backendMenuEntriesTable = $this->fetchTable('BackendMenuEntries');
 				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-				$entity = $backendMenuEntriesTable->find()->select('id')->find('withDeleted')->where([
-					'OR' => [
-						'createdOn >' => $time,
-						'changedOn >' => $time,
-						'deletedOn >' => $time,
-					],
-				])->first();
+				$entity = $backendMenuEntriesTable
+					->find()
+					->select('id')
+					->find('withDeleted')
+					->where([
+						'OR' => [
+							'createdOn >' => $time,
+							'changedOn >' => $time,
+							'deletedOn >' => $time,
+						],
+					])
+					->first()
+				;
 
 				// If there are newer menu entries, invalidate the menu cache.
 				if ($entity) {
@@ -117,7 +122,11 @@ class MenuCell extends Cell {
 				]);
 
 				// Set the template for the view
-				$this->viewBuilder()->setTemplatePath('Backend/cell/Menu')->setTemplate('menu');
+				$this
+					->viewBuilder()
+					->setTemplatePath('Backend/cell/Menu')
+					->setTemplate('menu')
+				;
 
 				return;
 			}
@@ -160,7 +169,11 @@ class MenuCell extends Cell {
 		]);
 
 		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Backend/cell/Menu')->setTemplate('menu');
+		$this
+			->viewBuilder()
+			->setTemplatePath('Backend/cell/Menu')
+			->setTemplate('menu')
+		;
 	}
 
 
@@ -176,7 +189,9 @@ class MenuCell extends Cell {
 		}
 
 		if (!($identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
+			throw new RuntimeException(
+				sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class)
+			);
 		}
 
 

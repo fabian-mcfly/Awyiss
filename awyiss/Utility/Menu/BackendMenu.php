@@ -15,7 +15,7 @@ class BackendMenu extends Menu {
 	/**
 	 * Appending entries in the backend allows for a fallback to the 'system' identifier.
 	 * This is useful when a custom menu entry is no longer present,
-	 * but an entry in the database or a custom json file still refers to it.
+	 * but an entry in the database or a custom JSON file still refers to it.
 	 *
 	 * @inheritDoc
 	 */
@@ -23,18 +23,21 @@ class BackendMenu extends Menu {
 		// Try to find the item with the given identifier
 		if ($this->hasItem($identifier)) {
 			parent::appendEntries($entries, $identifier, $determineVisibility);
+
 			return;
 		}
 
 		$children = $this->toArray();
 		if (isset($children[ $identifier ])) {
 			$this->appendInNestedChildren($children[ $identifier ], $entries, $determineVisibility);
+
 			return;
 		}
 
 		// If there's no 'system' item to fall back to, throw an exception
 		if ($this->hasItem('system')) {
 			parent::appendEntries($entries, 'system', $determineVisibility);
+
 			return;
 		}
 

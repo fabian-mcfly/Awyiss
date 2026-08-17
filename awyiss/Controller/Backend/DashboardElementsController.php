@@ -100,7 +100,13 @@ class DashboardElementsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$dashboardElement = $this->DashboardElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$dashboardElement = $this->DashboardElements
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$dashboardElement) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -257,6 +263,7 @@ class DashboardElementsController extends Controller {
 		]);
 	}
 
+
 	/**
 	 * @return array
 	 * @throws \ReflectionException
@@ -273,8 +280,12 @@ class DashboardElementsController extends Controller {
 		foreach ($authorizationService->getPolicies() as $policyClass) {
 			$scope = is_string($policyClass) ? $policyClass::getScope() : $policyClass->getScope();
 
+			$permissionOptionCollection = is_string($policyClass)
+				? $policyClass::getPermissionOptions()
+				: $policyClass->getPermissionOptions();
+
 			$permissions = [];
-			foreach (is_string($policyClass) ? $policyClass::getPermissionOptions() : $policyClass->getPermissionOptions() as $identifier => $permissionOption) {
+			foreach ($permissionOptionCollection as $identifier => $permissionOption) {
 				$permissions[] = $identifier;
 			}
 

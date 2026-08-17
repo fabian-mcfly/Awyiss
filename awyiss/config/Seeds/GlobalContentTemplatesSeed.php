@@ -36,6 +36,9 @@ class GlobalContentTemplatesSeed extends BaseSeed {
 		];
 
 		$table = $this->table('global_content_templates');
-		$table->insert($data)->save();
+		$table
+			->insert($data)
+			->save()
+		;
 	}
 }

@@ -22,6 +22,7 @@ class FrontendMenuItem extends MenuItem {
 	 */
 	protected MenuEntry $menuEntry;
 
+
 	/**
 	 * @param \Awyiss\Model\Entity\MenuEntry $entity
 	 * @param array $config
@@ -42,8 +43,14 @@ class FrontendMenuItem extends MenuItem {
 			$now = new DateTime();
 
 			if (
-				($entity->publicationStart && $entity->publicationStart > $now) ||
-				($entity->publicationEnd && $entity->publicationEnd < $now)
+				(
+					$entity->publicationStart
+					&& $entity->publicationStart > $now
+				)
+				|| (
+					$entity->publicationEnd
+					&& $entity->publicationEnd < $now
+				)
 			) {
 				$active = false;
 			}

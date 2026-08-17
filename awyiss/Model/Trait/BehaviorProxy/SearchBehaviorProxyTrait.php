@@ -17,8 +17,8 @@ trait SearchBehaviorProxyTrait {
 	 * @param string $column
 	 * @param string|null $type
 	 * @return array|null
-	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
 	 * @throws \ReflectionException
+	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
 		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
@@ -33,15 +33,24 @@ trait SearchBehaviorProxyTrait {
 	 * @param array|null $selectedValues
 	 * @param bool $includePossibleValues
 	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
+	 * @throws \ReflectionException
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
 	 */
-	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true): array {
-		return $this->getBehavior('Search')->getFilterColumns(
-			$blocklistedColumns,
-			$selectedOperators,
-			$selectedValues,
-			$includePossibleValues
-		);
+	public function getFilterColumns(
+		array $blocklistedColumns = [],
+		?array $selectedOperators = null,
+		?array $selectedValues = null,
+		bool $includePossibleValues = true
+	): array {
+		return $this
+			->getBehavior('Search')
+			->getFilterColumns(
+				$blocklistedColumns,
+				$selectedOperators,
+				$selectedValues,
+				$includePossibleValues
+			)
+		;
 	}
 
 
@@ -51,6 +60,7 @@ trait SearchBehaviorProxyTrait {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param array|null $filterColumns
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @throws \ReflectionException
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 */
 	public function searchFilterQuery(SelectQuery $query, ?array $filterColumns = null): SelectQuery {

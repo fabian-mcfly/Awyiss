@@ -26,6 +26,8 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @var string|null
 	 */
 	protected static ?string $compilerClass;
+
+
 	/**
 	 * @var array
 	 */
@@ -149,10 +151,15 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		$designTable = FactoryLocator::get('Table')->get('Designs');
 		/** @var \Awyiss\Model\Entity\Design $design */
-		$design = $designTable->find()->where(['inUse' => true])->first();
+		$design = $designTable
+			->find()
+			->where(['inUse' => true])
+			->first()
+		;
 
 		if (!$design) {
 			$this->designVariables[ $realm ] = [];
+
 			return [];
 		}
 
@@ -192,9 +199,9 @@ class DesignMiddleware implements MiddlewareInterface {
 
 			// If the css files are newer than the scss files, return null.
 			if (
-				$cssFiles->getLastModified() &&
-				$folderFiles->getLastModified() &&
-				$cssFiles->getLastModified()->greaterThan($folderFiles->getLastModified())
+				$cssFiles->getLastModified()
+				&& $folderFiles->getLastModified()
+				&& $cssFiles->getLastModified()->greaterThan($folderFiles->getLastModified())
 			) {
 				continue;
 			}

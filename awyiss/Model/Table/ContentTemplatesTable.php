@@ -130,15 +130,20 @@ class ContentTemplatesTable extends Table {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
-		return $query->enableAutoFields()->select([
-			'usedForContents' => $query->func()->count('Contents.id'),
-		])->leftJoinWith('Contents', function (SelectQuery $query) {
-			return $query->applyOptions([
-				'attributes' => [
-					'skip' => true,
-				],
-			]);
-		})->groupBy('ContentTemplates.id');
+		return $query
+			->enableAutoFields()
+			->select([
+				'usedForContents' => $query->func()->count('Contents.id'),
+			])
+			->leftJoinWith('Contents', function (SelectQuery $query) {
+				return $query->applyOptions([
+					'attributes' => [
+						'skip' => true,
+					],
+				]);
+			})
+			->groupBy('ContentTemplates.id')
+		;
 	}
 
 
@@ -182,7 +187,8 @@ class ContentTemplatesTable extends Table {
 
 		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes[ $includeInactiveKey ] = $attributesTable->find($includeInactive ? 'all' : 'active')
+		$this->availableContentAttributes[ $includeInactiveKey ] = $attributesTable
+			->find($includeInactive ? 'all' : 'active')
 			->where(['scope' => 'Contents'])
 			->all()
 			->indexBy('id')
@@ -198,7 +204,8 @@ class ContentTemplatesTable extends Table {
 					];
 				}
 			)
-			->toArray();
+			->toArray()
+		;
 
 
 		return $this->availableContentAttributes [ $includeInactiveKey ];

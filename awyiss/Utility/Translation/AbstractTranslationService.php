@@ -17,13 +17,15 @@ use Cake\Datasource\FactoryLocator;
  */
 abstract class AbstractTranslationService implements TranslationServiceInterface {
 	/**
-	 * @var int
-	 */
-	protected int $batchSize = 10;
-	/**
 	 * @var array Cache of translatable fields per entity type
 	 */
 	protected static array $translationFieldsCache = [];
+
+
+	/**
+	 * @var int
+	 */
+	protected int $batchSize = 10;
 
 
 	/**
@@ -72,7 +74,11 @@ abstract class AbstractTranslationService implements TranslationServiceInterface
 			if ($translation->isSuccess()) {
 				$entity->set($field, $translation->getTranslatedText());
 
-				if (!$entity->has($field) && $entity->has('attributes') && $entity->attributes instanceof EntityInterface) {
+				if (
+					!$entity->has($field)
+					&& $entity->has('attributes')
+					&& $entity->attributes instanceof EntityInterface
+				) {
 					// Field is an attribute
 					$entity->setDirty('attributes');
 				}

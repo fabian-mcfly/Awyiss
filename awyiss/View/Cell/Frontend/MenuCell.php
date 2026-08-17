@@ -32,13 +32,15 @@ class MenuCell extends Cell {
 	 * Options for the menu renderer
 	 *
 	 * @var array $rendererOptions
-	 * @noinspection HtmlUnknownAttribute
 	 */
 	protected array $rendererOptions = [
 		'formatters' => [],
 		'templates' => [
 			'list' => '<ul class="Level{{level}}{{identifier}}{{isPreview}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
-			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{link}}{{submenuTrigger}}{{children}}</li>' . PHP_EOL,
+			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">'
+				. PHP_EOL
+				. '{{link}}{{submenuTrigger}}{{children}}</li>'
+				. PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
 			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
 		],
@@ -77,7 +79,10 @@ class MenuCell extends Cell {
 	 * @return void
 	 */
 	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
-		DebugTimer::start('MenuCell::display', sprintf('MenuCell::display: Rendering menu "%s" for language "%s"', $identifier, $languageShortcode));
+		DebugTimer::start(
+			'MenuCell::display',
+			sprintf('MenuCell::display: Rendering menu "%s" for language "%s"', $identifier, $languageShortcode)
+		);
 
 		$this->View = $view;
 
@@ -114,8 +119,14 @@ class MenuCell extends Cell {
 		$active = $menuRecord->active;
 		$now = new DateTime();
 		if (
-			($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
-			($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
+			(
+				$menuRecord->publicationStart
+				&& $menuRecord->publicationStart > $now
+			)
+			|| (
+				$menuRecord->publicationEnd
+				&& $menuRecord->publicationEnd < $now
+			)
 		) {
 			$active = false;
 		}
@@ -178,7 +189,8 @@ class MenuCell extends Cell {
 			$query = $menusTable
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
 		/**
@@ -189,9 +201,12 @@ class MenuCell extends Cell {
 		 *
 		 * @var \Awyiss\Model\Entity\Menu $menu
 		 */
-		$menu = $query->where([
-			'identifier' => $identifier,
-		])->first();
+		$menu = $query
+			->where([
+				'identifier' => $identifier,
+			])
+			->first()
+		;
 
 		DebugTimer::stop('MenuCell::getMenu');
 
@@ -205,7 +220,10 @@ class MenuCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMenuEntries(MenuEntity $menu, string $languageShortcode): CollectionInterface {
-		DebugTimer::start('MenuCell::getMenuEntries', sprintf('MenuCell::getMenuEntries: Loading menu entries for menu "%s" and language "%s"', $menu->identifier, $languageShortcode));
+		DebugTimer::start(
+			'MenuCell::getMenuEntries',
+			sprintf('MenuCell::getMenuEntries: Loading menu entries for menu "%s" and language "%s"', $menu->identifier, $languageShortcode)
+		);
 
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $menuEntriesTable */
 		$menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
@@ -222,17 +240,23 @@ class MenuCell extends Cell {
 			$query = $menuEntriesTable
 				->find('accessible')
 				->find('active')
-				->find('published');
+				->find('published')
+			;
 		}
 
-		$menuEntries = $query->find('threaded')->where([
-			'menuId' => $menu->id,
-			'languageShortcode' => $languageShortcode,
-		])->all();
+		$menuEntries = $query
+			->find('threaded')
+			->where([
+				'menuId' => $menu->id,
+				'languageShortcode' => $languageShortcode,
+			])
+			->all()
+		;
 
-		$menuEntries = $menuEntries->filter(function (MenuEntry $menuEntry) {
-			return $menuEntry->parentId === null;
-		})->compile();
+		$menuEntries = $menuEntries
+			->filter(fn(MenuEntry $menuEntry) => $menuEntry->parentId === null)
+			->compile()
+		;
 
 		DebugTimer::stop('MenuCell::getMenuEntries');
 
@@ -265,14 +289,23 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
-		DebugTimer::start('MenuCell::renderItem', sprintf('MenuCell::renderItem: Rendering menu item "%s" at level %d', $data['title'], $data['level']));
+		DebugTimer::start(
+			'MenuCell::renderItem',
+			sprintf('MenuCell::renderItem: Rendering menu item "%s" at level %d', $data['title'], $data['level'])
+		);
 
 		$data['id'] = $data['item']->identifier;
 		$data['identifier'] = Inflector::ucparts($data['title'], false);
 
 		if (!empty($data['children'])) {
-			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger Level' . $data['level'] . '" />' . PHP_EOL .
-				'<label for="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger-Label Level' . $data['level'] . '">' . __('submenu_trigger') . '</label>' . PHP_EOL;
+			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] . '" class="SubmenuTrigger Level'
+				. $data['level'] . '" />'
+				. PHP_EOL
+				. '<label for="SubmenuTrigger-' . $data['id'] . '" class="SubmenuTrigger-Label Level' . $data['level'] . '">'
+				. __('submenu_trigger')
+				. '</label>'
+				. PHP_EOL
+			;
 		}
 
 		$data['isPreview'] = '';
@@ -300,7 +333,11 @@ class MenuCell extends Cell {
 		if (!empty($data['url'])) {
 			$templateName = 'link';
 
-			if (isset($this->options['currentRoute']) && str_starts_with($data['url'], $this->options['currentRoute'] . '#') && Router::getRequest()->getPath() === '/') {
+			if (
+				isset($this->options['currentRoute'])
+				&& str_starts_with($data['url'], $this->options['currentRoute'] . '#')
+				&& Router::getRequest()->getPath() === '/'
+			) {
 				$data['url'] = substr($data['url'], strlen($this->options['currentRoute']));
 			}
 		}

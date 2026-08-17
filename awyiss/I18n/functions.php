@@ -97,10 +97,10 @@ if (!function_exists('__d')) {
 
 		if (
 			(
-				!empty($return) &&
-				$return !== $string
-			) ||
-			$domain === 'cake'
+				!empty($return)
+				&& $return !== $string
+			)
+			|| $domain === 'cake'
 		) {
 			return $return;
 		}
@@ -109,8 +109,8 @@ if (!function_exists('__d')) {
 
 		// Fallback to system domain
 		if (
-			strtolower($domain) !== 'system' &&
-			!in_array($string, [
+			strtolower($domain) !== 'system'
+			&& !in_array($string, [
 				'meta_title_overview',
 				'menu_title',
 				'headline_overview',
@@ -162,8 +162,8 @@ if (!function_exists('__df')) {
 
 			// Fallback to system domain
 			if (
-				Inflector::underscore($fallbackDomain) === 'generic_pages' &&
-				!in_array($string, [
+				Inflector::underscore($fallbackDomain) === 'generic_pages'
+				&& !in_array($string, [
 					'meta_title_overview',
 					'menu_title',
 					'headline_overview',
@@ -345,10 +345,10 @@ if (!function_exists('__ld')) {
 
 		if (
 			(
-				!empty($return) &&
-				$return !== $string
-			) ||
-			$domain === 'cake'
+				!empty($return)
+				&& $return !== $string
+			)
+			|| $domain === 'cake'
 		) {
 			return $return;
 		}
@@ -357,8 +357,8 @@ if (!function_exists('__ld')) {
 
 		// Fallback to system domain
 		if (
-			strtolower($domain) !== 'system' &&
-			!in_array($string, [
+			strtolower($domain) !== 'system'
+			&& !in_array($string, [
 				'meta_title_overview',
 				'menu_title',
 				'headline_overview',

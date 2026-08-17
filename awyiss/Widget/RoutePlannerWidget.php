@@ -26,7 +26,12 @@ class RoutePlannerWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+	public static function getFormFields(
+		BackendView $view,
+		?Language $frontendLanguage = null,
+		?Language $userLanguage = null,
+		array $settings = []
+	): array {
 		return [
 			'settings.address' => [
 				'label' => __d('Frontend/route', 'address'),

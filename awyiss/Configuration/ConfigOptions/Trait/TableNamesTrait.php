@@ -12,6 +12,9 @@ use Awyiss\Utility\Inflector;
  * Provides a method to be used as a 'values'-callback.
  */
 trait TableNamesTrait {
+	/**
+	 * @var array
+	 */
 	protected static array $tableNames;
 
 

@@ -9,6 +9,7 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Model\Entity\ContentArea;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\ContentTemplateElement;
 use Awyiss\Model\Entity\Page;
@@ -77,9 +78,17 @@ class ContentsController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedContentAreaIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.contentAreaId';
-		$this->selectedPageIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.pageId';
-		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
+		$this->selectedContentAreaIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.contentAreaId'
+		;
+
+		$this->selectedPageIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.pageId'
+		;
+
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.parentId'
+		;
 	}
 
 
@@ -88,7 +97,11 @@ class ContentsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->Contents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['ContentTemplates']);
+		$query = $this->Contents
+			->find('mediaAssignments', useMediaEntity: true)
+			->where($this->getOverviewWhere())
+			->contain(['ContentTemplates'])
+		;
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($query);
 
@@ -109,26 +122,30 @@ class ContentsController extends Controller {
 
 		$query = $this->getOverviewQuery();
 
-		$contents = $query->formatResults(function (Collection $result): Collection {
-			/** @var \Awyiss\Model\Entity\Content $content */
-			foreach ($result as $content) {
-				$content->class = $content->column['width']->getCssClass();
+		$contents = $query
+			->formatResults(function (Collection $result): Collection {
+				/** @var \Awyiss\Model\Entity\Content $content */
+				foreach ($result as $content) {
+					$content->class = $content->column['width']->getCssClass();
 
-				if ($content->column['indent']) {
-					$content->class .= ' ' . $content->column['indent']->getCssClass();
+					if ($content->column['indent']) {
+						$content->class .= ' ' . $content->column['indent']->getCssClass();
+					}
+
+					if ($content->columnRtl) {
+						$content->class .= ' Column-RTL';
+					}
+
+					if ($content->columnLast) {
+						$content->class .= ' Column-Last';
+					}
 				}
 
-				if ($content->columnRtl) {
-					$content->class .= ' Column-RTL';
-				}
-
-				if ($content->columnLast) {
-					$content->class .= ' Column-Last';
-				}
-			}
-
-			return $result;
-		})->find('threaded')->all();
+				return $result;
+			})
+			->find('threaded')
+			->all()
+		;
 
 		$contents = $contents->groupBy('contentAreaId')->toArray();
 
@@ -141,14 +158,26 @@ class ContentsController extends Controller {
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->Contents->getColumnSystemClass();
 
-		$contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+		$contentTemplates = $this
+			->getContentTemplates()
+			->indexBy('id')
+			->toArray()
+		;
 		array_map(function (ContentTemplate $contentTemplate) {
 			// Build an array of assigned content elements, indexed by their identifier
-			$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+			$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)
+				->indexBy('identifier')
+				->toArray()
+			;
 			// Build an array of assigned content areas, indexed by their id
-			$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
-				return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
-			})->extract('id')->unique()->toList();
+			$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)
+				->filter(function (ContentArea $contentArea) {
+					return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
+				})
+				->extract('id')
+				->unique()
+				->toList()
+			;
 		}, $contentTemplates);
 
 		$this->set([
@@ -211,7 +240,13 @@ class ContentsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$content = $this->Contents
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$content) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -228,9 +263,11 @@ class ContentsController extends Controller {
 		}
 
 		if ($this->request->getParam('mode') === 'frontendEditor') {
-			$this->viewBuilder()
-			->setTemplate('edit_frontend_editor')
-			->setLayout('frontend_editor');
+			$this
+				->viewBuilder()
+				->setTemplate('edit_frontend_editor')
+				->setLayout('frontend_editor')
+			;
 		}
 
 		$this->setViewVars($content);
@@ -405,31 +442,37 @@ class ContentsController extends Controller {
 		if ($this->request->is('post') && $this->request->getData('duplicateOfPageId')) {
 			$duplicateOfPage = $this->getPage((int)$this->request->getData('duplicateOfPageId'));
 
-			$query = $this->Contents->find()
+			$query = $this->Contents
+				->find()
 				->find('mediaAssignments', useMediaEntity: true)
 				->where(['pageId' => $duplicateOfPage->id])
-				->contain(['ContentTemplates']);
+				->contain(['ContentTemplates'])
+			;
 
-			$contents = $query->formatResults(function (Collection $result): Collection {
-				/** @var \Awyiss\Model\Entity\Content $content */
-				foreach ($result as $content) {
-					$content->class = $content->column['width']->getCssClass();
+			$contents = $query
+				->formatResults(function (Collection $result): Collection {
+					/** @var \Awyiss\Model\Entity\Content $content */
+					foreach ($result as $content) {
+						$content->class = $content->column['width']->getCssClass();
 
-					if ($content->column['indent']) {
-						$content->class .= ' ' . $content->column['indent']->getCssClass();
+						if ($content->column['indent']) {
+							$content->class .= ' ' . $content->column['indent']->getCssClass();
+						}
+
+						if ($content->columnRtl) {
+							$content->class .= ' Column-RTL';
+						}
+
+						if ($content->columnLast) {
+							$content->class .= ' Column-Last';
+						}
 					}
 
-					if ($content->columnRtl) {
-						$content->class .= ' Column-RTL';
-					}
-
-					if ($content->columnLast) {
-						$content->class .= ' Column-Last';
-					}
-				}
-
-				return $result;
-			})->find('threaded')->all();
+					return $result;
+				})
+				->find('threaded')
+				->all()
+			;
 
 			$contents = $contents->groupBy('contentAreaId')->toArray();
 
@@ -439,14 +482,26 @@ class ContentsController extends Controller {
 				$contentAreas[ $contentAreaId ] = null;
 			}
 
-			$contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+			$contentTemplates = $this
+				->getContentTemplates()
+				->indexBy('id')
+				->toArray()
+			;
 			array_map(function (ContentTemplate $contentTemplate) {
 				// Build an array of assigned content elements, indexed by their identifier
-				$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+				$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)
+					->indexBy('identifier')
+					->toArray()
+				;
 				// Build an array of assigned content areas, indexed by their id
-				$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
-					return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
-				})->extract('id')->unique()->toList();
+				$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)
+					->filter(function ($contentArea) {
+						return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
+					})
+					->extract('id')
+					->unique()
+					->toList()
+				;
 			}, $contentTemplates);
 
 			$this->set([
@@ -561,10 +616,16 @@ class ContentsController extends Controller {
 				$session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
 				if ($this->request->getData('submitType') == 'submitClose') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true), 302);
+					throw new RedirectException(
+						Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true),
+						302
+					);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $this->page->languageShortcode, 'id' => $content->id], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'edit', 'lang' => $this->page->languageShortcode, 'id' => $content->id], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {
@@ -601,7 +662,11 @@ class ContentsController extends Controller {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->Contents->findById($contentId)->first();
 		if (!$content) {
-			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['data', 'status'])
+			;
 
 			// Set the response data
 			$this->set([
@@ -632,9 +697,11 @@ class ContentsController extends Controller {
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->Contents->findById($contentId)->first();
 		if (!$content) {
-			$this->viewBuilder()
+			$this
+				->viewBuilder()
 				->setClassName('Json')
-				->setOption('serialize', ['data', 'status']);
+				->setOption('serialize', ['data', 'status'])
+			;
 
 			// Set the response data
 			$this->set([
@@ -676,9 +743,13 @@ class ContentsController extends Controller {
 		$this->Authorization->ensure('read');
 
 		// Now that we have the page id, we get all current contents
-		$contents = $table->find()->where([
-			'pageId' => $content->pageId,
-		])->all();
+		$contents = $table
+			->find()
+			->where([
+				'pageId' => $content->pageId,
+			])
+			->all()
+		;
 
 		// And make sure that all contents in the request data are part of the current contents
 		$filteredOrderData = array_filter($orderData, function (array $item) use ($contents) {
@@ -739,18 +810,22 @@ class ContentsController extends Controller {
 		if (!isset($this->contentTemplates)) {
 			$pageTemplateId = $this->page->pageTemplateId;
 
-			$query = $this->Contents->ContentTemplates->find(
-				'active',
-			)->select([
-				'id',
-				'title',
-				'active',
-			])->matching('ContentAreas', function (SelectQuery $query) use ($pageTemplateId) {
-				return $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplateId]);
-			})->contain([
-				'ContentAreas',
-				'ContentTemplateElements',
-			]);
+			$query = $this->Contents->ContentTemplates
+				->find('active')
+				->select([
+					'id',
+					'title',
+					'active',
+				])
+				->matching(
+					'ContentAreas',
+					fn(SelectQuery $query) => $query->where(['ContentTemplateContentAreas.pageTemplateId' => $pageTemplateId])
+				)
+				->contain([
+					'ContentAreas',
+					'ContentTemplateElements',
+				])
+			;
 
 			$this->contentTemplates = $query->all()->indexBy('id');
 		}
@@ -773,10 +848,14 @@ class ContentsController extends Controller {
 				return new Collection([]);
 			}
 
-			$query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where([
-				'pageId' => $content->pageId,
-				'contentAreaId' => $content->contentAreaId,
-			]);
+			$query = $this->Contents
+				->find()
+				->find('mediaAssignments', useMediaEntity: true)
+				->where([
+					'pageId' => $content->pageId,
+					'contentAreaId' => $content->contentAreaId,
+				])
+			;
 
 			$this->threadedContents = $this->Contents->listNested($query);
 		}
@@ -822,15 +901,21 @@ class ContentsController extends Controller {
 				// Find the first page of pagerole `page`
 				$pageTable = $this->fetchTable('Pages');
 				/** @var \Awyiss\Model\Entity\Page $page */
-				$page = $pageTable->find()->select('id')->where([
-					'pageRoleId' => 1,
-					'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
-				])->orderBy([
-					'Pages.deleted' => 'ASC',
-					'Pages.parentsActive' => 'DESC',
-					'Pages.active' => 'DESC',
-					'Pages.parentId' => 'ASC',
-				])->first();
+				$page = $pageTable
+					->find()
+					->select('id')
+					->where([
+						'pageRoleId' => 1,
+						'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
+					])
+					->orderBy([
+						'Pages.deleted' => 'ASC',
+						'Pages.parentsActive' => 'DESC',
+						'Pages.active' => 'DESC',
+						'Pages.parentId' => 'ASC',
+					])
+					->first()
+				;
 
 				$pageId = $page?->id;
 			}
@@ -896,21 +981,29 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
-	protected function ensurePossibleParentId(Content $content, CollectionInterface $threadedContents, ?ContentTemplate $selectedContentTemplate): void {
+	protected function ensurePossibleParentId(
+		Content $content,
+		CollectionInterface $threadedContents,
+		?ContentTemplate $selectedContentTemplate
+	): void {
 		// Extract all possible parent ids
 		$possibleParentIds = $threadedContents->extract('id')->toList();
 
 		// Build an array of assigned content elements, indexed by their identifier
-		$assignedContentElements = $selectedContentTemplate ? collection($selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray() : [];
+		$assignedContentElements = $selectedContentTemplate
+			? collection($selectedContentTemplate->contentTemplateElements)
+				->indexBy('identifier')
+				->toArray()
+			: [];
 
 		$content->setDirty('parentId', false);
 
 		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected content template
 		if (
-			$content->parentId &&
-			(
-				!in_array($content->parentId, $possibleParentIds) ||
-				!isset($assignedContentElements['parentId'])
+			$content->parentId
+			&& (
+				!in_array($content->parentId, $possibleParentIds)
+				|| !isset($assignedContentElements['parentId'])
 			)
 		) {
 			// Remember the errors
@@ -1109,9 +1202,12 @@ class ContentsController extends Controller {
 			$contentElementsByFieldset = collection($selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
 
 			foreach ($contentElementsByFieldset as $fieldset => $contentElements) {
-				$contentElementsByFieldset[ $fieldset ] = collection($contentElements)->indexBy(function (ContentTemplateElement $entity) {
-					return Inflector::variable($entity->identifier);
-				})->toArray();
+				$contentElementsByFieldset[ $fieldset ] = collection($contentElements)
+					->indexBy(function (ContentTemplateElement $entity) {
+						return Inflector::variable($entity->identifier);
+					})
+					->toArray()
+				;
 			}
 		}
 
@@ -1129,7 +1225,11 @@ class ContentsController extends Controller {
 		if ($content->duplicateOf) {
 			$allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
 
-			$content->duplicateOfContent = $this->Contents->findById($content->duplicateOf)->find('mediaAssignments', useMediaEntity: true)->first();
+			$content->duplicateOfContent = $this->Contents
+				->findById($content->duplicateOf)
+				->find('mediaAssignments', useMediaEntity: true)
+				->first()
+			;
 
 			if (!$content->duplicateOfContent || $content->duplicateOfContent->id !== $content->duplicateOf) {
 				$content->duplicateOfContent = null;
@@ -1152,10 +1252,16 @@ class ContentsController extends Controller {
 			'columnWidths' => $columnWidths,
 			'columnIndents' => $columnIndents,
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
+			'forms' => $this->Contents->Forms
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'surveys' => $this->Contents->Surveys->find('active')->orderByAsc('title')->all(),
+			'surveys' => $this->Contents->Surveys
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'allowedKeys' => $allowedKeys,
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);
@@ -1208,16 +1314,27 @@ class ContentsController extends Controller {
 	protected function findLinkablePages(): CollectionInterface {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->find('active')
+			->where(['includeInLinklist' => true])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
 		$pagesTable = $this->fetchTable('Pages');
-		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'pageRoleId IN' => array_keys($pageRoles),
-		]);
+		$query = $pagesTable
+			->find('active')
+			->find('forCurrentLanguage', skipPageRoleCheck: true)
+			->where([
+				'pageRoleId IN' => array_keys($pageRoles),
+			])
+		;
 
 		return $pagesTable->listNested($query);
 	}

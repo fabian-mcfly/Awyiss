@@ -51,6 +51,7 @@ class AutoTranslateTask extends Task {
 
 		if ($data['type'] === 'content') {
 			$this->translateContents($data['sourceLanguage'], $data['targetLanguage'], $data['ids']);
+
 			return;
 		}
 
@@ -181,7 +182,11 @@ class AutoTranslateTask extends Task {
 		string $sourceLanguage,
 		string $type
 	): void {
-		$entities = $table->find()->where(['id IN' => $ids])->all();
+		$entities = $table
+			->find()
+			->where(['id IN' => $ids])
+			->all()
+		;
 
 		if (!$entities->count()) {
 			return;

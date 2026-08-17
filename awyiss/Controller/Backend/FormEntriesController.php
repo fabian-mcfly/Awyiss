@@ -20,6 +20,12 @@ use Cake\View\XmlView;
  */
 class FormEntriesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'uriParam' => 'form-id',
+	];
+	/**
 	 * @var array<string, string>
 	 */
 	protected array $csvEncoding = [
@@ -32,13 +38,6 @@ class FormEntriesController extends Controller {
 			'dataEncoding' => 'UTF-8',
 		],
 	];
-
-	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'uriParam' => 'form-id',
-	];
 	/**
 	 * @inheritDoc
 	 */
@@ -49,6 +48,7 @@ class FormEntriesController extends Controller {
 			'createdOn' => 'desc',
 		],
 	];
+
 
 	/**
 	 * @inheritDoc
@@ -72,13 +72,20 @@ class FormEntriesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		if (is_numeric($this->Categories->getSelectedCategory())) {
-			$form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
+			$form = $this
+				->fetchTable('Forms')
+				->findById($this->Categories->getSelectedCategory())
+				->first()
+			;
 		}
 
-		$query = $this->getOverviewQuery()->contain([
-			'Forms',
-			'Languages',
-		]);
+		$query = $this
+			->getOverviewQuery()
+			->contain([
+				'Forms',
+				'Languages',
+			])
+		;
 		$formEntries = $this->paginate($query);
 
 		$this->set([
@@ -101,22 +108,31 @@ class FormEntriesController extends Controller {
 		$format = $this->request->getData('exportFormat');
 
 		/** @var \Awyiss\Model\Entity\Form $form */
-		$form = $this->fetchTable('Forms')->findById($formId)->contain(['FormElements'])->first();
+		$form = $this
+			->fetchTable('Forms')
+			->findById($formId)
+			->contain(['FormElements'])
+			->first()
+		;
 
 		if (!$form) {
 			$this->Flash->error(__('record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		$form->initialize($this->viewBuilder()->build());
 
-		$query = $this->FormEntries->find()->where([
-			'OR' => [
-				'languageShortcode IS' => null,
-				'languageShortcode IN' => $languages,
-			],
-			'formId' => $formId,
-		]);
+		$query = $this->FormEntries
+			->find()
+			->where([
+				'OR' => [
+					'languageShortcode IS' => null,
+					'languageShortcode IN' => $languages,
+				],
+				'formId' => $formId,
+			])
+		;
 
 		$headlines = [];
 		if (in_array($format, ['csv', 'csvExcel'])) {
@@ -157,19 +173,23 @@ class FormEntriesController extends Controller {
 		}
 
 		if ($format === 'xml') {
-			$this->viewBuilder()
+			$this
+				->viewBuilder()
 				->setClassName(XmlView::class)
 				->setOption('rootNode', 'entries')
-				->setOption('serialize', ['entry']);
+				->setOption('serialize', ['entry'])
+			;
 			$this->set('entry', $entries);
 
 			return $this->render();
 		}
 
 		if ($format === 'json') {
-			$this->viewBuilder()
+			$this
+				->viewBuilder()
 				->setClassName(JsonView::class)
-				->setOption('serialize', 'entries');
+				->setOption('serialize', 'entries')
+			;
 			$this->set('entries', $entries);
 
 			return $this->render();
@@ -177,7 +197,8 @@ class FormEntriesController extends Controller {
 
 		$now = date('YmdHis');
 		$this->setResponse($this->getResponse()->withDownload(sprintf('form_entries_%s_%s.csv', $form->identifier, $now)));
-		$this->viewBuilder()
+		$this
+			->viewBuilder()
 			->setClassName('CsvView.Csv')
 			->setOptions([
 				'serialize' => 'entries',
@@ -186,7 +207,8 @@ class FormEntriesController extends Controller {
 				'dataEncoding' => $this->csvEncoding[ $format ]['dataEncoding'],
 				'bom' => $format === 'csvExcel',
 				'setSeparator' => $format === 'csvExcel' ? ',' : false,
-			]);
+			])
+		;
 		$this->set('entries', $entries);
 
 		return $this->render();

@@ -92,7 +92,14 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 		$classes = [];
 
 		/** @var class-string<ColumnSystemInterface> $class */
-		foreach (App::classes('*', 'Utility/Content', 'ColumnSystem', ColumnSystemInterface::class, null, ['BackendColumnSystem']) as $class) {
+		$foundClasses = App::classes(
+			'*',
+			'Utility/Content',
+			'ColumnSystem',
+			ColumnSystemInterface::class,
+			blocklistedClassNames: ['BackendColumnSystem']
+		);
+		foreach ($foundClasses as $class) {
 			$classes[ $class ] = $class::getName();
 		}
 

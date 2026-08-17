@@ -101,7 +101,11 @@ class ModelCommand extends BaseModelCommand {
 			$template = 'Model/entity_is_pagerole';
 		}
 
-		$contents = $this->createTemplateRenderer()->set($data)->generate($template);
+		$contents = $this
+			->createTemplateRenderer()
+			->set($data)
+			->generate($template)
+		;
 		$contents = str_replace('    ', "\t", $contents);
 
 		$this->writeFile($io, $filePath, $contents, $this->force);
@@ -183,7 +187,11 @@ class ModelCommand extends BaseModelCommand {
 			$template = 'Model/table_is_pagerole';
 		}
 
-		$contents = $this->createTemplateRenderer()->set($data)->generate($template);
+		$contents = $this
+			->createTemplateRenderer()
+			->set($data)
+			->generate($template)
+		;
 		$contents = str_replace('    ', "\t", $contents);
 
 		$this->writeFile($io, $filePath, $contents, $this->force);
@@ -193,7 +201,10 @@ class ModelCommand extends BaseModelCommand {
 		if (file_exists($filePath)) {
 			require_once $filePath;
 		}
-		$this->getTableLocator()->clear();
+		$this
+			->getTableLocator()
+			->clear()
+		;
 
 		$emptyFile = $path . 'Table' . DS . '.gitkeep';
 		$this->deleteEmptyFile($emptyFile, $io);
@@ -210,9 +221,9 @@ class ModelCommand extends BaseModelCommand {
 		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		if (
-			$args->getOption('for-pagerole') &&
-			$pageRoleEnum::tryFromName($args->getOption('for-pagerole')) &&
-			!empty($allAssociations['belongsTo'])
+			$args->getOption('for-pagerole')
+			&& $pageRoleEnum::tryFromName($args->getOption('for-pagerole'))
+			&& !empty($allAssociations['belongsTo'])
 		) {
 			foreach ($allAssociations['belongsTo'] as &$association) {
 				if ($association['alias'] === 'Pages') {
@@ -332,22 +343,27 @@ class ModelCommand extends BaseModelCommand {
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);
 
-		$parser->addOption('namespace', [
-			'choices' => [
-				'Awyiss',
-				CUSTOM_NAMESPACE,
-			],
-			'default' => 'Awyiss',
-			'help' => 'The namespace for the model.',
-		])->addOption('is-datatable', [
-			'boolean' => true,
-			'help' => 'Does the model reflect a datatable? Will extend GenericDatatablesTable.',
-		])->addOption('is-pagerole', [
-			'boolean' => true,
-			'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
-		])->addOption('for-pagerole', [
-			'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
-		]);
+		$parser
+			->addOption('namespace', [
+				'choices' => [
+					'Awyiss',
+					CUSTOM_NAMESPACE,
+				],
+				'default' => 'Awyiss',
+				'help' => 'The namespace for the model.',
+			])
+			->addOption('is-datatable', [
+				'boolean' => true,
+				'help' => 'Does the model reflect a datatable? Will extend GenericDatatablesTable.',
+			])
+			->addOption('is-pagerole', [
+				'boolean' => true,
+				'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
+			])
+			->addOption('for-pagerole', [
+				'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
+			])
+		;
 
 
 		return $parser;
@@ -423,19 +439,31 @@ class ModelCommand extends BaseModelCommand {
 				if ($tmpModelName === $model->getAlias() && !$this->findTableReferencedBy($schema, $fieldName)) {
 					continue;
 				}
-				if (!$this->getTableLocator()->exists($tmpModelName)) {
-					$this->getTableLocator()->get(
-						$tmpModelName,
-						['connection' => ConnectionManager::get($this->connection)]
-					);
+				if (
+					!$this
+						->getTableLocator()
+						->exists($tmpModelName)
+				) {
+					$this
+						->getTableLocator()
+						->get(
+							$tmpModelName,
+							['connection' => ConnectionManager::get($this->connection)]
+						)
+					;
 				}
-				$associationTable = $this->getTableLocator()->get($tmpModelName);
-				$this->getTableLocator()->remove($tmpModelName);
+				$associationTable = $this
+					->getTableLocator()
+					->get($tmpModelName)
+				;
+				$this
+					->getTableLocator()
+					->remove($tmpModelName)
+				;
 				$tables = $this->listAll();
 				// Check if association model could not be instantiated as a subclass but a generic Table instance instead
 				if (
-					$associationTable::class === Table::class &&
-					!in_array(Inflector::tableize($tmpModelName), $tables, true)
+					$associationTable::class === Table::class && !in_array(Inflector::tableize($tmpModelName), $tables, true)
 				) {
 					$allowAliasRelations = $args instanceof Arguments && $args->getOption('skip-relation-check');
 					$found = $this->findTableReferencedBy($schema, $fieldName);
@@ -493,10 +521,10 @@ class ModelCommand extends BaseModelCommand {
 			foreach ($otherSchema->columns() as $fieldName) {
 				$assoc = false;
 				if (
-					$otherTableName !== $tableName &&
-					!in_array($fieldName, $primaryKey) &&
-					$fieldName === $foreignKey &&
-					!$this->hasUniqueConstraintFor($otherSchema, $fieldName)
+					$otherTableName !== $tableName
+					&& !in_array($fieldName, $primaryKey)
+					&& $fieldName === $foreignKey
+					&& !$this->hasUniqueConstraintFor($otherSchema, $fieldName)
 				) {
 					$assoc = [
 						'alias' => $otherModel->getAlias(),

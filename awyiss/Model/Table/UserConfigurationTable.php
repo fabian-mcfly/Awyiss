@@ -68,13 +68,19 @@ class UserConfigurationTable extends Table {
 	public function buildCategories(): array {
 		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
 		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		$datatables = $datatablesTable
+			->findAllAndCache()
+			->indexBy('identifier')
+			->toArray()
+		;
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
 		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
-			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
-		})->toArray();
+		$pageRoles = $pageRolesTable
+			->findAllAndCache()
+			->indexBy(fn(PageRole $pageRole) => Inflector::camelize(Inflector::pluralize($pageRole->identifier)))
+			->toArray()
+		;
 
 		$configScopes = [];
 		foreach ($this->getScopes() as $identifier => $className) {
@@ -173,14 +179,13 @@ class UserConfigurationTable extends Table {
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
-			function (UserConfiguration $entity/*, array $options*/): bool|string {
+			function (UserConfiguration $entity): bool|string {
 				if (
-					$entity->hasOriginal('userId') &&
-					$entity->get('userId') !== $entity->getOriginal('userId')
+					$entity->hasOriginal('userId')
+					&& $entity->get('userId') !== $entity->getOriginal('userId')
 				) {
 					return __df($this->getI18nDomain(), 'Validation', 'error_user_id_unchanged');
 				}
-
 
 				return true;
 			},
@@ -210,60 +215,63 @@ class UserConfigurationTable extends Table {
 		);
 
 
-		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool {
-			$configOptions = ConfigOptionsProvider::loadConfigOptions($entity->scope);
-			$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
+		$rules->add(
+			function (UserConfiguration $entity): bool {
+				$configOptions = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+				$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
 
-
-			return $configOption && $configOption->isPersonalizable();
-		}, 'configOptionIsPersonalizable', [
-			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_config_option_is_personalizable'),
-		]);
+				return $configOption && $configOption->isPersonalizable();
+			},
+			'configOptionIsPersonalizable',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_config_option_is_personalizable'),
+			]
+		);
 
 
 		//Validate the provided value for the scope, identifier and language.
-		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool|string {
-			$valid = ConfigOptionsProvider::validateConfigValue(
-				$entity->scope,
-				Awyiss::REALM_BACKEND,
-				$entity->identifier,
-				$entity->value
-			);
-
-			if (!$valid) {
-				$value = ConfigOptionsProvider::typecastConfigValue(
+		$rules->add(
+			function (UserConfiguration $entity): bool|string {
+				$valid = ConfigOptionsProvider::validateConfigValue(
 					$entity->scope,
 					Awyiss::REALM_BACKEND,
 					$entity->identifier,
 					$entity->value
 				);
 
-				//A typecast to null cannot be valid if the initial value wasn't null.
-				//This happens when one tries to json_decode a string, for example.
-				if ($entity->value !== null && $value !== null) {
-					$valid = ConfigOptionsProvider::validateConfigValue(
+				if (!$valid) {
+					$value = ConfigOptionsProvider::typecastConfigValue(
 						$entity->scope,
 						Awyiss::REALM_BACKEND,
 						$entity->identifier,
-						$value
+						$entity->value
 					);
-				}
-			}
 
-			return $valid;
-		},
-		'validValue',
-		[
-			'errorField' => 'value',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_value'),
-		]);
+					//A typecast to null cannot be valid if the initial value wasn't null.
+					//This happens when one tries to JSON decode a string, for example.
+					if ($entity->value !== null && $value !== null) {
+						$valid = ConfigOptionsProvider::validateConfigValue(
+							$entity->scope,
+							Awyiss::REALM_BACKEND,
+							$entity->identifier,
+							$value
+						);
+					}
+				}
+
+				return $valid;
+			},
+			'validValue',
+			[
+				'errorField' => 'value',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_value'),
+			]
+		);
 
 
 		$rules->addDelete(
-			function (UserConfiguration $entity/*, array $options*/): bool {
-				return $entity->userId === $this->getIdentity()->getIdentifier();
-			},
+			fn(UserConfiguration $entity): bool => $entity->userId === $this->getIdentity()->getIdentifier(),
 			'configOwnedByUser',
 			[
 				'errorField' => '_general',
@@ -294,19 +302,20 @@ class UserConfigurationTable extends Table {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if (
 				// For now, contents are always accessible since accessing them depends on page roles
-				in_array($scope, ['Contents', 'System'], true) ||
+				in_array($scope, ['Contents', 'System'], true)
 				// Form elements are accessible if the user has access to the Forms scope
-				(
-					$scope === 'FormElements' &&
-					$identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])
-				) ||
+				|| (
+					$scope === 'FormElements'
+					&& $identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])
+				)
 				// Menu entries are accessible if the user has access to the Menus scope
+				||
 				(
-					$scope === 'MenuEntries' &&
-					$identity?->scopeIsAccessible('Menus', [], ['read', 'create', 'update', 'configure'])
-				) ||
+					$scope === 'MenuEntries'
+					&& $identity?->scopeIsAccessible('Menus', [], ['read', 'create', 'update', 'configure'])
+				)
 				// The user has access to the scope if any access is granted
-				$identity?->scopeIsAccessible($scope, [], ['read', 'create', 'update', 'configure'])
+				|| $identity?->scopeIsAccessible($scope, [], ['read', 'create', 'update', 'configure'])
 			) {
 				$this->configScopes[ $scope ] = $className;
 			}

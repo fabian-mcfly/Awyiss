@@ -12,17 +12,17 @@ use Awyiss\Routing\Router;
  */
 class MenuItemLink {
 	/**
-	 * @var array|string|null
+	 * @var string|null
 	 */
-	protected array|string|null $url = null;
+	protected ?string $rel = null;
 	/**
 	 * @var string|null
 	 */
 	protected ?string $target = null;
 	/**
-	 * @var string|null
+	 * @var array|string|null
 	 */
-	protected ?string $rel = null;
+	protected array|string|null $url = null;
 
 
 	/**
@@ -139,10 +139,10 @@ class MenuItemLink {
 			$lastSegment = substr($url, strrpos($url, '/'));
 			// Always ensure the URL ends with a slash if it doesn't contain a query string, unless it ends in a file extension
 			if (
-				!str_contains($url, '?') &&
-				!str_contains($url, '#') &&
-				!str_ends_with($url, '/') &&
-				!str_contains($lastSegment, '.')
+				!str_contains($url, '?')
+				&& !str_contains($url, '#')
+				&& !str_ends_with($url, '/')
+				&& !str_contains($lastSegment, '.')
 			) {
 				$url .= '/';
 			}

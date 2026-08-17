@@ -13,13 +13,13 @@ class BootstrapColumnSystem extends AbstractColumnSystem {
 	 */
 	protected static string $columnClassName = BootstrapColumn::class;
 	/**
-	 * @var int The maximum denominator
-	 */
-	protected static int $maxDenominator = 12;
-	/**
 	 * @var array<array> The column widths, indexed by the max denominator fraction
 	 */
 	protected static array $columnWidths = [];
+	/**
+	 * @var int The maximum denominator
+	 */
+	protected static int $maxDenominator = 12;
 
 
 	/**

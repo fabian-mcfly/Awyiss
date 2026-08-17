@@ -67,8 +67,13 @@ class BackendMenuEntriesController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedInsertAfterIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.insertAfterId';
-		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
+		$this->selectedInsertAfterIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.insertAfterId'
+		;
+
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.parentId'
+		;
 	}
 
 
@@ -93,7 +98,11 @@ class BackendMenuEntriesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		if ($this->BackendMenuEntries->searchIsActive()) {
-			$menuEntries = $this->getOverviewQuery()->find('threaded')->all();
+			$menuEntries = $this
+				->getOverviewQuery()
+				->find('threaded')
+				->all()
+			;
 		}
 		else {
 			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $backendMenuProviderClass */
@@ -146,7 +155,13 @@ class BackendMenuEntriesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$menuEntry = $this->BackendMenuEntries
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -281,7 +296,6 @@ class BackendMenuEntriesController extends Controller {
 			'id IN' => array_keys($requestData),
 		]);
 	}
-
 
 
 	/**
@@ -451,9 +465,12 @@ class BackendMenuEntriesController extends Controller {
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $table */
 		$table = $this->fetchTable('Datatables');
-		$table->findAllAndCache()->each(function (Datatable $datatable) {
-			static::$controllers[ $datatable->identifier ] ??= static::$controllers['GenericDatatables'];
-		});
+		$table
+			->findAllAndCache()
+			->each(function (Datatable $datatable) {
+				static::$controllers[ $datatable->identifier ] ??= static::$controllers['GenericDatatables'];
+			})
+		;
 		unset(static::$controllers['GenericDatatables']);
 
 		ksort(static::$controllers);
@@ -478,8 +495,12 @@ class BackendMenuEntriesController extends Controller {
 		foreach ($authorizationService->getPolicies() as $policyClass) {
 			$scope = is_string($policyClass) ? $policyClass::getScope() : $policyClass->getScope();
 
+			$permissionOptionCollection = is_string($policyClass)
+				? $policyClass::getPermissionOptions()
+				: $policyClass->getPermissionOptions();
+
 			$permissions = [];
-			foreach (is_string($policyClass) ? $policyClass::getPermissionOptions() : $policyClass->getPermissionOptions() as $identifier => $permissionOption) {
+			foreach ($permissionOptionCollection as $identifier => $permissionOption) {
 				$permissions[] = $identifier;
 			}
 

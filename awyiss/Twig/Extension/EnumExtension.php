@@ -46,13 +46,15 @@ class EnumExtension extends AbstractExtension {
 	 * @return object
 	 */
 	public function createProxy(string $enumFQN): object {
-		return new class ($enumFQN) {
+		return new readonly class ($enumFQN) {
 			/**
 			 * @param string $enum
 			 */
-			public function __construct(private readonly string $enum) {
+			public function __construct(private string $enum) {
 				if (!enum_exists($this->enum)) {
-					throw new InvalidArgumentException(sprintf('`%s` is not an Enum type and cannot be used in this function', $this->enum));
+					throw new InvalidArgumentException(
+						sprintf('`%s` is not an Enum type and cannot be used in this function', $this->enum)
+					);
 				}
 			}
 
@@ -62,7 +64,7 @@ class EnumExtension extends AbstractExtension {
 			 * @param array $arguments
 			 * @return mixed
 			 */
-			public function __call(string $name, array $arguments):	mixed {
+			public function __call(string $name, array $arguments): mixed {
 				$enumFQN = sprintf('%s::%s', $this->enum, $name);
 
 				if (defined($enumFQN)) {

@@ -108,7 +108,8 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 				->in($path)
 				->name('*.php')
 				->name('*.twig')
-				->files();
+				->files()
+			;
 			foreach ($files as $file) {
 				$this->_files[] = $file->getPathname();
 			}

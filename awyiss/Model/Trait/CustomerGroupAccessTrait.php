@@ -32,8 +32,8 @@ trait CustomerGroupAccessTrait {
 	public function isAccessibleBy(?IdentityGroupPermissionInterface $identity): bool {
 		// If no access settings exist, entity is accessible to everyone
 		if (
-			!isset($this->customerGroupAccessSettings) ||
-			!$this->customerGroupAccessSettings instanceof CustomerGroupAccessSetting
+			!isset($this->customerGroupAccessSettings)
+			|| !$this->customerGroupAccessSettings instanceof CustomerGroupAccessSetting
 		) {
 			return true;
 		}

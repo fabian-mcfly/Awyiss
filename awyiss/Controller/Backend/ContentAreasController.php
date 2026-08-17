@@ -91,7 +91,13 @@ class ContentAreasController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$contentArea = $this->ContentAreas->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$contentArea = $this->ContentAreas
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 
 		if (!$contentArea) {
 			$this->Flash->error(__('record_not_found'));

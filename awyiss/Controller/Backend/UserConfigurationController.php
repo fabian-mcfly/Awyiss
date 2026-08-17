@@ -57,9 +57,13 @@ class UserConfigurationController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$query = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
-			'identifier' => 'ASC',
-		]);
+		$query = $this->UserConfiguration
+			->find()
+			->where($this->getOverviewWhere())
+			->orderBy([
+				'identifier' => 'ASC',
+			])
+		;
 
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($query);
@@ -75,9 +79,7 @@ class UserConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview() {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('read');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('read');
 
 		$selectedScope = $this->Categories->getSelectedCategory();
 
@@ -96,17 +98,21 @@ class UserConfigurationController extends Controller {
 		$query = $this->getOverviewQuery();
 
 		$configuration = Hash::expand(
-			$query->all()->groupBy(function (UserConfiguration $entity) use ($configOptions) {
-				$identifier = array_map(function (string $identifier) {
-					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-				}, explode('.', $entity->identifier));
+			$query
+				->all()
+				->groupBy(function (UserConfiguration $entity) use ($configOptions) {
+					$identifier = array_map(
+						fn(string $identifier) => ConfigOptionsProvider::sanitizeIdentifier($identifier),
+						explode('.', $entity->identifier)
+					);
 
-				$path = implode('.', $identifier);
-				/** @noinspection PhpUndefinedFieldInspection */
-				$entity->configOption = $configOptions->getConfigOption('Backend', $path);
+					$path = implode('.', $identifier);
+					/** @noinspection PhpUndefinedFieldInspection */
+					$entity->configOption = $configOptions->getConfigOption('Backend', $path);
 
-				return implode('.', $identifier);
-			})->toArray()
+					return implode('.', $identifier);
+				})
+				->toArray()
 		);
 
 		if ($this->UserConfiguration->searchIsActive()) {
@@ -147,7 +153,9 @@ class UserConfigurationController extends Controller {
 			);
 
 			// Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
-			$flattenedConfigOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($flattenedConfigOptions[ Awyiss::REALM_BACKEND ]);
+			$flattenedConfigOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray(
+				$flattenedConfigOptions[ Awyiss::REALM_BACKEND ]
+			);
 		}
 
 
@@ -168,9 +176,7 @@ class UserConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add(): void {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('create');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('create');
 
 		$configuration = $this->UserConfiguration->newDefaultEntity([
 			'scope' => Inflector::camelize($this->Categories->getSelectedCategory()),
@@ -193,7 +199,9 @@ class UserConfigurationController extends Controller {
 		});
 
 		/** @noinspection PhpUndefinedFieldInspection */
-		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption('Backend', $configuration->identifier) : null;
+		$configuration->configOption = $configuration->identifier
+			? $configOptions->getConfigOption('Backend', $configuration->identifier)
+			: null;
 
 		$this->set([
 			'configuration' => $configuration,
@@ -210,9 +218,7 @@ class UserConfigurationController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	public function edit(int $id) {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('update');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('update');
 
 		/**
 		 * @var \Awyiss\Model\Entity\UserConfiguration $configuration
@@ -220,12 +226,14 @@ class UserConfigurationController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$configuration = $this->UserConfiguration->findById($id)
+		$configuration = $this->UserConfiguration
+			->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->where(['userId' => $this->getIdentity()->getIdentifier()])
-			->first();
+			->first()
+		;
 		if (!$configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -258,7 +266,9 @@ class UserConfigurationController extends Controller {
 		});
 
 		/** @noinspection PhpUndefinedFieldInspection */
-		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption('Backend', $configuration->identifier) : null;
+		$configuration->configOption = $configuration->identifier
+			? $configOptions->getConfigOption('Backend', $configuration->identifier)
+			: null;
 
 		$this->set([
 			'configuration' => $configuration,
@@ -275,9 +285,7 @@ class UserConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete(int $id): Response {
-		$this->Authorization->setAdditionalData([
-			'scope' => '',
-		])->ensure('delete');
+		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -382,27 +390,36 @@ class UserConfigurationController extends Controller {
 	 */
 	protected function getGlobalConfiguration(?ConfigOptionsInterface $configOptions): array {
 		$configTable = $this->fetchTable('Configuration');
-		$query = $configTable->find()->orderBy([
-			'identifier' => 'ASC',
-			'languageShortcode' => 'ASC',
-		]);
+		$query = $configTable
+			->find()
+			->orderBy([
+				'identifier' => 'ASC',
+				'languageShortcode' => 'ASC',
+			])
+		;
 
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 
-		$configuration = $query->all()->groupBy(function (Configuration $entity) use ($configOptions) {
-			$identifier = array_map(function (string $identifier) use ($configOptions) {
-				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-			}, explode('.', $entity->identifier));
+		$configuration = $query
+			->all()
+			->groupBy(function (Configuration $entity) use ($configOptions) {
+				$identifier = array_map(
+					fn(string $identifier) => ConfigOptionsProvider::sanitizeIdentifier($identifier),
+					explode('.', $entity->identifier)
+				);
 
-			$path = implode('.', $identifier);
-			/** @noinspection PhpUndefinedFieldInspection */
-			$entity->configOption = $configOptions->getConfigOption('Backend', $path);
+				$path = implode('.', $identifier);
+				/** @noinspection PhpUndefinedFieldInspection */
+				$entity->configOption = $configOptions->getConfigOption('Backend', $path);
 
-			return implode('.', $identifier);
-		})->toArray();
+				return implode('.', $identifier);
+			})
+			->toArray()
+		;
 
 		return Hash::expand($configuration);
 	}
+
 
 	/**
 	 * Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
@@ -426,6 +443,7 @@ class UserConfigurationController extends Controller {
 		return $configurations;
 	}
 
+
 	/**
 	 * @param array $configOptions
 	 * @param string $realm
@@ -439,6 +457,8 @@ class UserConfigurationController extends Controller {
 		string $selectedScope,
 		?string $parentCategories = null
 	): array {
+		$realm = Inflector::underscore($realm);
+
 		uksort($configOptions, function ($a, $b) use ($configOptions, $parentCategories, $realm, $selectedScope) {
 			$i18nKeyA = 'configuration_' . ($this->isCategory($configOptions[ $a ]) ? 'category' : 'identifier') . '_' . $realm;
 			$i18nKeyB = 'configuration_' . ($this->isCategory($configOptions[ $b ]) ? 'category' : 'identifier') . '_' . $realm;
@@ -502,7 +522,7 @@ class UserConfigurationController extends Controller {
 		if (is_array($value)) {
 			// If the array contains only instances of \Awyiss\Model\Entity\Configuration,
 			// and \Awyiss\Model\Entity\UserConfiguration, then it is not a category
-			return array_any($value, fn ($configItem) => !$configItem instanceof Configuration && !$configItem instanceof UserConfiguration);
+			return array_any($value, fn($configItem) => !$configItem instanceof Configuration && !$configItem instanceof UserConfiguration);
 		}
 
 		return false;

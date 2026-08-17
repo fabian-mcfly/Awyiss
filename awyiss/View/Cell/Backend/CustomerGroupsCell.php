@@ -37,7 +37,11 @@ class CustomerGroupsCell extends Cell {
 	 */
 	public function display(EntityInterface $entity): void {
 		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Backend/cell/CustomerGroups')->setTemplate('group_assignments');
+		$this
+			->viewBuilder()
+			->setTemplatePath('Backend/cell/CustomerGroups')
+			->setTemplate('group_assignments')
+		;
 
 		$availableGroups = $this->getGroups();
 		$assignedGroups = $entity->customerGroupAssignments ?? false;
@@ -65,15 +69,13 @@ class CustomerGroupsCell extends Cell {
 	 */
 	protected function getGroups(): Collection {
 		if (!isset(static::$groups)) {
-			/**
-			 * @uses \Awyiss\Model\Table::findActive()
-			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
-			 */
+			/** @uses \Awyiss\Model\Table::findActive() */
 			static::$groups = $this
 				->fetchTable('CustomerGroups')
 				->find('active')
 				->all()
-				->compile();
+				->compile()
+			;
 		}
 
 		return static::$groups;
@@ -94,7 +96,9 @@ class CustomerGroupsCell extends Cell {
 		}
 
 		if (!($identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
+			throw new RuntimeException(
+				sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class)
+			);
 		}
 
 

@@ -97,10 +97,11 @@ trait ForcedTitleTrait {
 	 * @return bool
 	 */
 	protected function fieldIsEmpty(string $column): bool {
-		return empty($this->$column) || (
-			!in_array($column, ['duplicateOf', 'mediaAssignments', 'cssClass', 'contentTemplateId', 'globalContentTemplateId']) &&
-			strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$column)))) === 0
-		);
+		return empty($this->$column)
+			|| (
+				!in_array($column, ['duplicateOf', 'mediaAssignments', 'cssClass', 'contentTemplateId', 'globalContentTemplateId'])
+				&& strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$column)))) === 0
+			);
 	}
 
 
@@ -235,7 +236,12 @@ trait ForcedTitleTrait {
 	protected function loadContentTemplate(): ?ContentTemplate {
 		if (!isset(static::$contentTemplates)) {
 			$table = FactoryLocator::get('Table')->get('ContentTemplates');
-			static::$contentTemplates = $table->find()->all()->indexBy('id')->toArray();
+			static::$contentTemplates = $table
+				->find()
+				->all()
+				->indexBy('id')
+				->toArray()
+			;
 		}
 
 		return $this->contentTemplate = static::$contentTemplates[ $this->contentTemplateId ] ?? null;
@@ -248,7 +254,12 @@ trait ForcedTitleTrait {
 	protected function loadGlobalContentTemplate(): ?GlobalContentTemplate {
 		if (!isset(static::$globalContentTemplates)) {
 			$table = FactoryLocator::get('Table')->get('GlobalContentTemplates');
-			static::$globalContentTemplates = $table->find()->all()->indexBy('id')->toArray();
+			static::$globalContentTemplates = $table
+				->find()
+				->all()
+				->indexBy('id')
+				->toArray()
+			;
 		}
 
 		return $this->globalContentTemplate = static::$globalContentTemplates[ $this->globalContentTemplateId ] ?? null;
@@ -308,7 +319,10 @@ trait ForcedTitleTrait {
 
 		try {
 			/** @var \Awyiss\Model\Entity\Form $form */
-			$form = FactoryLocator::get('Table')->get('Forms')->get($this->formId);
+			$form = FactoryLocator::get('Table')
+				->get('Forms')
+				->get($this->formId)
+			;
 		}
 		catch (RecordNotFoundException) {
 			return null;
@@ -329,7 +343,10 @@ trait ForcedTitleTrait {
 
 		try {
 			/** @var \Awyiss\Model\Entity\Survey $survey */
-			$survey = FactoryLocator::get('Table')->get('Surveys')->get($this->surveyId);
+			$survey = FactoryLocator::get('Table')
+				->get('Surveys')
+				->get($this->surveyId)
+			;
 		}
 		catch (RecordNotFoundException) {
 			return null;

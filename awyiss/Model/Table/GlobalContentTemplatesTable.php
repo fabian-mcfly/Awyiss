@@ -72,7 +72,8 @@ class GlobalContentTemplatesTable extends Table {
 		'publication',
 	];
 	/**
-	 * @var array<string, array<string, array{title: string, label: string, identifier: string, active: bool, type: string,inputType:string}|null>>
+	 * @var array<string, array<string, array{title: string, label: string, identifier: string, active: bool, type:
+	 *     string,inputType:string}|null>>
 	 */
 	protected array $availableGlobalContentAttributes = [
 		'withInactive' => null,
@@ -112,15 +113,20 @@ class GlobalContentTemplatesTable extends Table {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
-		return $query->enableAutoFields()->select([
-			'usedForGlobalContents' => $query->func()->count('GlobalContents.id'),
-		])->leftJoinWith('GlobalContents', function (SelectQuery $query) {
-			return $query->applyOptions([
-				'attributes' => [
-					'skip' => true,
-				],
-			]);
-		})->groupBy('GlobalContentTemplates.id');
+		return $query
+			->enableAutoFields()
+			->select([
+				'usedForGlobalContents' => $query->func()->count('GlobalContents.id'),
+			])
+			->leftJoinWith('GlobalContents', function (SelectQuery $query) {
+				return $query->applyOptions([
+					'attributes' => [
+						'skip' => true,
+					],
+				]);
+			})
+			->groupBy('GlobalContentTemplates.id')
+		;
 	}
 
 
@@ -179,18 +185,27 @@ class GlobalContentTemplatesTable extends Table {
 
 		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableGlobalContentAttributes[ $key ] = $attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'GlobalContents'])->all()->indexBy('identifier')->map(
-			function (Attribute $attribute): array {
-				return [
-					'title' => $attribute->title,
-					'label' => $attribute->label,
-					'identifier' => $attribute->identifier,
-					'active' => $attribute->active,
-					'type' => $attribute->type,
-					'inputType' => $attribute->inputType,
-				];
-			}
-		)->toArray();
+		$this->availableGlobalContentAttributes[ $key ] = $attributesTable
+			->find($includeInactive ? 'all' : 'active')
+			->where(
+				['scope' => 'GlobalContents']
+			)
+			->all()
+			->indexBy('identifier')
+			->map(
+				function (Attribute $attribute): array {
+					return [
+						'title' => $attribute->title,
+						'label' => $attribute->label,
+						'identifier' => $attribute->identifier,
+						'active' => $attribute->active,
+						'type' => $attribute->type,
+						'inputType' => $attribute->inputType,
+					];
+				}
+			)
+			->toArray()
+		;
 
 
 		return $this->availableGlobalContentAttributes[ $key ];

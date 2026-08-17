@@ -48,7 +48,6 @@ function nonceDump(mixed ...$vars): mixed {
 }
 
 
-
 /**
  * @param mixed ...$vars
  * @return mixed
@@ -58,6 +57,7 @@ function nonceDump(mixed ...$vars): mixed {
 function dump(mixed ...$vars): mixed {
 	if (!$vars) {
 		VarDumper::dump(new ScalarStub('🐛'));
+
 		return null;
 	}
 
@@ -69,7 +69,6 @@ function dump(mixed ...$vars): mixed {
 
 	return $vars[ $key ];
 }
-
 
 
 /**

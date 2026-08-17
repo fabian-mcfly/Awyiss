@@ -35,5 +35,11 @@ interface RoutingServiceInterface {
 	 * @param array $params
 	 * @return \Awyiss\Utility\Route\RouteInterface|false
 	 */
-	public function getRoute(AddressInterface $start, AddressInterface $end, string $transportationMode = 'driving-car', ?string $languageShortcode = null, array $params = []): RouteInterface|false;
+	public function getRoute(
+		AddressInterface $start,
+		AddressInterface $end,
+		string $transportationMode = 'driving-car',
+		?string $languageShortcode = null,
+		array $params = []
+	): RouteInterface|false;
 }

@@ -235,14 +235,20 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
-		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$query = $mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
-			'id !=' => 1,
-			'hidden' => false,
-		]);
+		$query = $mediaFoldersTable
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
+			->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)
+			->where([
+				'id !=' => 1,
+				'hidden' => false,
+			])
+		;
 		/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
 		$mediaFolders = $mediaFoldersTable->listNested($query);
 
-		return $mediaFolders->printer('label', 'id', '- ')->toArray();
+		return $mediaFolders
+			->printer('label', 'id', '- ')
+			->toArray()
+		;
 	}
 }

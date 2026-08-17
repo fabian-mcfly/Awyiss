@@ -28,141 +28,176 @@ class SurveySurveyQuestions {
 	 */
 	public function up(): void {
 		if ($this->migration->hasTable('survey_survey_questions')) {
-			$this->migration->table('survey_survey_questions')->drop()->save();
+			$this->migration
+				->table('survey_survey_questions')
+				->drop()
+				->save()
+			;
 		}
 
-		$this->migration->table('survey_survey_questions')->addColumn('id', 'integer', [
-			'autoIncrement' => true,
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('survey_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('survey_question_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('identifier', 'char', [
-			'default' => null,
-			'limit' => 8,
-			'null' => false,
-		])->addColumn('title', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('subtitle', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('text', 'text', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('next_action', 'string', [
-			'default' => null,
-			'limit' => 20,
-			'null' => true,
-		])->addColumn('next_action_target', 'string', [
-			'default' => null,
-			'limit' => 20,
-			'null' => true,
-		])->addColumn('allow_custom_answer', 'boolean', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('custom_answer_title', 'string', [
-			'default' => null,
-			'limit' => 255,
-			'null' => true,
-		])->addColumn('system_order', 'integer', [
-			'default' => '0',
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('active', 'boolean', [
-			'default' => true,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('deleted', 'boolean', [
-			'default' => false,
-			'limit' => null,
-			'null' => false,
-		])->addColumn('created_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('changed_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('changed_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addColumn('deleted_by', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-			'signed' => true,
-		])->addColumn('deleted_on', 'datetime', [
-			'default' => null,
-			'limit' => null,
-			'null' => true,
-		])->addIndex(
-			[
-				'survey_id',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_SURVEY_ID',
-			]
-		)->addIndex(
-			[
-				'survey_question_id',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_SURVEY_QUESTION_ID',
-			]
-		)->addIndex(
-			[
-				'identifier',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_IDENTIFIER',
-			]
-		)->addIndex(
-			[
-				'system_order',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_SYSTEM_ORDER',
-			]
-		)->addIndex(
-			[
-				'active',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_ACTIVE',
-			]
-		)->addIndex(
-			[
-				'deleted',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED',
-			]
-		)->addIndex(
-			[
-				'deleted',
-				'system_order',
-			], [
-				'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED_ORDER',
-			]
-		)->create();
+		$this->migration
+			->table('survey_survey_questions')
+			->addColumn('id', 'integer', [
+				'autoIncrement' => true,
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addPrimaryKey(['id'])
+			->addColumn('survey_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('survey_question_id', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => false,
+				'signed' => true,
+			])
+			->addColumn('identifier', 'char', [
+				'default' => null,
+				'limit' => 8,
+				'null' => false,
+			])
+			->addColumn('title', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('subtitle', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('text', 'text', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('next_action', 'string', [
+				'default' => null,
+				'limit' => 20,
+				'null' => true,
+			])
+			->addColumn('next_action_target', 'string', [
+				'default' => null,
+				'limit' => 20,
+				'null' => true,
+			])
+			->addColumn('allow_custom_answer', 'boolean', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('custom_answer_title', 'string', [
+				'default' => null,
+				'limit' => 255,
+				'null' => true,
+			])
+			->addColumn('system_order', 'integer', [
+				'default' => '0',
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('active', 'boolean', [
+				'default' => true,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('deleted', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
+			])
+			->addColumn('created_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('created_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('changed_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('changed_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addColumn('deleted_by', 'integer', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+				'signed' => true,
+			])
+			->addColumn('deleted_on', 'datetime', [
+				'default' => null,
+				'limit' => null,
+				'null' => true,
+			])
+			->addIndex(
+				[
+					'survey_id',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_SURVEY_ID',
+				]
+			)
+			->addIndex(
+				[
+					'survey_question_id',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_SURVEY_QUESTION_ID',
+				]
+			)
+			->addIndex(
+				[
+					'identifier',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_IDENTIFIER',
+				]
+			)
+			->addIndex(
+				[
+					'system_order',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_SYSTEM_ORDER',
+				]
+			)
+			->addIndex(
+				[
+					'active',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_ACTIVE',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED',
+				]
+			)
+			->addIndex(
+				[
+					'deleted',
+					'system_order',
+				], [
+					'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED_ORDER',
+				]
+			)
+			->create()
+		;
 	}
 
 
@@ -172,6 +207,10 @@ class SurveySurveyQuestions {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('survey_survey_questions')->drop()->save();
+		$this->migration
+			->table('survey_survey_questions')
+			->drop()
+			->save()
+		;
 	}
 }

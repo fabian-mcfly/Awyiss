@@ -35,16 +35,103 @@ class OpenAITranslationService extends AbstractTranslationService {
 	 * @var array Supported language codes (OpenAI supports many languages)
 	 */
 	protected array $supportedLanguages = [
-		'af', 'sq', 'am', 'ar', 'hy', 'az', 'eu', 'be', 'bn', 'bs',
-		'bg', 'ca', 'zh', 'hr', 'cs', 'da', 'nl', 'en', 'eo', 'et',
-		'fi', 'fr', 'gl', 'ka', 'de', 'el', 'gu', 'ht', 'he', 'hi',
-		'hu', 'is', 'id', 'ga', 'it', 'ja', 'jw', 'kn', 'kk', 'km',
-		'ko', 'ku', 'ky', 'lo', 'la', 'lv', 'lt', 'lb', 'mk', 'mg',
-		'ms', 'ml', 'mt', 'mi', 'mr', 'mn', 'my', 'ne', 'no', 'nb',
-		'or', 'ps', 'fa', 'pl', 'pt', 'pa', 'ro', 'ru', 'sm', 'gd',
-		'sr', 'st', 'sn', 'sd', 'si', 'sk',	'sl', 'so', 'es', 'su',
-		'sw', 'sv', 'tl', 'tg', 'ta', 'te', 'th', 'tr', 'uk', 'ur',
-		'uz', 'vi', 'cy', 'xh', 'yi', 'yo', 'zu',
+		'af',
+		'sq',
+		'am',
+		'ar',
+		'hy',
+		'az',
+		'eu',
+		'be',
+		'bn',
+		'bs',
+		'bg',
+		'ca',
+		'zh',
+		'hr',
+		'cs',
+		'da',
+		'nl',
+		'en',
+		'eo',
+		'et',
+		'fi',
+		'fr',
+		'gl',
+		'ka',
+		'de',
+		'el',
+		'gu',
+		'ht',
+		'he',
+		'hi',
+		'hu',
+		'is',
+		'id',
+		'ga',
+		'it',
+		'ja',
+		'jw',
+		'kn',
+		'kk',
+		'km',
+		'ko',
+		'ku',
+		'ky',
+		'lo',
+		'la',
+		'lv',
+		'lt',
+		'lb',
+		'mk',
+		'mg',
+		'ms',
+		'ml',
+		'mt',
+		'mi',
+		'mr',
+		'mn',
+		'my',
+		'ne',
+		'no',
+		'nb',
+		'or',
+		'ps',
+		'fa',
+		'pl',
+		'pt',
+		'pa',
+		'ro',
+		'ru',
+		'sm',
+		'gd',
+		'sr',
+		'st',
+		'sn',
+		'sd',
+		'si',
+		'sk',
+		'sl',
+		'so',
+		'es',
+		'su',
+		'sw',
+		'sv',
+		'tl',
+		'tg',
+		'ta',
+		'te',
+		'th',
+		'tr',
+		'uk',
+		'ur',
+		'uz',
+		'vi',
+		'cy',
+		'xh',
+		'yi',
+		'yo',
+		'zu',
 	];
 
 
@@ -87,7 +174,12 @@ class OpenAITranslationService extends AbstractTranslationService {
 	/**
 	 * @inheritDoc
 	 */
-	public function translateText(string $text, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): TranslationResult|false {
+	public function translateText(
+		string $text,
+		string $targetLanguage,
+		?string $sourceLanguage = null,
+		array $options = []
+	): TranslationResult|false {
 		$systemMessage = $this->buildSystemMessage($targetLanguage, $sourceLanguage, false);
 
 		$messages = [
@@ -200,18 +292,29 @@ class OpenAITranslationService extends AbstractTranslationService {
 	protected function buildSystemMessage(string $targetLanguage, ?string $sourceLanguage, bool $isBatch): string {
 		$fromLanguage = $sourceLanguage ? ' from language with code `' . $sourceLanguage : '`';
 
-		$message = 'You are a professional translator. Translate all user messages' . $fromLanguage . ' into the language with code `' . $targetLanguage . '`';
-		$message .= ' accurately and fluently, but ignore `<widget>` tags and their content. Ignoring `<widget>` tags means that you should not translate or alter any text within these tags,';
-		$message .= ' and the tags themselves should remain unchanged in the output. THIS IS IMPORTANT.';
+		$message = 'You are a professional translator. Translate all user messages'
+			. $fromLanguage . ' into the language with code `' . $targetLanguage . '`'
+		;
+		$message .= ' accurately and fluently, but ignore `<widget>` tags and their content. Ignoring `<widget>` tags means that you'
+			. ' should not translate or alter any text within these tags, and the tags themselves should remain unchanged in the output.'
+			. ' THIS IS IMPORTANT.'
+		;
+
 		$message .= ' Keep the HTML structure intact. Only translate the text content, do not modify any HTML tags or attributes.';
 		$message .= ' Respond only with the translated text, without any additional explanations or comments.';
 		$message .= ' Do not add anything that is not in the original text and no information about yourself.';
 		$message .= ' Ensure that the translation is accurate and contextually appropriate.';
-		$message .= ' Preserve the meaning and tone of the original content. Avoid literal translations that may not convey the intended message.';
+		$message .= ' Preserve the meaning and tone of the original content. Avoid literal translations'
+			. ' that may not convey the intended message.'
+		;
+
 		$message .= ' If you encounter any text that is not in a language you recognize, keep it unchanged in the translation.';
 
 		if ($isBatch) {
-			$message .= ' The content is provided as a JSON encoded array. Decode it, translate the elements, and respond with a JSON encoded array in the same structure.';
+			$message .= ' The content is provided as a JSON encoded array. Decode it, translate the elements,'
+				. ' and respond with a JSON encoded array in the same structure.'
+			;
+
 			$message .= ' Ignore json inside the text. Only translate the text values in the array.';
 		}
 

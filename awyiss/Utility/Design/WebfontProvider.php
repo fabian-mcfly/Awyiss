@@ -78,10 +78,10 @@ class WebfontProvider {
 	 * @return array
 	 */
 	public function getWebfonts(): array {
-		$this->webfonts = Cache::remember('webfonts', fn () => $this->fetchWebfonts(), 'persistent');
+		$this->webfonts = Cache::remember('webfonts', fn() => $this->fetchWebfonts(), 'persistent');
 
 		$webfonts = new Collection($this->webfonts);
 
-		return $webfonts->filter(fn ($font) => $font['popularity'] < 1000)->toArray();
+		return $webfonts->filter(fn($font) => $font['popularity'] < 1000)->toArray();
 	}
 }

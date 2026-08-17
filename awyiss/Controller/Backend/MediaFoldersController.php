@@ -52,7 +52,9 @@ class MediaFoldersController extends Controller {
 			LocaleMiddleware::getLanguage()->shortcode => LocaleMiddleware::getLanguage()->title,
 		];
 
-		$this->selectedLanguageSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::variable($this->getName()) . '.language';
+		$this->selectedLanguageSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.'
+			. Inflector::variable($this->getName()) . '.language'
+		;
 
 		if ($this->request->getParam('action') !== 'overview') {
 			return;
@@ -125,9 +127,11 @@ class MediaFoldersController extends Controller {
 		else {
 			$query->orderBy('languageShortcode');
 
-			$mediaFolders = $query->find('threaded')->all()->groupBy(function (MediaFolder $mediaFolder) {
-				return $mediaFolder->languageShortcode ?? '_global';
-			});
+			$mediaFolders = $query
+				->find('threaded')
+				->all()
+				->groupBy(fn(MediaFolder $mediaFolder) => $mediaFolder->languageShortcode ?? '_global')
+			;
 		}
 
 		$this->set([
@@ -180,7 +184,11 @@ class MediaFoldersController extends Controller {
 		 * @var \Awyiss\Model\Entity\MediaFolder $mediaFolder
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$mediaFolder = $this->MediaFolders->findById($id)->find('translations')->first();
+		$mediaFolder = $this->MediaFolders
+			->findById($id)
+			->find('translations')
+			->first()
+		;
 
 		if (!$mediaFolder) {
 			$this->Flash->error(__('record_not_found'));
@@ -228,9 +236,11 @@ class MediaFoldersController extends Controller {
 		$children = $this->MediaFolders->getNestedChildren($mediaFolder);
 
 		// Check if any of the subfolders is hidden
-		$hiddenSubfolders = $children->filter(function (MediaFolder $mediaFolder) {
-			return $mediaFolder->hidden;
-		})->extract('id')->toArray();
+		$hiddenSubfolders = $children
+			->filter(fn(MediaFolder $mediaFolder) => $mediaFolder->hidden)
+			->extract('id')
+			->toArray()
+		;
 		if ($mediaFolder->hidden || $hiddenSubfolders) {
 			$this->Flash->error(__('error_subfolders_hidden'));
 
@@ -295,7 +305,10 @@ class MediaFoldersController extends Controller {
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $mediaFolder->languageShortcode, 'id' => $mediaFolder->id], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'edit', 'lang' => $mediaFolder->languageShortcode, 'id' => $mediaFolder->id], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {
@@ -348,9 +361,11 @@ class MediaFoldersController extends Controller {
 		$children = $this->MediaFolders->getNestedChildren($mediaFolder);
 
 		// Check if any of the subfolders is hidden
-		$hiddenSubfolders = $children->filter(function (MediaFolder $mediaFolder) {
-			return $mediaFolder->hidden;
-		})->extract('id')->toArray();
+		$hiddenSubfolders = $children
+			->filter(fn(MediaFolder $mediaFolder) => $mediaFolder->hidden)
+			->extract('id')
+			->toArray()
+		;
 
 		if ($mediaFolder->hidden || $hiddenSubfolders) {
 			if (!$this->request->is('ajax')) {
@@ -373,9 +388,13 @@ class MediaFoldersController extends Controller {
 
 		$mediaFolderIds = [$mediaFolder->id, ...array_column($children->toArray(), 'id')];
 
-		$mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
-			'mediaFolderId IN' => $mediaFolderIds,
-		])->count();
+		$mediaFolderAssignments = $this->MediaFolders->MediaAssignments
+			->find()
+			->where([
+				'mediaFolderId IN' => $mediaFolderIds,
+			])
+			->count()
+		;
 
 		if ($mediaFolderAssignments) {
 			if (!$this->request->is('ajax')) {
@@ -396,9 +415,15 @@ class MediaFoldersController extends Controller {
 		}
 
 		// Check if any of the files inside the media folders are used
-		$files = $this->MediaFolders->Media->find()->where([
-			'mediaFolderId IN' => $mediaFolderIds,
-		])->contain(['MediaAssignments'])->matching('MediaAssignments')->count();
+		$files = $this->MediaFolders->Media
+			->find()
+			->where([
+				'mediaFolderId IN' => $mediaFolderIds,
+			])
+			->contain(['MediaAssignments'])
+			->matching('MediaAssignments')
+			->count()
+		;
 
 		if (!$this->request->is('ajax')) {
 			return $files > 0;
@@ -472,9 +497,11 @@ class MediaFoldersController extends Controller {
 	protected function getThreadedMediaFolders(MediaFolder $mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? false, includeGlobal: false)
-			->where($this->getOverviewWhere())
-			->where(['hidden' => $mediaFolder->hidden]);
+			$query = $this->MediaFolders
+				->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? false, includeGlobal: false)
+				->where($this->getOverviewWhere())
+				->where(['hidden' => $mediaFolder->hidden])
+			;
 
 			$this->threadedMediaFolders = $this->MediaFolders->listNested($query);
 		}

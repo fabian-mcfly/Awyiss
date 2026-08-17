@@ -81,12 +81,14 @@ class QueuedJobsController extends BackendController {
 		$queuedJobs = $this->paginate($query);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$queuedJobs->items()->each(function (QueuedJob $queuedJob) {
-			// If the reference is not empty, check if '::' is in the reference
-			// If it is, we try to translate it, using the first part as the domain name and the second part as the key
-
-			$this->setJobProperties($queuedJob);
-		});
+		$queuedJobs
+			->items()
+			->each(function (QueuedJob $queuedJob) {
+				// If the reference is not empty, check if '::' is in the reference
+				// If it is, we try to translate it, using the first part as the domain name and the second part as the key
+				$this->setJobProperties($queuedJob);
+			})
+		;
 
 		$this->set([
 			'queuedJobs' => $queuedJobs,
@@ -167,9 +169,9 @@ class QueuedJobsController extends BackendController {
 
 		/** @noinspection PhpUndefinedFieldInspection */
 		if (
-			$queuedJob->fetched &&
-			!$queuedJob->completed &&
-			!$queuedJob->failed
+			$queuedJob->fetched
+			&& !$queuedJob->completed
+			&& !$queuedJob->failed
 		) {
 			$this->Flash->error(__('delete_failed_in_progress'));
 

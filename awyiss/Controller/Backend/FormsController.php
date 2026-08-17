@@ -100,12 +100,14 @@ class FormsController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$form = $this->Forms->findById($id)
+		$form = $this->Forms
+			->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain(['FormConditionalRecipients'])
-			->first();
+			->first()
+		;
 		if (!$form) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -298,7 +300,11 @@ class FormsController extends Controller {
 	 */
 	protected function setViewVars(Form $form): void {
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
+		$emailTemplates = $this
+			->fetchTable('EmailTemplates')
+			->find('active')
+			->orderByAsc('title')
+		;
 
 		$formConditionalRecipientTypes = [
 			'elementIdentifier',
@@ -318,22 +324,51 @@ class FormsController extends Controller {
 			}
 		}
 
-		$pageProperties = $this->fetchTable('Pages')->getSchema()->columns();
+		$pageProperties = $this
+			->fetchTable('Pages')
+			->getSchema()
+			->columns()
+		;
 		$pageProperties = array_combine($pageProperties, $pageProperties);
-		$pageProperties = array_diff($pageProperties, ['metaTitle', 'metaDescription', 'robotsFollow', 'robotsIndex', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn']);
+		$pageProperties = array_diff($pageProperties, [
+			'metaTitle',
+			'metaDescription',
+			'robotsFollow',
+			'robotsIndex',
+			'deleted',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'deletedBy',
+			'deletedOn',
+		]);
 		foreach ($pageProperties as $value) {
 			$pageProperties[ $value ] = __d('Pages', Inflector::underscore($value)) . ' (' . $value . ')';
 		}
 
 		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
-		$pageRoles = $this->fetchTable('PageRoles')->find()->all()->indexBy(function (PageRole $pageRole) {
-			return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
-		})->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->find()
+			->all()
+			->indexBy(function (PageRole $pageRole) {
+				return Inflector::camelize(Inflector::pluralize($pageRole->identifier));
+			})
+			->toArray()
+		;
 
-		$attributes = $this->fetchTable('Attributes')->find()->where(['scope IN' => array_keys($pageRoles)])->toArray();
+		$attributes = $this
+			->fetchTable('Attributes')
+			->find()
+			->where(['scope IN' => array_keys($pageRoles)])
+			->toArray()
+		;
 		/** @var \Awyiss\Model\Entity\Attribute $attribute */
 		foreach ($attributes as $attribute) {
-			$pageProperties[$pageRoles[ $attribute->scope ]->title ][ $attribute->identifier ] = $attribute->label . ' (' . $attribute->identifier . ')';
+			$pageProperties[ $pageRoles[ $attribute->scope ]->title ][ $attribute->identifier ] = $attribute->label
+				. ' (' . $attribute->identifier . ')'
+			;
 		}
 
 		$conditionalRecipientsStrategies = [

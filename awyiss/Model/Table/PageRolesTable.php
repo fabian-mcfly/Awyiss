@@ -164,9 +164,9 @@ class PageRolesTable extends Table {
 		$rules->add(
 			function (PageRole $entity, array $options) use ($rules): bool|string {
 				if (
-					($options['isCopy'] ?? false) === false &&
-					$entity->hasOriginal('identifier') &&
-					$entity->get('identifier') !== $entity->getOriginal('identifier')
+					($options['isCopy'] ?? false) === false
+					&& $entity->hasOriginal('identifier')
+					&& $entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
 					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_unchanged');
 				}
@@ -178,12 +178,12 @@ class PageRolesTable extends Table {
 				$datatables = $datatablesTable->findAllAndCache();
 
 				if (
-					$entity->isDirty('identifier') &&
-					(
-						str_starts_with($entity->identifier, 'attributes') ||
-						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
-						App::className(Inflector::camelize($pluralIdentifier), 'Controller/Backend', 'Controller') ||
-						$datatables->firstMatch(['active' => true, 'identifier' => $pluralIdentifier])
+					$entity->isDirty('identifier')
+					&& (
+						str_starts_with($entity->identifier, 'attributes')
+						|| in_array($entity->identifier, $this->blocklistedIdentifiers)
+						|| App::className(Inflector::camelize($pluralIdentifier), 'Controller/Backend', 'Controller')
+						|| $datatables->firstMatch(['active' => true, 'identifier' => $pluralIdentifier])
 					)
 				) {
 					return __df($this->getI18nDomain(), 'Validation', 'error_identifier_allowed');
@@ -207,7 +207,7 @@ class PageRolesTable extends Table {
 		);
 
 		$rules->addDelete(
-			function (PageRole $entity/*, array $options*/): bool {
+			function (PageRole $entity): bool {
 				return $entity->identifier !== 'page';
 			},
 			'notPageRolePageDeletion',

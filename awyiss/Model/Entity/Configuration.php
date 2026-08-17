@@ -45,15 +45,15 @@ class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $defaultValues = [
-		'realm' => Awyiss::REALM_FRONTEND,
-		'scope' => 'System',
+	protected array $_virtual = [ // phpcs:ignore
+		'printableValue',
 	];
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [ // phpcs:ignore
-		'printableValue',
+	protected array $defaultValues = [
+		'realm' => Awyiss::REALM_FRONTEND,
+		'scope' => 'System',
 	];
 
 

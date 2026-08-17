@@ -175,22 +175,16 @@ class IntegrityCheckCommand extends Command {
 
 		$config = Configure::read('FileHashes', []);
 
-		if (str_contains($path, '::')) {
-			[$className, $method] = explode('::', $path, 2);
-			$key = $className . '::' . $method;
-		}
-		else {
-			$key = substr($fullPath, strlen(ROOT . DS));
-		}
+		$identifier = $this->normaleizeIdentifier($path, $fullPath);
 
-		if (!isset($config[ $key ])) {
+		if (!isset($config[ $identifier ])) {
 			$io->error(sprintf('Identifier not found `%s`', $path));
 
 
 			return;
 		}
 
-		unset($config[ $key ]);
+		unset($config[ $identifier ]);
 
 		ksort($config);
 
@@ -223,22 +217,16 @@ class IntegrityCheckCommand extends Command {
 				return;
 			}
 
-			if (str_contains($path, '::')) {
-				[$className, $method] = explode('::', $path, 2);
-				$key = $className . '::' . $method;
-			}
-			else {
-				$key = substr($fullPath, strlen(ROOT . DS));
-			}
+			$identifier = $this->normaleizeIdentifier($path, $fullPath);
 
-			if (!isset($config[ $key ])) {
+			if (!isset($config[ $identifier ])) {
 				$io->error(sprintf('Identifier not found `%s`', $path));
 
 
 				return;
 			}
 
-			$files = [$key => $config[ $key ]];
+			$files = [$identifier => $config[ $identifier ]];
 		}
 
 		$results = [
@@ -353,7 +341,10 @@ class IntegrityCheckCommand extends Command {
 
 		$method = $reflection->getMethod($method);
 
-		$methodContent = implode('', array_slice($fileCode, $method->getStartLine() - 1, $method->getEndLine() - $method->getStartLine() + 1));
+		$methodContent = implode(
+			'',
+			array_slice($fileCode, $method->getStartLine() - 1, $method->getEndLine() - $method->getStartLine() + 1)
+		);
 
 
 		return md5($methodContent);
@@ -398,7 +389,15 @@ class IntegrityCheckCommand extends Command {
 	 * @param bool $shouldQuit
 	 * @return void
 	 */
-	protected function askForUpdate(ConsoleIo $io, string $file, mixed $currentHash, array &$updatedData, bool $interactive, bool &$forceUpdate, bool &$shouldQuit): void {
+	protected function askForUpdate(
+		ConsoleIo $io,
+		string $file,
+		mixed $currentHash,
+		array &$updatedData,
+		bool $interactive,
+		bool &$forceUpdate,
+		bool &$shouldQuit
+	): void {
 		$update = $forceUpdate;
 		if ($interactive && !$forceUpdate) {
 			$key = $io->askChoice('Update hash?', ['y', 'n', 'a', 'q', 'c'], 'n');
@@ -412,6 +411,7 @@ class IntegrityCheckCommand extends Command {
 			if ($key === 'q') {
 				$io->info('Saving and quitting.', 2);
 				$shouldQuit = true;
+
 				return;
 			}
 
@@ -426,5 +426,21 @@ class IntegrityCheckCommand extends Command {
 		if ($update) {
 			$updatedData[ $file ] = $currentHash;
 		}
+	}
+
+
+	/**
+	 * @param string $path
+	 * @param string $fullPath
+	 * @return string
+	 */
+	protected function normaleizeIdentifier(string $path, string $fullPath): string {
+		if (str_contains($path, '::')) {
+			[$className, $method] = explode('::', $path, 2);
+
+			return $className . '::' . $method;
+		}
+
+		return substr($fullPath, strlen(ROOT . DS));
 	}
 }

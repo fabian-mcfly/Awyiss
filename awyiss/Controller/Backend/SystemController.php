@@ -17,6 +17,9 @@ use Cake\ORM\Query\SelectQuery;
  * @property \Awyiss\Model\Table\UrlHistoryTable $UrlHistory
  */
 class SystemController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
 	protected ?string $defaultTable = '';
 
 
@@ -51,7 +54,12 @@ class SystemController extends Controller {
 		// Check if the cronjob is running
 		$queuedProcessesTable = $this->fetchTable('Queue.QueueProcesses');
 		$timeOffset = time() - Configure::read('Queue.workermaxruntime');
-		$cronjobRunning = $queuedProcessesTable->find('all')->where(['QueueProcesses.modified >' => date('Y-m-d H:i:s', $timeOffset)])->count() > 0;
+		$cronjobRunning = $queuedProcessesTable
+			->find('all')
+			->where([
+					'QueueProcesses.modified >' => date('Y-m-d H:i:s', $timeOffset),
+				])
+			->count() > 0;
 
 		// Check if webroot/media is writable
 		$mediaPath = WWW_ROOT . 'media';
@@ -150,10 +158,14 @@ class SystemController extends Controller {
 		if (!$runningJob) {
 			$reference = 'System::clearCache';
 
-			$runningJob = $queuedJobsTable->find()->where([
-				'reference' => $reference,
-				'completed IS' => null,
-			])->first();
+			$runningJob = $queuedJobsTable
+				->find()
+				->where([
+					'reference' => $reference,
+					'completed IS' => null,
+				])
+				->first()
+			;
 
 			if (!$runningJob) {
 				$runningJob = $queuedJobsTable->createJob('Queue.Execute', [
@@ -171,7 +183,11 @@ class SystemController extends Controller {
 		}
 
 		if ($this->request->is('ajax')) {
-			$this->viewBuilder()->setOption('serialize', ['runningJob'])->setClassName('Json');
+			$this
+				->viewBuilder()
+				->setOption('serialize', ['runningJob'])
+				->setClassName('Json')
+			;
 		}
 
 		$this->set([

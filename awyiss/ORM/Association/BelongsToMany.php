@@ -10,7 +10,8 @@ use Cake\ORM\Association\BelongsToMany as BaseBelongsToMany;
 /**
  * Re-implemented so it'll use ExistsTrait
  *
- * @inheritDoc} */
+ * {@inheritDoc}
+ */
 class BelongsToMany extends BaseBelongsToMany {
 	use ExistsTrait;
 

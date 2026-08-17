@@ -39,8 +39,8 @@ class PasswordIdentifier extends BasePasswordIdentifier {
 		}
 
 		if (
-			$hashedPassword === null ||
-			!$hasher->check($password, $hashedPassword)
+			$hashedPassword === null
+			|| !$hasher->check($password, $hashedPassword)
 		) {
 			return false;
 		}

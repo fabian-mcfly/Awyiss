@@ -108,7 +108,7 @@ class Marshaller extends BaseMarshaller {
 	 * Re-implemented 1:1 to override how the result of PropertyMarshalInterface::buildMarshalMap()
 	 * is merged into the map built by Marshaller::_buildPropertyMap().
 	 * Instead of using the `+` operator, we use `array_merge()`, to allow behaviors to override the default
-	 * marshalling of properties provided by the table's schema and associations.
+	 * marshaling of properties provided by the table's schema and associations.
 	 *
 	 * @inheritDoc
 	 */
@@ -139,7 +139,11 @@ class Marshaller extends BaseMarshaller {
 			// it is a missing association that we should error on.
 			if (!$this->_table->hasAssociation($stringifiedKey)) {
 				if (
-					!str_starts_with($stringifiedKey, '_') && (!isset($options['junctionProperty']) || $options['junctionProperty'] !== $stringifiedKey)
+					!str_starts_with($stringifiedKey, '_')
+					&& (
+						!isset($options['junctionProperty'])
+						|| $options['junctionProperty'] !== $stringifiedKey
+					)
 				) {
 					throw new InvalidArgumentException(
 						sprintf(
@@ -157,29 +161,15 @@ class Marshaller extends BaseMarshaller {
 				$nested['forceNew'] = $options['forceNew'];
 			}
 			if (isset($options['isMerge'])) {
-				$callback = function (
-					$value,
-					EntityInterface $entity,
-				) use (
+				$callback = fn($value, EntityInterface $entity) => $this->_mergeAssociation(
+					$this->fieldValue($entity, $assoc->getProperty()),
 					$assoc,
-					$nested,
-				): array|EntityInterface|null {
-					$options = $nested + ['associated' => [], 'association' => $assoc];
-
-					return $this->_mergeAssociation(
-						$this->fieldValue($entity, $assoc->getProperty()),
-						$assoc,
-						$value,
-						$options,
-					);
-				};
+					$value,
+					$nested + ['associated' => [], 'association' => $assoc],
+				);
 			}
 			else {
-				$callback = function ($value) use ($assoc, $nested): array|EntityInterface|null {
-					$options = $nested + ['associated' => []];
-
-					return $this->_marshalAssociation($assoc, $value, $options);
-				};
+				$callback = fn($value) => $this->_marshalAssociation($assoc, $value, $nested + ['associated' => []]);
 			}
 			$map[ $assoc->getProperty() ] = $callback;
 		}

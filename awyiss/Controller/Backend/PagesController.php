@@ -33,6 +33,10 @@ use RuntimeException;
 #[AllowDynamicProperties]
 class PagesController extends Controller {
 	/**
+	 * @var int|null Forced root page id when categories are disabled
+	 */
+	protected ?int $forcedRootPageId = null;
+	/**
 	 * @var bool Nesting enabled
 	 */
 	protected bool $nestable = true;
@@ -48,10 +52,6 @@ class PagesController extends Controller {
 	 * @var \Cake\Datasource\ResultSetInterface
 	 */
 	protected CollectionInterface $pageTemplates;
-	/**
-	 * @var int|null Forced root page id when categories are disabled
-	 */
-	protected ?int $forcedRootPageId = null;
 	/**
 	 * @var string|null Session identifier for the selected parentId
 	 */
@@ -78,7 +78,9 @@ class PagesController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parentId';
+		$this->selectedParentIdSessionIdentifier = Inflector::variable($this->getName()) . '.'
+			. ($this->request->getParam('lang') ?? 'global') . '.parentId'
+		;
 
 		if (!($this->categories['enabled'] ?? false)) {
 			$this->forcedRootPageId = Configure::read('Awyiss.' . $this->getName() . '.Frontend.categories.forcedRootPageId');
@@ -108,15 +110,18 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$query = $this->getOverviewQuery()->find('mediaAssignments')
-		->contain([
-			'PageTemplates.ContentAreas.ContentTemplates',
-		]);
+		$query = $this
+			->getOverviewQuery()
+			->find('mediaAssignments')
+			->contain([
+				'PageTemplates.ContentAreas.ContentTemplates',
+			])
+		;
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (
-			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey') ||
-			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey')
+			|| $this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
 		) {
 			$this->sortable = false;
 		}
@@ -133,7 +138,11 @@ class PagesController extends Controller {
 			$pages = $query->all();
 		}
 
-		$pageTemplates = $this->getPageTemplates()->indexBy('id')->toArray();
+		$pageTemplates = $this
+			->getPageTemplates()
+			->indexBy('id')
+			->toArray()
+		;
 
 		$this->set([
 			'pages' => $pages,
@@ -216,11 +225,16 @@ class PagesController extends Controller {
 				],
 			]);
 
+			$entities = null;
 			if (!empty($requestData['pages'])) {
 				$entities = $this->buildEntitiesFromIndentedRows($requestData['pages'], $requestData);
 			}
 
-			if (!$this->request->getData('reloadForm') && $entities?->count()) { //reloadForm is set when we need to reload options based on current values
+			if (
+				//reloadForm is set when we need to reload options based on current values
+				!$this->request->getData('reloadForm')
+				&& $entities?->count()
+			) {
 				$success = false;
 
 				if ($entities->count()) {
@@ -283,7 +297,13 @@ class PagesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$page = $this->Pages
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 
 		if (!$page) {
 			$this->Flash->error(__df($this->pageRoleName, 'Pages', 'record_not_found'));
@@ -428,15 +448,26 @@ class PagesController extends Controller {
 	public function linkList(): void {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->find('active')
+			->where(['includeInLinklist' => true])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
-		$query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'pageRoleId IN' => array_keys($pageRoles),
-		]);
+		$query = $this->Pages
+			->find('active')
+			->find('forCurrentLanguage', skipPageRoleCheck: true)
+			->where([
+				'pageRoleId IN' => array_keys($pageRoles),
+			])
+		;
 
 		$pagesByPageRole = [];
 		$baseUrl = Router::url('/', true);
@@ -520,11 +551,12 @@ class PagesController extends Controller {
 		]);
 
 		if (
-			!$this->request->getData('reloadForm') && //reloadForm is set when we need to reload options based on current values
-			(
+			//reloadForm is set when we need to reload options based on current values
+			!$this->request->getData('reloadForm')
+			&& (
 				//Only save pages if there are no descendants with different page role OR if the decision has been made
-				!$hasDescendantsWithDifferentPageRole ||
-				$copyDescendantsWithDifferentPageRole !== null
+				!$hasDescendantsWithDifferentPageRole
+				|| $copyDescendantsWithDifferentPageRole !== null
 			)
 		) {
 			if (
@@ -556,7 +588,10 @@ class PagesController extends Controller {
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $page->languageShortcode, 'id' => $page->id], true), 302);
+				throw new RedirectException(
+					Router::url(['action' => 'edit', 'lang' => $page->languageShortcode, 'id' => $page->id], true),
+					302
+				);
 			}
 
 			if (!$this->request->is('ajax')) {
@@ -585,9 +620,14 @@ class PagesController extends Controller {
 	protected function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
 			/** @uses \Awyiss\Model\Table::findActive() */
-			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
-				'pageRoleId' => $this->getPageRole(),
-			])->all()->indexBy('id');
+			$this->pageTemplates = $this->Pages->PageTemplates
+				->find('active')
+				->where([
+					'pageRoleId' => $this->getPageRole(),
+				])
+				->all()
+				->indexBy('id')
+			;
 		}
 
 
@@ -618,8 +658,10 @@ class PagesController extends Controller {
 			unset($categoryQueryConditions['parentId']);
 
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
-			->where($this->getOverviewWhere() + $categoryQueryConditions);
+			$query = $this->Pages
+				->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
+				->where($this->getOverviewWhere() + $categoryQueryConditions)
+			;
 
 			$this->threadedPages = $this->Pages->listNested($query);
 		}
@@ -779,11 +821,19 @@ class PagesController extends Controller {
 		}
 
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$menus = $this->fetchTable('Menus')->find('active')->all();
+		$menus = $this
+			->fetchTable('Menus')
+			->find('active')
+			->all()
+		;
 
 		// Get the parent page if it exists
 		if ($page->parentId) {
-			$parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $page->parentId])->first();
+			$parentRecord = $this->Pages
+				->find('all', skipPageRoleCheck: true)
+				->where(['id' => $page->parentId])
+				->first()
+			;
 		}
 
 		$pageTemplates = $this->getPageTemplates();
@@ -805,10 +855,16 @@ class PagesController extends Controller {
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'forms' => $this->Pages->Forms->find('active')->orderByAsc('title')->all(),
+			'forms' => $this->Pages->Forms
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'linkTargets' => $this->findLinkablePages(),
 			/** @uses \Awyiss\Model\Table::findActive() */
-			'surveys' => $this->Pages->Surveys->find('active')->orderByAsc('title')->all(),
+			'surveys' => $this->Pages->Surveys
+				->find('active')
+				->orderByAsc('title')
+				->all(),
 			'menus' => $menus,
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'parentRecord' => $parentRecord ?? null,
@@ -930,7 +986,7 @@ class PagesController extends Controller {
 			);
 
 			//Add the current line to the result
-			$entities = $entities->append([ $entity ]);
+			$entities = $entities->append([$entity]);
 
 			$currentId++;
 		}
@@ -977,8 +1033,8 @@ class PagesController extends Controller {
 	protected function isNestableWithCategoriesEnabled(): void {
 		$categoriesBehavior = $this->Pages->getBehavior('Categories');
 		if (
-			$categoriesBehavior->getConfig('enabled') &&
-			in_array($categoriesBehavior->getConfig('field'), ['parentId', 'parentId'], true)
+			$categoriesBehavior->getConfig('enabled')
+			&& in_array($categoriesBehavior->getConfig('field'), ['parentId', 'parentId'], true)
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}
@@ -991,16 +1047,27 @@ class PagesController extends Controller {
 	protected function findLinkablePages(): CollectionInterface {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['includeInLinklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this
+			->fetchTable('PageRoles')
+			->find('active')
+			->where(['includeInLinklist' => true])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
 		$pagesTable = $this->fetchTable('Pages');
-		$query = $pagesTable->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'pageRoleId IN' => array_keys($pageRoles),
-		]);
+		$query = $pagesTable
+			->find('active')
+			->find('forCurrentLanguage', skipPageRoleCheck: true)
+			->where([
+				'pageRoleId IN' => array_keys($pageRoles),
+			])
+		;
 
 		return $pagesTable->listNested($query);
 	}

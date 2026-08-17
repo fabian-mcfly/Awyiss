@@ -216,80 +216,91 @@ class LanguagesTable extends Table {
 		);
 
 
-		$rules->add(function (Language $entity): string|bool {
-			if ($entity->isNew()) {
-				return true;
-			}
+		$rules->add(
+			function (Language $entity): string|bool {
+				if ($entity->isNew()) {
+					return true;
+				}
 
-			// If the language is active and the realm was not changed or is still the same as before, it's ok
-			// (we don't want to prevent deactivating a language or changing the realm if there are other active languages in the original realm)
-			if (
-				$entity->active &&
-				(
-					!$entity->hasOriginal('realm') ||
-					(
-						$entity->hasOriginal('realm') &&
-						$entity->getOriginal('realm') === $entity->realm
+				// If the language is active and the realm was not changed or is still the same as before, it's ok.
+				// We don't want to prevent deactivating a language or changing the realm if there are
+				// other active languages in the original realm
+				if (
+					$entity->active
+					&& (
+						!$entity->hasOriginal('realm')
+						|| $entity->getOriginal('realm') === $entity->realm
 					)
-				)
-			) {
-				return true;
-			}
+				) {
+					return true;
+				}
 
-			$count = $this->find()->where([
-				'realm' => $entity->hasOriginal('realm') ? $entity->getOriginal('realm') : $entity->realm,
-				'active' => true,
-				'id !=' => $entity->id,
-			])->count();
+				$count = $this
+					->find()
+					->where([
+						'realm' => $entity->hasOriginal('realm') ? $entity->getOriginal('realm') : $entity->realm,
+						'active' => true,
+						'id !=' => $entity->id,
+					])
+					->count()
+				;
 
-			if ($count > 0) {
-				return true;
-			}
+				if ($count > 0) {
+					return true;
+				}
 
-			if (
-				$entity->hasOriginal('realm') &&
-				$entity->getOriginal('realm') !== $entity->realm
-			) {
-				return __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_realm_change');
-			}
+				if (
+					$entity->hasOriginal('realm')
+					&& $entity->getOriginal('realm') !== $entity->realm
+				) {
+					return __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_realm_change');
+				}
 
-			return false;
-		}, 'notLastActiveLanguageInRealm', [
-			'errorField' => '_general',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_deactivate'),
-		]);
-
-
-		$rules->add(function (Language $entity): bool {
-			return in_array($entity->realm, Awyiss::getRealms());
-		}, 'validRealm', [
-			'errorField' => 'realm',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_realm'),
-		]);
+				return false;
+			},
+			'notLastActiveLanguageInRealm',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_not_last_active_language_in_realm_on_deactivate'),
+			]
+		);
 
 
-		$rules->add(function (Language $entity): bool {
-			return in_array($entity->timezone, DateTimeZone::listIdentifiers());
-		}, 'validTimezone', [
-			'errorField' => 'timezone',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_timezone'),
-		]);
+		$rules->add(
+			fn(Language $entity) => in_array($entity->realm, Awyiss::getRealms()),
+			'validRealm',
+			[
+				'errorField' => 'realm',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_realm'),
+			]
+		);
 
 
-		$rules->add(function (Language $entity): bool {
-			return in_array($entity->locale, ResourceBundle::getLocales(''));
-		}, 'validLocale', [
-			'errorField' => 'locale',
-			'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_locale'),
-		]);
+		$rules->add(
+			fn(Language $entity) => in_array($entity->timezone, DateTimeZone::listIdentifiers()),
+			'validTimezone',
+			[
+				'errorField' => 'timezone',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_timezone'),
+			]
+		);
+
+
+		$rules->add(
+			fn(Language $entity) => in_array($entity->locale, ResourceBundle::getLocales('')),
+			'validLocale',
+			[
+				'errorField' => 'locale',
+				'message' => __df($this->getI18nDomain(), 'Validation', 'error_valid_locale'),
+			]
+		);
 
 
 		$rules->addDelete(
-			function (Language $entity): bool {
-				$count = $this->find()->where(['realm' => $entity->realm])->count();
-
-				return $count > 1;
-			},
+			fn(Language $entity) => $this
+				->find()
+				->where(['realm' => $entity->realm])
+				->count() > 1,
 			'notLastLanguageInRealm',
 			[
 				'errorField' => '_general',

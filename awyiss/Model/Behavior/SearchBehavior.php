@@ -82,11 +82,21 @@ class SearchBehavior extends Behavior {
 	 * @param array|null $selectedValues
 	 * @param bool $includePossibleValues
 	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
+	 * @throws \ReflectionException
 	 */
-	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true): array {
+	public function getFilterColumns(
+		array $blocklistedColumns = [],
+		?array $selectedOperators = null,
+		?array $selectedValues = null,
+		bool $includePossibleValues = true
+	): array {
 		$schema = $this->table()->getSchema();
 
-		$blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deletedOn', 'deletedBy']);
+		$blocklistedColumns = array_merge(
+			$blocklistedColumns,
+			$this->getConfig('blocklistedColumns', []),
+			['deleted', 'deletedOn', 'deletedBy']
+		);
 
 		if ($this->getConfig('columns') && $selectedOperators === null && $selectedValues === null) {
 			$columns = $this->getConfig('columns');
@@ -105,7 +115,7 @@ class SearchBehavior extends Behavior {
 
 			$disabledOperators = $this->disabledOperators($type);
 
-			$columns[$column] = new FilterColumnSettings(
+			$columns[ $column ] = new FilterColumnSettings(
 				disabledOperators: $disabledOperators,
 				nullable: $columnData['null'],
 				maxLength: $columnData['length'],
@@ -126,18 +136,20 @@ class SearchBehavior extends Behavior {
 
 				$columnData = $schema->getColumn($attribute->identifier);
 				$type = $attributesTable->normalizeColumnType($columnData['type']);
-				$values = $includePossibleValues ? $attributesTable->getPossibleFieldValues($attribute->identifier, $columnData['type']) : [];
+				$values = $includePossibleValues
+					? $attributesTable->getPossibleFieldValues($attribute->identifier, $columnData['type'])
+					: [];
 
 				$disabledOperators = $this->disabledOperators($type);
 
-				$columns['attributes__' . $attribute->identifier] = new FilterColumnSettings(
+				$columns[ 'attributes__' . $attribute->identifier ] = new FilterColumnSettings(
 					disabledOperators: $disabledOperators,
 					nullable: $columnData['null'],
 					maxLength: $columnData['length'],
-					operator: $selectedOperators['attributes__' . $attribute->identifier ] ?? null,
+					operator: $selectedOperators[ 'attributes__' . $attribute->identifier ] ?? null,
 					title: $attribute->title,
 					type: $type,
-					value: $selectedValues['attributes__' . $attribute->identifier ] ?? null,
+					value: $selectedValues[ 'attributes__' . $attribute->identifier ] ?? null,
 					values: $values,
 				);
 			}
@@ -158,7 +170,10 @@ class SearchBehavior extends Behavior {
 	 * @return bool
 	 */
 	public function isActive(): bool {
-		$sessionData = Router::getRequest()->getSession()->read($this->getConfig('sessionIdentifier'));
+		$sessionData = Router::getRequest()
+			->getSession()
+			->read($this->getConfig('sessionIdentifier'))
+		;
 
 		return !empty($sessionData['values']);
 	}
@@ -179,8 +194,8 @@ class SearchBehavior extends Behavior {
 			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categoriesBehavior */
 			$categoriesBehavior = $table->getBehavior('Categories');
 			if (
-				$categoriesBehavior->getConfig('enabled') &&
-				$categoriesBehavior->getConfig('foreignKey') === $column
+				$categoriesBehavior->getConfig('enabled')
+				&& $categoriesBehavior->getConfig('foreignKey') === $column
 			) {
 				return $categoriesBehavior->getCategories();
 			}
@@ -190,20 +205,24 @@ class SearchBehavior extends Behavior {
 			/** @var \Awyiss\Model\Behavior\NestBehavior $nestBehavior */
 			$nestBehavior = $table->getBehavior('Nest');
 			if (
-				$nestBehavior->getConfig('enabled') &&
-				$nestBehavior->getConfig('parent.foreignKey') === $column
+				$nestBehavior->getConfig('enabled')
+				&& $nestBehavior->getConfig('parent.foreignKey') === $column
 			) {
 				$query = $table->find('all');
 
 				if (
-					in_array($table->getAlias(), ['Contents', 'GlobalContents']) &&
-					$table->hasAssociation('MediaAssignments')
+					in_array($table->getAlias(), ['Contents', 'GlobalContents'])
+					&& $table->hasAssociation('MediaAssignments')
 				) {
 					$query->find('mediaAssignments', useMediaEntity: true);
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				return $nestBehavior->listNested($query)->printer('label', 'id', '- ')->toArray();
+				return $nestBehavior
+					->listNested($query)
+					->printer('label', 'id', '- ')
+					->toArray()
+				;
 			}
 		}
 
@@ -265,6 +284,7 @@ class SearchBehavior extends Behavior {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param array|null $filterColumns
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @throws \ReflectionException
 	 */
 	public function filterQuery(SelectQuery $query, ?array $filterColumns = null): SelectQuery {
 		$filterColumns ??= $this->getFilterColumns([], null, null, false);
@@ -277,10 +297,10 @@ class SearchBehavior extends Behavior {
 			// If the operator is null and the type is not boolean,
 			// or the type is boolean and the value is null, skip this column
 			if (
-				$columnSettings->operator === null &&
-				(
-					$columnSettings->type !== 'boolean' ||
-					$columnSettings->value === null
+				$columnSettings->operator === null
+				&& (
+					$columnSettings->type !== 'boolean'
+					|| $columnSettings->value === null
 				)
 			) {
 				continue;
@@ -361,7 +381,12 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addEqualsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+	protected function addEqualsCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $not = false
+	): SelectQuery {
 		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		if ($value === null) {
@@ -400,7 +425,13 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addGreaterThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
+	protected function addGreaterThanCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $orEqual = false,
+		bool $not = false
+	): SelectQuery {
 		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		if ($value === null) {
@@ -440,7 +471,12 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addBetweenCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+	protected function addBetweenCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $not = false
+	): SelectQuery {
 		$values = $columnSettings->value ?? [];
 
 		if (!is_array($values)) {
@@ -455,14 +491,14 @@ class SearchBehavior extends Behavior {
 
 			return is_string($value) ? trim($value) : $value;
 		}, $values);
-		$values = array_filter($values, fn ($value) => is_numeric($value));
+		$values = array_filter($values, fn($value) => is_numeric($value));
 
 		if (!$values || count($values) !== 2) {
 			return $query;
 		}
 
 		// Normalize all
-		$values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $values);
+		$values = array_map(fn($value) => $this->normalizeValue($value, $columnSettings), $values);
 
 		if ($not) {
 			$where = [
@@ -497,7 +533,12 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addLengthEqualToCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+	protected function addLengthEqualToCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $not = false
+	): SelectQuery {
 		if ($columnSettings->value === null) {
 			return $query;
 		}
@@ -505,10 +546,16 @@ class SearchBehavior extends Behavior {
 		$value = (int)$columnSettings->value;
 
 		if (
-			$this->getConfig('handleNulls', true) === true &&
-			(
-				($not && $value !== 0) ||
-				(!$not && $value === 0)
+			$this->getConfig('handleNulls', true) === true
+			&& (
+				(
+					$not
+					&& $value !== 0
+				)
+				|| (
+					!$not
+					&& $value === 0
+				)
 			)
 		) {
 			/**
@@ -549,7 +596,13 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addLongerThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
+	protected function addLongerThanCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $orEqual = false,
+		bool $not = false
+	): SelectQuery {
 		if ($columnSettings->value === null) {
 			return $query;
 		}
@@ -631,7 +684,12 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addInCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+	protected function addInCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $not = false
+	): SelectQuery {
 		$values = $columnSettings->value ?? [];
 
 		if (!is_array($values)) {
@@ -655,12 +713,18 @@ class SearchBehavior extends Behavior {
 		$hasEmpty = in_array('', $values, true);
 
 		// Normalize all
-		$values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $values);
+		$values = array_map(fn($value) => $this->normalizeValue($value, $columnSettings), $values);
 
 		$operator = $not ? ' NOT IN' : ' IN';
 		if (
-			($not && !$hasEmpty) ||
-			(!$not && $hasEmpty)
+			(
+				$not
+				&& !$hasEmpty
+			)
+			|| (
+				!$not
+				&& $hasEmpty
+			)
 		) {
 			/**
 			 * If the operator is
@@ -692,7 +756,13 @@ class SearchBehavior extends Behavior {
 	 * @param string $wildcard
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addContainsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false, string $wildcard = 'both'): SelectQuery {
+	protected function addContainsCondition(
+		SelectQuery $query,
+		string $column,
+		FilterColumnSettings $columnSettings,
+		bool $not = false,
+		string $wildcard = 'both'
+	): SelectQuery {
 		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		if (!in_array($wildcard, ['both', 'start', 'end'])) {
@@ -767,7 +837,11 @@ class SearchBehavior extends Behavior {
 			return $this->users;
 		}
 
-		$this->users = FactoryLocator::get('Table')->get('Users')->find('list', keyField: 'id', valueField: 'label')->toArray();
+		$this->users = FactoryLocator::get('Table')
+			->get('Users')
+			->find('list', keyField: 'id', valueField: 'label')
+			->toArray()
+		;
 
 		return $this->users;
 	}
@@ -861,7 +935,11 @@ class SearchBehavior extends Behavior {
 	 * @param \Awyiss\Model\Enum\DateComparisonOperator $dateComparisonOperator
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addDateComparisonCondition(SelectQuery $query, string $column, DateComparisonOperator $dateComparisonOperator): SelectQuery {
+	protected function addDateComparisonCondition(
+		SelectQuery $query,
+		string $column,
+		DateComparisonOperator $dateComparisonOperator
+	): SelectQuery {
 		$now = DateTime::now();
 
 		return match ($dateComparisonOperator) {

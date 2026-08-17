@@ -12,7 +12,7 @@ use Cake\Datasource\RepositoryInterface;
 
 /**
  * Class NumericPaginator
- *	- Allows for sorting by multiple fields.
+ *    - Allows for sorting by multiple fields.
  */
 class NumericPaginator extends BaseNumericPaginator {
 	/**

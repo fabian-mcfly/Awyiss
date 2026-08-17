@@ -71,9 +71,18 @@ class ContactFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	protected static array $strings = [
-		'title', 'titleMr', 'titleMs', 'titleDiverse',
-		'firstname', 'lastname', 'email', 'phone', 'message',
-		'privacyAccepted', 'privacyAcceptedYes', 'privacyAcceptedText',
+		'title',
+		'titleMr',
+		'titleMs',
+		'titleDiverse',
+		'firstname',
+		'lastname',
+		'email',
+		'phone',
+		'message',
+		'privacyAccepted',
+		'privacyAcceptedYes',
+		'privacyAcceptedText',
 		'submit',
 	];
 	/**

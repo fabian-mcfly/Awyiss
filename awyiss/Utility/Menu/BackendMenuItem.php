@@ -105,6 +105,7 @@ class BackendMenuItem extends MenuItem {
 		$itemUrl = $this->getLink()?->getUrl();
 		if (!$itemUrl) {
 			$this->isCurrentRoute = false;
+
 			return false;
 		}
 

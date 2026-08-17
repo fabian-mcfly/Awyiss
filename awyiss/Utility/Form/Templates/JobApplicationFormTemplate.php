@@ -22,7 +22,8 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 			'lastname' => 'Apellido',
 			'email' => 'Correo electrónico',
 			'phone' => 'Teléfono',
-			'jobApplicationFilesText' => '<strong>Documentos de solicitud</strong><br>Espacio para currículum, certificados y una carta de presentación opcional',
+			'jobApplicationFilesText' => '<strong>Documentos de solicitud</strong><br>Espacio para currículum,'
+				. ' certificados y una carta de presentación opcional',
 			'jobApplicationFile' => 'Archivo',
 			'privacyAccepted' => 'Acepto la política de privacidad',
 			'privacyAcceptedYes' => 'Sí',
@@ -38,7 +39,8 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 			'lastname' => 'Nom de famille',
 			'email' => 'E-mail',
 			'phone' => 'Téléphone',
-			'jobApplicationFilesText' => '<strong>Documents de candidature</strong><br>Espace pour le CV, les diplômes et une lettre de motivation optionnelle',
+			'jobApplicationFilesText' => '<strong>Documents de candidature</strong><br>Espace pour le CV,'
+				. ' les diplômes et une lettre de motivation optionnelle',
 			'jobApplicationFile' => 'Fichier',
 			'privacyAccepted' => 'J\'accepte la politique de confidentialité',
 			'privacyAcceptedYes' => 'Oui',
@@ -54,7 +56,8 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 			'lastname' => 'Cognome',
 			'email' => 'E-mail',
 			'phone' => 'Telefono',
-			'jobApplicationFilesText' => '<strong>Documenti di candidatura</strong><br>Spazio per curriculum vitae, certificati e una lettera di presentazione opzionale',
+			'jobApplicationFilesText' => '<strong>Documenti di candidatura</strong><br>Spazio per curriculum vitae,'
+				. ' certificati e una lettera di presentazione opzionale',
 			'jobApplicationFile' => 'File',
 			'privacyAccepted' => 'Accetto la politica sulla privacy',
 			'privacyAcceptedYes' => 'Sì',
@@ -66,8 +69,19 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	protected static array $strings = [
-		'title', 'titleMr', 'titleMs', 'titleDiverse', 'firstname', 'lastname', 'email', 'phone',
-		'jobApplicationFilesText', 'jobApplicationFile', 'privacyAccepted', 'privacyAcceptedYes', 'privacyAcceptedText',
+		'title',
+		'titleMr',
+		'titleMs',
+		'titleDiverse',
+		'firstname',
+		'lastname',
+		'email',
+		'phone',
+		'jobApplicationFilesText',
+		'jobApplicationFile',
+		'privacyAccepted',
+		'privacyAcceptedYes',
+		'privacyAcceptedText',
 		'submit',
 	];
 	/**

@@ -19,13 +19,13 @@ use IteratorAggregate;
  */
 class AddressCollection implements Countable, IteratorAggregate {
 	/**
-	 * @var array<int, \Awyiss\Utility\Route\AddressInterface>
-	 */
-	protected array $addresses = [];
-	/**
 	 * @var class-string<\Awyiss\Utility\Route\AddressInterface>
 	 */
 	protected string $addressClass;
+	/**
+	 * @var array<int, \Awyiss\Utility\Route\AddressInterface>
+	 */
+	protected array $addresses = [];
 
 
 	/**

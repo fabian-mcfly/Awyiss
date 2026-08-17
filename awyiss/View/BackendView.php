@@ -123,7 +123,13 @@ class BackendView extends AppView {
 		}
 
 		$twig->addGlobal('baseUrl', Router::url('/', true));
-		$twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$twig->addGlobal(
+			'currentPath',
+			$this
+				->getRequest()
+				->getUri()
+				->getPath()
+		);
 		$twig->addGlobal('currentUrl', $uri->__toString());
 		$twig->addGlobal('config', Configure::read());
 		$twig->addGlobal('folder', $folder);

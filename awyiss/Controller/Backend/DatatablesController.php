@@ -94,7 +94,7 @@ class DatatablesController extends Controller {
 		/** @var \Awyiss\Model\Entity\Datatable $datatable */
 		$datatable = $datatables->firstMatch(['id' => $id]);
 
-		if (! $datatable) {
+		if (!$datatable) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -124,7 +124,7 @@ class DatatablesController extends Controller {
 
 		/** @var \Awyiss\Model\Entity\Datatable $datatable */
 		$datatable = $this->Datatables->findById($id)->first();
-		if (! $datatable) {
+		if (!$datatable) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);

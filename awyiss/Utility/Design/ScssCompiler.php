@@ -43,8 +43,8 @@ class ScssCompiler {
 	 * Main files are ones that do not start with an underscore.
 	 *
 	 * @param string|null $realm The realm to be searched. This can be either Awyiss::REALM_FRONTEND or Awyiss::REALM_BACKEND.
-	 * @return array{string: \Awyiss\Utility\Design\ScssFilesCollection} An associative array where the keys are folder paths and the values are ScssFilesCollection objects
-	 *     containing all .scss files and the latest file modification time.
+	 * @return array{string: \Awyiss\Utility\Design\ScssFilesCollection} An associative array where the keys are folder paths
+	 *  and the values are ScssFilesCollection objects containing all .scss files and the latest file modification time.
 	 * @throws InvalidArgumentException If the given realm is not valid.
 	 */
 	public static function discoverRealmFiles(?string $realm): array {
@@ -77,7 +77,8 @@ class ScssCompiler {
 	 * Main files are ones that do not start with an underscore.
 	 *
 	 * @param string $folderPath The path to the directory to be searched.
-	 * @return \Awyiss\Utility\Design\ScssFilesCollection A ScssFilesCollection object containing all .scss files and the latest file modification time.
+	 * @return \Awyiss\Utility\Design\ScssFilesCollection A ScssFilesCollection object containing all .scss files
+	 *  and the latest file modification time.
 	 */
 	public static function discoverFiles(string $folderPath): ScssFilesCollection {
 		// Create a new ScssFilesCollection object.
@@ -107,7 +108,7 @@ class ScssCompiler {
 		}
 
 		// Sort files by filename
-		usort($files, fn (SplFileInfo $a, SplFileInfo $b) => strnatcasecmp($a->getRealPath(), $b->getRealPath()));
+		usort($files, fn(SplFileInfo $a, SplFileInfo $b) => strnatcasecmp($a->getRealPath(), $b->getRealPath()));
 
 		// Add each file to the ScssFilesCollection object.
 		foreach ($files as $file) {
@@ -126,7 +127,8 @@ class ScssCompiler {
 	 * @param string $basePath The base path for the SCSS files.
 	 * @param array $vars An array of variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
-	 * @return array|null An array of compiled CSS content if $returnCss is true, null if no files are found or if the CSS files are newer than the SCSS files.
+	 * @return array|null An array of compiled CSS content if $returnCss is true, null if no files are found or
+	 *  if the CSS files are newer than the SCSS files.
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public static function compile(ScssFilesCollection $files, string $basePath, array $vars = [], bool $returnCss = false): ?array {
@@ -145,7 +147,8 @@ class ScssCompiler {
 			$scssVariableProvider->setScssFiles([$file->getPathname()]);
 
 			$internalVariables = $scssVariableProvider->getInternalVariables();
-			$includeColumnSystem = isset($internalVariables['includeColumnSystem']) && $internalVariables['includeColumnSystem']->getValue() === true;
+			$includeColumnSystem = isset($internalVariables['includeColumnSystem'])
+				&& $internalVariables['includeColumnSystem']->getValue() === true;
 
 			$compiledCss[] = self::compileScss($file, $basePath, $vars, $returnCss, $includeColumnSystem);
 		}
@@ -158,12 +161,12 @@ class ScssCompiler {
 	/**
 	 * Compiles SCSS files in multiple folders into CSS.
 	 *
-	 * @param array<string, \Awyiss\Utility\Design\ScssFilesCollection> $folders An associative array where the keys are folder paths and the values are ScssFilesCollection
-	 *     objects.
+	 * @param array<string, \Awyiss\Utility\Design\ScssFilesCollection> $folders An associative array where the keys are folder paths
+	 *  and the values are ScssFilesCollection objects.
 	 * @param array $vars An array of variables to be passed to the SCSS compiler. Defaults to an empty array.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system. Defaults to false.
-	 * @return array An associative array where the keys are folder paths and the values are the results of the compilation. If $returnCss is true, the values are arrays of
-	 *     compiled CSS content; otherwise, they are null.
+	 * @return array An associative array where the keys are folder paths and the values are the results of the compilation.
+	 *  If $returnCss is true, the values are arrays of compiled CSS content; otherwise, they are null.
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public static function compileFolders(array $folders, array $vars = [], bool $returnCss = false): array {
@@ -223,7 +226,13 @@ class ScssCompiler {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 * @throws \Exception
 	 */
-	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss, bool $includeColumnSystem = false): CompilationResult|string|false {
+	public static function compileScss(
+		SplFileInfo $file,
+		string $basePath,
+		array $vars,
+		bool $returnCss,
+		bool $includeColumnSystem = false
+	): CompilationResult|string|false {
 		// Make sure it's a .scss file.
 		if ($file->getExtension() !== 'scss') {
 			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
@@ -282,9 +291,11 @@ class ScssCompiler {
 			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
 
 			static::$compiler->setSourceMapOptions([
+				// Relative url path of .css file
 				'sourceMapURL' => $cssFilename . '.map',
-				'sourceMapFilename' => $cssFilename, // Relative url path of .css file
-				'sourceMapBasepath' => $basePath, // Difference between file & url locations, removed from ALL source files in .map
+				// Difference between file & url locations, removed from ALL source files in .map
+				'sourceMapFilename' => $cssFilename,
+				'sourceMapBasepath' => $basePath,
 				'sourceRoot' => $sourceRoot,
 			]);
 		}

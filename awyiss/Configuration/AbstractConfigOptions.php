@@ -87,7 +87,9 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		$configOption = Hash::get($configOptions, $path);
 
 		if ($configOption instanceof ConfigOptionsCollection) {
-			throw new InvalidArgumentException(sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionsCollection::class));
+			throw new InvalidArgumentException(
+				sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionsCollection::class)
+			);
 		}
 
 

@@ -196,9 +196,14 @@ class FormConditionalRecipients {
 				throw new OutOfBoundsException('Form elements not found');
 			}
 
-			$elements = $this->form->formElements->listNested()->filter(function ($formElement) {
-				return !in_array($formElement->type, ['fieldset', 'hidden', 'freeText', 'submit']);
-			})->indexBy('identifier')->toArray();
+			$elements = $this->form->formElements
+				->listNested()
+				->filter(function ($formElement) {
+					return !in_array($formElement->type, ['fieldset', 'hidden', 'freeText', 'submit']);
+				})
+				->indexBy('identifier')
+				->toArray()
+			;
 
 			if (!array_key_exists($field, $elements)) {
 				throw new OutOfBoundsException('Field not found in form elements');
@@ -298,8 +303,14 @@ class FormConditionalRecipients {
 	 */
 	protected function compareGreaterThan(mixed $value, mixed $compareValue, bool $orEqual = false, bool $not = false): bool {
 		if (
-			!(is_numeric($value) || $this->isDateOrTime($value)) ||
-			!(is_numeric($compareValue) || $this->isDateOrTime($value))
+			!(
+				is_numeric($value)
+				|| $this->isDateOrTime($value)
+			)
+			|| !(
+				is_numeric($compareValue)
+				|| $this->isDateOrTime($value)
+			)
 		) {
 			if (is_null($compareValue)) {
 				return !$not;
@@ -334,8 +345,8 @@ class FormConditionalRecipients {
 	 */
 	protected function compareBetween(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
-			!is_array($compareValue) ||
-			count($compareValue) !== 2
+			!is_array($compareValue)
+			|| count($compareValue) !== 2
 		) {
 			return false;
 		}
@@ -346,9 +357,7 @@ class FormConditionalRecipients {
 		if (
 			array_filter(
 				$compareValues,
-				function (mixed $value): bool {
-					return !(is_numeric($value) || $this->isDateOrTime($value));
-				}
+				fn(mixed $value): bool => !(is_numeric($value) || $this->isDateOrTime($value))
 			)
 		) {
 			return false;
@@ -478,10 +487,10 @@ class FormConditionalRecipients {
 	protected function compareContains(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
 			(
-				!is_scalar($value) &&
-				!is_array($value)
-			) ||
-			!is_scalar($compareValue)
+				!is_scalar($value)
+				&& !is_array($value)
+			)
+			|| !is_scalar($compareValue)
 		) {
 			return false;
 		}
@@ -518,8 +527,8 @@ class FormConditionalRecipients {
 	 */
 	protected function compareStartsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
-			!is_scalar($value) ||
-			!is_scalar($compareValue)
+			!is_scalar($value)
+			|| !is_scalar($compareValue)
 		) {
 			return false;
 		}
@@ -545,8 +554,8 @@ class FormConditionalRecipients {
 	 */
 	protected function compareEndsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
-			!is_scalar($value) ||
-			!is_scalar($compareValue)
+			!is_scalar($value)
+			|| !is_scalar($compareValue)
 		) {
 			return false;
 		}
@@ -571,8 +580,8 @@ class FormConditionalRecipients {
 	 */
 	protected function compareRegexp(mixed $value, mixed $compareValue): bool {
 		if (
-			!is_scalar($value) ||
-			!is_scalar($compareValue)
+			!is_scalar($value)
+			|| !is_scalar($compareValue)
 		) {
 			return false;
 		}
@@ -594,7 +603,12 @@ class FormConditionalRecipients {
 	 * @return $this
 	 */
 	public function setProcessStrategy(string $processStrategy): static {
-		if (!in_array($processStrategy, [self::PROCESS_STRATEGY_MATCH_FIRST, self::PROCESS_STRATEGY_MATCH_ALL, self::PROCESS_STRATEGY_MATCH_LAST])) {
+		if (
+			!in_array(
+				$processStrategy,
+				[self::PROCESS_STRATEGY_MATCH_FIRST, self::PROCESS_STRATEGY_MATCH_ALL, self::PROCESS_STRATEGY_MATCH_LAST]
+			)
+		) {
 			throw new InvalidArgumentException('Invalid process strategy');
 		}
 
@@ -618,10 +632,10 @@ class FormConditionalRecipients {
 				ComparisonOperator::NotBetween,
 				ComparisonOperator::In,
 				ComparisonOperator::NotIn,
-			]) ||
-			(
-				is_array($value) &&
-				in_array($conditionalRecipient->operator, [
+			])
+			|| (
+				is_array($value)
+				&& in_array($conditionalRecipient->operator, [
 					ComparisonOperator::Equal,
 					ComparisonOperator::NotEqual,
 				])

@@ -14,6 +14,9 @@ use Cake\Utility\Hash;
  * @inheritDoc
  */
 class PhpConfig extends BasePhpConfig {
+	/**
+	 * @var array
+	 */
 	protected array $paths = [
 		'Awyiss' => CONFIG,
 	];

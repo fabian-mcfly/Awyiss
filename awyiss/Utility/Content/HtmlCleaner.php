@@ -40,6 +40,7 @@ class HtmlCleaner {
 	 */
 	public const string CLEAN_STRICT = 'strict';
 
+
 	/**
 	 * The default fields to clean
 	 *
@@ -76,7 +77,9 @@ class HtmlCleaner {
 				continue;
 			}
 
-			throw new InvalidArgumentException(sprintf('Invalid clean method. Expected one of `none`, `moderate`, `strict`. `%s` given.', $method));
+			throw new InvalidArgumentException(
+				sprintf('Invalid clean method. Expected one of `none`, `moderate`, `strict`. `%s` given.', $method)
+			);
 		}
 
 		if ($entity->has('_translations')) {
@@ -326,7 +329,7 @@ class HtmlCleaner {
 				continue;
 			}
 
-			// If the current node has any non-textnode children, skip it
+			// If the current node has any non-text node children, skip it
 			if ($pTag->hasChildNodes()) {
 				/** @var \Dom\Node $childNode */
 				foreach ($pTag->childNodes as $childNode) {
@@ -355,7 +358,7 @@ class HtmlCleaner {
 				preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $nextSibling->textContent)
 			) {
 				if ($nextSibling->hasChildNodes()) {
-					// If the current node has any non-textnode children, skip it
+					// If the current node has any non-text node children, skip it
 					foreach ($nextSibling->childNodes as $childNode) {
 						if ($childNode->nodeName !== '#text' && $childNode->nodeType !== XML_ENTITY_REF_NODE) {
 							continue 2;
@@ -470,9 +473,11 @@ class HtmlCleaner {
 
 			// Check if the parent node ha a follow-up sibling of type text node and not empty
 			if (
-				$brTag->parentNode->nextSibling &&
-				$brTag->parentNode->nextSibling->nodeName === '#text' &&
-				!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $brTag->parentNode->nextSibling->nodeValue)
+				$brTag->parentNode->nextSibling && $brTag->parentNode->nextSibling->nodeName === '#text'
+				&& !preg_match(
+					'/^([\s\n\r\t]|\xC2\xA0)*$/',
+					$brTag->parentNode->nextSibling->nodeValue
+				)
 			) {
 				// If a next sibling exists, move the br between the parent and the next sibling
 				$brTag->parentNode->parentNode->insertBefore($brTag, $brTag->parentNode->nextSibling);
@@ -659,7 +664,8 @@ class HtmlCleaner {
 		// If the entity has no attributes or the attributes are not an instance of Entity,
 		// the field is not valid
 		if (
-			!$entity->has('attributes') || !($entity->get('attributes') instanceof Entity)
+			!$entity->has('attributes')
+			|| !($entity->get('attributes') instanceof Entity)
 		) {
 			return false;
 		}

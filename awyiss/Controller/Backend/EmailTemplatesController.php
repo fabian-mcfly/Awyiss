@@ -95,7 +95,13 @@ class EmailTemplatesController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$emailTemplate = $this->EmailTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$emailTemplate = $this->EmailTemplates
+			->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->first()
+		;
 		if (!$emailTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -172,9 +178,10 @@ class EmailTemplatesController extends Controller {
 		$this->viewBuilder()->setClassName('Frontend');
 
 		$view
-		->setTemplatePath('Frontend/email')
-		->setLayoutPath('email')
-		->setLayout(str_replace('.twig', '', $emailTemplate->layout));
+			->setTemplatePath('Frontend/email')
+			->setLayoutPath('email')
+			->setLayout(str_replace('.twig', '', $emailTemplate->layout))
+		;
 
 		/** @var \Cake\View\HelperRegistry $helpersRegistry */
 		$helperRegistry = $view->helpers();
@@ -255,7 +262,12 @@ class EmailTemplatesController extends Controller {
 	protected function setViewVars(EmailTemplate $emailTemplate): void {
 		$placeholders = [];
 
-		$forms = $this->fetchTable('Forms')->find()->contain(['FormElements'])->toArray();
+		$forms = $this
+			->fetchTable('Forms')
+			->find()
+			->contain(['FormElements'])
+			->toArray()
+		;
 		foreach ($forms as $form) {
 			/** @var \Awyiss\Model\Entity\Form $form */
 			foreach ($form->formElements as $formElement) {

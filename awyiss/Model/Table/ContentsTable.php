@@ -70,6 +70,10 @@ class ContentsTable extends Table {
 		'identifier' => 'page',
 	];
 	/**
+	 * @var array The column indents
+	 */
+	protected array $columnIndents;
+	/**
 	 * @var array The column system
 	 */
 	protected array $columnSystem = [
@@ -81,13 +85,9 @@ class ContentsTable extends Table {
 	 */
 	protected array $columnWidths;
 	/**
-	 * @var array The column indents
-	 */
-	protected array $columnIndents;
-	/**
 	 * @var string
 	 */
-	private string $forScope;
+	protected string $forScope;
 	/**
 	 * @inheritDoc
 	 */
@@ -208,44 +208,62 @@ class ContentsTable extends Table {
 		 *
 		 * @noinspection GrazieInspection
 		 */
-		$subquery = $this->find()->select([
-			'latestPageId' => 'pageId',
-			'latestDate' => $this->find()->func()->max(
-				new FunctionExpression('COALESCE', [
-					'Contents.changedOn' => 'literal',
-					'Contents.createdOn' => 'literal',
-				])
-			),
-		])->groupBy('pageId')->applyOptions([
-			'attributes' => [
-				'skip' => true,
-			],
-		]);
+		$subquery = $this
+			->find()
+			->select([
+				'latestPageId' => 'pageId',
+				'latestDate' => $this
+					->find()
+					->func()
+					->max(
+						new FunctionExpression('COALESCE', [
+							'Contents.changedOn' => 'literal',
+							'Contents.createdOn' => 'literal',
+						])
+					),
+			])
+			->groupBy('pageId')
+			->applyOptions([
+				'attributes' => [
+					'skip' => true,
+				],
+			])
+		;
 
-		return $query->select([
-			'pageId',
-			'id',
-			'changedOn',
-			'createdOn',
-		])->innerJoin(
-			['latest' => $subquery],
-			function (QueryExpression $exp/*, SelectQuery $q*/) {
-				return $exp->eq('Contents.pageId', new IdentifierExpression('latestPageId'))->eq(
-					new FunctionExpression('COALESCE', [
-						'Contents.changedOn' => 'literal',
-						'Contents.createdOn' => 'literal',
-					]),
-					new IdentifierExpression('latestDate')
-				);
-			}
-		)->where(['Contents.deleted' => 0])->groupBy('Contents.pageId')->orderBy([
-			'Contents.changedOn' => 'DESC',
-			'Contents.createdOn' => 'DESC',
-		])->applyOptions([
-			'attributes' => [
-				'skip' => true,
-			],
-		]);
+		return $query
+			->select([
+				'pageId',
+				'id',
+				'changedOn',
+				'createdOn',
+			])
+			->innerJoin(
+				['latest' => $subquery],
+				function (QueryExpression $exp/*, SelectQuery $q*/) {
+					return $exp
+						->eq('Contents.pageId', new IdentifierExpression('latestPageId'))
+						->eq(
+							new FunctionExpression('COALESCE', [
+								'Contents.changedOn' => 'literal',
+								'Contents.createdOn' => 'literal',
+							]),
+							new IdentifierExpression('latestDate')
+						)
+					;
+				}
+			)
+			->where(['Contents.deleted' => 0])
+			->groupBy('Contents.pageId')
+			->orderBy([
+				'Contents.changedOn' => 'DESC',
+				'Contents.createdOn' => 'DESC',
+			])
+			->applyOptions([
+				'attributes' => [
+					'skip' => true,
+				],
+			])
+		;
 	}
 
 
@@ -524,7 +542,11 @@ class ContentsTable extends Table {
 			// Make sure that all children of the current entity can be moved to the target content area as well
 			if (!$this->childrenCanBeMoved($entity, $page->pageTemplateId)) {
 				$entity->setError('contentAreaId', [
-					'validContentAreaIdForChildren' => __df($this->getI18nDomain(), 'Validation', 'error_valid_content_area_id_for_children'),
+					'validContentAreaIdForChildren' => __df(
+						$this->getI18nDomain(),
+						'Validation',
+						'error_valid_content_area_id_for_children'
+					),
 				]);
 
 				return false;
@@ -563,7 +585,11 @@ class ContentsTable extends Table {
 		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
 
 
-		$rules->add($rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]), 'validSurveyId', ['errorField' => 'surveyId']);
+		$rules->add(
+			$rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]),
+			'validSurveyId',
+			['errorField' => 'surveyId']
+		);
 
 
 		$rules->add(function (Content $entity): bool {
@@ -639,7 +665,12 @@ class ContentsTable extends Table {
 				try {
 					/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */
 					$designMiddleware = Router::getRequest()->getAttribute('design');
-					$css = $compilerClass::compileScss($tempFile, ROOT . DS . CUSTOM_DIR . DS . 'asset' . DS, $designMiddleware?->getDesignVariables() ?? [], true);
+					$css = $compilerClass::compileScss(
+						$tempFile,
+						ROOT . DS . CUSTOM_DIR . DS . 'asset' . DS,
+						$designMiddleware?->getDesignVariables() ?? [],
+						true
+					);
 				}
 				catch (Exception | SassException) {
 					$css = false;
@@ -672,7 +703,11 @@ class ContentsTable extends Table {
 				$childrenContentIds = array_column($nestedChildren, 'id');
 
 				if ($childrenContentIds) {
-					$duplicatingContents = $table->find()->where(['duplicateOf IN' => $childrenContentIds])->count();
+					$duplicatingContents = $table
+						->find()
+						->where(['duplicateOf IN' => $childrenContentIds])
+						->count()
+					;
 
 					if ($duplicatingContents) {
 						return __df($this->getI18nDomain(), 'Validation', 'error_no_duplicated_children');
@@ -905,7 +940,12 @@ class ContentsTable extends Table {
 	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 	 * @return void
 	 */
-	protected function validateInputFields(Content $entity, Validator $validator, ?Validator $attributesValidator, ContentTemplate $contentTemplate): void {
+	protected function validateInputFields(
+		Content $entity,
+		Validator $validator,
+		?Validator $attributesValidator,
+		ContentTemplate $contentTemplate
+	): void {
 		$contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
 		$contentAttributes = array_column($contentAttributes, null, 'identifier');
 
@@ -1008,7 +1048,12 @@ class ContentsTable extends Table {
 	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @return void
 	 */
-	protected function validateUnassignedAttributes(ContentTemplate $contentTemplate, Content $entity, array $contentAttributes, ?Validator $attributesValidator): void {
+	protected function validateUnassignedAttributes(
+		ContentTemplate $contentTemplate,
+		Content $entity,
+		array $contentAttributes,
+		?Validator $attributesValidator
+	): void {
 		$attributes = array_keys($contentAttributes);
 
 		foreach (
@@ -1142,22 +1187,27 @@ class ContentsTable extends Table {
 		}
 
 		// Find all contents that are duplicated by nested children of the current entity
-		$duplicatedContents = $this->find()->where(['id IN' => $duplicatedContentIds])->all()->indexBy('id')->toArray();
+		$duplicatedContents = $this
+			->find()
+			->where(['id IN' => $duplicatedContentIds])
+			->all()
+			->indexBy('id')
+			->toArray()
+		;
 
-		/** @var \Awyiss\Model\Entity\Content $duplicatedContent */
-		foreach ($duplicatedContents as $duplicatedContent) {
-			/**
-			 * If any of the nested children of the current entity
-			 * is duplicating another content that is on the same page,
-			 * return an error message.
-			 *
-			 * This prevents moving a content to a page if it
-			 * would result in a content and its duplicated content
-			 * being on the same page.
-			 */
-			if ($duplicatedContent->pageId === $entity->pageId) {
-				return __df($this->getI18nDomain(), 'Validation', 'error_children_not_duplicating_contents_on_same_page');
-			}
+		/**
+		 * If any of the nested children of the current entity
+		 * is duplicating another content that is on the same page,
+		 * return an error message.
+		 *
+		 * This prevents moving a content to a page if it
+		 * would result in a content and its duplicated content
+		 * being on the same page.
+		 *
+		 * @var \Awyiss\Model\Entity\Content $duplicatedContent
+		 */
+		if (array_any($duplicatedContents, fn($duplicatedContent) => $duplicatedContent->pageId === $entity->pageId)) {
+			return __df($this->getI18nDomain(), 'Validation', 'error_children_not_duplicating_contents_on_same_page');
 		}
 
 		return true;
@@ -1174,20 +1224,43 @@ class ContentsTable extends Table {
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
 		if ($column === 'contentTemplateId') {
-			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('ContentTemplates')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 		if ($column === 'duplicateOf') {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			return $this->find('threaded')->find('mediaAssignments', useMediaEntity: true)->all()->listNested()->printer('label', 'id', '- ')->toArray();
+			return $this
+				->find('threaded')
+				->find('mediaAssignments', useMediaEntity: true)
+				->all()
+				->listNested()
+				->printer(
+					'label',
+					'id',
+					'- '
+				)
+				->toArray()
+			;
 		}
 
 		if ($column === 'formId') {
-			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('Forms')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 		if ($column === 'surveyId') {
-			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
+			return $this
+				->getAssociation('Surveys')
+				->find('list', valueField: 'label')
+				->toArray()
+			;
 		}
 
 		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
