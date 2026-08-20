@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.1\n"
+"Project-Id-Version: 0.2.9\n"
 "POT-Creation-Date: 2024-05-11 19:35+0000\n"
-"PO-Revision-Date: 2025-09-02 14:58+0000\n"
+"PO-Revision-Date: 2026-08-20 11:50+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -505,6 +505,9 @@ msgstr "Enabled"
 msgid "configuration_identifier_backend_lock_session_based"
 msgstr "Session-based"
 
+msgid "configuration_identifier_frontend_timezone"
+msgstr "Timezone"
+
 msgid "configuration_identifier_backend_timezone"
 msgstr "Timezone"
 
@@ -538,7 +541,7 @@ msgstr "OpenRouteService API Key"
 msgid "configuration_identifier_frontend_route_routing_service"
 msgstr "Route-Planer Service"
 
-msgid "configuration_category_frontend_publication"
+msgid "configuration_category_frontend_publication_data"
 msgstr "Publication"
 
 msgid "configuration_identifier_frontend_publication_data_check_ancestor_pages_publication_status"
