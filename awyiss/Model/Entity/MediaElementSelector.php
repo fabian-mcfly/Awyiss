@@ -22,7 +22,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaElement $mediaElement
  * @property \Awyiss\Model\Entity\MediaSelector $mediaSelector
- * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  */
 class MediaElementSelector extends Entity {
 	/**
@@ -53,7 +53,7 @@ class MediaElementSelector extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {

@@ -8,7 +8,7 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -128,7 +128,7 @@ class FormElementsController extends Controller {
 			->all()
 		;
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->FormElements->getColumnSystemClass();
 
 		$form = $this

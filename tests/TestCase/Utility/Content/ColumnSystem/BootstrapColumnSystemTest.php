@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Test\TestCase\Utility\Content;
+namespace Awyiss\Test\TestCase\Utility\Content\ColumnSystem;
 
 
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\BootstrapColumn;
-use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\BootstrapColumn;
+use Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem;
 
 
 /**
  * Test case for BootstrapColumnSystem
  *
- * @see \Awyiss\Utility\Content\BootstrapColumnSystem
+ * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem
  */
 class BootstrapColumnSystemTest extends TestCase {
 	/**
@@ -27,7 +27,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsReturnsCorrectNumberOfColumns(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -38,7 +38,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsReturnsBootstrapColumnInstances(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -51,7 +51,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsContainsCorrectFractions(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -64,7 +64,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsColumnsHaveCorrectNumeratorAndDenominator(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -81,7 +81,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsExcludesFullWidthColumn(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -92,7 +92,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsReturnsCorrectNumberOfIndents(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -103,7 +103,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsContainsCorrectFractions(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -116,7 +116,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsColumnsHaveOffsetCssClassPrefix(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -130,7 +130,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsColumnsHaveCorrectNumeratorAndDenominator(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -147,7 +147,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getName()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getName()
 	 */
 	public function testGetNameReturnsBootstrap(): void {
 		$name = BootstrapColumnSystem::getName();
@@ -158,7 +158,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getScssFilePaths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::getScssFilePaths()
 	 */
 	public function testGetScssFilePaths(): void {
 		$filePaths = BootstrapColumnSystem::getScssFilePaths();
@@ -169,7 +169,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorChangesColumnCount(): void {
 		BootstrapColumnSystem::setMaxDenominator(6);
@@ -181,7 +181,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorChangesColumnFractions(): void {
 		BootstrapColumnSystem::setMaxDenominator(4);
@@ -194,7 +194,7 @@ class BootstrapColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorAffectsColumnIndents(): void {
 		BootstrapColumnSystem::setMaxDenominator(3);

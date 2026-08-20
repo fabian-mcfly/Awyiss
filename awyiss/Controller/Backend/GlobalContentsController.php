@@ -11,7 +11,7 @@ use Awyiss\Model\Entity\GlobalContentTemplate;
 use Awyiss\Model\Entity\GlobalContentTemplateElement;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -118,7 +118,7 @@ class GlobalContentsController extends Controller {
 		$globalContents = $globalContents->groupBy('identifier')->toArray();
 		ksort($globalContents);
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->GlobalContents->getColumnSystemClass();
 
 		$globalContentTemplates = $this

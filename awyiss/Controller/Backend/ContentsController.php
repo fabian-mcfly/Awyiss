@@ -15,7 +15,7 @@ use Awyiss\Model\Entity\ContentTemplateElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Awyiss\Utility\Inflector;
 use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\Collection;
@@ -155,7 +155,7 @@ class ContentsController extends Controller {
 			$contentAreas[ $contentAreaId ] = null;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $columnSystemClass */
 		$columnSystemClass = $this->Contents->getColumnSystemClass();
 
 		$contentTemplates = $this

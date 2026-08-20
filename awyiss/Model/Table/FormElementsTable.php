@@ -9,7 +9,7 @@ use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -167,7 +167,7 @@ class FormElementsTable extends Table {
 
 
 	/**
-	 * @return class-string<\Awyiss\Utility\Content\ColumnSystemInterface>
+	 * @return class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface>
 	 */
 	public function getColumnSystemClass(): string {
 		return $this->columnSystem['className'];
@@ -197,7 +197,7 @@ class FormElementsTable extends Table {
 		// Use the column system of contents
 		$this->columnSystem = array_merge($this->columnSystem, LocalConfig::read('columnSystem', [], 'Contents'));
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $className */
 		$className = $this->columnSystem['className'];
 		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
@@ -399,9 +399,9 @@ class FormElementsTable extends Table {
 		]);
 
 		$rules->add(function (FormElement $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $width */
 			$width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $indent */
 			$indent = $entity->column['indent'];
 
 			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);

@@ -10,7 +10,7 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Arrays;
-use Awyiss\Utility\Content\BackendColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;

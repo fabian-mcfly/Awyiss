@@ -21,7 +21,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $required
  * @property int $systemOrder
  * @property \Awyiss\Model\Entity\GlobalContentTemplate $globalContentTemplate
- * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  */
 class GlobalContentTemplateElement extends Entity {
 	/**
@@ -65,7 +65,7 @@ class GlobalContentTemplateElement extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {

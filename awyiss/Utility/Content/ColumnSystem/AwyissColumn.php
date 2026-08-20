@@ -1,26 +1,23 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Content;
+namespace Awyiss\Utility\Content\ColumnSystem;
+
+
+use function __dx;
 
 
 /**
- * Class BootstrapColumn
+ * Class AwyissColumn
  */
-class BootstrapColumn extends AbstractColumn {
-	/**
-	 * @var string
-	 */
-	protected string $cssClassPrefix = 'col-md';
-
-
+class AwyissColumn extends AbstractColumn {
 	/**
 	 * @inheritDoc
 	 */
 	public function getLabel(): string {
 		if (!isset($this->label)) {
 			return $this->numerator === $this->denominator
-				? __dx('ColumnSystem', 'bootstrap', 'column_width_full')
+				? __dx('ColumnSystem', 'awyiss', 'column_width_full')
 				: __dx(
 					'ColumnSystem',
 					'awyiss',
@@ -32,13 +29,5 @@ class BootstrapColumn extends AbstractColumn {
 
 
 		return $this->label;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getCssClass(): string {
-		return $this->cssClassPrefix . '-' . $this->numerator;
 	}
 }

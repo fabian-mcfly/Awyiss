@@ -43,7 +43,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\Form $form
  * @property \Awyiss\Model\Entity\FormElement $parentFormElement
  * @property \Awyiss\Model\Entity\FormElement[] $childFormElements
- * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{width: \Awyiss\Utility\Content\ColumnSystem\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  * @property array|null $parentFormElements
  * @property array|bool|null $disabled
  * @property array|bool|null $readonly
@@ -201,7 +201,7 @@ class FormElement extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {

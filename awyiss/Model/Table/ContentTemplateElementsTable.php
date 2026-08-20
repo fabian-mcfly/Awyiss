@@ -6,7 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\BackendColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\BackendColumnSystem;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 

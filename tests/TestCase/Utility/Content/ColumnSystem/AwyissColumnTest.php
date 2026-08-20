@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Test\TestCase\Utility\Content;
+namespace Awyiss\Test\TestCase\Utility\Content\ColumnSystem;
 
 
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\AwyissColumn;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumn;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestWith;
 
@@ -13,12 +13,12 @@ use PHPUnit\Framework\Attributes\TestWith;
 /**
  * Test case for AwyissColumn
  *
- * @see \Awyiss\Utility\Content\AwyissColumn
+ * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn
  */
 class AwyissColumnTest extends TestCase {
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getLabel()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getLabel()
 	 */
 	public function testGetLabelWhenLabelIsNotSet(): void {
 		$column = new AwyissColumn(6, 12);
@@ -39,7 +39,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getLabel()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getLabel()
 	 */
 	public function testGetLabelWhenLabelIsSet(): void {
 		$column = new AwyissColumn(6, 12, 'Custom Label');
@@ -53,7 +53,7 @@ class AwyissColumnTest extends TestCase {
 	 * @param int $denominator
 	 * @param string $expectedPercentage
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getLabel()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getLabel()
 	 */
 	#[TestWith([3, 12, '25%'])]
 	#[TestWith([4, 12, '33%'])]
@@ -70,7 +70,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testGetPercentageWithDefaultPrecision(): void {
 		$column = new AwyissColumn(1, 3);
@@ -83,7 +83,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testGetPercentageWithCustomPrecision(): void {
 		$column = new AwyissColumn(1, 3);
@@ -96,7 +96,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testGetPercentageWithZeroPrecision(): void {
 		$column = new AwyissColumn(1, 3);
@@ -109,7 +109,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testGetPercentageWithHighPrecision(): void {
 		$column = new AwyissColumn(1, 6);
@@ -122,7 +122,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testGetPercentageWithFullWidth(): void {
 		$column = new AwyissColumn(12, 12);
@@ -135,7 +135,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::__construct()
 	 */
 	public function testConstructorWithZeroDenominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -146,7 +146,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::__construct()
 	 */
 	public function testConstructorWithNegativeNominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -157,7 +157,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::__construct()
 	 */
 	public function testConstructorWithNegativeDenominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -168,7 +168,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::getPercentage()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::getPercentage()
 	 */
 	public function testNumeratorGreaterThanDenominator(): void {
 		$column = new AwyissColumn(15, 12);
@@ -181,7 +181,7 @@ class AwyissColumnTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumn::jsonSerialize()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::jsonSerialize()
 	 */
 	public function testJsonSerialize(): void {
 		$column = new AwyissColumn(6, 12);

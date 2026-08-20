@@ -47,7 +47,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\GlobalContent[] $childGlobalContents
  * @property \Awyiss\Model\Entity\Form|null $form
  * @property \Awyiss\Model\Entity\Survey|null $survey
- * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{width: \Awyiss\Utility\Content\ColumnSystem\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  * @property array|null $parentGlobalContents
  * @property float|null $realColumnWidth
  * @property int $realSystemOrder
@@ -167,7 +167,7 @@ class GlobalContent extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {

@@ -161,7 +161,7 @@ class ConfigurationListenerTest extends TestCase {
 			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'columnSystem.className',
-			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
+			'value' => '\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem',
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
@@ -169,7 +169,7 @@ class ConfigurationListenerTest extends TestCase {
 
 		$this->listener->afterSaveCommit($event, $entity, $options);
 
-		$this->assertSame('\Awyiss\Utility\Content\BootstrapColumnSystem', Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
+		$this->assertSame('\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem', Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
 	}
 
 
@@ -1179,7 +1179,7 @@ class ConfigurationListenerTest extends TestCase {
 			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'columnSystem.className',
-			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
+			'value' => '\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem',
 		]);
 
 		$event = new Event('Model.Configuration.afterDeleteCommit');

@@ -6,7 +6,7 @@ namespace Awyiss\Test\TestCase\Model\Entity;
 
 use Awyiss\Model\Entity\GlobalContentTemplateElement;
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\BootstrapColumn;
+use Awyiss\Utility\Content\ColumnSystem\BootstrapColumn;
 use Cake\Datasource\FactoryLocator;
 
 

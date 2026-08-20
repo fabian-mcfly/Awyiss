@@ -512,7 +512,7 @@ class AttributesHelper extends Helper {
 			}
 		}
 
-		/** @var \Awyiss\Utility\Content\AbstractColumn $columnSpan */
+		/** @var \Awyiss\Utility\Content\ColumnSystem\AbstractColumn $columnSpan */
 		$columnSpan = $attributeFields[ $fieldName ]->column['span'];
 		if ($columnSpan->getNumerator() !== 12) {
 			$options['columnSpan'] = $columnSpan->getNumerator();

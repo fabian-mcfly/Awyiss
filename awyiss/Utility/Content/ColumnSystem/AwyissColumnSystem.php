@@ -1,7 +1,10 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Content;
+namespace Awyiss\Utility\Content\ColumnSystem;
+
+
+use const DS;
 
 
 /**

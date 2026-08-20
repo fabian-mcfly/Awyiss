@@ -10,7 +10,7 @@ use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Core\App;
-use Awyiss\Utility\Content\ColumnSystemInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface;
 
 
 /**
@@ -27,7 +27,7 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'columnSystem' => [
 				new ConfigOption(
-					defaultValue: '\Awyiss\Utility\Content\AwyissColumnSystem',
+					defaultValue: '\Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem',
 					identifier: 'className',
 					localizable: false,
 					nullable: false,
@@ -86,15 +86,15 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @return array<<class-string<ColumnSystemInterface>, string>
+	 * @return array<<class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface>, string>
 	 */
 	protected function getColumnSystemClasses(): array {
 		$classes = [];
 
-		/** @var class-string<ColumnSystemInterface> $class */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $class */
 		$foundClasses = App::classes(
 			'*',
-			'Utility/Content',
+			'Utility/Content/ColumnSystem',
 			'ColumnSystem',
 			ColumnSystemInterface::class,
 			blocklistedClassNames: ['BackendColumnSystem']

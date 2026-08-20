@@ -6,7 +6,7 @@ namespace Awyiss\Utility\Design;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
-use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Log\Log;
@@ -308,7 +308,7 @@ class ScssCompiler {
 		/**
 		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
 		 *
-		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $columnSystemClassName
+		 * @var \Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface $columnSystemClassName
 		 */
 		$columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className', AwyissColumnSystem::class);
 		$columnSystemFilePaths = $columnSystemClassName::getScssFilePaths();
@@ -384,7 +384,7 @@ class ScssCompiler {
 		/**
 		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
 		 *
-		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $columnSystemClassName
+		 * @var \Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface $columnSystemClassName
 		 */
 		$columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className', AwyissColumnSystem::class);
 		$columnSystemClassName::setMaxDenominator(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns', 5));

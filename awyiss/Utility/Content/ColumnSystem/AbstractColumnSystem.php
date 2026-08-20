@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Content;
+namespace Awyiss\Utility\Content\ColumnSystem;
 
 
 use RuntimeException;
@@ -109,7 +109,7 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 				// Avoid adding duplicates
 				if (!array_key_exists($fraction, $fractions)) {
 					/**
-					 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
+					 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumn::__construct()
 					 */
 					$fractions[ $fraction ] = new static::$columnClassName(
 						numerator: $simplifiedNumerator,

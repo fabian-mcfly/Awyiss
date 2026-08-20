@@ -13,7 +13,7 @@ use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
 use Cake\Database\Expression\FunctionExpression;
@@ -165,7 +165,7 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @return class-string<\Awyiss\Utility\Content\ColumnSystemInterface>
+	 * @return class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface>
 	 */
 	public function getColumnSystemClass(): string {
 		return $this->columnSystem['className'];
@@ -295,7 +295,7 @@ class ContentsTable extends Table {
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $className */
 		$className = $this->columnSystem['className'];
 		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
@@ -593,9 +593,9 @@ class ContentsTable extends Table {
 
 
 		$rules->add(function (Content $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $width */
 			$width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $indent */
 			$indent = $entity->column['indent'];
 
 			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);

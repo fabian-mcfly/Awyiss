@@ -10,7 +10,7 @@ use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\BootstrapColumn;
+use Awyiss\Utility\Content\ColumnSystem\BootstrapColumn;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
 

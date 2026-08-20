@@ -1,19 +1,19 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Test\TestCase\Utility\Content;
+namespace Awyiss\Test\TestCase\Utility\Content\ColumnSystem;
 
 
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\AwyissColumn;
-use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumn;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
 use PHPUnit\Framework\Attributes\TestWith;
 
 
 /**
  * Test case for AwyissColumnSystem
  *
- * @see \Awyiss\Utility\Content\AwyissColumnSystem
+ * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem
  */
 class AwyissColumnSystemTest extends TestCase {
 	/**
@@ -28,7 +28,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsReturnsCorrectNumberOfColumns(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -39,7 +39,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsReturnsAwyissColumnInstances(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -52,7 +52,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnWidths()
 	 */
 	public function testGetColumnWidthsContainsCorrectFractions(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -67,7 +67,7 @@ class AwyissColumnSystemTest extends TestCase {
 	 * @param int $numerator
 	 * @param int $denominator
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnWidths()
 	 */
 	#[TestWith([1, 1])]
 	#[TestWith([1, 2])]
@@ -90,7 +90,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsExcludesFullWidthColumn(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -101,7 +101,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsReturnsCorrectNumberOfIndents(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -112,7 +112,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsContainsCorrectFractions(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -125,7 +125,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnIndents()
 	 */
 	public function testGetColumnIndentsColumnsHaveOffsetCssClassPrefix(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -141,7 +141,7 @@ class AwyissColumnSystemTest extends TestCase {
 	 * @param int $numerator
 	 * @param int $denominator
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getColumnIndents()
 	 */
 	#[TestWith([1, 2])]
 	#[TestWith([1, 3])]
@@ -163,7 +163,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getName()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getName()
 	 */
 	public function testGetNameReturnsAwyiss(): void {
 		$name = AwyissColumnSystem::getName();
@@ -174,7 +174,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getScssFilePaths()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::getScssFilePaths()
 	 */
 	public function testGetScssFilePaths(): void {
 		$filePaths = AwyissColumnSystem::getScssFilePaths();
@@ -184,14 +184,15 @@ class AwyissColumnSystemTest extends TestCase {
 		$this->assertArrayHasKey('post', $filePaths);
 		$this->assertArrayHasKey(0, $filePaths['post']);
 
-		$this->assertEquals(ROOT . DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_helpers.scss']), $filePaths['pre'][0]);
-		$this->assertEquals(ROOT . DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_content_elements.scss']), $filePaths['post'][0]);
+		$this->assertEquals(\ROOT . \DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_helpers.scss']), $filePaths['pre'][0]);
+		$this->assertEquals(
+			\ROOT . \DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_content_elements.scss']), $filePaths['post'][0]);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorChangesColumnCount(): void {
 		AwyissColumnSystem::setMaxDenominator(6);
@@ -203,7 +204,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorChangesColumnFractions(): void {
 		AwyissColumnSystem::setMaxDenominator(4);
@@ -216,7 +217,7 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
+	 * @see \Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem::setMaxDenominator()
 	 */
 	public function testSetMaxDenominatorAffectsColumnIndents(): void {
 		AwyissColumnSystem::setMaxDenominator(3);

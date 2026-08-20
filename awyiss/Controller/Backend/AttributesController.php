@@ -10,7 +10,7 @@ use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
 use Awyiss\Model\Table\GenericDatatablesTable;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;

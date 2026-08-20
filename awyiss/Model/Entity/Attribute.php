@@ -34,7 +34,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  */
 class Attribute extends Entity {
 	/**
@@ -80,7 +80,7 @@ class Attribute extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {

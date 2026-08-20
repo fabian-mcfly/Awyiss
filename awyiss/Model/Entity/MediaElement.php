@@ -27,7 +27,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface} $column
  * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaElementAssignment[] $mediaElementAssignments
  * @property \Awyiss\Model\Entity\MediaElementSelector[] $mediaElementSelectors
@@ -78,7 +78,7 @@ class MediaElement extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnSystem\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {

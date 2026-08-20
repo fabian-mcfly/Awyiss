@@ -9,7 +9,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\BackendColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;

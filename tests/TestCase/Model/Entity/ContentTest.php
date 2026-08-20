@@ -6,7 +6,7 @@ namespace Awyiss\Test\TestCase\Model\Entity;
 
 use Awyiss\Model\Entity\Content;
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Cake\Datasource\FactoryLocator;
 
 

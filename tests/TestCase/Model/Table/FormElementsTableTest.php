@@ -12,9 +12,9 @@ use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Content\AwyissColumn;
-use Awyiss\Utility\Content\AwyissColumnSystem;
-use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumn;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
 

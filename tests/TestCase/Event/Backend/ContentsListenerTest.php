@@ -166,14 +166,14 @@ class ContentsListenerTest extends TestCase {
 			'scope' => 'Contents',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'columnSystem.className',
-			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
+			'value' => '\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem',
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
 
 		$this->listener->recompileAfterClassNameSave($event, $entity);
 
-		$this->assertSame('\Awyiss\Utility\Content\BootstrapColumnSystem', Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
+		$this->assertSame('\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem', Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
 	}
 
 

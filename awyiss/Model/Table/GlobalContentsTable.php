@@ -10,7 +10,7 @@ use Awyiss\Model\Entity\GlobalContent;
 use Awyiss\Model\Entity\GlobalContentTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem;
 use Awyiss\Validation\Validator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -127,7 +127,7 @@ class GlobalContentsTable extends Table {
 
 
 	/**
-	 * @return class-string<\Awyiss\Utility\Content\ColumnSystemInterface>
+	 * @return class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface>
 	 */
 	public function getColumnSystemClass(): string {
 		return $this->columnSystem['className'];
@@ -157,7 +157,7 @@ class GlobalContentsTable extends Table {
 		// Use the column system of contents
 		$this->columnSystem = array_merge($this->columnSystem, LocalConfig::read('columnSystem', [], 'Contents'));
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystem\ColumnSystemInterface> $className */
 		$className = $this->columnSystem['className'];
 		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
@@ -381,9 +381,9 @@ class GlobalContentsTable extends Table {
 
 
 		$rules->add(function (GlobalContent $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $width */
 			$width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			/** @var \Awyiss\Utility\Content\ColumnSystem\ColumnInterface $indent */
 			$indent = $entity->column['indent'];
 
 			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);

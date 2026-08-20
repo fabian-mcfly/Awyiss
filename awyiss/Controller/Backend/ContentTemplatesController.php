@@ -9,7 +9,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;

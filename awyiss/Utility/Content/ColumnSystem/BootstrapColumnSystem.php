@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Content;
+namespace Awyiss\Utility\Content\ColumnSystem;
 
 
 /**
@@ -68,7 +68,7 @@ class BootstrapColumnSystem extends AbstractColumnSystem {
 			$fraction = $i . '/' . $maxDenominator;
 
 			/**
-			 * @see \Awyiss\Utility\Content\BootstrapColumn::__construct()
+			 * @see \Awyiss\Utility\Content\ColumnSystem\BootstrapColumn::__construct()
 			 */
 			$fractions[ $fraction ] = new static::$columnClassName(
 				numerator: $i,

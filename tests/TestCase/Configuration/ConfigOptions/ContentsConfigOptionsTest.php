@@ -46,14 +46,14 @@ class ContentsConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.columnSystem.className']->isLocalizable());
 		$this->assertFalse($configOptions['Backend.columnSystem.className']->isNullable());
 		$this->assertFalse($configOptions['Backend.columnSystem.className']->isPersonalizable());
-		$this->assertSame('\Awyiss\Utility\Content\AwyissColumnSystem', $configOptions['Backend.columnSystem.className']->getDefaultValue());
+		$this->assertSame('\Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem', $configOptions['Backend.columnSystem.className']->getDefaultValue());
 		$this->assertSame('Awyiss', $configOptions['Backend.columnSystem.className']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.columnSystem.className']->getType());
 		$this->assertNull($configOptions['Backend.columnSystem.className']->getTypecast());
 		$this->assertNull($configOptions['Backend.columnSystem.className']->getValidate());
 		$this->assertSame([
-			'\Awyiss\Utility\Content\AwyissColumnSystem' => 'Awyiss',
-			'\Awyiss\Utility\Content\BootstrapColumnSystem' => 'Bootstrap',
+			'\Awyiss\Utility\Content\ColumnSystem\AwyissColumnSystem' => 'Awyiss',
+			'\Awyiss\Utility\Content\ColumnSystem\BootstrapColumnSystem' => 'Bootstrap',
 		], $configOptions['Backend.columnSystem.className']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.columnSystem.maxColumns', $configOptions);
