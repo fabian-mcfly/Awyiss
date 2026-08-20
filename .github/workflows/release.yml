@@ -75,84 +75,39 @@ jobs:
           
           echo "" >> CHANGELOG.txt
           echo "---" >> CHANGELOG.txt
-          echo "" >> CHANGELOG.txt
-          echo "### Downloads" >> CHANGELOG.txt
-          echo "" >> CHANGELOG.txt
-          echo "- **Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip**: Source code only (requires \`composer install\`)" >> CHANGELOG.txt
-          echo "- **Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip**: Full package with all dependencies (ready to deploy)" >> CHANGELOG.txt
-
-      - name: Create source archive (without dependencies)
-        run: |
-          # Create temporary directory for source files
-          mkdir -p release-source
-          
-          # Copy all files except ignored ones
-          rsync -av \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='.idea' \
-            --exclude='.phpunit.cache' \
-            --exclude='.env' \
-            --exclude='release-source' \
-            ./ release-source/
-          
-          # Create zip archive
-          cd release-source
-          zip -r ../Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip .
-          cd ..
-          
-          echo "Source archive created: Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip"
-          ls -lh Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, intl, pdo_sqlite
-          coverage: none
-
-      - name: Validate composer.json
-        run: composer validate --strict
-
-      - name: Install Composer dependencies
-        run: composer install --optimize-autoloader --no-interaction
-
-      - name: Create full archive (with dependencies)
-        run: |
-          # Create temporary directory for full package
-          mkdir -p release-full
-          
-          # Remove release-source directory if it exists to avoid conflicts
-          rm -rf release-source
-          
-          # Copy all files except ignored ones
-          rsync -av \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='.idea' \
-            --exclude='.phpunit.cache' \
-            --exclude='.env' \
-            --exclude='release-full' \
-            --exclude='Awyiss-*.zip' \
-            ./ release-full/
-          
-          # Create zip archive
-          cd release-full
-          zip -r ../Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip .
-          cd ..
-          
-          echo "Full archive created: Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip"
-          ls -lh Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ steps.get_version.outputs.VERSION }}
           body_path: CHANGELOG.txt
-          files: |
-            Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip
-            Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip
-          draft: false
+          draft: true
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send draft release email notification
+        if: >-
+          ${{
+            secrets.RELEASE_NOTIFY_EMAIL != '' &&
+            secrets.SMTP_SERVER != '' &&
+            secrets.SMTP_USERNAME != '' &&
+            secrets.SMTP_PASSWORD != ''
+          }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT || '587' }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "[Awyiss] Draft Release erstellt: ${{ steps.get_version.outputs.VERSION }}"
+          to: ${{ secrets.RELEASE_NOTIFY_EMAIL }}
+          from: ${{ secrets.SMTP_FROM || secrets.SMTP_USERNAME }}
+          body: |
+            Es wurde ein Draft-Release erstellt.
+
+            Repository: ${{ github.repository }}
+            Version: ${{ steps.get_version.outputs.VERSION }}
+            Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Draft-Release ansehen: ${{ github.server_url }}/${{ github.repository }}/releases
+
