@@ -14,7 +14,7 @@
     <option name="HEX_COLOR_LONG_FORMAT" value="true" />
     <option name="KEEP_SINGLE_LINE_BLOCKS" value="true" />
     <option name="SPACE_AFTER_COLON" value="false" />
-    <option name="ENFORCE_QUOTES_ON_FORMAT" value="true" />
+    <option name="USE_DOUBLE_QUOTES" value="false" />
   </CssCodeStyleSettings>
   <HTMLCodeStyleSettings>
     <option name="HTML_ALIGN_ATTRIBUTES" value="false" />
@@ -63,7 +63,7 @@
     <option name="HEX_COLOR_UPPER_CASE" value="true" />
     <option name="HEX_COLOR_LONG_FORMAT" value="true" />
     <option name="SPACE_AFTER_COLON" value="false" />
-    <option name="ENFORCE_QUOTES_ON_FORMAT" value="true" />
+    <option name="USE_DOUBLE_QUOTES" value="false" />
   </ScssCodeStyleSettings>
   <codeStyleSettings language="Blade">
     <indentOptions>
@@ -261,7 +261,11 @@
     </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="Twig">
+    <option name="RIGHT_MARGIN" value="200" />
+    <option name="WRAP_ON_TYPING" value="0" />
+    <option name="SOFT_MARGINS" value="200" />
     <indentOptions>
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
       <option name="USE_TAB_CHARACTER" value="true" />
     </indentOptions>
   </codeStyleSettings>
