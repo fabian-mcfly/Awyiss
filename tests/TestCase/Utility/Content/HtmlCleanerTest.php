@@ -29,6 +29,7 @@ class HtmlCleanerTest extends TestCase {
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>
+<p class="Textsize-LikeH4">&laquo;\u{202F}Max Mustermann\u{202F}&raquo;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>Before ending empty p-tags</p>
@@ -117,6 +118,7 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>
+<p class="Textsize-LikeH4">«\u{202F}Max Mustermann\u{202F}»</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>Before ending empty p-tags</p>
@@ -186,6 +188,7 @@ HTML,
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>
+<p class="Textsize-LikeH4">«\u{202F}Max Mustermann\u{202F}»</p>
 <p>&nbsp;</p>
 <p>Before ending empty p-tags</p>
 <p>&nbsp;</p>

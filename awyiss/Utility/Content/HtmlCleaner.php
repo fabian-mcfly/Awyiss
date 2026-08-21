@@ -550,7 +550,7 @@ class HtmlCleaner {
 			while ($tag->firstChild) {
 				if ($tag->firstChild->nodeName === '#text') {
 					$content = $tag->firstChild->nodeValue;
-					$content = ltrim($content, "\t\n\r\xC2\xA0 ");
+					$content = mb_ltrim($content);
 
 					$tag->firstChild->nodeValue = $content;
 
@@ -579,7 +579,7 @@ class HtmlCleaner {
 			while ($tag->lastChild) {
 				if ($tag->lastChild->nodeName === '#text') {
 					$content = $tag->lastChild->nodeValue;
-					$content = rtrim($content, "\t\n\r\xC2\xA0 ");
+					$content = mb_rtrim($content);
 
 					$tag->lastChild->nodeValue = $content;
 
