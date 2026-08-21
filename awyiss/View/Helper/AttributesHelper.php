@@ -405,7 +405,7 @@ class AttributesHelper extends Helper {
 			->combine(
 				'identifier',
 				fn(Attribute $entity) => $entity,
-				fn(Attribute $entity) => $entity->fieldset
+				fn(Attribute $entity) => $entity->fieldset ?? ''
 			)
 			->toArray()
 		;
