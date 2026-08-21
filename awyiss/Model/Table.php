@@ -1223,8 +1223,6 @@ class Table extends BaseTable {
 			/** @var \Awyiss\Utility\Content\Typography\TypographyFixer $className */
 			$className = App::className('TypographyFixer', 'Utility/Content/Typography');
 			$className::format($entity, $languageShortcode);
-
-			dd($entity->get('_translations'));
 		}
 	}
 
