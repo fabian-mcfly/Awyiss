@@ -460,7 +460,7 @@ class ImageHandler {
 				'mediaElementId' => 5,
 				'mediaElementSelectorIdentifier' => 'inlineImgTag',
 				'mediaId' => $mediaItem->id,
-				'scope' => Inflector::underscore($entity->getSource()),
+				'scope' => Inflector::camelize($entity->getSource()),
 			]);
 
 			// Copy the original assignment ID if it exists, but only if the entity is not new
