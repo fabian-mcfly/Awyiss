@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Content;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\I18n;
 use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
@@ -558,9 +559,23 @@ class ImageHandler {
 	 * @noinspection DuplicatedCode
 	 */
 	protected static function getDefaultFields(EntityInterface $entity): array {
+		if ($entity instanceof I18n) {
+			if (
+				$entity->has('content')
+				&& (
+					str_contains($entity->get('content'), '<img')
+					|| str_contains($entity->get('content'), '<awyiss-responsive-image')
+				)
+			) {
+				return ['content'];
+			}
+			else {
+				return [];
+			}
+		}
+
 		/** @var \Awyiss\Model\Table $table */
 		$table = FactoryLocator::get('Table')->get($entity->getSource());
-
 
 		if (!$table->hasBehavior('Attributes') || !$table->hasAttributes()) {
 			return static::$defaultFields;
