@@ -7,6 +7,7 @@ namespace Awyiss\Utility\Content;
 use Awyiss\Model\Entity;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
+use Dom\HTMLCollection;
 use Dom\HTMLDocument;
 use Dom\XPath;
 use InvalidArgumentException;
@@ -128,6 +129,9 @@ class HtmlCleaner {
 		$value = $entity->get($field);
 		$dom = static::getDom($value);
 
+		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
+		static::removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems($dom);
+
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
 
@@ -136,9 +140,6 @@ class HtmlCleaner {
 
 		// Replace &nbsp; after a dot, comma, question mark, or exclamation mark with a regular space
 		static::replaceNbspAfterPunctuation($dom);
-
-		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
-		static::removeLeadingAndTrailingWhitespace($dom);
 
 		// Combine consecutive whitespaces
 		static::combineConsecutiveWhitespace($dom);
@@ -159,6 +160,9 @@ class HtmlCleaner {
 		$value = $entity->get($field);
 		$dom = static::getDom($value);
 
+		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
+		static::removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems($dom);
+
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
 
@@ -173,9 +177,6 @@ class HtmlCleaner {
 
 		// Convert multiple consecutive `<br>`-tags to a single `<br>`-tag
 		static::combineConsecutiveBrTags($dom);
-
-		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
-		static::removeLeadingAndTrailingWhitespace($dom);
 
 		// Combine consecutive whitespaces
 		static::combineConsecutiveWhitespace($dom);
@@ -212,43 +213,33 @@ class HtmlCleaner {
 	 * @return void
 	 */
 	protected static function cleanEmptyTags(HtmlDocument $dom): void {
-		// Get all tags inside the `<body>`-tag
+		// Clean all list items, list tags, starting from the items, because if the list items are empty, the list tags will be empty too
+		$tags = array_merge(
+			iterator_to_array($dom->getElementsByTagName('li')),
+			iterator_to_array($dom->getElementsByTagName('dd')),
+			iterator_to_array($dom->getElementsByTagName('dt')),
+			iterator_to_array($dom->getElementsByTagName('ul')),
+			iterator_to_array($dom->getElementsByTagName('ol')),
+			iterator_to_array($dom->getElementsByTagName('dl'))
+		);
+		static::doCleanEmptyTags($tags, [
+			'LI' => false,
+			'DD' => false,
+			'DT' => false,
+			'UL' => false,
+			'OL' => false,
+			'DL' => false,
+		]);
+
+		// Get all direct child tags inside the `<body>`-tag
 		$body = $dom->getElementsByTagName('body')->item(0);
 		$tags = $body->getElementsByTagName('*');
 
-		/** @var \Dom\Node $tag */
-		foreach ($tags as $tag) {
-			if (in_array($tag->nodeName, ['BR', 'HR', 'IMG'])) {
-				continue;
-			}
-
-			$content = $tag->textContent;
-
-			// If the text content is a non-breaking space, do nothing
-			if (in_array($content, ['', '&nbsp;', "\u{A0}"], true)) {
-				continue;
-			}
-
-			// Check if the content of the tag is empty or only contains whitespaces or non-breaking spaces
-			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $content)) {
-				if (in_array($tag->nodeName, ['UL', 'OL', 'DL'])) {
-					if ($tag->nextSibling && $tag->nextSibling->nodeName === '#text') {
-						$tag->parentNode->removeChild($tag->nextSibling);
-					}
-
-					// Empty lists? Remove them
-					$tag->parentNode->removeChild($tag);
-					continue;
-				}
-
-				while ($tag->firstChild) {
-					$tag->removeChild($tag->firstChild);
-				}
-
-				// Add a non-breaking space to the tag
-				$tag->textContent = "\xC2\xA0";
-			}
-		}
+		static::doCleanEmptyTags($tags, [
+			'UL' => false,
+			'OL' => false,
+			'DL' => false,
+		]);
 	}
 
 
@@ -284,7 +275,11 @@ class HtmlCleaner {
 
 				// If the next sibling is a text node and only consist of whitespaces,
 				// remove it. No space should occur after a <br>-tag.
-				if ($brTag->nextSibling->nodeName === '#text' && preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $brTag->nextSibling->nodeValue)) {
+				if (
+					$brTag->nextSibling
+					&& $brTag->nextSibling->nodeName === '#text'
+					&& preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $brTag->nextSibling->nodeValue)
+				) {
 					$brTag->parentNode->removeChild($brTag->nextSibling);
 				}
 			}
@@ -297,7 +292,7 @@ class HtmlCleaner {
 			}
 
 			// Remove the next sibling if it is a <br>-tag to avoid multiple consecutive <br>-tags
-			if ($brTag->nextSibling->nodeName === 'BR') {
+			if ($brTag->nextSibling && $brTag->nextSibling->nodeName === 'BR') {
 				$brTag->parentNode->removeChild($brTag->nextSibling);
 				$i--;
 				$brTagCounter--;
@@ -354,9 +349,7 @@ class HtmlCleaner {
 			}
 
 			// Check if the next sibling is a <p>-tag and empty
-			if (
-				preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $nextSibling->textContent)
-			) {
+			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $nextSibling->textContent)) {
 				if ($nextSibling->hasChildNodes()) {
 					// If the current node has any non-text node children, skip it
 					foreach ($nextSibling->childNodes as $childNode) {
@@ -366,7 +359,7 @@ class HtmlCleaner {
 					}
 				}
 
-				if ($pTag->nextSibling->nodeName === '#text') {
+				if ($pTag->nextSibling && $pTag->nextSibling->nodeName === '#text') {
 					$pTag->parentNode->removeChild($pTag->nextSibling);
 				}
 
@@ -460,7 +453,7 @@ class HtmlCleaner {
 		/**
 		 * Remove the last <br> tag, if it is the last child of the parent
 		 * It's necessary to get the <br> tags again, because the NodeList is updated after removing a child,
-		 * and it's necessary to remove the last <br> tag multiple times, if there are multiple <br> tags at the end
+		 * and it's necessary to remove the last <br> tag multiple times, if there are multiple <br> tags at the end.
 		 */
 		$brTags = $dom->querySelectorAll('br');
 
@@ -544,7 +537,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingWhitespace(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems(HtmlDocument $dom): void {
 		// Get all `<p>`- and `<li>`-tags
 		$pTags = $dom->querySelectorAll('p');
 		$liTags = $dom->querySelectorAll('li');
@@ -552,6 +545,8 @@ class HtmlCleaner {
 		$tags = array_merge(iterator_to_array($pTags), iterator_to_array($liTags));
 
 		foreach ($tags as $tag) {
+			$childRemoved = false;
+
 			while ($tag->firstChild) {
 				if ($tag->firstChild->nodeName === '#text') {
 					$content = $tag->firstChild->nodeValue;
@@ -570,9 +565,11 @@ class HtmlCleaner {
 					}
 
 					$tag->removeChild($tag->firstChild);
+					$childRemoved = true;
 				}
 				elseif ($tag->firstChild->nodeName === 'BR') {
 					$tag->removeChild($tag->firstChild);
+					$childRemoved = true;
 				}
 				else {
 					break;
@@ -597,9 +594,19 @@ class HtmlCleaner {
 					}
 
 					$tag->removeChild($tag->lastChild);
+					$childRemoved = true;
 				}
 				else {
 					break;
+				}
+			}
+
+			// If the tag is empty, add a non-breaking space
+			if (!$tag->firstChild) {
+				// But only if anything has been removed from the tag, otherwise it would add a non-breaking space to an
+				// empty tag that was already empty
+				if ($childRemoved) {
+					$tag->textContent = "\xC2\xA0";
 				}
 			}
 		}
@@ -677,5 +684,75 @@ class HtmlCleaner {
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		return $entity->attributes->has($field) && is_string($entity->attributes->get($field)) && $entity->attributes->isDirty($field);
+	}
+
+
+	/**
+	 * @param \Dom\HTMLCollection|array $tags
+	 * @param array<string, bool|string> $handleEmptyTags A list of tags to handle differently. The key is the tag name, the value is
+	 *  either `false` to remove the tag or a string to replace the content with. Node names not in the list will be replaced with
+	 *  a non-breaking space.
+	 * @return void
+	 */
+	protected static function doCleanEmptyTags(HTMLCollection|array $tags, array $handleEmptyTags = []): void {
+		/** @var \Dom\Node $tag */
+		foreach ($tags as $tag) {
+			if (in_array($tag->nodeName, ['BR', 'HR', 'IMG', 'AWYISS-RESPONSIVE-IMAGE'])) {
+				continue;
+			}
+
+			$content = $tag->textContent;
+
+			// If the text content is a non-breaking space, or if the text content is empty and the tag has child nodes, skip it,
+			// but only if the tag is not in the list of tags to handle differently or not set to `false`.
+			// This handles `<a>`-tags that have an `<img>`-tag inside, which is a valid case and should not be removed.
+			// Empty list items will be removed if they are in the list of tags to handle differently and set to `false`.
+			if (
+				(
+					in_array($content, ['&nbsp;', "\u{A0}"], true)
+					|| (
+						$content === ''
+						&& $tag->hasChildNodes()
+					)
+				)
+				&& (
+					!isset($handleEmptyTags[ $tag->nodeName ])
+					|| $handleEmptyTags[ $tag->nodeName ] !== false
+				)
+			) {
+				continue;
+			}
+
+			// Check if the content of the tag is empty or only contains whitespaces or non-breaking spaces
+			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $content)) {
+				if (
+					array_key_exists($tag->nodeName, $handleEmptyTags)
+					&& $handleEmptyTags[$tag->nodeName] === false
+				) {
+					if ($tag->nextSibling && $tag->nextSibling->nodeName === '#text') {
+						$tag->parentNode->removeChild($tag->nextSibling);
+					}
+
+					// Empty lists? Remove them
+					$tag->parentNode->removeChild($tag);
+					continue;
+				}
+
+				while ($tag->firstChild) {
+					$tag->removeChild($tag->firstChild);
+				}
+
+				// Add the replacement content if specified, otherwise add a non-breaking space
+				if (
+					array_key_exists($tag->nodeName, $handleEmptyTags)
+					&& is_string($handleEmptyTags[$tag->nodeName])
+				) {
+					$tag->textContent = $handleEmptyTags[$tag->nodeName];
+					continue;
+				}
+
+				$tag->textContent = "\xC2\xA0";
+			}
+		}
 	}
 }

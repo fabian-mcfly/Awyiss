@@ -95,6 +95,7 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_MODERATE
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::cleanModerate()
 	 */
 	public function testCleanModerate(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -198,7 +199,6 @@ HTML,
 <p>&nbsp;</p>
 <p>Duis autem</p>
 <p>&nbsp;</p>
-<ul><li></li></ul>
 <ul><li>&lt;br&gt; at the end</li>
 <li>&lt;br&gt; at the start</li></ul>
 <p>&nbsp;</p>
@@ -357,7 +357,8 @@ HTML,
 		$content->text = $this->exampleHtml;
 
 		$this->expectException(InvalidArgumentException::class);
-		$this->expectExceptionMessage('Invalid clean method. Expected one of `none`, `moderate`, `strict`. `UnknownMethod` given.');
+		$this->expectExceptionMessageIsOrContains('Invalid clean method. Expected one of `none`, `moderate`, `strict`.'
+			. ' `UnknownMethod` given.');
 
 		HtmlCleaner::clean($content, 'UnknownMethod');
 	}
@@ -411,7 +412,11 @@ HTML;
 		HtmlCleaner::clean($news, HtmlCleaner::CLEAN_STRICT, ['text']);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$this->assertSame('<p>Paragraph in between empty paragraphs</p>', $news->attributes->text, 'Attribute should be cleaned to a single paragraph');
+		$this->assertSame(
+			'<p>Paragraph in between empty paragraphs</p>',
+			$news->attributes->text,
+			'Attribute should be cleaned to a single paragraph'
+		);
 		$this->assertSame('<p>Paragraph in between empty paragraphs</p>', $news->text, 'Attribute should be cleaned to a single paragraph');
 	}
 
@@ -443,6 +448,135 @@ HTML;
 
 		HtmlCleaner::clean($news, HtmlCleaner::CLEAN_STRICT, ['text']);
 
-		$this->assertSame('<p>Paragraph in between empty paragraphs</p>', $news->_translations['fr']->text, 'Text should be cleaned to a single paragraph');
+		$this->assertSame(
+			'<p>Paragraph in between empty paragraphs</p>',
+			$news->_translations['fr']->text,
+			'Text should be cleaned to a single paragraph'
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanWithTrailingBrsNotEmitsWarning(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		$content->text = <<<'HTML'
+<p>
+	Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>
+	Korrekt wäre eigentlich „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.<br>
+</p>
+HTML;
+
+		HtmlCleaner::clean($content);
+
+		$this->assertSame(
+			'<p>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br> Korrekt wäre eigentlich'
+				. ' „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.</p>',
+			$content->text,
+			'Trailing <br> tags should be removed without emitting a warning'
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanWithTrailingBrsWithTrailingWhitespace(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		$content->text = <<<'HTML'
+<p>
+	Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>
+	Korrekt wäre eigentlich „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.<br>
+</p>
+HTML;
+
+		HtmlCleaner::clean($content);
+
+		$this->assertSame(
+			'<p>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br> Korrekt wäre eigentlich'
+				. ' „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.</p>',
+			$content->text,
+			'Trailing <br> tags should be removed without emitting a warning'
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanWithTrailingBrsWithLeadingAndTrailingWhitespace(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		$content->text = <<<'HTML'
+<p>
+	Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>
+	Korrekt wäre eigentlich „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet. <br>
+</p>
+HTML;
+
+		HtmlCleaner::clean($content);
+
+		$this->assertSame(
+			'<p>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br> Korrekt wäre eigentlich'
+				. ' „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet. </p>',
+			$content->text,
+			'Trailing <br> tags should be removed without emitting a warning'
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanWithLeadingBrsWithLeadingWhitespace(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		$content->text = <<<'HTML'
+<p>
+	<br>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>
+	<br>Korrekt wäre eigentlich „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.<br>
+</p>
+HTML;
+
+		HtmlCleaner::clean($content);
+
+		$this->assertSame(
+			'<p>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>Korrekt wäre eigentlich'
+				. ' „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.</p>',
+			$content->text,
+			'Trailing <br> tags should be removed without emitting a warning'
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanWithLeadingBrsWithLeadingAndTrailingWhitespace(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		$content->text = <<<'HTML'
+<p>
+	<br> Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>
+	<br>Korrekt wäre eigentlich „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.<br>
+</p>
+HTML;
+
+		HtmlCleaner::clean($content);
+
+		$this->assertSame(
+			'<p>Das ist ein "falsches Zitat" und hier kommt ein "weiteres falsches Zitat".<br>Korrekt wäre eigentlich'
+				. ' „dieses Zitat“ - aber auch hier wurde der falsche Strich verwendet.</p>',
+			$content->text,
+			'Trailing <br> tags should be removed without emitting a warning'
+		);
 	}
 }

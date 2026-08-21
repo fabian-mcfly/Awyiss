@@ -2946,7 +2946,6 @@ HTML,
 <p>&nbsp;</p>
 <p>Duis autem</p>
 <p>&nbsp;</p>
-<ul><li></li></ul>
 <ul><li>&lt;br&gt; at the end</li>
 <li>&lt;br&gt; at the start</li></ul>
 <p>&nbsp;</p>
