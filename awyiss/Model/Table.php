@@ -12,6 +12,7 @@ use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\AttributesTable;
 use Awyiss\Model\Table\AuditTable;
 use Awyiss\Model\Table\ContentsTable;
@@ -1181,21 +1182,49 @@ class Table extends BaseTable {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options): void {
-		// Do not clean HTML if this is not the primary entity
+		// Convert image tags to the custom format. Even if the entity is not primary or deleted.
+		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
+			/** @var \Awyiss\Utility\Content\ImageHandler $className */
+			$className = App::className('ImageHandler', 'Utility/Content');
+			$className::replaceImageTags($entity);
+		}
+
+		// Do not fix typography if this is not the primary entity
 		if ($options['_primary'] === false) {
 			return;
 		}
 
 		if ($entity->get('deleted') === true) {
-			// If the entity is deleted, we don't want to clean the HTML
+			// If the entity is deleted, we don't want to fix the typography
 			return;
 		}
 
-		// Convert image tags to the custom format
-		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
-			/** @var \Awyiss\Utility\Content\ImageHandler $className */
-			$className = App::className('ImageHandler', 'Utility/Content');
-			$className::replaceImageTags($entity);
+		$dirtyColumns = $entity->extract([], true);
+		$irrelevantColumns = ['systemOrder', '_publicationData'];
+		// If the only dirty columns are irrelevant, we don't want to fix the typography
+		if (!array_diff(array_keys($dirtyColumns), $irrelevantColumns)) {
+			return;
+		}
+
+		// Fix typical typography issues like double hyphens, wrong quotes, etc.
+		if (Configure::read('Awyiss.System.Backend.typographyFixing', false) === true) {
+			$languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
+
+			if (
+				(
+					$entity instanceof Page
+					|| $entity->has('languageShortcode')
+				)
+				&& $entity->get('languageShortcode') !== null
+			) {
+				$languageShortcode = $entity->languageShortcode;
+			}
+
+			/** @var \Awyiss\Utility\Content\Typography\TypographyFixer $className */
+			$className = App::className('TypographyFixer', 'Utility/Content/Typography');
+			$className::format($entity, $languageShortcode);
+
+			dd($entity->get('_translations'));
 		}
 	}
 

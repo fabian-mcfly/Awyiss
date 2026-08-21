@@ -33,6 +33,7 @@ use Awyiss\ORM\Marshaller;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Content\HtmlCleaner;
+use Awyiss\Utility\Content\Typography\TypographyRuleRegistry;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
@@ -2994,6 +2995,143 @@ HTML,
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeSave()
 	 */
+	public function testBeforeSaveNotFixesTypographyWhenConfigFalsish(): void {
+		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
+		};
+
+		TypographyRuleRegistry::registerDefaults();
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		Configure::write('Awyiss.System.Backend.typographyFixing', null);
+
+		$cancelEvent = static function ($event) {
+			$event->stopPropagation();
+		};
+		$table->getEventManager()->on('Model.beforeSave', ['priority' => 100], $cancelEvent);
+
+		$text = '<p>Das ist ein "falsches Zitat" ! Preis : 49,99€ und 20 %.</p>';
+
+		$entity = new Page();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->text = $text;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->languageShortcode = 'de';
+
+		$table->save($entity, ['checkRules' => false]);
+
+		$table->getEventManager()->off('Model.beforeSave', $cancelEvent);
+		TypographyRuleRegistry::reset();
+
+		$this->assertSame($text, $entity->text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table::beforeSave()
+	 */
+	public function testBeforeSaveFixesTypographyWhenConfigTrueish(): void {
+		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
+		};
+
+		TypographyRuleRegistry::registerDefaults();
+		Configure::write('Awyiss.System.Backend.typographyFixing', true);
+
+		$cancelEvent = static function ($event) {
+			$event->stopPropagation();
+		};
+		$table->getEventManager()->on('Model.beforeSave', ['priority' => 100], $cancelEvent);
+
+		$text = '<p>Das ist ein "falsches Zitat" ! Preis : 49,99€ und 20 %.</p>';
+
+		$entity = new Page();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->text = $text;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->languageShortcode = 'de';
+
+		$table->save($entity, ['checkRules' => false]);
+
+		$table->getEventManager()->off('Model.beforeSave', $cancelEvent);
+		TypographyRuleRegistry::reset();
+
+		$expected = '<p>Das ist ein „falsches Zitat“! Preis: 49,99 € und 20 %.</p>';
+		$this->assertSame($expected, $entity->text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table::beforeSave()
+	 */
+	public function testBeforeSaveNotFixesTypographyWhenNoRulesForLanguage(): void {
+		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
+		};
+
+		TypographyRuleRegistry::reset();
+		Configure::write('Awyiss.System.Backend.typographyFixing', true);
+
+		$cancelEvent = static function ($event) {
+			$event->stopPropagation();
+		};
+		$table->getEventManager()->on('Model.beforeSave', ['priority' => 100], $cancelEvent);
+
+		$text = '<p>Das ist ein "falsches Zitat" ! Preis : 49,99€ und 20 %.</p>';
+
+		$entity = new Page();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->text = $text;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->languageShortcode = 'de';
+
+		$table->save($entity, ['checkRules' => false]);
+
+		$table->getEventManager()->off('Model.beforeSave', $cancelEvent);
+		TypographyRuleRegistry::reset();
+
+		$this->assertSame($text, $entity->text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table::beforeSave()
+	 */
+	public function testBeforeSaveNotFixesTypographyWhenDeleted(): void {
+		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
+		};
+
+		TypographyRuleRegistry::registerDefaults();
+		Configure::write('Awyiss.System.Backend.typographyFixing', true);
+
+		$cancelEvent = static function ($event) {
+			$event->stopPropagation();
+		};
+		$table->getEventManager()->on('Model.beforeSave', ['priority' => 100], $cancelEvent);
+
+		$text = '<p>Das ist ein "falsches Zitat" ! Preis : 49,99€ und 20 %.</p>';
+
+		$entity = new Page();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->text = $text;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->languageShortcode = 'de';
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->deleted = true;
+
+		$table->save($entity, ['checkRules' => false]);
+
+		$table->getEventManager()->off('Model.beforeSave', $cancelEvent);
+		TypographyRuleRegistry::reset();
+
+		$this->assertSame($text, $entity->text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table::beforeSave()
+	 */
 	public function testBeforeSaveNotHandleImagesInHtmlConfigFalsish(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 		};
@@ -3052,6 +3190,6 @@ HTML,
 
 		$this->assertCount(1, $entity->mediaAssignments);
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaId);
-		$this->assertSame('pages', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('Pages', $entity->mediaAssignments[0]->scope);
 	}
 }

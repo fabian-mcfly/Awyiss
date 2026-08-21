@@ -222,4 +222,8 @@ TypeFactory::map('char', StringType::class);
 TypeFactory::map('string', StringType::class);
 TypeFactory::map('text', StringType::class);
 
+/** @var class-string<\Awyiss\Utility\Content\Typography\TypographyRuleRegistry> $typographyRuleRegistry */
+$typographyRuleRegistry = App::className('TypographyRuleRegistry', 'Utility/Content/Typography');
+$typographyRuleRegistry::registerDefaults();
+
 Validator::addDefaultProvider('default', App::className('Validation', 'Validation'));

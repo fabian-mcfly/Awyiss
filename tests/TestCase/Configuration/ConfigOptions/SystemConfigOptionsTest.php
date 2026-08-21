@@ -41,7 +41,7 @@ class SystemConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(26, $configOptions);
+		$this->assertCount(27, $configOptions);
 
 		$this->assertArrayHasKey('Frontend.editor', $configOptions);
 		$this->assertFalse($configOptions['Frontend.editor']->isLocalizable());
@@ -357,5 +357,15 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.timezone']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.timezone']->getValues());
 		$this->assertArrayHasKey('auto', $configOptions['Backend.timezone']->getValues(true));
+
+		$this->assertArrayHasKey('Backend.typographyFixing', $configOptions);
+		$this->assertFalse($configOptions['Backend.typographyFixing']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.typographyFixing']->isNullable());
+		$this->assertFalse($configOptions['Backend.typographyFixing']->isPersonalizable());
+		$this->assertTrue($configOptions['Backend.typographyFixing']->getDefaultValue());
+		$this->assertSame('true', $configOptions['Backend.typographyFixing']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.typographyFixing']->getType());
+		$this->assertNull($configOptions['Backend.typographyFixing']->getTypecast());
+		$this->assertNull($configOptions['Backend.typographyFixing']->getValidate());
 	}
 }

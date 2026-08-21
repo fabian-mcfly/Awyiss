@@ -254,6 +254,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					return ['auto' => __d('System', 'timezone_automatic')] + $timezones;
 				},
 			),
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'typographyFixing',
+				localizable: false,
+				nullable: false,
+				personalizable: false,
+				type: ConfigOptionType::Bool,
+			),
 		]);
 	}
 
