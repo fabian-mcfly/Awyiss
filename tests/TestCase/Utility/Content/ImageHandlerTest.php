@@ -61,7 +61,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -99,7 +99,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -122,10 +122,10 @@ class ImageHandlerTest extends TestCase {
 		$this->assertCount(2, $content->mediaAssignments);
 		$this->assertArrayHasKey(0, $content->mediaAssignments);
 		$this->assertSame(4, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 		$this->assertArrayHasKey(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[1]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[1]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[1]->scope);
 
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->newDefaultEntity();
@@ -158,7 +158,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -184,7 +184,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -216,7 +216,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -241,7 +241,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -266,9 +266,9 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(2, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 		$this->assertSame(4, $content->mediaAssignments[1]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[1]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[1]->scope);
 	}
 
 
@@ -293,7 +293,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -315,7 +315,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -337,7 +337,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -364,7 +364,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -393,7 +393,7 @@ class ImageHandlerTest extends TestCase {
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertNotNull($content->mediaAssignments[0]);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 		$this->assertSame($mediaAssignmentId, $content->mediaAssignments[0]->id, 'Media assignment ID should be preserved');
 	}
 
@@ -415,7 +415,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -455,7 +455,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -477,7 +477,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -502,7 +502,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -532,9 +532,9 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(2, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 		$this->assertSame(4, $content->mediaAssignments[1]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[1]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[1]->scope);
 	}
 
 
@@ -564,7 +564,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -589,7 +589,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 	}
 
 
@@ -614,7 +614,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -644,7 +644,7 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertCount(1, $news->mediaAssignments);
 		$this->assertSame(2, $news->mediaAssignments[0]->mediaId);
-		$this->assertSame('news', $news->mediaAssignments[0]->scope);
+		$this->assertSame('News', $news->mediaAssignments[0]->scope);
 	}
 
 
@@ -674,7 +674,7 @@ class ImageHandlerTest extends TestCase {
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertNotNull($content->mediaAssignments[0]);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
-		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
+		$this->assertSame('Contents', $content->mediaAssignments[0]->scope);
 		$this->assertSame($mediaAssignmentId, $content->mediaAssignments[0]->id, 'Media assignment ID should be preserved');
 	}
 

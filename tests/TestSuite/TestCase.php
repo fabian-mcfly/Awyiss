@@ -68,7 +68,6 @@ class TestCase extends BaseTestCase {
 
 		$reflection = new ReflectionClass(AppView::class);
 		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(null, null);
 	}
@@ -136,7 +135,6 @@ class TestCase extends BaseTestCase {
 	protected function callProtectedMethod(object|string $object, string $methodName, mixed ...$args): mixed {
 		$reflection = new ReflectionClass($object);
 		$method = $reflection->getMethod($methodName);
-		/** @noinspection PhpExpressionResultUnusedInspection */
 		$method->setAccessible(true);
 
 		// Handle static methods when $object is a class name (string)
