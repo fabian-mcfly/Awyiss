@@ -1150,6 +1150,13 @@ class Table extends BaseTable {
 			return;
 		}
 
+		$dirtyColumns = $entity->getDirty();
+		$irrelevantColumns = ['systemOrder', '_publicationData'];
+		// If the only dirty columns are irrelevant, we don't want to clean the HTML
+		if (!array_diff(array_keys($dirtyColumns), $irrelevantColumns)) {
+			return;
+		}
+
 		/**
 		 * The HTML cleaning happens here and not in the `beforeSave`-event
 		 * since it could result in empty fields in case the HTML contained
