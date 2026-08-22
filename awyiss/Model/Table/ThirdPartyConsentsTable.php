@@ -61,6 +61,7 @@ class ThirdPartyConsentsTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('acceptType');
 		$validator->add('acceptType', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'inList' => [

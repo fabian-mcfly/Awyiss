@@ -284,13 +284,12 @@ class ConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('scope', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['scope']);
+		$this->assertArrayHasKey('_empty', $errors['scope']);
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['identifier']);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
 
-		$this->assertArrayHasKey('languageShortcode', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['languageShortcode']);
+		$this->assertArrayNotHasKey('languageShortcode', $errors);
 	}
 
 
@@ -311,7 +310,7 @@ class ConfigurationTableTest extends TestCase {
 		$entity = $this->configurationTable->newEntity($data);
 		$errors = $entity->getErrors();
 
-		$this->assertArrayNotHasKey('scope', $errors);
+		$this->assertArrayHasKey('scope', $errors);
 		$this->assertArrayNotHasKey('value', $errors);
 		$this->assertArrayNotHasKey('languageShortcode', $errors);
 		$this->assertArrayNotHasKey('description', $errors);

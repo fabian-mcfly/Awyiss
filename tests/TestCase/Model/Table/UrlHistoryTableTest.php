@@ -202,7 +202,7 @@ class UrlHistoryTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('url', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['url']);
+		$this->assertArrayHasKey('_empty', $errors['url']);
 	}
 
 

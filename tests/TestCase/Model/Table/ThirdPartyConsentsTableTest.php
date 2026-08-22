@@ -302,7 +302,7 @@ class ThirdPartyConsentsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('acceptType', $errors);
-		$this->assertArrayHasKey('inList', $errors['acceptType']);
+		$this->assertArrayHasKey('_empty', $errors['acceptType']);
 	}
 
 

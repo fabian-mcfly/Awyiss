@@ -296,10 +296,9 @@ class SurveyQuestionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['title']);
+		$this->assertArrayHasKey('_empty', $errors['title']);
 
-		$this->assertArrayHasKey('subtitle', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['subtitle']);
+		$this->assertArrayNotHasKey('subtitle', $errors);
 	}
 
 

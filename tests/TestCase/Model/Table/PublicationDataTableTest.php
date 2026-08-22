@@ -189,7 +189,7 @@ class PublicationDataTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('scope', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['scope']);
+		$this->assertArrayHasKey('_empty', $errors['scope']);
 	}
 
 

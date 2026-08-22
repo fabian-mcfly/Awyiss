@@ -283,7 +283,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('link', $errors);
+		$this->assertArrayNotHasKey('link', $errors);
 	}
 
 

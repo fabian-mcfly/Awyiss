@@ -52,6 +52,7 @@ class PublicationDataTable extends Table {
 		], 'create');
 
 
+		$validator->notEmptyString('scope');
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],

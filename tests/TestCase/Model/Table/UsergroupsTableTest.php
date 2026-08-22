@@ -254,7 +254,7 @@ class UsergroupsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['title']);
+		$this->assertArrayHasKey('_empty', $errors['title']);
 	}
 
 

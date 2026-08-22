@@ -550,6 +550,7 @@ class AttributesTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('inputType');
 		$validator->add('inputType', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],

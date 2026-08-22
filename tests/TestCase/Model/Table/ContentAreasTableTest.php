@@ -230,10 +230,10 @@ class ContentAreasTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['title']);
+		$this->assertArrayHasKey('_empty', $errors['title']);
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['identifier']);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
 	}
 
 

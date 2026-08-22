@@ -233,6 +233,12 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
+			if (is_string($value)) {
+				// Trim whitespace from string values
+				$value = mb_trim($value);
+				$data[ $key ] = $value;
+			}
+
 			if (array_key_exists($key, $associations)) {
 				if ($value === null) {
 					continue;
@@ -300,6 +306,12 @@ class DefaultValuesBehavior extends Behavior {
 
 		foreach ($entity->getDirty() as $field) {
 			$value = $entity->get($field);
+
+			if (is_string($value)) {
+				// Trim whitespace from string values
+				$value = mb_trim($value);
+				$entity->set($field, $value, ['setter' => false]);
+			}
 
 			if (array_key_exists($field, $associations)) {
 				if ($value !== null) {

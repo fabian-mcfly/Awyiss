@@ -151,6 +151,7 @@ class ConfigurationTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('scope');
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
@@ -159,6 +160,7 @@ class ConfigurationTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],

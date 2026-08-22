@@ -257,7 +257,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('scope', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['scope']);
+		$this->assertArrayHasKey('_empty', $errors['scope']);
 	}
 
 
@@ -296,7 +296,7 @@ class UserConfigurationTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['identifier']);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
 	}
 
 

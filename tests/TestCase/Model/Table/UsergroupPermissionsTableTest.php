@@ -224,7 +224,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('scope', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['scope']);
+		$this->assertArrayHasKey('_empty', $errors['scope']);
 	}
 
 
@@ -243,6 +243,7 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('identifier', $errors);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
 	}
 
 
@@ -261,7 +262,26 @@ class UsergroupPermissionsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['identifier']);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
+	 */
+	public function testEntityValidationNullIdentifier(): void {
+		$data = [
+			'scope' => 'TestScope',
+			'identifier' => null,
+		];
+
+		$entity = $this->usergroupPermissionsTable->newDefaultEntity();
+		$this->usergroupPermissionsTable->patchEntity($entity, $data);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('identifier', $errors);
+		$this->assertArrayHasKey('_empty', $errors['identifier']);
 	}
 
 

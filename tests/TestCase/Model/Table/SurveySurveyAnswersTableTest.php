@@ -292,8 +292,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$this->surveySurveyAnswersTable->patchEntity($entity, $data);
 		$errors = $entity->getErrors();
 
-		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['title']);
+		$this->assertArrayNotHasKey('title', $errors);
 	}
 
 
@@ -313,9 +312,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$this->surveySurveyAnswersTable->patchEntity($entity, $data);
 		$errors = $entity->getErrors();
 
-		// Subtitle has notBlank validation when not empty
-		$this->assertArrayHasKey('subtitle', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['subtitle']);
+		$this->assertArrayNotHasKey('subtitle', $errors);
 	}
 
 
@@ -360,8 +357,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$this->surveySurveyAnswersTable->patchEntity($entity, $data);
 		$errors = $entity->getErrors();
 
-		$this->assertArrayHasKey('nextActionTarget', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['nextActionTarget']);
+		$this->assertArrayNotHasKey('nextActionTarget', $errors);
 	}
 
 

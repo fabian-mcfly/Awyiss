@@ -341,10 +341,10 @@ class PageTemplatesTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('title', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['title']);
+		$this->assertArrayHasKey('_empty', $errors['title']);
 
 		$this->assertArrayHasKey('fileName', $errors);
-		$this->assertArrayHasKey('notBlank', $errors['fileName']);
+		$this->assertArrayHasKey('_empty', $errors['fileName']);
 	}
 
 

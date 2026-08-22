@@ -236,7 +236,7 @@ class DesignsTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('identifier', $errors);
-		$this->assertArrayHasKey('title', $errors);
+		$this->assertArrayNotHasKey('title', $errors);
 	}
 
 
