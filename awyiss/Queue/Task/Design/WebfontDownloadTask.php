@@ -54,30 +54,6 @@ class WebfontDownloadTask extends Task {
 
 				// Update the font variants in the outer array
 				$fonts[ $key ]['variants'][ $variantKey ] = $font['variants'][ $variantKey ];
-
-				if (
-					file_exists(
-						$fontPath . DS . $font['id'] . '-' . $font['version'] . '-latin-' . $font['variants'][ $variantKey ] . '.woff2'
-					)
-					|| file_exists(
-						$fontPath
-						. DS
-						. $font['id']
-						. '-'
-						. $font['version']
-						. '-latin_latin-ext-'
-						. $font['variants'][ $variantKey ]
-						. '.woff2'
-					)
-				) {
-					// Remove the variant from the list if it already exists
-					unset($font['variants'][ $variantKey ]);
-				}
-			}
-
-			// Skip if there are no variants to download
-			if (!$font['variants']) {
-				continue;
 			}
 
 			// External API URL
@@ -136,24 +112,41 @@ EOT;
 			// Local path for the font
 			$fontPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'font' . DS . $font['id'];
 
-			foreach ($font['variants'] as $variantKey => $variant) {
+			// If no variants are specified, use all known variants
+			$font['variants'] = $font['variants'] ?: [
+				'100',
+				'100italic',
+				'200',
+				'200italic',
+				'300',
+				'300italic',
+				'regular',
+				'italic',
+				'500',
+				'500italic',
+				'600',
+				'600italic',
+				'700',
+				'700italic',
+				'800',
+				'800italic',
+				'900',
+				'900italic',
+			];
+
+			foreach ($font['variants'] as $variant) {
+				$variant = (string)$variant;
 				$fontWeight = in_array($variant, ['regular', 'italic'], true) ? 400 : (int)$variant;
 				$fontStyle = str_ends_with($variant, 'italic') ? 'italic' : 'normal';
-				$fileName = $font['id'] . '-' . $font['version'] . '-latin_latin-ext-' . $font['variants'][ $variantKey ] . '.woff2';
+				$fileName = $font['id'] . '-' . $font['version'] . '-latin_latin-ext-' . $variant . '.woff2';
 
-				if (
-					!file_exists(
-						$fontPath
-						. DS
-						. $font['id']
-						. '-'
-						. $font['version']
-						. '-latin_latin-ext-'
-						. $font['variants'][ $variantKey ]
-						. '.woff2'
-					)
-				) {
-					$fileName = $font['id'] . '-' . $font['version'] . '-latin-' . $font['variants'][ $variantKey ] . '.woff2';
+				if (!file_exists($fontPath . DS . $fileName)) {
+					$fileName = $font['id'] . '-' . $font['version'] . '-latin-' . $variant . '.woff2';
+				}
+
+				// If the file still does not exist, skip this variant
+				if (!file_exists($fontPath . DS . $fileName)) {
+					continue;
 				}
 
 				$fileContents .= $this->buildFontFaceBlock($font['id'], $font['name'], $fontStyle, $fontWeight, $fileName);
@@ -196,9 +189,12 @@ EOT;
 		$queryData = [
 			'download' => 'zip',
 			'subsets' => 'latin,latin-ext',
-			'variants' => implode(',', array_unique($font['variants'])),
 			'formats' => 'woff2',
 		];
+
+		if (!empty($font['variants'])) {
+			$queryData['variants'] = implode(',', array_unique($font['variants']));
+		}
 
 		return 'https://gwfh.mranftl.com/api/fonts/' . $font['id'] . '?' . http_build_query($queryData);
 	}

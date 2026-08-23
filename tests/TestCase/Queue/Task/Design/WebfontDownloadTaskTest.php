@@ -76,6 +76,27 @@ SCSS);
 	 * @throws \ReflectionException
 	 */
 	public function testGenerateScssFileWithMultipleVariants(): void {
+		// Copy `awyiss/assets/font/2f_media-webfont.woff2` to each font directory to simulate downloaded fonts
+		$fontDir = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'font';
+		$sourceFontFile = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'font' . DS . '2f_media-webfont.woff2';
+
+		// Make sure all folders exist
+		foreach (['font1', 'font2', 'font3'] as $fontId) {
+			$dir = $fontDir . DS . $fontId;
+			if (!is_dir($dir)) {
+				mkdir($dir, 0777, true);
+			}
+		}
+
+		copy($sourceFontFile, $fontDir . DS . 'font1' . DS . 'font1-v1-latin-regular.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font1' . DS . 'font1-v1-latin-italic.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font1' . DS . 'font1-v1-latin-700.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font2' . DS . 'font2-v2-latin-regular.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font2' . DS . 'font2-v2-latin-700.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font3' . DS . 'font3-v3-latin-italic.woff2');
+		copy($sourceFontFile, $fontDir . DS . 'font3' . DS . 'font3-v3-latin-300italic.woff2');
+		// font3 does not have a 700 variant, so we won't copy that
+
 		$task = new WebfontDownloadTask();
 		$fonts = [
 			[
@@ -94,7 +115,7 @@ SCSS);
 				'id' => 'font3',
 				'name' => 'Third Font',
 				'version' => 'v3',
-				'variants' => ['italic'],
+				'variants' => ['italic', '300italic', '700'],
 			],
 		];
 		$scss = $this->callProtectedMethod(
@@ -114,12 +135,15 @@ SCSS);
 		$this->assertStringContainsString("src:url('../font/font2/font2-v2-latin-700.woff2')", $scss);
 
 		$this->assertStringContainsString("src:url('../font/font3/font3-v3-latin-italic.woff2')", $scss);
+		$this->assertStringContainsString("src:url('../font/font3/font3-v3-latin-300italic.woff2')", $scss);
+		// 700 does not exist for font3, so it should not be included
+		$this->assertStringNotContainsString("src:url('../font/font3/font3-v3-latin-700.woff2')", $scss);
 
-		$this->assertSame(6, substr_count($scss, '@font-face'));
-		$this->assertSame(6, substr_count($scss, 'font-family:'));
+		$this->assertSame(7, substr_count($scss, '@font-face'));
+		$this->assertSame(7, substr_count($scss, 'font-family:'));
 
 		$this->assertSame(4, substr_count($scss, 'font-style:normal'));
-		$this->assertSame(2, substr_count($scss, 'font-style:italic'));
+		$this->assertSame(3, substr_count($scss, 'font-style:italic'));
 
 		$this->assertSame(2, substr_count($scss, 'font-weight:700'));
 		$this->assertSame(4, substr_count($scss, 'font-weight:400'));
@@ -164,7 +188,7 @@ SCSS);
 			['id' => 'font_1', 'name' => 'Test Font', 'version' => 'v10', 'variants' => ['regular', '400', '400i', 'italic', '700', '700i', 400]]
 		);
 
-		$this->assertSame('https://gwfh.mranftl.com/api/fonts/font_1?download=zip&subsets=latin%2Clatin-ext&variants=regular%2C400%2C400i%2Citalic%2C700%2C700i&formats=woff2', $url);
+		$this->assertSame('https://gwfh.mranftl.com/api/fonts/font_1?download=zip&subsets=latin%2Clatin-ext&formats=woff2&variants=regular%2C400%2C400i%2Citalic%2C700%2C700i', $url);
 	}
 
 
