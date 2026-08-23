@@ -19,6 +19,9 @@ use Awyiss\Utility\Content\Typography\TypographyRuleInterface;
  * Also covers punctuation that follows a closing parenthesis or an HTML entity (e.g. `&quot;`), and normalizes both Unicode spaces
  * and literal `&nbsp;` sequences, without rewriting the semicolon that terminates an entity itself (e.g. `&laquo;`).
  *
+ * Handles punctuation followed by HTML entities (like closing quotes: `&rdquo;`, `&raquo;`, etc.), ensuring that spacing is normalized
+ * even in constructs like `"text !"` where the punctuation is immediately followed by a quote entity.
+ *
  * Guards against rewriting colons and question marks in URL-like segments (e.g. `edit.php?id=555` or `id:555`), and against inserting
  * spacing between `!` and `?` (or `?` and `!`) combinations.
  */
@@ -74,14 +77,21 @@ class PunctuationSpacingRule implements TypographyRuleInterface {
 			$negativeLookahead = '(?![!?])';
 		}
 
-		$followPattern = '(' . $whitespace . '|\z|' . $boundary . ')';
+		// After punctuation, we allow an optional HTML entity (e.g. closing quote like &rdquo;, &raquo;, etc.)
+		// or a literal closing quote character before the actual boundary/whitespace/end. This ensures we catch
+		// cases like `"text !"` where the space before ! needs to be removed even though a quote follows the punctuation.
+		// Closing quotes: " ' " " ' ' » ›
+		$closingQuotes = "[\"'\u{201C}\u{201D}\u{2018}\u{2019}\u{00BB}\u{203A}]";
+		$entityPattern = '&(?:#\d+|#x[0-9A-Fa-f]+|[A-Za-z][A-Za-z0-9]+);';
+		$optionalFollowingQuote = '(?:' . $closingQuotes . '|' . $entityPattern . ')?';
+		$followPattern = $optionalFollowingQuote . '(' . $whitespace . '|\z|' . $boundary . ')';
 		if ($hasExclamation && !$hasQuestion) {
 			// Allow matching ! in !? when only ! is configured.
-			$followPattern .= '|\?(?=(' . $whitespace . '|\z|' . $boundary . '))';
+			$followPattern .= '|\?(?=' . $optionalFollowingQuote . '(' . $whitespace . '|\z|' . $boundary . '))';
 		}
 		elseif ($hasQuestion && !$hasExclamation) {
 			// Allow matching ? in ?! when only ? is configured.
-			$followPattern .= '|!(?=(' . $whitespace . '|\z|' . $boundary . '))';
+			$followPattern .= '|!(?=' . $optionalFollowingQuote . '(' . $whitespace . '|\z|' . $boundary . '))';
 		}
 
 		// Handle individual punctuation marks (but skip those already handled in combinations)

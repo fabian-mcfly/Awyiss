@@ -47,6 +47,7 @@ class TypographyFixerTest extends TestCase {
 
 <p>
 	Noch ein Beispiel : "Hallo Welt !" Und noch eines : "Wie geht es dir ?"<br>
+	Noch ein Beispiel : "Hallo Welt!" Und noch eines : "Wie geht es dir?"<br>
 </p>
 
 <p>
@@ -294,7 +295,8 @@ HTML;
 </p>
 
 <p>
-	Noch ein Beispiel: „Hallo Welt !“ Und noch eines: „Wie geht es dir ?“<br>
+	Noch ein Beispiel: „Hallo Welt!“ Und noch eines: „Wie geht es dir?“<br>
+	Noch ein Beispiel: „Hallo Welt!“ Und noch eines: „Wie geht es dir?“<br>
 </p>
 
 <p>
@@ -361,8 +363,8 @@ HTML;
 
 <p>
 	Er sagte: „Das funktioniert nicht.“<br>
-	Sie antwortete: „Warum nicht ?“<br>
-	Darauf sagte er: „Weil es falsch gesetzt ist !“<br>
+	Sie antwortete: „Warum nicht?“<br>
+	Darauf sagte er: „Weil es falsch gesetzt ist!“<br>
 </p>
 
 <p>
@@ -529,7 +531,8 @@ HTML;
 </p>
 
 <p>
-	Noch ein Beispiel: “Hallo Welt !” Und noch eines: “Wie geht es dir ?”<br>
+	Noch ein Beispiel: “Hallo Welt!” Und noch eines: “Wie geht es dir?”<br>
+	Noch ein Beispiel: “Hallo Welt!” Und noch eines: “Wie geht es dir?”<br>
 </p>
 
 <p>
@@ -596,8 +599,8 @@ HTML;
 
 <p>
 	Er sagte: “Das funktioniert nicht.”<br>
-	Sie antwortete: “Warum nicht ?”<br>
-	Darauf sagte er: “Weil es falsch gesetzt ist !”<br>
+	Sie antwortete: “Warum nicht?”<br>
+	Darauf sagte er: “Weil es falsch gesetzt ist!”<br>
 </p>
 
 <p>
@@ -764,6 +767,7 @@ HTML;
 </p>
 
 <p>
+	Noch ein Beispiel : « Hallo Welt ! » Und noch eines : « Wie geht es dir ? »<br>
 	Noch ein Beispiel : « Hallo Welt ! » Und noch eines : « Wie geht es dir ? »<br>
 </p>
 
@@ -1013,7 +1017,8 @@ HTML;
 </p>
 
 <p>
-	Noch ein Beispiel: «Hallo Welt !» Und noch eines: «Wie geht es dir ?»<br>
+	Noch ein Beispiel: «Hallo Welt!» Und noch eines: «Wie geht es dir?»<br>
+	Noch ein Beispiel: «Hallo Welt!» Und noch eines: «Wie geht es dir?»<br>
 </p>
 
 <p>
@@ -1080,8 +1085,8 @@ HTML;
 
 <p>
 	Er sagte: «Das funktioniert nicht.»<br>
-	Sie antwortete: «Warum nicht ?»<br>
-	Darauf sagte er: «Weil es falsch gesetzt ist !»<br>
+	Sie antwortete: «Warum nicht?»<br>
+	Darauf sagte er: «Weil es falsch gesetzt ist!»<br>
 </p>
 
 <p>
@@ -1248,7 +1253,8 @@ HTML;
 </p>
 
 <p>
-	Noch ein Beispiel: «Hallo Welt !» Und noch eines: «Wie geht es dir ?»<br>
+	Noch ein Beispiel: «Hallo Welt!» Und noch eines: «Wie geht es dir?»<br>
+	Noch ein Beispiel: «Hallo Welt!» Und noch eines: «Wie geht es dir?»<br>
 </p>
 
 <p>
@@ -1315,8 +1321,8 @@ HTML;
 
 <p>
 	Er sagte: «Das funktioniert nicht.»<br>
-	Sie antwortete: «Warum nicht ?»<br>
-	Darauf sagte er: «Weil es falsch gesetzt ist !»<br>
+	Sie antwortete: «Warum nicht?»<br>
+	Darauf sagte er: «Weil es falsch gesetzt ist!»<br>
 </p>
 
 <p>
