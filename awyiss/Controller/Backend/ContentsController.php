@@ -16,6 +16,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnSystem\ColumnInterface;
+use Awyiss\Utility\Content\Typography\TypographyFixer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\Collection;
@@ -27,6 +28,7 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
+use Exception;
 
 
 /**
@@ -558,6 +560,70 @@ class ContentsController extends Controller {
 		]);
 
 		$this->viewBuilder()->setLayout('overlay_configuration');
+	}
+
+
+	/**
+	 * Fix typography in HTML content based on language
+	 *
+	 * @return void
+	 * @noinspection PhpUnused
+	 */
+	#[NoDirectAccess]
+	public function fixTypography(): void {
+		$this->request->allowMethod(['post']);
+		$this->Categories->disable();
+
+		$content = $this->request->getData('content');
+		$language = $this->request->getData('language');
+
+		if (!$content || !$language) {
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['success', 'message'])
+			;
+
+			$this->set([
+				'success' => false,
+				'message' => __('Invalid request data'),
+			]);
+
+			$this->response = $this->response->withStatus(400, 'Bad Request');
+
+			return;
+		}
+
+		try {
+			$fixedContent = TypographyFixer::formatHtml($content, $language);
+
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['success', 'data'])
+			;
+
+			$this->set([
+				'success' => true,
+				'data' => [
+					'content' => $fixedContent,
+				],
+			]);
+		}
+		catch (Exception) {
+			$this
+				->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['success', 'message'])
+			;
+
+			$this->set([
+				'success' => false,
+				'message' => __('Failed to fix typography'),
+			]);
+
+			$this->response = $this->response->withStatus(500, 'Internal Server Error');
+		}
 	}
 
 

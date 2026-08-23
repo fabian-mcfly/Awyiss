@@ -126,6 +126,7 @@ tinymce.addI18n("de_DE", {
 	"Find and replace...": "Suchen und ersetzen...",
 	"Find in selection": "In Auswahl suchen",
 	"Find whole words only": "Nur ganze W\xf6rter suchen",
+	"Fix Typography": "Typografie korrigieren",
 	"Flags": "Flaggen",
 	"Focus to contextual toolbar": "Fokus auf kontextbezogene Symbolleiste",
 	"Focus to element path": "Fokus auf Elementpfad",

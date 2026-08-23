@@ -59,23 +59,23 @@
 		return str;
 	};
 
-	const isVisualCharsEnabled = (editor) => editor.plugins.visualchars ? editor.plugins.visualchars.isEnabled() : false;
+	const isVisualCharsEnabled = (editor) => editor.plugins.visualCharsPlus ? editor.plugins.visualCharsPlus.isEnabled() : false;
 
 	// Regular non-breaking space (&nbsp;)
 	const insertNbsp = (editor, times) => {
 		const classes = () => isVisualCharsEnabled(editor) ? 'mce-nbsp-wrap mce-nbsp' : 'mce-nbsp-wrap';
 		const nbspSpan = () => `<span class="${classes()}" contenteditable="false">${stringRepeat('&nbsp;', times)}</span>`;
 		const shouldWrap = wrapNbsps(editor);
-		const html = shouldWrap || editor.plugins.visualchars ? nbspSpan() : stringRepeat('&nbsp;', times);
+		const html = shouldWrap || editor.plugins.visualCharsPlus ? nbspSpan() : stringRepeat('&nbsp;', times);
 		editor.undoManager.transact(() => editor.insertContent(html));
 	};
 
 	// Narrow non-breaking space (&#8239;)
 	const insertNarrowNbsp = (editor, times) => {
-		const classes = () => isVisualCharsEnabled(editor) ? 'mce-nbsp-wrap mce-narrow-nbsp' : 'mce-nbsp-wrap';
+		const classes = () => isVisualCharsEnabled(editor) ? 'mce-nbsp-wrap mce-nbsp mce-narrow-nbsp' : 'mce-nbsp-wrap';
 		const nbspSpan = () => `<span class="${classes()}" contenteditable="false">${stringRepeat('&#8239;', times)}</span>`;
 		const shouldWrap = wrapNbsps(editor);
-		const html = shouldWrap || editor.plugins.visualchars ? nbspSpan() : stringRepeat('&#8239;', times);
+		const html = shouldWrap || editor.plugins.visualCharsPlus ? nbspSpan() : stringRepeat('&#8239;', times);
 		editor.undoManager.transact(() => editor.insertContent(html));
 	};
 
