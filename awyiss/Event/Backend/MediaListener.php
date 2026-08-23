@@ -24,7 +24,7 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Dom\HTMLDocument;
+use Dom\XMLDocument;
 use Imagick;
 
 
@@ -519,7 +519,7 @@ class MediaListener implements EventListenerInterface {
 
 		$contents = file_get_contents($path);
 
-		$dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
+		$dom = XMLDocument::createFromString($contents, LIBXML_NOERROR);
 		$svg = $dom->getElementsByTagName('svg')->item(0);
 		if (!$svg) {
 			return;
@@ -532,8 +532,8 @@ class MediaListener implements EventListenerInterface {
 			}
 		}
 
-		// Create a <g> element with id="AWYISS_SVG_ID" and move all children of <svg> into it
-		$g = $dom->createElement('g');
+		// Create a <g> element with id="AWYISS_SVG_ID" in the SVG namespace and move all children of <svg> into it
+		$g = $dom->createElementNS('http://www.w3.org/2000/svg', 'g');
 		$g->setAttribute('id', 'AWYISS_SVG_ID');
 
 		// Move all children of <svg> into the new <g> element
@@ -543,14 +543,7 @@ class MediaListener implements EventListenerInterface {
 
 		$svg->appendChild($g);
 
-		$content = '';
-		// Remove the opening and closing `<body>`-tags
-		$body = $dom->querySelector('body');
-
-		while ($body->firstChild) {
-			$content .= $dom->saveHTML($body->firstChild);
-			$body->removeChild($body->firstChild);
-		}
+		$content = $dom->saveXml($dom->documentElement, LIBXML_NOEMPTYTAG);
 
 		file_put_contents($path, $content);
 	}
