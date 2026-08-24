@@ -164,6 +164,11 @@ export default class FormUpdater {
 		const form = event.target;
 		event.preventDefault();
 
+		// Do nothing if the form is already being submitted
+		if (form.dataset.locked === 'true') {
+			return;
+		}
+
 		let hiddenInput = form.querySelector('input[name="submitType"]');
 		if (!hiddenInput) {
 			hiddenInput = document.createElement('input');
@@ -179,6 +184,9 @@ export default class FormUpdater {
 		if (form.checkValidity()) {
 			// If the form is valid, submit it
 			form.submit();
+
+			// Lock the form to prevent multiple submissions
+			form.dataset.locked = 'true';
 
 			return;
 		}
@@ -213,6 +221,8 @@ export default class FormUpdater {
 			setTimeout(() => {
 				if (!firstInvalidElement.offsetParent) {
 					form.submit();
+					// Lock the form to prevent multiple submissions
+					form.dataset.locked = 'true';
 					return;
 				}
 
@@ -225,6 +235,8 @@ export default class FormUpdater {
 		// force the form to submit. The server will handle the validation.
 		if (!firstInvalidElement.offsetParent) {
 			form.submit();
+			// Lock the form to prevent multiple submissions
+			form.dataset.locked = 'true';
 			return;
 		}
 
@@ -244,6 +256,8 @@ export default class FormUpdater {
 			// The browser was not able to focus the element or scroll it into view
 			// Since there's no practical way to do make it visible, submit the form
 			form.submit();
+			// Lock the form to prevent multiple submissions
+			form.dataset.locked = 'true';
 		}
 	}
 
