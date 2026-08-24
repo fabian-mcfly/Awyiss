@@ -45,6 +45,40 @@
 					{% endblock %}
 				</ol>
 			{% endblock %}
+
+			{% block breadcrumbsJson %}
+				<script type="application/ld+json">
+					{
+						"@context": "https://schema.org",
+						"@type": "BreadcrumbList",
+						"itemListElement": [
+							{% for page in pages %}
+								{% block breadcrumbsJsonItem %}
+									{
+										"@type": "ListItem",
+										"position": {{ loop.index }},
+										"name": "{{ page.title|e('js') }}",
+										"item": "{{ UrlHelper.build({lang: page.languageShortcode, slug: page.slug}, {fullBase: true}) }}"
+									}{% if not loop.last %},{% endif %}
+								{% endblock %}
+							{% endfor %}
+
+							{% block breadcrumbsJsonAdditionalItems %}
+								{% for additionalCrumb in additionalCrumbs %}
+									{% block breadcrumbsJsonAdditionalItem %}
+										{
+											"@type": "ListItem",
+											"position": {{ pages|length + loop.index }},
+											"name": "{{ additionalCrumb.title|e('js') }}",
+											"item": "{{ additionalCrumb.url }}"
+										}{% if not loop.last %},{% endif %}
+									{% endblock %}
+								{% endfor %}
+							{% endblock %}
+						]
+					}
+				</script>
+			{% endblock %}
 		</div>
 	{% endif %}
 {% endblock %}
