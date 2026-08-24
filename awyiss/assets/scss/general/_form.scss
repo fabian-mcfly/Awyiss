@@ -1773,7 +1773,10 @@ textarea {
 		~ form {
 			.FormInputName-LanguageShortcode {
 				display:block;
-				grid-column:auto / span 6;
+
+				&:has(+ .FormInputName-PageId) {
+					grid-column:auto / span 6;
+				}
 
 				+ .FormInputName-PageId {
 					grid-column:auto / span 6;
