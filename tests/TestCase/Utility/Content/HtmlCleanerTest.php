@@ -24,7 +24,7 @@ class HtmlCleanerTest extends TestCase {
 <p>&nbsp; &nbsp; &nbsp;&nbsp;    </p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p>After starting empty p-tags</p>
+<h3>After starting empty p-tags &nbsp;</h3>
 <p><br>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -113,7 +113,7 @@ HTML;
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p>After starting empty p-tags</p>
+<h3>After starting empty p-tags</h3>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -139,10 +139,8 @@ HTML;
 <ul><li>&lt;br&gt; at the end</li>
 <li>&lt;br&gt; at the start</li></ul>
 <p>&nbsp;</p>
-	<ul>
-		<li>Many ending &lt;br&gt;</li>
-		<li>Another starting &lt;br&gt;</li>
-	</ul>
+	<ul><li>Many ending &lt;br&gt;</li>
+		<li>Another starting &lt;br&gt;</li></ul>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <ul><li>&nbsp;</li></ul>
@@ -184,7 +182,7 @@ HTML,
 
 		$this->assertSame(
 			<<<'HTML'
-<p>After starting empty p-tags</p>
+<h3>After starting empty p-tags</h3>
 <p>Starting &lt;br&gt;</p>
 <p>&nbsp;</p>
 <p>After two empty p-tags</p>
@@ -205,10 +203,8 @@ HTML,
 <ul><li>&lt;br&gt; at the end</li>
 <li>&lt;br&gt; at the start</li></ul>
 <p>&nbsp;</p>
-	<ul>
-		<li>Many ending &lt;br&gt;</li>
-		<li>Another starting &lt;br&gt;</li>
-	</ul>
+	<ul><li>Many ending &lt;br&gt;</li>
+		<li>Another starting &lt;br&gt;</li></ul>
 <p>&nbsp;</p>
 <p>Space after! asdf</p>
 <p>Space after? asdf</p>

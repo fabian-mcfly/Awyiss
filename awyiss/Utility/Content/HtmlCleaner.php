@@ -130,7 +130,7 @@ class HtmlCleaner {
 		$dom = static::getDom($value);
 
 		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
-		static::removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems($dom);
+		static::removeLeadingAndTrailingWhitespaceFromTags($dom);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
@@ -161,7 +161,7 @@ class HtmlCleaner {
 		$dom = static::getDom($value);
 
 		// Remove leading and trailing whitespaces (including non-breaking spaces) from each tag
-		static::removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems($dom);
+		static::removeLeadingAndTrailingWhitespaceFromTags($dom);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::removeLeadingAndTrailingBrTagsInParagraphs($dom);
@@ -532,19 +532,21 @@ class HtmlCleaner {
 
 	/**
 	 * Removes leading and trailing whitespaces (including non-breaking spaces)
-	 * from each `<p>`- and `<li>`-tag of the given \Dom\HTMLDocument
+	 * from each tag inside the `<body>`-tag of the given \Dom\HTMLDocument
 	 *
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingWhitespaceFromParagraphsAndListItems(HtmlDocument $dom): void {
-		// Get all `<p>`- and `<li>`-tags
-		$pTags = $dom->querySelectorAll('p');
-		$liTags = $dom->querySelectorAll('li');
-
-		$tags = array_merge(iterator_to_array($pTags), iterator_to_array($liTags));
+	protected static function removeLeadingAndTrailingWhitespaceFromTags(HtmlDocument $dom): void {
+		// Get all tags inside `<body>`
+		$tags = $dom->querySelectorAll('body *');
+		$skipTags = ['PRE', 'CODE', 'SCRIPT', 'STYLE', 'TEXTAREA'];
 
 		foreach ($tags as $tag) {
+			if (in_array($tag->nodeName, $skipTags, true)) {
+				continue;
+			}
+
 			$childRemoved = false;
 
 			while ($tag->firstChild) {
