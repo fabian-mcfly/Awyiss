@@ -249,6 +249,7 @@ class MediaHelper extends Helper {
 		$attributes = $mediaRenderOptions->getAttributes();
 		$attributes += [
 			'controls' => true,
+			'playsinline' => true,
 			'preload' => 'metadata',
 		];
 
@@ -487,6 +488,7 @@ class MediaHelper extends Helper {
 			'controls' => true,
 			'loop' => false,
 			'muted' => false,
+			'playsinline' => true,
 			'preload' => 'metadata',
 			'poster' => $media->previewPath,
 		];
