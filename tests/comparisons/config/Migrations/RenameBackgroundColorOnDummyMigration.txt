@@ -19,6 +19,7 @@ class AlterBackgroundColorOnDummyMigration extends BaseMigration {
 		if ($table->hasIndexByName('BY_BACKGROUNDCOLOR')) {
 			$table->removeIndexByName('BY_BACKGROUNDCOLOR');
 		}
+
 		$table->update();
 	}
 }

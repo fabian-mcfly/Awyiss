@@ -76,6 +76,15 @@ class {{ name }} extends BaseMigration {
 								{%~ endfor %}
 							{%~ endif %}
 						{%~ endfor %}
+					{%~ elseif tableMethod == 'create' and indexMethod != 'removeIndex' %}
+						{%~ for indexName, config in columns['indexes'] %}
+
+		$table->{{ indexMethod }}([{{
+			Migration.stringifyList(config['columns'], {'indent': 3})|raw -}}
+		], [{{
+			Migration.stringifyList(config['options'], {'indent': 3})|raw
+		}}]);
+						{%~ endfor %}
 					{%~ endif %}
 					{%~ if tableMethod == 'create' and columns['primaryKey'] is not empty %}
 		$table->addPrimaryKey([{{
@@ -84,6 +93,7 @@ class {{ name }} extends BaseMigration {
 					{%~ endif %}
 				{%~ endif %}
 			{%~ endif %}
+
 		$table->{{ tableMethod }}(){%~ if tableMethod == 'drop' %}->save(){%~ endif %};
 		{%~ endfor %}
 	}

@@ -23,6 +23,7 @@ class AlterBackgroundColorOnDummyMigrationV2 extends BaseMigration {
                 'unique' => false,
             ]);
 		}
+
 		$table->update();
 	}
 }

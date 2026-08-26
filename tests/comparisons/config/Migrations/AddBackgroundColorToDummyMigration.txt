@@ -15,6 +15,7 @@ class AddBackgroundColorToDummyMigration extends BaseMigration {
             'limit' => 50,
             'null' => true,
         ]);
+
 		$table->update();
 	}
 }
