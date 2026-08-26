@@ -272,6 +272,9 @@ class FormsTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('userName', null, function (array $context): bool {
+			return !empty($context['data']['sendEmail']) || !empty($context['data']['sendConfirmationEmail']);
+		});
 		$validator->add('userName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
