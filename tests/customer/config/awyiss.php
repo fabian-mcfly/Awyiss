@@ -49,10 +49,10 @@ return [
 			],
 		],
 		'previewScssFiles' => [
-			ROOT . DS . CUSTOM_DIR . '/assets/scss/test.scss',
+			ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'scss' . DS . 'test.scss',
 		],
 		'scssFiles' => [
-			ROOT . DS . CUSTOM_DIR . '/assets/scss/_variables.scss',
+			ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'scss' . DS . '_variables.scss',
 		],
 		'units' => [
 			'px' => [

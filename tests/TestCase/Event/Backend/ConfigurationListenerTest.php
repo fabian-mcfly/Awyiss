@@ -949,12 +949,12 @@ class ConfigurationListenerTest extends TestCase {
 		$files = glob($pattern);
 		$this->assertCount(6, $files);
 		$this->assertSame([
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[de][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[de][en].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[es][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[es][en].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[zu][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[zu][en].php',
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[de][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[de][en].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[es][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[es][en].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[zu][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[zu][en].php']),
 		], $files);
 	}
 
@@ -1459,12 +1459,12 @@ class ConfigurationListenerTest extends TestCase {
 		$files = glob($pattern);
 		$this->assertCount(6, $files);
 		$this->assertSame([
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[de][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[de][en].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[es][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[es][en].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[zu][de].php',
-			ROOT . DS . CUSTOM_DIR . '/config/development/customer[zu][en].php',
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[de][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[de][en].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[es][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[es][en].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[zu][de].php']),
+			implode(DS, [ROOT, CUSTOM_DIR, 'config', 'development', 'customer[zu][en].php']),
 		], $files);
 	}
 

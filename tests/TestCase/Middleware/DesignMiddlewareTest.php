@@ -89,7 +89,7 @@ class DesignMiddlewareTest extends TestCase {
 			unlink($testCssPath . '.map');
 		}
 
-		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/js/main.min.js';
+		$filePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'js' . DS . 'main.min.js';
 		if (file_exists($filePath)) {
 			unlink($filePath);
 		}

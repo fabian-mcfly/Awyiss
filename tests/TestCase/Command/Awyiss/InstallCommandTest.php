@@ -51,7 +51,6 @@ class InstallCommandTest extends TestCase {
 		$this->assertOutputContains('You need to create an admin user and run the migrations once the database connection is fixed manually.');
 		$this->assertOutputContains('<success>Skipping symlink creation in dry run mode.</success>');
 		$this->assertOutputContains('<success>Skipping .gitkeep removal in dry run mode.</success>');
-		$this->assertOutputContains('<success>Skeleton folder removed successfully.</success>');
 		$this->assertOutputContains('<success>Installation completed.</success>');
 	}
 

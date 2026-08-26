@@ -613,8 +613,8 @@ class DatatablesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'unlink ' . ROOT . DS . CUSTOM_DIR . '/Model/Entity/TestDatatable.php',
-						'unlink ' . ROOT . DS . CUSTOM_DIR . '/Model/Table/TestDatatableTable.php',
+						'unlink ' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php']),
+						'unlink ' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'TestDatatableTable.php']),
 						'bin' . DS . 'cake bake migration drop_testDatatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
 						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
 						'bin' . DS . 'cake schema_cache clear',

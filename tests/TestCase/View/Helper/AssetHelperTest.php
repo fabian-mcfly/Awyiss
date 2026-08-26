@@ -1126,8 +1126,8 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags();
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$this->assertStringContainsString('<link rel="preload"', $result);
 		$this->assertStringContainsString('href="http://localhost/assets/awyiss/css/dummy.' . $fileMTimeCss . '.css"', $result);
@@ -1153,7 +1153,7 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags('all', true);
 
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$this->assertStringNotContainsString('<link rel="stylesheet"', $result);
 		$this->assertStringNotContainsString('<link rel="preload"', $result);
@@ -1177,8 +1177,8 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags('all', false);
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$this->assertStringContainsString('<link rel="preload"', $result);
 		$this->assertStringContainsString('href="http://localhost/assets/awyiss/css/dummy.' . $fileMTimeCss . '.css"', $result);
@@ -1203,8 +1203,8 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags('all', false, false);
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$this->assertStringContainsString('<link rel="preload"', $result);
 		$this->assertStringContainsString('href="http://localhost/assets/awyiss/css/dummy.' . $fileMTimeCss . '.css"', $result);
@@ -1229,8 +1229,8 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags('css');
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$this->assertStringContainsString('<link rel="stylesheet"', $result);
 		$this->assertStringNotContainsString('<link rel="preload"', $result);
@@ -1276,11 +1276,11 @@ class AssetHelperTest extends TestCase {
 
 		$result = $this->helper->getTags();
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 
 		$this->assertStringContainsString('dummy.min.' . $fileMTimeCss . '.css', $result);
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
 
 
@@ -1705,7 +1705,7 @@ class AssetHelperTest extends TestCase {
 		$this->assertStringContainsString('<script', $importMap);
 		$this->assertStringContainsString('{"imports":{"dummy":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.min', $importMap);
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.min.js');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.min.js']));
 	}
 
 
@@ -1827,7 +1827,7 @@ class AssetHelperTest extends TestCase {
 
 		$finalAssets = $this->helper->getFinalAssets();
 
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
 
 		$testArray = [
 			'dummy.css' => [
@@ -1853,7 +1853,7 @@ class AssetHelperTest extends TestCase {
 
 		$finalAssets = $this->helper->getFinalAssets();
 
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 
 		$testArray = [
 			'dummy.css' => [
@@ -1867,7 +1867,7 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertEquals($testArray, $finalAssets);
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
 
 
@@ -1958,7 +1958,7 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testGetAssetPath(): void {
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
 
 		$path = $this->helper->getAssetPath('dummy.css');
 
@@ -1972,7 +1972,7 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testGetAssetPathMinifiesFileIfNotExist(): void {
-		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy2.min.css';
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy2.min.css']);
 		if (file_exists($filePath)) {
 			unlink($filePath);
 		}
@@ -1998,7 +1998,7 @@ class AssetHelperTest extends TestCase {
 		$path = $this->helper->getAssetPath('dummy_webfont.css');
 		$this->assertNull($path);
 
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/css/dummy_webfont.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', 'dummy_webfont.css']));
 
 		$path = $this->helper->getAssetPath('dummy_webfont.css', ['realm' => Awyiss::REALM_FRONTEND]);
 		$this->assertEquals('http://localhost/assets/css/dummy_webfont.' . $fileMTime . '.css', $path);
@@ -2024,7 +2024,7 @@ class AssetHelperTest extends TestCase {
 	public function testGetAssetPathWithLocalPath(): void {
 		$path = $this->helper->getAssetPath('dummy.css', ['localPath' => true]);
 
-		$this->assertSame(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css', $path);
+		$this->assertSame(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']), $path);
 	}
 
 
@@ -2050,7 +2050,7 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertStringContainsString('dummy.min.css', $path);
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
 
 
@@ -2062,9 +2062,9 @@ class AssetHelperTest extends TestCase {
 	public function testGetAssetPathWithMinifiedAndLocalPath(): void {
 		$path = $this->helper->getAssetPath('dummy.css', ['minified' => true, 'localPath' => true]);
 
-		$this->assertSame(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css', $path);
+		$this->assertSame(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']), $path);
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
 
 
@@ -2081,7 +2081,7 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertTrue($response->hasHeader('Link'));
 
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
 
 		$this->assertContains('Link: <http://localhost/assets/awyiss/css/dummy.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
 	}
@@ -2100,11 +2100,11 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertTrue($response->hasHeader('Link'));
 
-		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 
 		$this->assertContains('Link: <http://localhost/assets/awyiss/css/dummy.min.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
 
-		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
+		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
 
 
@@ -2119,8 +2119,8 @@ class AssetHelperTest extends TestCase {
 
 		$this->helper->afterLayout();
 
-		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.css');
-		$fileMTimeJs = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.js');
+		$fileMTimeCss = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
+		$fileMTimeJs = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
 
 		$response = $this->helper->getView()->getResponse();
 
@@ -2311,7 +2311,7 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testMinifyCss(): void {
-		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/css/main.min.css';
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', 'main.min.css']);
 		if (file_exists($filePath)) {
 			unlink($filePath);
 		}
@@ -2335,7 +2335,7 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testMinifyJs(): void {
-		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/js/main.min.js';
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'js', 'main.min.js']);
 		if (file_exists($filePath)) {
 			unlink($filePath);
 		}
@@ -2428,9 +2428,9 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetCreatesNewScssFile(): void {
-		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
-		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
-		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+		$scssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_b3e052fc6c30f602.scss']);
+		$cssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css']);
+		$cssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css.map']);
 
 		if (file_exists($scssPath)) {
 			unlink($scssPath);
@@ -2471,9 +2471,9 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetNotUpdatesExistingScssFile(): void {
-		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
-		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
-		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+		$scssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_b3e052fc6c30f602.scss']);
+		$cssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css']);
+		$cssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css.map']);
 
 		if (file_exists($cssPath)) {
 			unlink($cssPath);
@@ -2505,9 +2505,9 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetNotUpdatesExistingCssFile(): void {
-		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
-		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
-		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+		$scssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_b3e052fc6c30f602.scss']);
+		$cssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css']);
+		$cssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css.map']);
 
 		touch($scssPath, time() - 3600);
 		touch($cssPath, time() - 3600);
@@ -2534,12 +2534,12 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetRemovesOutdatedFiles(): void {
-		$oldScssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
-		$newScssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_4b0b55b40350baaf.scss';
-		$oldCssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
-		$newCssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_4b0b55b40350baaf.css';
-		$oldCssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
-		$newCssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_4b0b55b40350baaf.css.map';
+		$oldScssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_b3e052fc6c30f602.scss']);
+		$newScssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_4b0b55b40350baaf.scss']);
+		$oldCssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css']);
+		$newCssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_4b0b55b40350baaf.css']);
+		$oldCssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_b3e052fc6c30f602.css.map']);
+		$newCssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_4b0b55b40350baaf.css.map']);
 
 		touch($oldScssPath, time() - 7200);
 		touch($oldCssPath, time() - 7200);
@@ -2565,9 +2565,9 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetRespectsPriority(): void {
-		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_9a26370f2d2e3100.scss';
-		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_9a26370f2d2e3100.css';
-		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_9a26370f2d2e3100.css.map';
+		$scssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_9a26370f2d2e3100.scss']);
+		$cssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_9a26370f2d2e3100.css']);
+		$cssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_9a26370f2d2e3100.css.map']);
 
 		$scssContent1 = 'color: red;';
 		$scssContent2 = 'color: blue;';
@@ -2606,9 +2606,9 @@ CSS, $cssContent);
 	 * @throws \Exception
 	 */
 	public function testAddDynamicContentsStylesheetUsesDesignSettings(): void {
-		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_07de357242c7fade.scss';
-		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_07de357242c7fade.css';
-		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_07de357242c7fade.css.map';
+		$scssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', '_dynamic', 'page_123_07de357242c7fade.scss']);
+		$cssPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_07de357242c7fade.css']);
+		$cssMapPath = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'css', '_dynamic', 'page_123_07de357242c7fade.css.map']);
 
 		if (file_exists($scssPath)) {
 			unlink($scssPath);

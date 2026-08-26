@@ -20,6 +20,8 @@
 <a href="/de/startseite/">Startseite</a>
 </li>
 </ol>
+<script type="application/ld+json">
+{ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Startseite", "item": "http://localhost/de/startseite/" } ] } </script>
 </div>
 <p>And Text after Widget</p>
 </div>

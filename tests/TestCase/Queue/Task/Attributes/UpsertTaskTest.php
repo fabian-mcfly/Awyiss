@@ -503,12 +503,12 @@ class UpsertTaskTest extends TestCase {
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesUsergroupsTable.php',
+					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php',
 					$commands[1]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesUsergroup.php',
+					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php',
 					$commands[2]
 				);
 
@@ -645,12 +645,12 @@ class UpsertTaskTest extends TestCase {
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesUsergroupsTable.php',
+					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php',
 					$commands[1]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesUsergroup.php',
+					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php',
 					$commands[2]
 				);
 

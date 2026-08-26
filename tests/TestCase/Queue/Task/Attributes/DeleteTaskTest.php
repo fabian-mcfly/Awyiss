@@ -123,18 +123,18 @@ class DeleteTaskTest extends TestCase {
 
 				if ($identifier === 'News') {
 					// Special case for news, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesNewsTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesNews.php && ';
+					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.php';
+					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.php && ';
 				}
 				elseif ($identifier === 'Pages') {
 					// Special case for pages, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesPagesTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesPage.php && ';
+					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesPagesTable.php';
+					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesPage.php && ';
 				}
 				elseif ($identifier === 'Usergroups') {
 					// Special case for usergroups, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Table/AttributesUsergroupsTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model/Entity/AttributesUsergroup.php && ';
+					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php';
+					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php && ';
 				}
 
 				$this->assertSame(
