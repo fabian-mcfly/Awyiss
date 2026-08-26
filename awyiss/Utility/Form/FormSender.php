@@ -1046,6 +1046,7 @@ class FormSender {
 		$safeRealSender = $this->getFormOptions()->getSafeRealSender();
 		if ($safeRealSender) {
 			$mailer
+				->setFrom($safeRealSender, html_entity_decode($senderName))
 				->setSender($safeRealSender, html_entity_decode($senderName))
 				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName))
 			;

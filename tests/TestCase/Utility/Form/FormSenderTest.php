@@ -869,7 +869,7 @@ class FormSenderTest extends TestCase {
 			// Subject must be encoded in UTF-8
 			$this->assertEquals('Betreff =?UTF-8?B?ZsO8ciBFLU1haWwgdm9uIE1heCBNdXN0ZXJtYW5u?=', $mailer->getSubject());
 			// From in the email is the email address and name of the page visitor
-			$this->assertEquals(['example@domain.com' => 'Max Mustermann'], $mailer->getFrom());
+			$this->assertEquals(['noreply@localhost' => 'Max Mustermann'], $mailer->getFrom());
 			// To is the email address and name of the page owner
 			$this->assertEquals(['awyiss@cms.de' => 'Awyiss CMS'], $mailer->getTo());
 		};
@@ -1667,7 +1667,7 @@ class FormSenderTest extends TestCase {
 			// Subject must be encoded in UTF-8
 			$this->assertEquals('Betreff =?UTF-8?B?ZsO8ciBCZXN0w6R0aWd1bmc=?=', $mailer->getSubject());
 			// From in the email is the email address and name of the page visitor
-			$this->assertEquals(['awyiss@cms.de' => 'Awyiss CMS'], $mailer->getFrom());
+			$this->assertEquals(['noreply@localhost' => 'Awyiss CMS'], $mailer->getFrom());
 			// To is the email address and name of the page owner
 			$this->assertEquals(['example@domain.com' => 'Max Mustermann'], $mailer->getTo());
 		};
@@ -1712,7 +1712,7 @@ class FormSenderTest extends TestCase {
 			/** @var \Cake\Mailer\Mailer $mailer */
 			$mailer = $event->getData('mailer');
 
-			$this->assertEquals(['awyiss@cms.de' => 'Test Title Appendix'], $mailer->getFrom());
+			$this->assertEquals(['noreply@localhost' => 'Test Title Appendix'], $mailer->getFrom());
 		};
 
 		$eventManager->on('FormSender.beforeConfirmationEmailDeliver', $callableBeforeEmailDeliver);
