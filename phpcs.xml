@@ -2,8 +2,6 @@
 <ruleset name="CustomStandard">
 	<description>Awyiss coding standard based on PhpStorm configuration.</description>
 
-	<file>./awyiss</file>
-
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./docs/*</exclude-pattern>
