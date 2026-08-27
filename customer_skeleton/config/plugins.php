@@ -4,7 +4,7 @@ return [
 	'DebugKit' => [
 		'onlyDebug' => true,
 	],
-	'IdeHelper' => [
+	/*'IdeHelper' => [
 		'onlyCli' => true,
-	],
+	],*/
 ];

@@ -23,6 +23,7 @@ html {
 	letter-spacing:-.5px;
 	scrollbar-width:thin;
 	scroll-behavior:smooth;
+	-webkit-text-size-adjust:none;
 
 	@media screen and (prefers-reduced-motion:reduce) {
 		scroll-behavior:auto;
