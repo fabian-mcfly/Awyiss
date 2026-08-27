@@ -1,15 +1,27 @@
 #!/usr/bin/php -q
 <?php
 
-require dirname(__DIR__) . '/awyiss/I18n/functions.php';
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
 
-$loader = require dirname(__DIR__) . '/vendor/autoload.php';
+$dir = dirname(__DIR__) . DS;
+
+$awyissPath = $dir;
+require $awyissPath . 'awyiss' . DS . 'I18n' . DS . 'functions.php';
+require $awyissPath . 'awyiss' . DS . 'functions.php';
+
+$loader = require $dir . 'vendor' . DS . 'autoload.php';
 
 use Cake\Console\CommandRunner;
 
-// Build the runner with an application and root executable name.
+/**
+ * Build the runner with an application and root executable name.
+ *
+ * @noinspection PhpFullyQualifiedNameUsageInspection
+ */
 $runner = new CommandRunner(
-	new \Awyiss\Awyiss(dirname(__DIR__) . DS . 'awyiss' . DS . 'config', null, null, $loader),
+	new \Awyiss\Awyiss($awyissPath . 'awyiss' . DS . 'config', null, null, $loader),
 	'cake'
 );
 exit($runner->run($argv));
