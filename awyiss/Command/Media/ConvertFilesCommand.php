@@ -1125,10 +1125,10 @@ class ConvertFilesCommand extends Command {
 
 			if ($hasIccProfile === false) {
 				$image->stripImage();
-				$cmykProfile = file_get_contents(ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'icc_profiles' . DS . 'cmyk.icc');
+				$cmykProfile = file_get_contents(APP . 'assets' . DS . 'icc_profiles' . DS . 'cmyk.icc');
 				$image->profileImage('icc', $cmykProfile);
 				$image->stripImage();
-				$srgbProfile = file_get_contents(ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'icc_profiles' . DS . 'srgb.icc');
+				$srgbProfile = file_get_contents(APP . 'assets' . DS . 'icc_profiles' . DS . 'srgb.icc');
 				$image->profileImage('icc', $srgbProfile);
 			}
 

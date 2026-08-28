@@ -279,11 +279,11 @@ class ScssCompiler {
 		/** @noinspection PhpParamsInspection */
 		static::$compiler->addVariables(static::getColumnSystemVariables());
 
-		$sourceRoot = '../';
+		$sourceRoot = '..' . DS;
 		$subDir = trim(substr($cssFolderPath, strlen($basePath)), DS);
 		if (str_contains($subDir, DS)) {
 			$directoryCount = substr_count($subDir, DS);
-			$sourceRoot .= str_repeat('../', $directoryCount);
+			$sourceRoot .= str_repeat('..' . DS, $directoryCount);
 		}
 
 		// Set the source map options if the CSS content is not returned.

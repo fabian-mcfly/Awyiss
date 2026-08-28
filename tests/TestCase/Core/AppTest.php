@@ -218,6 +218,8 @@ class AppTest extends TestCase {
 			'Media\ClearCacheCommand' => '\Awyiss\Command\Media\ClearCacheCommand',
 			'Media\ConvertFilesCommand' => '\Awyiss\Command\Media\ConvertFilesCommand',
 			'Media\DetectAvailableCommandsCommand' => '\Awyiss\Command\Media\DetectAvailableCommandsCommand',
+			'Migrations\MigrateCommand' => '\Awyiss\Command\Migrations\MigrateCommand',
+			'Migrations\SeedCommand' => '\Awyiss\Command\Migrations\SeedCommand',
 			'Scss\CompileCommand' => '\Awyiss\Command\Scss\CompileCommand',
 			'Twig\ClearCacheCommand' => '\Awyiss\Command\Twig\ClearCacheCommand',
 			'I18nExtractCommand' => '\Awyiss\Command\I18nExtractCommand',

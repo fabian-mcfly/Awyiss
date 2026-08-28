@@ -91,7 +91,7 @@ class PhpConfig extends BasePhpConfig {
 		$contents .= ';';
 		$contents = str_replace('    ', "\t", $contents);
 
-		$folder = ENV_CUSTOM_CONFIG;
+		$folder = defined('ENV_CUSTOM_CONFIG') ? ENV_CUSTOM_CONFIG : CONFIG;
 
 		if (str_contains($key, '.')) {
 			[$folder, $key] = explode('.', $key);

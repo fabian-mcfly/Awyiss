@@ -5,29 +5,42 @@ declare(strict_types=1);
 /*
  * Use the DS to separate the directories in other defines
  */
+
+
+use Composer\InstalledVersions;
+
+
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
-
-/*
- * The full path to the directory which holds "awyiss", WITHOUT a trailing DS.
- */
-define('ROOT', dirname(realpath(__DIR__ . DS . '..' . DS)));
 
 /*
  * The actual directory name for the application directory.
  */
 define('APP_DIR', 'awyiss');
 
+$root = rtrim(InstalledVersions::getRootPackage()['install_path'], DS);
+define('ROOT', realpath($root));
+
 /*
- * Path to the application's directory.
+ * The full path to the project root and
+ * path to the awyiss directory.
  */
-define('APP', ROOT . DS . APP_DIR . DS);
+try {
+	$awyissPath = InstalledVersions::getInstallPath('awyiss/awyiss');
+	// Replace subpath instead of using `realpath` because `realpath` will resolve symlinks, but we want to keep the original path.
+	$awyissPath = rtrim(str_replace(DS . 'vendor' . DS . 'composer' . DS . '..' . DS . '..' . DS, DS, $awyissPath), DS);
+	$awyissPath = rtrim(str_replace(DS . 'composer' . DS . '..' . DS, DS, $awyissPath), DS);
+	define('APP', $awyissPath . DS . APP_DIR . DS);
+}
+catch (OutOfBoundsException $e) {
+	define('APP', ROOT . DS . APP_DIR . DS);
+}
 
 /*
  * Path to the config directories.
  */
-define('CONFIG', ROOT . DS . APP_DIR . DS . 'config' . DS);
+define('CONFIG', APP . 'config' . DS);
 
 /*
  * File path to the webroot directory.

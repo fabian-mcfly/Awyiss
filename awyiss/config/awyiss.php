@@ -14,7 +14,7 @@ use Queue\Generator\Task\QueuedJobTask;
 $assetPaths = [
 	Awyiss::REALM_FRONTEND => [],
 	Awyiss::REALM_BACKEND => [
-		'awyiss' => ROOT . DS . APP_DIR . DS . 'assets' . DS,
+		'awyiss' => APP . 'assets' . DS,
 	],
 ];
 
@@ -39,15 +39,15 @@ return [
 			'assets' => $assetPaths,
 			'locales' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS : null,
-				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,
+				'awyiss' => APP . 'locales' . DS,
 			],
 			'plugins' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS : null,
-				'awyiss' => ROOT . DS . APP_DIR . DS . 'plugins' . DS,
+				'awyiss' => APP . 'plugins' . DS,
 			],
 			'templates' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS : null,
-				'awyiss' => ROOT . DS . APP_DIR . DS . 'templates' . DS,
+				'awyiss' => APP . 'templates' . DS,
 			],
 		],
 		'webroot' => 'webroot',
@@ -344,7 +344,7 @@ return [
 	'Queue' => [
 		'defaultRequeueTimeout' => 120,
 		'maxworkers' => 3,
-		'workermaxruntime' => 600,
+		'workerLifetime' => 600,
 	],
 
 

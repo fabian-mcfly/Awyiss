@@ -55,6 +55,8 @@ return [
 		'\\Cake\\View\\Widget\\SelectBoxWidget::_renderOptions' => '6e6e27f00ee6989b2d381441575c99b4',
 		'\\MatthiasMullie\\Minify\\CSS::stripWhitespace' => '9a81901a063da5912d15032c3c999737',
 		'\\Migrations\\Command\\BakeSimpleMigrationCommand::bake' => 'd6e0974560b1cf432e4d6e36d62e5bf2',
+		'\\Migrations\\Command\\MigrateCommand::executeMigrations' => '3ae317eceed086ca5942415acdc6c453',
+		'\\Migrations\\Command\\SeedCommand::executeSeeds' => '59cb1f582cd29e6cd4c39116a3e9219d',
 		'\\Migrations\\Util\\ColumnParser::parseFields' => 'c7378a64ce2ee3ea6e42596d079b6a04',
 		'vendor/cakephp/bake/src/Command/AllCommand.php' => 'a6711fbf9a7d413fd58260caa2cde5c9',
 		'vendor/cakephp/bake/src/Command/ModelCommand.php' => '3c3465d4c0277c3785098df2b119e3e6',

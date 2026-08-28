@@ -268,7 +268,7 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	/**
 	 * Load customer center routes from separate file
 	 */
-	$file = ROOT . DS . APP_DIR . DS . 'config' . DS . 'routes_customer_center.php';
+	$file = APP . 'config' . DS . 'routes_customer_center.php';
 	if (is_file($file)) {
 		include $file;
 	}

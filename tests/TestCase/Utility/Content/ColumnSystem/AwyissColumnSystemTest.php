@@ -184,9 +184,14 @@ class AwyissColumnSystemTest extends TestCase {
 		$this->assertArrayHasKey('post', $filePaths);
 		$this->assertArrayHasKey(0, $filePaths['post']);
 
-		$this->assertEquals(\ROOT . \DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_helpers.scss']), $filePaths['pre'][0]);
 		$this->assertEquals(
-			\ROOT . \DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_content_elements.scss']), $filePaths['post'][0]);
+			ROOT . DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_helpers.scss']),
+			$filePaths['pre'][0]
+		);
+		$this->assertEquals(
+			ROOT . DS . implode(DS, ['awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss', '_content_elements.scss']),
+			$filePaths['post'][0]
+		);
 	}
 
 

@@ -66,11 +66,11 @@ class SystemController extends Controller {
 		$mediaWritable = is_writable($mediaPath);
 
 		// Check if awyiss/assets/css is writable
-		$awyissCssPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'css';
+		$awyissCssPath = APP . 'assets' . DS . 'css';
 		$awyissCssWritable = is_writable($awyissCssPath);
 
 		// Check if awyiss/assets/js is writable
-		$awyissJsPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'js';
+		$awyissJsPath = APP . 'assets' . DS . 'js';
 		$awyissJsWritable = is_writable($awyissJsPath);
 
 		// Check if webroot/assets/css is writable

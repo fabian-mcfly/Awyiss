@@ -149,8 +149,8 @@ class App extends BaseApp {
 		}
 
 		$paths[ '\\Awyiss\\' . $namespaceType . '\\' ] = [
-			'pattern' => implode(DS, [ROOT, APP_DIR, ...$folders, $name . $suffix . '.php']),
-			'basePath' => implode(DS, [ROOT, APP_DIR, ...$baseFolders]),
+			'pattern' => implode(DS, [APP, ...$folders, $name . $suffix . '.php']),
+			'basePath' => implode(DS, [APP, ...$baseFolders]),
 		];
 
 		foreach ($paths as $namespace => $pathConfig) {

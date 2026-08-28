@@ -533,7 +533,10 @@ class AssetHelper extends Helper {
 			}
 
 			// Convert the filesystem path to a path relative to the application's base path
-			$relativePath = str_replace(realpath(ROOT), '', realpath($assetPath));
+			$prePath = rtrim($key === 'awyiss' ? realpath(APP . '..') : realpath(ROOT . DS . CUSTOM_DIR), DS) . DS;
+			if (str_starts_with(realpath($assetPath), $prePath)) {
+				$relativePath = substr(realpath($assetPath), strlen($prePath));
+			}
 
 			// Check if the file is minified and append ".min" to the filename before the extension if it is
 			$fileName = substr($relativePath, 0, -strlen($extension));
@@ -542,7 +545,7 @@ class AssetHelper extends Helper {
 			if ($minified) {
 				$fileName .= 'min.';
 
-				$minifiedPath = $this->getMinifiedPath($fileName, $extension, $assetPath);
+				$minifiedPath = $this->getMinifiedPath($prePath . $fileName, $extension, $assetPath);
 
 				// Get the file modification time
 				$modTime = filemtime($minifiedPath);
@@ -570,7 +573,7 @@ class AssetHelper extends Helper {
 			}
 
 			// Generate a URL for the asset using CakePHP's Router and append the modification time to the filename
-			return static::$checkedAssets[ $realm . '__' . $asset ] = Router::url($fileName . $extension, true);
+			return static::$checkedAssets[ $realm . '__' . $asset ] = Router::url('/' . $fileName . $extension, true);
 		}
 
 		// If the asset is not found, return null
@@ -1337,7 +1340,7 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	protected function getMinifiedPath(string $fileName, mixed $extension, string $assetPath): string {
-		$minifiedPath = ROOT . $fileName . $extension;
+		$minifiedPath = $fileName . $extension;
 
 		/*
 		 * If the minified file does not exist,

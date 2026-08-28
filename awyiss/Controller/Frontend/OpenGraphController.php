@@ -122,7 +122,7 @@ class OpenGraphController extends AppController {
 		// Find the customer logo
 		$logoPath = $this->getLoginLogoPath();
 		if (!$logoPath) {
-			$logoPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'img' . DS . 'logo-awyiss.png';
+			$logoPath = APP . 'assets' . DS . 'img' . DS . 'logo-awyiss.png';
 		}
 
 		// Return the logo as response
@@ -185,7 +185,7 @@ class OpenGraphController extends AppController {
 			return false;
 		}
 
-		$pubPem = file_get_contents(ROOT . DS . 'awyiss' . DS . 'config' . DS . 'screenshots.2f.media.pem');
+		$pubPem = file_get_contents(APP . DS . 'config' . DS . 'screenshots.2f.media.pem');
 		if ($pubPem === false) {
 			return false;
 		}
