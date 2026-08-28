@@ -25,7 +25,7 @@ trait ConfigTrait {
 	/**
 	 * @var string The database host
 	 */
-	protected string $dbHost;
+	protected string $dbHost = 'localhost';
 	/**
 	 * @var string The database name
 	 */
@@ -41,7 +41,7 @@ trait ConfigTrait {
 	/**
 	 * @var string The database type
 	 */
-	protected string $dbType;
+	protected string $dbType = 'mysql';
 	/**
 	 * @var string The database username
 	 */
@@ -165,28 +165,28 @@ trait ConfigTrait {
 			$environmentConfig['Datasources']['default']['driver'] = Sqlite::class;
 		}
 
-		if ($this->dbHost) {
+		if (!empty($this->dbHost)) {
 			$environmentConfig['Datasources']['default']['host'] = $this->dbHost;
 		}
 		else {
 			unset($environmentConfig['Datasources']['default']['host']);
 		}
 
-		if ($this->dbPort) {
+		if (!empty($this->dbPort)) {
 			$environmentConfig['Datasources']['default']['port'] = $this->dbPort;
 		}
 		else {
 			unset($environmentConfig['Datasources']['default']['port']);
 		}
 
-		if ($this->dbPassword) {
+		if (!empty($this->dbPassword)) {
 			$environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
 		}
 		else {
 			unset($environmentConfig['Datasources']['default']['password']);
 		}
 
-		if ($this->dbUsername) {
+		if (!empty($this->dbUsername)) {
 			$environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
 		}
 		else {
@@ -377,6 +377,17 @@ trait ConfigTrait {
 			$this->io->success('ide-twig.json file can be updated.');
 
 			return;
+		}
+
+		// Rename `_ide-twig.json` to `ide-twig.json` if it exists in Frontend and Backend template folders
+		$backendFilePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'Backend' . DS;
+		if (file_exists($backendFilePath . '_ide-twig.json')) {
+			rename($backendFilePath . '_ide-twig.json', $backendFilePath . 'ide-twig.json');
+		}
+
+		$frontendFilePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'Frontend' . DS;
+		if (file_exists($frontendFilePath . '_ide-twig.json')) {
+			rename($frontendFilePath . '_ide-twig.json', $frontendFilePath . 'ide-twig.json');
 		}
 
 		// Load the contents of the ide-twig.json file

@@ -13,6 +13,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
+use Cake\Utility\Text;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -53,6 +54,27 @@ class InstallCommand extends Command {
 	 * @var \Cake\Console\ConsoleIo The console I/O
 	 */
 	protected ConsoleIo $io;
+	/**
+	 * A list of reserved customer names that cannot be used for the installation.
+	 *
+	 * @var array<string>
+	 */
+	protected array $reservedCustomerNames = [
+		'customer_skeleton',
+		'awyiss',
+		'docs',
+		'backup',
+		'bin',
+		'logs',
+		'tests',
+		'tmp',
+		'vendor',
+		'webroot',
+	];
+	/**
+	 * @var string Absolute path to the resolved skeleton directory
+	 */
+	protected string $skeletonPath;
 
 
 	/**
@@ -80,8 +102,22 @@ class InstallCommand extends Command {
 			return static::CODE_SUCCESS;
 		}
 
+		// If a CUSTOM_DIR already exists, we ask the user if they want to continue with the installation
+		if (
+			defined('CUSTOM_DIR')
+			&& is_dir(ROOT . DS . CUSTOM_DIR)
+			&& !in_array(CUSTOM_DIR, [...$this->reservedCustomerNames, 'tests' . DS . 'customer'])
+			&& $this->io->askChoice(
+				'CUSTOM_DIR already exists. Do you want to continue with the installation? This may overwrite existing files.',
+				['y', 'n'],
+				'n'
+			) === 'n'
+		) {
+			return static::CODE_ERROR;
+		}
+
 		// Check if the dummy folder exists
-		$this->checkDummyFolder();
+		$this->getSkeletonFolderPath();
 
 		// Get user inputs
 		$this->getInputs();
@@ -133,12 +169,6 @@ class InstallCommand extends Command {
 			$this->filesystem->mkdir(TMP . 'sessions', 0755);
 		}
 
-		if (!$this->dryRun) {
-			// Remove the dummy folder
-			$this->filesystem->remove(ROOT . DS . '_customer_skeleton');
-		}
-		$this->io->success('Skeleton folder removed successfully.');
-
 		if ($this->connectionValid) {
 			// Ask for the environment of installation.
 			$this->rtEditor = $this->io->askChoice('Rich text editor to use?', ['TinyMCE', 'Jodit', 'none'], 'TinyMCE');
@@ -181,8 +211,10 @@ class InstallCommand extends Command {
 	 *
 	 * @return void
 	 */
-	protected function checkDummyFolder(): void {
-		if (!$this->filesystem->exists(ROOT . DS . '_customer_skeleton')) {
+	protected function getSkeletonFolderPath(): void {
+		$this->skeletonPath = APP . '..' . DS . 'customer_skeleton';
+
+		if (!$this->filesystem->exists($this->skeletonPath)) {
 			$this->io->abort('Skeleton folder does not exist. Installation aborted.');
 		}
 	}
@@ -239,7 +271,7 @@ class InstallCommand extends Command {
 		}
 
 		try {
-			$this->filesystem->mirror(ROOT . DS . '_customer_skeleton', ROOT . DS . $this->customerName);
+			$this->filesystem->mirror($this->skeletonPath, ROOT . DS . $this->customerName);
 			$this->io->success('Skeleton folder copied successfully.');
 		}
 		catch (IOExceptionInterface) {
@@ -302,7 +334,7 @@ class InstallCommand extends Command {
 		$this->io->success('Queue migrations completed.');
 
 		// Seed the database
-		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'seed', '-q']);
+		$this->runCommand(['bin' . DS . 'cake', 'seeds', 'run', '-q']);
 		$this->io->success('Seeding completed.');
 	}
 
@@ -321,7 +353,7 @@ class InstallCommand extends Command {
 
 		if (!isset($this->customerName)) {
 			if (!defined('CUSTOM_DIR')) {
-				$this->io->abort('Invalid customer name.');
+				$this->io->abort('CUSTOM_DIR is not defined. Cannot create symlinks.');
 			}
 			else {
 				$this->customerName = CUSTOM_DIR;
@@ -330,7 +362,7 @@ class InstallCommand extends Command {
 
 		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 			try {
-				$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
+				$this->filesystem->symlink(APP . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
 				$this->filesystem->symlink(
 					ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce',
 					WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce'
@@ -342,7 +374,7 @@ class InstallCommand extends Command {
 
 				$this->io->out('Please create the symlinks manually:');
 
-				$this->io->comment('ln -s ' . ROOT . DS . 'awyiss' . DS . 'assets ' . WWW_ROOT . 'awyiss' . DS . 'assets');
+				$this->io->comment('ln -s ' . APP . 'assets ' . WWW_ROOT . 'awyiss' . DS . 'assets');
 				$this->io->comment(
 					'ln -s'
 					. ' '
@@ -367,7 +399,7 @@ class InstallCommand extends Command {
 				'mklink',
 				'/D',
 				WWW_ROOT . 'awyiss' . DS . 'assets',
-				ROOT . DS . 'awyiss' . DS . 'assets',
+				APP . 'assets',
 			],
 			[
 				'cmd',
@@ -397,7 +429,7 @@ class InstallCommand extends Command {
 
 			$this->io->out('Please create the symlinks manually:');
 
-			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets ' . ROOT . DS . 'awyiss\assets');
+			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets ' . APP . '\assets');
 			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets\js\TinyMCE\tinymce ' . ROOT . DS . 'vendor\tinymce\tinymce');
 			$this->io->comment('mklink /D ' . WWW_ROOT . 'assets ' . ROOT . DS . $this->customerName . DS . 'assets');
 
@@ -414,21 +446,22 @@ class InstallCommand extends Command {
 	 * @return void
 	 */
 	protected function validateCustomerName(): void {
-		$reservedNames = ['_customer_skeleton', 'awyiss', 'docs', 'backup', 'bin', 'logs', 'tests', 'tmp', 'vendor', 'webroot'];
-
 		if (empty($this->customerName)) {
 			$this->io->abort('Invalid customer name.');
 		}
 
-		if (in_array($this->customerName, $reservedNames)) {
+		if (in_array($this->customerName, $this->reservedCustomerNames)) {
 			$this->io->abort('Invalid customer name.');
 		}
 
-		if (!preg_match('/[^a-z0-9_-]/', $this->customerName)) {
+		$cleanedName = strtolower(Text::slug($this->customerName, [
+			'preserve' => '-',
+			'replacement' => '_',
+		]));
+
+		if ($cleanedName === $this->customerName) {
 			return;
 		}
-
-		$cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
 
 		$choice = $this->io->askChoice('Invalid customer name. Do you want to use "' . $cleanedName . '" instead?', ['y', 'n'], 'y');
 		if ($choice === 'y') {

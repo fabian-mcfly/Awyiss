@@ -48,7 +48,9 @@ class InstallCommandTest extends TestCase {
 
 		$this->assertOutputContains('<success>Skeleton folder can be copied.</success>');
 		$this->assertOutputContains('<success>.env file can be created.</success>');
-		$this->assertOutputContains('You need to create an admin user and run the migrations once the database connection is fixed manually.');
+		$this->assertOutputContains(
+			'You need to create an admin user and run the migrations once the database connection is fixed manually.'
+		);
 		$this->assertOutputContains('<success>Skipping symlink creation in dry run mode.</success>');
 		$this->assertOutputContains('<success>Skipping .gitkeep removal in dry run mode.</success>');
 		$this->assertOutputContains('<success>Installation completed.</success>');
