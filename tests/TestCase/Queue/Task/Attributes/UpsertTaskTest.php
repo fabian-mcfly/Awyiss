@@ -174,7 +174,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration create_attributes_users userId:integer[11]:index testCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'create_attributes_users\' \'userId:integer[11]:index\' \'testCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[0]
@@ -235,7 +236,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_testCol_to_attributes_contents testCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'add_testCol_to_attributes_contents\' \'testCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[0]
@@ -296,7 +298,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration alter_oldCol_on_attributes_contents newCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'alter_oldCol_on_attributes_contents\' \'newCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[0]
@@ -356,7 +359,8 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(3, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_testCol_from_attributes_contents testCol --folder tests/customer/config/Migrations',
+					'bin/cake bake migration \'remove_testCol_from_attributes_contents\' \'testCol\''
+						. ' --folder \'tests/customer/config/Migrations\'',
 					$commands[0]
 				);
 
@@ -364,7 +368,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration create_attributes_users userId:integer[11]:index renamedCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'create_attributes_users\' \'userId:integer[11]:index\' \'renamedCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[2]
@@ -424,7 +429,8 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(3, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_testCol_from_attributes_news testCol --folder tests/customer/config/Migrations',
+					'bin/cake bake migration \'remove_testCol_from_attributes_news\' \'testCol\''
+						. ' --folder \'tests/customer/config/Migrations\'',
 					$commands[0]
 				);
 
@@ -432,7 +438,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_renamedCol_to_attributes_contents renamedCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'add_renamedCol_to_attributes_contents\' \'renamedCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[2]
@@ -498,17 +505,17 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(5, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration drop_attributes_usergroups --folder tests/customer/config/Migrations',
+					'bin/cake bake migration \'drop_attributes_usergroups\' --folder \'tests/customer/config/Migrations\'',
 					$commands[0]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php',
+					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php\'',
 					$commands[1]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php',
+					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php\'',
 					$commands[2]
 				);
 
@@ -516,7 +523,8 @@ class UpsertTaskTest extends TestCase {
 
 				$this->assertEquals(
 					sprintf(
-						'bin/cake bake migration add_renamedCol_to_attributes_contents renamedCol:%s --folder tests/customer/config/Migrations',
+						'bin/cake bake migration \'add_renamedCol_to_attributes_contents\' \'renamedCol:%s\''
+							. ' --folder \'tests/customer/config/Migrations\'',
 						$colString
 					),
 					$commands[4]
@@ -581,7 +589,8 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(1, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration remove_testCol_from_attributes_contents testCol --folder tests/customer/config/Migrations',
+					'bin/cake bake migration \'remove_testCol_from_attributes_contents\' \'testCol\''
+						. ' --folder \'tests/customer/config/Migrations\'',
 					$commands[0]
 				);
 
@@ -640,17 +649,17 @@ class UpsertTaskTest extends TestCase {
 				$this->assertCount(3, $commands);
 
 				$this->assertEquals(
-					'bin/cake bake migration drop_attributes_usergroups --folder tests/customer/config/Migrations',
+					'bin/cake bake migration \'drop_attributes_usergroups\' --folder \'tests/customer/config/Migrations\'',
 					$commands[0]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php',
+					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php\'',
 					$commands[1]
 				);
 
 				$this->assertEquals(
-					'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php',
+					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php\'',
 					$commands[2]
 				);
 
@@ -710,10 +719,10 @@ class UpsertTaskTest extends TestCase {
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
 					'(bin/cake bake migration create_attributes_contents' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
+					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_contents --namespace Customer --no-fixture --no-test --update --force' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					' && bin/cake bake model \'attributes_contents\' --namespace Customer --no-fixture --no-test --update --force' .
+					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 
@@ -756,9 +765,9 @@ class UpsertTaskTest extends TestCase {
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
 					'(bin/cake bake migration remove_testCol_from_attributes_contents' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
+					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 
@@ -801,10 +810,10 @@ class UpsertTaskTest extends TestCase {
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
 					'(bin/cake bake migration add_test_to_attributes_news' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
+					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole News' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					' && bin/cake bake model \'attributes_news\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'News\'' .
+					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 
@@ -846,11 +855,11 @@ class UpsertTaskTest extends TestCase {
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
 					'(bin/cake bake migration add_test_to_attributes_contents' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
+					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_contents --namespace Customer --no-fixture --no-test --update --force' .
-					' && bin/cake bake model attributes_pages --namespace Customer --no-fixture --no-test --update --force --for-pagerole Pages' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					' && bin/cake bake model \'attributes_contents\' --namespace Customer --no-fixture --no-test --update --force' .
+					' && bin/cake bake model \'attributes_pages\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'Pages\'' .
+					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 
@@ -892,11 +901,11 @@ class UpsertTaskTest extends TestCase {
 			$this->callback(function (array $jobData): bool {
 				$this->assertSame(
 					'(bin/cake bake migration add_test_to_attributes_products' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
+					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
 					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model attributes_products --namespace Customer --no-fixture --no-test --update --force --for-pagerole Products' .
-					' && bin/cake bake model attributes_news --namespace Customer --no-fixture --no-test --update --force --for-pagerole News' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					' && bin/cake bake model \'attributes_products\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'Products\'' .
+					' && bin/cake bake model \'attributes_news\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'News\'' .
+					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 

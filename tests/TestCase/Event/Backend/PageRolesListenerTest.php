@@ -284,8 +284,8 @@ class PageRolesListenerTest extends TestCase {
 					return true;
 				}
 
-				return isset($data['command']) &&
-					   $data['command'] === 'bin/cake bake enum PageRole page:1,newscategory:2,news:3,product:4 -i --namespace Customer --is-pagerole --force';
+				return isset($data['command']) && $data['command'] === 'bin/cake bake enum PageRole'
+					. ' \'page:1,newscategory:2,news:3,product:4\' -i --namespace Customer --is-pagerole --force';
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter > 1) {
@@ -337,8 +337,10 @@ class PageRolesListenerTest extends TestCase {
 					return true;
 				}
 
-				return isset($data['command']) &&
-					   $data['command'] === 'bin/cake bake enum PageRole page:1,newscategory:2,news:3,product:4 -i --namespace Customer --is-pagerole --force';
+				return isset($data['command']) && $data['command'] === 'bin/cake bake enum PageRole'
+					. ' \'page:1,newscategory:2,news:3,product:4\''
+					. ' -i --namespace Customer --is-pagerole --force'
+				;
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter > 1) {
@@ -447,8 +449,10 @@ class PageRolesListenerTest extends TestCase {
 					return true;
 				}
 
-				return isset($data['command']) && $data['command'] === '(bin/cake bake model TestRoles --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages --update &&'
-				   . ' bin/cake bake seed --data PageRoles --folder tests/customer/config/Seeds --force --truncate)';
+				return isset($data['command']) && $data['command'] === '(bin/cake bake model \'TestRoles\' --namespace Customer'
+					. ' --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation'
+					. ' --skip-relation-check --table pages --update &&'
+				   . ' bin/cake bake seed --data PageRoles --folder \'tests/customer/config/Seeds\' --force --truncate)';
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
@@ -500,9 +504,10 @@ class PageRolesListenerTest extends TestCase {
 					return true;
 				}
 
-				return isset($data['command']) &&
-					   $data['command'] ===
-					   '(bin/cake bake model NewRoles --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages --update && bin/cake bake seed --data PageRoles --folder tests/customer/config/Seeds --force --truncate)';
+				return isset($data['command']) && $data['command'] === '(bin/cake bake model \'NewRoles\''
+					. ' --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test'
+					. ' --no-validation --skip-relation-check --table pages --update && bin/cake bake seed --data PageRoles'
+					. ' --folder \'tests/customer/config/Seeds\' --force --truncate)';
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {

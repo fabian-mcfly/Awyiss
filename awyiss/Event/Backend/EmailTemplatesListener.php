@@ -74,7 +74,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 		$commands = [];
 
 		if (!file_exists($folderPath)) {
-			$commands[] = 'mkdir -m 0755 -p ' . $folderPath;
+			$commands[] = 'mkdir -m 0755 -p ' . escapeshellarg($folderPath);
 		}
 
 		$filePath = $folderPath . $fileName . $extension;
@@ -89,7 +89,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 			$currentFilePath = $folderPath . $currentFileName . $extension;
 			$fileExists = file_exists($currentFilePath);
 			if ($fileExists) {
-				$commands[] = 'mv -f ' . $currentFilePath . ' ' . $filePath;
+				$commands[] = 'mv -f ' . escapeshellarg($currentFilePath) . ' ' . escapeshellarg($filePath);
 			}
 		}
 		else {
@@ -99,21 +99,19 @@ class EmailTemplatesListener implements EventListenerInterface {
 		//If the file does not exist, we create one based on a twig-template for frontend email templates
 		if (!$fileExists) {
 			$commands[] = 'bin' . DS . 'cake bake template email_templates email_template '
-				. $fileName . ' --prefix Frontend --controller email'
+				. escapeshellarg($fileName) . ' --prefix Frontend --controller email'
 			;
-			$commands[] = 'chmod 0755 ' . $filePath;
+			$commands[] = 'chmod 0755 ' . escapeshellarg($filePath);
 		}
 
 		if (!empty($commands)) {
-			$data = [
-				'command' => implode(' && ', array_map('escapeshellcmd', $commands)),
-				'escape' => false,
-				'log' => true,
-			];
-
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$queuedJobsTable->createJob('Queue.Execute', $data, [
+			$queuedJobsTable->createJob('Queue.Execute', [
+				'command' => implode(' && ', $commands),
+				'escape' => false,
+				'log' => true,
+			], [
 				'group' => 'general',
 				'priority' => 1,
 				'reference' => 'EmailTemplates::fileChanges',
@@ -151,7 +149,8 @@ class EmailTemplatesListener implements EventListenerInterface {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$queuedJobsTable->createJob('Queue.Execute', [
-				'command' => 'mv -f ' . $filePath . ' ' . $newFilePath,
+				'command' => 'mv',
+				'params' => ['-f', $filePath, $newFilePath],
 				'log' => true,
 			], [
 				'group' => 'general',

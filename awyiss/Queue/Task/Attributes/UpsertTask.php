@@ -66,7 +66,7 @@ class UpsertTask extends Task {
 
 
 		//Force migrations for attributes to be stored in the custom directory, to not mess with the Awyiss migrations.
-		$migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$migrationsPath = ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$attributesTableName = 'attributes_' . Inflector::underscore($data['new']['scope']);
 		$bakeOldModel = false;
@@ -109,8 +109,11 @@ class UpsertTask extends Task {
 			// The target attributes-table does not exist
 			if (!$tableExists) {
 				// Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-				$commands[] = 'bin' . DS . 'cake bake migration create_' . $attributesTableName
-					. ' ' . $foreignKey . ':integer[11]:index ' . $column . $migrationsPath
+				$commands[] = 'bin' . DS . 'cake bake migration'
+					. ' ' . escapeshellarg('create_' . $attributesTableName)
+					. ' ' . escapeshellarg($foreignKey . ':integer[11]:index')
+					. ' ' . escapeshellarg($column)
+					. $migrationsPath
 				;
 			}
 			else {
@@ -198,14 +201,14 @@ class UpsertTask extends Task {
 		 */
 		if (count($schema->columns()) <= 3) {
 			//Bake a `drop`-migration
-			$commands[] = 'bin' . DS . 'cake bake migration drop_' . $oldAttributesTableName . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration ' . escapeshellarg('drop_' . $oldAttributesTableName) . $migrationsPath;
 
 			//Remove both the table and the entity files from the custom directory.
 			if (file_exists($oldTableFile)) {
-				$commands[] = 'unlink ' . $oldTableFile;
+				$commands[] = 'unlink ' . escapeshellarg($oldTableFile);
 			}
 			if (file_exists($oldEntityFile)) {
-				$commands[] = 'unlink ' . $oldEntityFile;
+				$commands[] = 'unlink ' . escapeshellarg($oldEntityFile);
 			}
 
 			$bakeOldModel = false;
@@ -236,14 +239,10 @@ class UpsertTask extends Task {
 			}
 
 			//Bake a `remove`-migration
-			$commands[] = 'bin'
-				. DS
-				. 'cake bake migration remove_'
-				. ($data['old']['identifier'] ?? $data['new']['identifier'])
-				. '_from_'
-				. $oldAttributesTableName
-				. ' '
-				. $data['old']['identifier']
+			$commands[] = 'bin' . DS . 'cake bake migration'
+				. ' ' . escapeshellarg('remove_' . ($data['old']['identifier'] ?? $data['new']['identifier']) . '_from_'
+				. $oldAttributesTableName)
+				. ' ' . escapeshellarg($data['old']['identifier'])
 				. $migrationsPath
 			;
 		}
@@ -275,15 +274,18 @@ class UpsertTask extends Task {
 		$attributesTableName = 'attributes_' . Inflector::underscore($data['new']['scope']);
 
 		//Migrate all the newly baked migrations
-		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate'
+			. ' --source ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations') . ' --no-lock'
+		;
+
 		//Clear the database schema
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//And bake the model
-		$forPageRole = $scopeIsPageRole ? ' --for-pagerole ' . $data['new']['scope'] : null;
+		$forPageRole = $scopeIsPageRole ? ' --for-pagerole ' . escapeshellarg($data['new']['scope']) : null;
 
 		if (empty($data['new']['deleted'])) {
-			$commands[] = 'bin' . DS . 'cake bake model ' . $attributesTableName
+			$commands[] = 'bin' . DS . 'cake bake model ' . escapeshellarg($attributesTableName)
 				. ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $forPageRole
 			;
 		}
@@ -296,23 +298,23 @@ class UpsertTask extends Task {
 			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 			if ($pageRoleEnum::tryFromName($data['old']['scope'])) {
-				$forPageRole = ' --for-pagerole ' . $data['old']['scope'];
+				$forPageRole = ' --for-pagerole ' . escapeshellarg($data['old']['scope']);
 			}
 
 			$oldAttributesTable = 'attributes_' . Inflector::underscore($data['old']['scope']);
 
-			$commands[] = 'bin' . DS . 'cake bake model ' . $oldAttributesTable
+			$commands[] = 'bin' . DS . 'cake bake model ' . escapeshellarg($oldAttributesTable)
 				. ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $forPageRole
 			;
 		}
 
 		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes'
-			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
 		;
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
+			'command' => '(' . implode(' && ', $commands) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -373,14 +375,9 @@ class UpsertTask extends Task {
 		//Column is renamed but only if the scope is still the same.
 		if (!$changedScope && isset($diff['identifier'])) {
 			//The scope has not changed, but the identifier has: alter the column
-			$commands[] = 'bin'
-				. DS
-				. 'cake bake migration alter_'
-				. $data['old']['identifier']
-				. '_on_'
-				. $attributesTableName
-				. ' '
-				. $column
+			$commands[] = 'bin' . DS . 'cake bake migration'
+				. ' ' . escapeshellarg('alter_' . $data['old']['identifier'] . '_on_' . $attributesTableName)
+				. ' ' . escapeshellarg($column)
 				. $migrationsPath
 			;
 		}
@@ -393,27 +390,17 @@ class UpsertTask extends Task {
 
 			if (!$columnExists) {
 				//The column does not exist in the target table? Add it.
-				$commands[] = 'bin'
-					. DS
-					. 'cake bake migration add_'
-					. $data['new']['identifier']
-					. '_to_'
-					. $attributesTableName
-					. ' '
-					. $column
+				$commands[] = 'bin' . DS . 'cake bake migration'
+					. ' ' . escapeshellarg('add_' . $data['new']['identifier'] . '_to_' . $attributesTableName)
+					. ' ' . escapeshellarg($column)
 					. $migrationsPath
 				;
 			}
 			else {
 				//The column does exist in the target table? Alter it.
-				$commands[] = 'bin'
-					. DS
-					. 'cake bake migration alter_'
-					. $data['new']['identifier']
-					. '_on_'
-					. $attributesTableName
-					. ' '
-					. $column
+				$commands[] = 'bin' . DS . 'cake bake migration'
+					. ' ' . escapeshellarg('alter_' . $data['new']['identifier'] . '_on_' . $attributesTableName)
+					. ' ' . escapeshellarg($column)
 					. $migrationsPath
 				;
 			}

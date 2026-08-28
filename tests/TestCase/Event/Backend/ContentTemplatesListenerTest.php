@@ -341,10 +341,11 @@ class ContentTemplatesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/content/',
-						'bin/cake bake template content_templates content_template test_template --prefix Frontend --controller content',
-						'chmod 0755 ' . TMP . 'test_templates/Frontend/content/test_template.twig',
-					]);
+					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/content/\'',
+					'bin/cake bake template content_templates content_template \'test_template\''
+						. ' --prefix Frontend --controller content',
+					'chmod 0755 \'' . TMP . 'test_templates/Frontend/content/test_template.twig\'',
+				]);
 			}),
 			[
 				'group' => 'general',
@@ -429,10 +430,11 @@ class ContentTemplatesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/content/',
-						'bin/cake bake template content_templates content_template test_template --prefix Frontend --controller content',
-						'chmod 0755 ' . TMP . 'test_templates/Frontend/content/test_template.twig',
-					]);
+					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/content/\'',
+					'bin/cake bake template content_templates content_template \'test_template\''
+						. ' --prefix Frontend --controller content',
+					'chmod 0755 \'' . TMP . 'test_templates/Frontend/content/test_template.twig\'',
+				]);
 			}),
 			[
 				'group' => 'general',
@@ -523,10 +525,10 @@ class ContentTemplatesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/content/',
-						'bin/cake bake template content_templates content_template new_template --prefix Frontend --controller content',
-						'chmod 0755 ' . TMP . 'test_templates/Frontend/content/new_template.twig',
-					]);
+					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/content/\'',
+					'bin/cake bake template content_templates content_template \'new_template\' --prefix Frontend --controller content',
+					'chmod 0755 \'' . TMP . 'test_templates/Frontend/content/new_template.twig\'',
+				]);
 			}),
 			[
 				'group' => 'general',
@@ -579,7 +581,10 @@ class ContentTemplatesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'mv -f ' . TMP . 'test_templates/Frontend/content/test_template.twig ' . TMP . 'test_templates/Frontend/content/new_template.twig';
+				return isset($data['command']) && $data['command'] === 'mv -f'
+					. ' \''. TMP . 'test_templates/Frontend/content/test_template.twig\''
+					. ' \''. TMP . 'test_templates/Frontend/content/new_template.twig\''
+				;
 			}),
 			[
 				'group' => 'general',
@@ -633,8 +638,8 @@ class ContentTemplatesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'bin/cake bake template content_templates content_template new_template --prefix Frontend --controller content',
-						'chmod 0755 ' . TMP . 'test_templates/Frontend/content/new_template.twig',
+						'bin/cake bake template content_templates content_template \'new_template\' --prefix Frontend --controller content',
+						'chmod 0755 \'' . TMP . 'test_templates/Frontend/content/new_template.twig\'',
 					]);
 			}),
 			[
@@ -694,7 +699,10 @@ class ContentTemplatesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'mv -f ' . TMP . 'test_templates/Frontend/content/test_template.twig ' . TMP . 'test_templates/Frontend/content/new_template.twig';
+				return isset($data['command']) && $data['command'] === 'mv -f'
+					. ' \'' . TMP . 'test_templates/Frontend/content/test_template.twig\''
+					. ' \'' . TMP . 'test_templates/Frontend/content/new_template.twig\''
+				;
 			}),
 			[
 				'group' => 'general',
@@ -735,10 +743,11 @@ class ContentTemplatesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/content/',
-						'bin/cake bake template content_templates content_template test_template --prefix Frontend --controller content',
-						'chmod 0755 ' . TMP . 'test_templates/Frontend/content/test_template.twig',
-					]);
+					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/content/\'',
+					'bin/cake bake template content_templates content_template \'test_template\''
+						. ' --prefix Frontend --controller content',
+					'chmod 0755 \'' . TMP . 'test_templates/Frontend/content/test_template.twig\'',
+				]);
 			}),
 			[
 				'group' => 'general',
@@ -821,12 +830,11 @@ class ContentTemplatesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) &&
-					   str_starts_with(
-						   $data['command'],
-						   'mv -f ' . TMP . 'test_templates/Frontend/content/test_template.twig ' . TMP . 'test_templates/Frontend/content/_deleted-test_template-'
-					   ) &&
-					   str_ends_with($data['command'], '.twig');
+				return isset($data['command']) && $data['command'] === 'mv'
+					&& isset($data['params']) && $data['params'][0] === '-f'
+					&& $data['params'][1] === TMP . 'test_templates/Frontend/content/test_template.twig'
+					&& str_starts_with($data['params'][2], TMP . 'test_templates/Frontend/content/_deleted-test_template-')
+					&& str_ends_with($data['params'][2], '.twig');
 			}),
 			[
 				'group' => 'general',

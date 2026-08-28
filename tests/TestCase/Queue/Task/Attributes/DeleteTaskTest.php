@@ -123,25 +123,38 @@ class DeleteTaskTest extends TestCase {
 
 				if ($identifier === 'News') {
 					// Special case for news, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.php && ';
+					$unlinkCommands = 'unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.php\''
+					;
+					$unlinkCommands .= ' && unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Entity' . DS . 'AttributesNews.php\' && '
+					;
 				}
 				elseif ($identifier === 'Pages') {
 					// Special case for pages, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesPagesTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesPage.php && ';
+					$unlinkCommands = 'unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Table' . DS . 'AttributesPagesTable.php\''
+					;
+					$unlinkCommands .= ' && unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Entity' . DS . 'AttributesPage.php\' && '
+					;
 				}
 				elseif ($identifier === 'Usergroups') {
 					// Special case for usergroups, we need to unlink the files
-					$unlinkCommands = 'unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php';
-					$unlinkCommands .= ' && unlink ' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php && ';
+					$unlinkCommands = 'unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php\''
+					;
+					$unlinkCommands .= ' && unlink \'' . ROOT . DS . CUSTOM_DIR . DS
+						. 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php\' && '
+					;
 				}
 
 				$this->assertSame(
-					'(' . $unlinkCommands . 'bin/cake bake migration drop_attributes_' . Inflector::underscore($identifier) . ' --folder tests/customer/config/Migrations' .
-					' && bin/cake migrations migrate --source ../../tests/customer/config/Migrations --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake seed --data Attributes --folder tests/customer/config/Seeds --force --truncate)',
+					'(' . $unlinkCommands . 'bin/cake bake migration \'drop_attributes_' . Inflector::underscore($identifier) . '\''
+					. ' --folder \'tests/customer/config/Migrations\''
+					. ' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock'
+					. ' && bin/cake schema_cache clear'
+					. ' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
 					$jobData['command']
 				);
 

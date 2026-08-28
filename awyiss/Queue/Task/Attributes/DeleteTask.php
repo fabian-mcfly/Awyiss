@@ -65,31 +65,33 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 
 		//Remove both the table and the entity files from the custom directory.
 		if (file_exists($tableFile)) {
-			$commands[] = 'unlink ' . $tableFile;
+			$commands[] = 'unlink ' . escapeshellarg($tableFile);
 		}
 		if (file_exists($entityFile)) {
-			$commands[] = 'unlink ' . $entityFile;
+			$commands[] = 'unlink ' . escapeshellarg($entityFile);
 		}
 
 		//Bake a `drop`-migration
-		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $attributesTableName
-			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations'
+		$commands[] = 'bin' . DS . 'cake bake migration ' . escapeshellarg('drop_' . $attributesTableName)
+			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations')
 		;
 
 		//Migrate all the newly baked migrations
-		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations'
+			. ' migrate --source ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations') . ' --no-lock'
+		;
 
 		//Clear the database schema
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		// Bake the seed for the attributes table and truncate it beforehand.
 		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes'
-			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
 		;
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
+			'command' => '(' . implode(' && ', $commands) . ')',
 			'escape' => false,
 			'log' => true,
 		], [

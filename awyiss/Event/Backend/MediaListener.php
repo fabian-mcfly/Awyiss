@@ -83,8 +83,8 @@ class MediaListener implements EventListenerInterface {
 		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 
 		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => 'bin' . DS . 'cake media clear_cache',
-			'escape' => false,
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['media', 'clear_cache'],
 			'log' => true,
 		], [
 			'group' => 'general',
@@ -105,8 +105,8 @@ class MediaListener implements EventListenerInterface {
 		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 
 		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => 'bin' . DS . 'cake media clear_cache',
-			'escape' => false,
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['media', 'clear_cache'],
 			'log' => true,
 		], [
 			'group' => 'general',

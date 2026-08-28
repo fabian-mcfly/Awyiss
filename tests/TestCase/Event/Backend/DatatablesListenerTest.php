@@ -254,27 +254,30 @@ class DatatablesListenerTest extends TestCase {
 			'Queue.Execute',
 			$this->callback(function ($data) {
 				$expectedColumns = [
-					'parentId:integer?[11]:index',
-					'languageShortcode:char?[2]:index',
-					'title:string?[255]',
-					'systemOrder:integer[11](0)',
-					'active:tinyinteger[1](1):index',
-					'deleted:tinyinteger[1](0):index',
-					'createdBy:integer?[11]',
-					'createdOn:datetime?',
-					'changedBy:integer?[11]',
-					'changedOn:datetime?',
-					'deletedBy:integer?[11]',
-					'deletedOn:datetime?',
+					'\'parentId:integer?[11]:index\'',
+					'\'languageShortcode:char?[2]:index\'',
+					'\'title:string?[255]\'',
+					'\'systemOrder:integer[11](0)\'',
+					'\'active:tinyinteger[1](1):index\'',
+					'\'deleted:tinyinteger[1](0):index\'',
+					'\'createdBy:integer?[11]\'',
+					'\'createdOn:datetime?\'',
+					'\'changedBy:integer?[11]\'',
+					'\'changedOn:datetime?\'',
+					'\'deletedBy:integer?[11]\'',
+					'\'deletedOn:datetime?\'',
 				];
 
-				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'bin' . DS . 'cake bake migration create_testDatatable ' . implode(' ', $expectedColumns) . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
-						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
-						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake model testDatatable --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable',
-						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
-					])) . ')';
+				$expectedCommand = '(' . implode(' && ', [
+					'bin' . DS . 'cake bake migration \'create_testDatatable\' ' . implode(' ', $expectedColumns)
+						. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
+					'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
+					'bin' . DS . 'cake schema_cache clear',
+					'bin' . DS . 'cake bake model \'testDatatable\' --namespace ' . CUSTOM_NAMESPACE
+						. ' --no-fixture --no-test --update --force --is-datatable',
+					'bin' . DS . 'cake bake seed --data Datatables --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\''
+						. ' --force --truncate',
+				]) . ')';
 
 				return $data['command'] === $expectedCommand;
 			}),
@@ -563,12 +566,14 @@ class DatatablesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'bin' . DS . 'cake bake migration drop_testDatatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
-						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
+				$expectedCommand = '(' . implode(' && ', [
+						'bin' . DS . 'cake bake migration \'drop_testDatatable\''
+							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
+						'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
 						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
-					])) . ')';
+						'bin' . DS . 'cake bake seed --data Datatables'
+							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\' --force --truncate',
+					]) . ')';
 
 				return $data['command'] === $expectedCommand;
 			}),
@@ -612,14 +617,16 @@ class DatatablesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				$expectedCommand = '(' . implode(' && ', array_map('escapeshellcmd', [
-						'unlink ' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php']),
-						'unlink ' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'TestDatatableTable.php']),
-						'bin' . DS . 'cake bake migration drop_testDatatable --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
-						'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock',
+				$expectedCommand = '(' . implode(' && ', [
+						'unlink \'' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php']) . '\'',
+						'unlink \'' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'TestDatatableTable.php']). '\'',
+						'bin' . DS . 'cake bake migration \'drop_testDatatable\''
+							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
+						'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
 						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate',
-					])) . ')';
+						'bin' . DS . 'cake bake seed --data Datatables --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\''
+							. ' --force --truncate',
+					]) . ')';
 
 				return $data['command'] === $expectedCommand;
 			}),

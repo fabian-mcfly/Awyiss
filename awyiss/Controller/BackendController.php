@@ -192,7 +192,8 @@ abstract class BackendController extends AppController {
 			$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 			if (!$queuedJobsTable->isQueued('System::detectAvailableCommands')) {
 				$queuedJobsTable->createJob('Queue.Execute', [
-					'command' => 'bin' . DS . 'cake media detect_available_commands',
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'detect_available_commands'],
 					'log' => true,
 				], [
 					'group' => 'general',

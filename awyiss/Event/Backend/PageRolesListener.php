@@ -165,7 +165,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . $filePath;
+			$commands[] = 'unlink ' . escapeshellarg($filePath);
 		}
 
 		$filePath = implode(
@@ -173,16 +173,16 @@ class PageRolesListener implements EventListenerInterface {
 			[ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']
 		);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . $filePath;
+			$commands[] = 'unlink ' . escapeshellarg($filePath);
 		}
 
 		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
-			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
 		;
 
 		//Queue the job.
 		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
+			'command' => '(' . implode(' && ', $commands) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -212,21 +212,19 @@ class PageRolesListener implements EventListenerInterface {
 		}
 
 		$commands[] = 'bin' . DS . 'cake bake enum PageRole '
-			. implode(',', $pageRoles)
+			. escapeshellarg(implode(',', $pageRoles))
 			. ' -i --namespace ' . CUSTOM_NAMESPACE
 			. ' --is-pagerole --force'
 		;
 
 		if (!empty($commands)) {
-			$data = [
-				'command' => implode(' && ', array_map('escapeshellcmd', $commands)),
-				'escape' => false,
-				'log' => true,
-			];
-
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
-			$queuedJobsTable->createJob('Queue.Execute', $data, [
+			$queuedJobsTable->createJob('Queue.Execute', [
+				'command' => implode(' && ', $commands),
+				'escape' => false,
+				'log' => true,
+			], [
 				'group' => 'general',
 				'priority' => 1,
 				'reference' => 'PageRoles::createEnum',
@@ -253,7 +251,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$commands = [];
 
-		$command = 'bin' . DS . 'cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
+		$command = 'bin' . DS . 'cake bake model ' . escapeshellarg(Inflector::camelize(Inflector::pluralize($entity->identifier)));
 		$command .= ' --namespace ' . CUSTOM_NAMESPACE;
 
 		$command .= ' --force';
@@ -271,12 +269,12 @@ class PageRolesListener implements EventListenerInterface {
 		$commands[] = $command;
 
 		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
-			. ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate'
+			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
 		;
 
 		//Queue the job.
 		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
+			'command' => '(' . implode(' && ', $commands) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
