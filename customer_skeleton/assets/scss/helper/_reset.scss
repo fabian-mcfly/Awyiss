@@ -208,6 +208,7 @@
 			&::before {
 				content:attr(alt);
 				display:block;
+				height:100%;
 				aspect-ratio:var(--imageAspectRatio);
 				padding:20px;
 				background-color:var(--imageBackgroundColor);
