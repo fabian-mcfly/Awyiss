@@ -6,6 +6,9 @@ return [
 		'onlyCli' => true,
 	],
 	'CsvView' => [],
+	/*'IdeHelper' => [
+		'onlyCli' => true,
+	],*/
 	'Migrations' => [
 		'onlyCli' => true,
 	],
