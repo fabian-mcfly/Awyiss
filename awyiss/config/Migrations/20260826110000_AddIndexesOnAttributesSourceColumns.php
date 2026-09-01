@@ -28,7 +28,7 @@ class AddIndexesOnAttributesSourceColumns extends BaseMigration {
 			}
 
 			$table = $this->table($tableName);
-			$indexName = 'BY_' . strtoupper(Inflector::underscore($column));
+			$indexName = 'BY_' . strtoupper($column);
 			if ($table->hasIndex([$column]) || $table->hasIndexByName($indexName)) {
 				continue;
 			}
