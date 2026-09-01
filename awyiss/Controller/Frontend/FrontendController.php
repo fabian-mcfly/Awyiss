@@ -287,6 +287,8 @@ class FrontendController extends AppController {
 			->find('mediaAssignments', useMediaEntity: true)
 		;
 
+		$finder = $languageShortcode ? 'withDeleted' : 'all';
+
 		if (!$this->previewMode) {
 			/**
 			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
@@ -309,26 +311,10 @@ class FrontendController extends AppController {
 
 		// Include the languages in the query, including deleted languages
 		$query->contain([
-			'Languages' => [
-				'fields' => ['id', 'active', 'deleted'],
-				'finder' => [
-					$languageShortcode ? 'withDeleted' : 'all' => [
-						'translate' => ['skip' => true],
-					],
-				],
-			],
 			'PageRoles' => [
 				'fields' => ['id', 'active', 'deleted'],
 				'finder' => [
-					$languageShortcode ? 'withDeleted' : 'all' => [
-						'translate' => ['skip' => true],
-					],
-				],
-			],
-			'PageTemplates' => [
-				'fields' => ['id', 'fileName'],
-				'finder' => [
-					$languageShortcode ? 'withDeleted' : 'all' => [
+					$finder => [
 						'translate' => ['skip' => true],
 					],
 				],
@@ -371,6 +357,17 @@ class FrontendController extends AppController {
 				$query->andWhere(['languageShortcode' => $languageShortcode]);
 			}
 			else {
+				$query->contain([
+					'Languages' => [
+						'fields' => ['id', 'active', 'deleted'],
+						'finder' => [
+							$finder => [
+								'translate' => ['skip' => true],
+							],
+						],
+					],
+				]);
+
 				$query->orderBy([
 					'Languages.systemOrder' => 'ASC',
 					'Languages.deleted' => 'ASC',
@@ -407,13 +404,30 @@ class FrontendController extends AppController {
 				'DuplicateOfPage' => [
 					'fields' => ['id', 'languageShortcode', 'slug'],
 					'finder' => [
-						$languageShortcode ? 'withDeleted' : 'all' => [
+						$finder => [
+							// Skip the customer group access settings and the translate behavior for the duplicated page, as we don't need them
+							'customerGroupAccessSettings' => ['skip' => true],
 							'translate' => ['skip' => true],
 						],
 					],
 				],
 			]);
 		}
+
+		// If the language part hasn't been loaded yet, load it now
+		if (!array_key_exists('Languages', $query->getContain())) {
+			$page->language = LocaleMiddleware::getLanguageByShortcode($languageShortcode, Awyiss::REALM_FRONTEND);
+		}
+
+		$pageTemplate = $this
+			->fetchTable('PageTemplates')
+			->find($finder)
+			->select(['id', 'fileName'])
+			->applyOptions(['translate' => ['skip' => true]])
+			->where(['id' => $page->pageTemplateId])
+			->first()
+		;
+		$page->pageTemplate = $pageTemplate;
 
 		if (!$page->language || !$page->language->deleted) {
 			return $page;
@@ -984,8 +998,20 @@ class FrontendController extends AppController {
 		;
 
 		$contain = [
-			'Languages',
-			'PageTemplates',
+			'Languages' => [
+				'finder' => [
+					'withDeleted' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
+			'PageTemplates' => [
+				'finder' => [
+					'withDeleted' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
 		];
 
 		// Only contain the DuplicateOf relation when the page is a duplicate

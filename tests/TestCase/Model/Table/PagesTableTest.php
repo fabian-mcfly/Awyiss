@@ -280,15 +280,15 @@ class PagesTableTest extends TestCase {
 
 		// Verify the specific conditions are applied
 		$sql = $query->sql();
-		$this->assertStringContainsString('active = :c2', $sql);
-		$this->assertStringContainsString('parentsActive = :c3', $sql);
+		$this->assertStringContainsString('active = :c0', $sql);
+		$this->assertStringContainsString('parentsActive = :c1', $sql);
 
 		// Verify the bound values
 		$valueBinder = $query->getValueBinder();
 		$bindings = $valueBinder->bindings();
 
-		$this->assertTrue($bindings[':c2']['value']);
-		$this->assertTrue($bindings[':c3']['value']);
+		$this->assertTrue($bindings[':c0']['value']);
+		$this->assertTrue($bindings[':c1']['value']);
 	}
 
 

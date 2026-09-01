@@ -35,6 +35,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @var array
 	 */
 	protected static array $pageRoles;
+	/**
+	 * @var array|null
+	 */
+	protected static ?array $scopesWithAccessSettings = null;
 
 
 	/**
@@ -108,6 +112,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		$this->setupAssociations(in_array($this->getConfig('referenceName'), static::$pageRoles, true));
+
+		if (!isset(static::$scopesWithAccessSettings)) {
+			$this->cacheScopes();
+		}
 	}
 
 
@@ -318,6 +326,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		bool $includeUndefined
 	): SelectQuery {
 		$alias = $this->_table->getAlias();
+
+		// Skip if the scope is not in the list of scopes with publication data access settings as there's no data to fetch
+		if (!in_array($alias, static::$scopesWithAccessSettings, true)) {
+			return $query;
+		}
+
 		$date ??= new DateTime('now');
 		$operator = $when === 'before' ? '<=' : '>=';
 		$name = Inflector::camelize($alias . '_publicationData' . Inflector::camelize($type->value));
@@ -468,6 +482,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
+		$alias = $query->getRepository()->getAlias();
+		// Skip if the scope is not in the list of scopes with publication data access settings as there's no data to fetch
+		if (!in_array($alias, static::$scopesWithAccessSettings, true)) {
+			return;
+		}
+
 		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'publicationData'));
 		if ($queryOptions['skip'] === true) {
 			return;
@@ -606,5 +626,22 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				return $publicationData;
 			},
 		];
+	}
+
+
+	/**
+	 * Caches the scopes that have access settings in the publication data table.
+	 *
+	 * @return void
+	 */
+	public function cacheScopes(): void {
+		static::$scopesWithAccessSettings = $this->publicationDataTable
+			->unhydratedFind()
+			->select(['scope'])
+			->distinct(['scope'])
+			->all()
+			->extract('scope')
+			->toArray()
+		;
 	}
 }

@@ -29,7 +29,6 @@ use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
@@ -696,32 +695,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$selectorField = key($aliasedField);
 
 		$query->contain(['Media', 'MediaFolders']);
-
-		$dialect = $query
-			->getConnection()
-			->getDriver()
-			->schemaDialect()
-		;
-		// Only MySQL supports FIND_IN_SET for ordering.
-		if ($dialect instanceof MysqlSchemaDialect) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query
-				->func()
-				->FIND_IN_SET([
-					$elementField => 'identifier',
-					implode(',', array_column(static::$mediaElements, 'id')),
-				])), true);
-
-			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query
-				->func()
-				->FIND_IN_SET([
-					$selectorField => 'identifier',
-					implode(',', $identifiers),
-				])));
-
-			return $query;
-		}
 
 		$query->orderBy(function (QueryExpression $exp) use ($elementField) {
 			$index = 0;

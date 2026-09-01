@@ -13,7 +13,6 @@ use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\CollectionInterface;
-use Cake\ORM\Query\SelectQuery;
 use Cake\View\View;
 use Dom\HTMLDocument;
 
@@ -78,17 +77,24 @@ trait FrontendRenderingTrait {
 			return [];
 		}
 
+		$mediaIdsSubquery = $this
+			->fetchTable('MediaAssignments')
+			->find()
+			->applyOptions(['systemOrder' => ['skip' => true]])
+			->select(['MediaAssignments.mediaId'])
+			->where([
+				'MediaAssignments.foreignKey IN' => $entityIds,
+				'MediaAssignments.scope' => Inflector::camelize($scope),
+				'MediaAssignments.mediaId IS NOT' => null,
+			])
+		;
+
 		$mediaTable = $this->fetchTable('Media');
+
 		$query = $mediaTable
 			->find()
-			->matching('MediaAssignments', function (SelectQuery $query) use ($entityIds, $scope) {
-				return $query->where([
-					'MediaAssignments.foreignKey IN' => $entityIds,
-					'MediaAssignments.scope' => Inflector::camelize($scope),
-				]);
-			})
+			->where(['Media.id IN' => $mediaIdsSubquery])
 			->contain(['MediaResizedImages'])
-			->distinct('Media.id')
 		;
 
 		$media = $query->all()->toList();

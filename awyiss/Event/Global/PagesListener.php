@@ -16,7 +16,6 @@ use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -76,26 +75,12 @@ class PagesListener implements EventListenerInterface {
 			->toArray()
 		;
 
-		$prefixedColumn = $query->getRepository()->getAlias() . '.pageRoleId';
-
-		$dialect = $query
-			->getConnection()
-			->getDriver()
-			->schemaDialect()
-		;
-
-		// Only MySQL supports FIND_IN_SET for ordering.
-		if ($dialect instanceof MysqlSchemaDialect) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->expr($query
-				->func()
-				->FIND_IN_SET([
-					$prefixedColumn => 'identifier',
-					implode(',', array_column($pageRoles, 'id')),
-				])));
-
+		if (count($pageRoles) < 2) {
+			// If there is only one page role, we don't need to sort the results by page role, as they will all have the same page role id.
 			return;
 		}
+
+		$prefixedColumn = $query->getRepository()->getAlias() . '.pageRoleId';
 
 		$query->orderBy(function (QueryExpression $exp) use ($pageRoles, $prefixedColumn) {
 			$index = 0;

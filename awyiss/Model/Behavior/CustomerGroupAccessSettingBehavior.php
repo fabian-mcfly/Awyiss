@@ -41,6 +41,10 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 * @var array
 	 */
 	protected static array $pageRoles;
+	/**
+	 * @var array
+	 */
+	protected static array $scopesWithAccessSettings;
 
 
 	/**
@@ -114,6 +118,17 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 		}
 
 		$this->setupAssociations(in_array($this->getConfig('referenceName'), static::$pageRoles, true));
+
+		if (!isset(static::$scopesWithAccessSettings)) {
+			static::$scopesWithAccessSettings = $this->accessSettingsTable
+				->unhydratedFind()
+				->select(['scope'])
+				->distinct(['scope'])
+				->all()
+				->extract('scope')
+				->toArray()
+			;
+		}
 	}
 
 
@@ -169,6 +184,12 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			return;
 		}
 
+		$alias = $query->getRepository()->getAlias();
+		// Skip if the scope is not in the list of scopes with access settings as there's no data to fetch
+		if (!in_array($alias, static::$scopesWithAccessSettings, true)) {
+			return;
+		}
+
 		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'customerGroupAccessSettings', []));
 		// Skip if explicitly skipped
 		if ($queryOptions['skip'] === true) {
@@ -187,7 +208,13 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 		$query->contain([
 			'CustomerGroupAccessSettings',
 			'CustomerGroupAssignments' => [
-				'CustomerGroups',
+				'CustomerGroups' => [
+					'finder' => [
+						'all' => [
+							'translate' => ['skip' => true],
+						],
+					],
+				],
 			],
 		]);
 	}

@@ -98,6 +98,12 @@ class DesignMiddlewareTest extends TestCase {
 		if (file_exists($invalidSCssFile)) {
 			unlink($invalidSCssFile);
 		}
+
+		// Reset static $firstPage in FrontendController to null
+		$reflection = new \ReflectionClass(\Awyiss\Controller\Frontend\FrontendController::class);
+		$property = $reflection->getProperty('firstPage');
+		$property->setAccessible(true);
+		$property->setValue(null, null);
 	}
 
 

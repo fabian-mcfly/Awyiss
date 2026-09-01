@@ -13,6 +13,7 @@ use Cake\I18n\DateTime;
 use Cake\ORM\TableRegistry;
 use Exception;
 use LogicException;
+use ReflectionClass;
 
 
 /**
@@ -99,6 +100,9 @@ class PublicationDataBehaviorTest extends TestCase {
 			$this->assertNotEmpty($entity4->_publicationData);
 			$this->assertNotEmpty($entity5->_publicationData);
 
+			// Reset static cached $scopesWithAccessSettings in PublicationDataBehavior to ensure that the next test runs with a clean state
+			$this->table->getBehavior('PublicationData')->cacheScopes();
+
 			return $result;
 		}
 		catch (Exception $ex) {
@@ -127,6 +131,9 @@ class PublicationDataBehaviorTest extends TestCase {
 
 		$this->table->deleteAll([]);
 		$this->publicationDataTable->deleteAll(['id >' => 8]);
+
+		// Reset static cached $scopesWithAccessSettings
+		$this->table->getBehavior('PublicationData')->cacheScopes();
 	}
 
 

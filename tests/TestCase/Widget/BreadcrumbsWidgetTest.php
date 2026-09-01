@@ -84,7 +84,6 @@ class BreadcrumbsWidgetTest extends TestCase {
 
 		$reflection = new ReflectionClass(BreadcrumbsWidget::class);
 		$property = $reflection->getProperty('isPreview');
-		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		// Reset the static property to null
 		$property->setValue(null, null);

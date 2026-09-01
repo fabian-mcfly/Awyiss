@@ -269,6 +269,8 @@ class ContentsCell extends Cell {
 			->toArray()
 		;
 
+		$entitiesNeedingChildren = [];
+
 		/** @var \Awyiss\Model\Entity\Content $entity */
 		foreach ($duplicatingEntities as $entity) {
 			if (empty($duplicatedEntities[ $entity->duplicateOf ])) {
@@ -279,43 +281,121 @@ class ContentsCell extends Cell {
 			$duplicatedEntity = $duplicatedEntities[ $entity->duplicateOf ];
 			$entity->set('duplicateOfContent', $duplicatedEntity);
 
-			// If the duplicating content has children, we don't need to fetch children for the duplicated content
 			if (!empty($entity->children)) {
 				continue;
 			}
 
-			$finders = [];
+			$entitiesNeedingChildren[] = $entity;
+		}
 
-			if (!$isPreview) {
-				$finders = ['active', 'published'];
+		if (!$entitiesNeedingChildren) {
+			DebugTimer::stop('ContentsCell::addDuplicates');
+
+			return;
+		}
+
+		$childrenByPage = $this->fetchChildrenByPage($entitiesNeedingChildren, $duplicatedEntities, $isPreview);
+		$newContents = [];
+
+		foreach ($entitiesNeedingChildren as $entity) {
+			/** @var \Awyiss\Model\Entity\Content $duplicatedEntity */
+			$duplicatedEntity = $duplicatedEntities[ $entity->duplicateOf ];
+			$pageId = $duplicatedEntity->pageId;
+
+			if (empty($childrenByPage[ $pageId ])) {
+				continue;
 			}
 
-			$finders = array_merge($finders, [
-				'mediaAssignments' => [
-					'includeElementSelector' => true,
-					'useMediaEntity' => true,
-				],
-			]);
-
-			$children = $duplicatedEntity->getNestedChildren([
-				'contain' => [
-					'ContentAreas',
-					'ContentTemplates',
-				],
-				'finders' => $finders,
-			]);
-
-			if ($children->count()) {
-				$children = $children->nest('id', 'parentId');
-				foreach ($children as $child) {
-					$child->parentId = $entity->id;
-				}
+			$children = $this->findNestedChildren($childrenByPage[ $pageId ], $duplicatedEntity->id);
+			$newContents = array_merge($newContents, $children);
+			foreach ($children as $child) {
+				$child->parentId = $entity->id;
 			}
 
-			$entity->set('children', $children->toList());
+			$entity->set('children', $children);
+		}
+
+		if ($newContents) {
+			// Cache the media assignments for the newly added children
+			$newContents = new Collection($newContents);
+			$this->cacheAssignedMediaItems($newContents, 'contents');
 		}
 
 		DebugTimer::stop('ContentsCell::addDuplicates');
+	}
+
+
+	/**
+	 * Fetch all descendants for the given duplicated entities' pages in a single query,
+	 * grouped and nested per pageId, to avoid an N+1 query per duplicating entity.
+	 *
+	 * @param array<\Awyiss\Model\Entity\Content> $entitiesNeedingChildren
+	 * @param array<int|string, \Awyiss\Model\Entity\Content> $duplicatedEntities
+	 * @param bool $isPreview
+	 * @return array<int|string, array<\Awyiss\Model\Entity\Content>>
+	 */
+	protected function fetchChildrenByPage(array $entitiesNeedingChildren, array $duplicatedEntities, bool $isPreview): array {
+		$pageIds = [];
+		foreach ($entitiesNeedingChildren as $entity) {
+			if (!isset($duplicatedEntities[ $entity->duplicateOf ])) {
+				continue;
+			}
+
+			$pageIds[] = $duplicatedEntities[ $entity->duplicateOf ]->pageId;
+		}
+
+		$pageIds = array_unique($pageIds);
+
+		$query = $this
+			->getContentsQuery($isPreview)
+			->where([
+				'Contents.pageId IN' => $pageIds,
+			])
+			->contain([
+				'ContentAreas' => [
+					'finder' => [
+						'active' => [
+							'translate' => ['skip' => true],
+						],
+					],
+				],
+				'ContentTemplates' => [
+					'finder' => [
+						'active' => [
+							'translate' => ['skip' => true],
+						],
+					],
+				],
+			])
+		;
+
+		return $query->all()->groupBy('pageId')->toArray();
+	}
+
+
+	/**
+	 * Recursively walk a nested tree to find the node matching the given id
+	 * and return its children as a flat list.
+	 *
+	 * @param array<\Awyiss\Model\Entity\Content> $nestedContents
+	 * @param int $contentId
+	 * @return array<\Awyiss\Model\Entity\Content>
+	 */
+	protected function findNestedChildren(array $nestedContents, int $contentId): array {
+		foreach ($nestedContents as $content) {
+			if ($content->id === $contentId) {
+				return $content->children ?? [];
+			}
+
+			if (!empty($content->children)) {
+				$found = $this->findNestedChildren($content->children, $contentId);
+				if ($found) {
+					return $found;
+				}
+			}
+		}
+
+		return [];
 	}
 
 
@@ -431,8 +511,20 @@ class ContentsCell extends Cell {
 
 		// Contain ContentAreas and ContentTemplates
 		$query->contain([
-			'ContentAreas',
-			'ContentTemplates',
+			'ContentAreas' => [
+				'finder' => [
+					'active' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
+			'ContentTemplates' => [
+				'finder' => [
+					'active' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
 		]);
 
 		return $query;
