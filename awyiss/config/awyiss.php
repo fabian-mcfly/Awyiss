@@ -62,6 +62,13 @@ return [
 			'path' => CACHE,
 		],
 
+		'classes' => [
+			'className' => FileEngine::class,
+			'duration' => '+1 years',
+			'path' => CACHE . 'classes' . DS,
+			'prefix' => 'classes_',
+		],
+
 		'instagram' => [
 			'className' => FileEngine::class,
 			'duration' => 43200,

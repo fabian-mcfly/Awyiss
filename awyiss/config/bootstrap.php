@@ -116,6 +116,7 @@ catch (Exception $ex) {
  * for a short time.
  */
 if (Configure::read('debug')) {
+	Configure::write('Cache.classes.duration', '+60 seconds');
 	Configure::write('Cache._cake_model_.duration', '+60 seconds');
 	Configure::write('Cache._cake_translations_.duration', '+60 seconds');
 }

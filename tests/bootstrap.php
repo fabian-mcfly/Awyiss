@@ -17,6 +17,7 @@
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
+use Cake\Cache\Cache;
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
@@ -94,5 +95,8 @@ FactoryLocator::add('Table', new TableLocator()->allowFallbackClass(true)->setFa
 // Here it's 'en_ZW' (English in Zimbabwe)
 ini_set('intl.default_locale', 'en_AG');
 \Cake\I18n\I18n::setLocale('en_AG');
+
+Cache::pool('classes')->clear();
+Cache::pool('persistent')->clear();
 
 Text::setTransliteratorId('de-ASCII; Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove');

@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\View\AppView;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventDispatcherTrait;
@@ -70,6 +71,8 @@ class TestCase extends BaseTestCase {
 		$property = $reflection->getProperty('twig');
 		$property->setAccessible(true);
 		$property->setValue(null, null);
+
+		Cache::pool('classes')->clear();
 	}
 
 
