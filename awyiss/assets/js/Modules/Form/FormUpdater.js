@@ -169,6 +169,8 @@ export default class FormUpdater {
 			return;
 		}
 
+		const submitter = event.submitter;
+
 		let hiddenInput = form.querySelector('input[name="submitType"]');
 		if (!hiddenInput) {
 			hiddenInput = document.createElement('input');
@@ -176,14 +178,13 @@ export default class FormUpdater {
 			form.appendChild(hiddenInput);
 		}
 
-		const submitter = event.submitter;
 		hiddenInput.name = submitter?.name ?? 'submitType';
 		hiddenInput.value = submitter?.value ?? '';
 
-		//form.noValidate = false;
-		if (form.checkValidity()) {
-			// If the form is valid, submit it
-			form.submit();
+		// If the submiter has formnovalidate attribute, don't validate the form and submit it
+		if (submitter?.formNoValidate || form.checkValidity()) {
+			// If the form is valid, submit it. Use the native submit method to avoid issues with form elements named "submit"
+			HTMLFormElement.prototype.submit.call(form);
 
 			// Lock the form to prevent multiple submissions
 			form.dataset.locked = 'true';
