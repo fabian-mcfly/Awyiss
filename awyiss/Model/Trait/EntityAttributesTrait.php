@@ -5,6 +5,7 @@ namespace Awyiss\Model\Trait;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\MissingPropertyException;
 use InvalidArgumentException;
@@ -41,8 +42,15 @@ trait EntityAttributesTrait {
 			$value = $this->{$method}($value);
 		}
 
-		//Return a value if found or if an accessor exists.
+		// Return a value if found or if an accessor exists.
 		if (!is_null($value) || $method || $field === '_translations') {
+			return $value;
+		}
+
+		// If the field is the foreign key of the attributes, do not return it
+		$source = $this->getSource();
+		$foreignKey = Inflector::variable(Inflector::singularize($source) . '_id');
+		if ($field === $foreignKey) {
 			return $value;
 		}
 
