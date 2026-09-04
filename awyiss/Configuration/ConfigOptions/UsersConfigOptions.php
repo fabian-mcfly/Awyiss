@@ -23,6 +23,14 @@ class UsersConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption(
+				defaultValue: false,
+				identifier: 'forceTwoFactor',
+				localizable: false,
+				nullable: false,
+				personalizable: false,
+				type: ConfigOptionType::Bool,
+			),
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
@@ -36,7 +44,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$fields = $this->getTableFields();
 
-						unset($fields['id'], $fields['username'], $fields['password']);
+						unset($fields['id'], $fields['username'], $fields['password'], $fields['twoFactorSecret']);
 
 						return $fields;
 					},

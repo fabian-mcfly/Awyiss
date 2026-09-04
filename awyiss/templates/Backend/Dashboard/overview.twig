@@ -41,14 +41,24 @@
 
 	<fieldset class="Overview-Fieldset Fieldset-QuickActions">
 		<legend>{{ __('fieldset_quick_actions') }}</legend>
-
 		<ul class="QuickActions">
+			{% if not IdentityHelper.get('twoFactorEnabled') %}
+				<li class="QuickAction QuickAction-EnableTwoFactor">
+					<a href="{{ UrlHelper.build({controller: 'users', action: 'two-factor-enable'}) }}" class="Button Button-Configure">{{ __('quick_action_enable_two_factor') }}</a>
+				</li>
+			{% elseif not config('Awyiss.Users.Backend.forceTwoFactor') %}
+				<li class="QuickAction QuickAction-DisableTwoFactor">
+					<a href="{{ UrlHelper.build({controller: 'users', action: 'two-factor-disable'}) }}" class="Button Button-Configure">{{ __('quick_action_disable_two_factor') }}</a>
+				</li>
+			{% endif %}
+
 			{% do AuthorizationHelper.setScope('pages') %}
 			{% if AuthorizationHelper.isAccessible('create') %}
 				<li class="QuickAction QuickAction-AddPage">
 					<a href="{{ UrlHelper.build({controller: 'pages', action: 'add'}) }}" class="Button Button-Add">{{ __('quick_action_add_page') }}</a>
 				</li>
 			{% endif %}
+
 			{% do AuthorizationHelper.resetScope() %}
 			<li class="QuickAction QuickAction-UserConfiguration">
 				<a href="{{ UrlHelper.build({controller: 'user-configuration', action: 'overview', scope: 'system'}) }}" class="Button Button-Configure">{{ __('quick_action_user_configuration') }}</a>

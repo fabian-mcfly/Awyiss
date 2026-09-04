@@ -94,6 +94,8 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 				}
 
 				$user->changedOn = $reidentifiedUser->changedOn;
+				$user->twoFactorEnabled = $reidentifiedUser->twoFactorEnabled;
+				$user->twoFactorSecret = $reidentifiedUser->twoFactorSecret;
 			}
 		}
 

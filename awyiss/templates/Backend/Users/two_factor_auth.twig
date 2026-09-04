@@ -1,0 +1,28 @@
+{#
+@var account string
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+#}
+
+<div class="Users Form Login">
+	{{ FormHelper.create() }}
+	<fieldset class="Fieldset-Login">
+		<h1>{{ __('two_factor_verification') }}</h1>
+
+		{{ FlashHelper.render() }}
+
+		{{ FormHelper.control('code', {
+			autocapitalize: 'off',
+			autocomplete: 'off',
+			inputmode: 'numeric',
+			label: __('two_factor_verification_instructions'),
+			maxlength: 6,
+			required: true,
+			value: '',
+		}) }}
+
+		{{ FormHelper.button(__('two_factor_confirm'), {class: 'Submit'}) }}
+	</fieldset>
+	{{ FormHelper.end() }}
+</div>
+

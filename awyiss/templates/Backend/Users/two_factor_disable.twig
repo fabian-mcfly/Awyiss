@@ -1,0 +1,32 @@
+{#
+@var account string
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+#}
+
+<div class="Users Form Login">
+	{{ FormHelper.create() }}
+	<fieldset class="Fieldset-Login">
+		<h1>{{ __('two_factor_disable') }}</h1>
+
+		{{ FlashHelper.render() }}
+
+		{{ FormHelper.control('code', {
+			autocapitalize: 'off',
+			autocomplete: 'off',
+			inputmode: 'numeric',
+			label: __('two_factor_disable_instructions'),
+			maxlength: 6,
+			required: true,
+			value: '',
+		}) }}
+
+		<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'overview'}) }}" class="Button Button-Cancel">
+			{{ __('cancel') }}
+		</a>
+
+		{{ FormHelper.button(__('two_factor_disable_confirm'), {class: 'Submit Button Button-Error'}) }}
+	</fieldset>
+	{{ FormHelper.end() }}
+</div>
+

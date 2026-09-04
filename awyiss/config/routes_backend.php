@@ -44,6 +44,10 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->applyMiddleware('requestLocale');
 
+	/** @var class-string<\Awyiss\Middleware\TwoFactorMiddleware> $twoFactorMiddlewareClass */
+	$twoFactorMiddlewareClass = App::className('TwoFactor', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendTwoFactor', new $twoFactorMiddlewareClass());
+	$routeBuilder->applyMiddleware('backendTwoFactor');
 
 	/**
 	 * Load the backend-related routes

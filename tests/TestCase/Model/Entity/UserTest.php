@@ -82,6 +82,7 @@ class UserTest extends TestCase {
 			'lastname' => true,
 			'email' => true,
 			'active' => true,
+			'twoFactorEnabled' => true,
 			'usergroups' => true,
 			'_translations' => true,
 			'_publicationData' => true,

@@ -36,11 +36,23 @@ class UsersConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @covers \Awyiss\Configuration\ConfigOptions\UsersConfigOptions
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(2, $configOptions);
+		$this->assertCount(3, $configOptions);
+
+		$this->assertArrayHasKey('Backend.forceTwoFactor', $configOptions);
+		$this->assertFalse($configOptions['Backend.forceTwoFactor']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.forceTwoFactor']->isNullable());
+		$this->assertFalse($configOptions['Backend.forceTwoFactor']->isPersonalizable());
+		$this->assertFalse($configOptions['Backend.forceTwoFactor']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.forceTwoFactor']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.forceTwoFactor']->getType());
+		$this->assertNull($configOptions['Backend.forceTwoFactor']->getTypecast());
+		$this->assertNull($configOptions['Backend.forceTwoFactor']->getValidate());
+		$this->assertNull($configOptions['Backend.forceTwoFactor']->getValues());
 
 		$this->assertArrayHasKey('Backend.overview.displayedFields', $configOptions);
 		$this->assertFalse($configOptions['Backend.overview.displayedFields']->isLocalizable());
@@ -66,6 +78,7 @@ class UsersConfigOptionsTest extends TestCase {
 			'createdOn' => 'Users::created_on',
 			'changedBy' => 'Users::changed_by',
 			'changedOn' => 'Users::changed_on',
+			'twoFactorEnabled' => 'Users::two_factor_enabled',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);

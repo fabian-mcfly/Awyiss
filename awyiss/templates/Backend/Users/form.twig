@@ -137,6 +137,10 @@
 					{{ FormHelper.control('active') }}
 				{% endblock %}
 
+				{% block formControlTwoFactorEnabled %}
+					{{ FormHelper.control('twoFactorEnabled') }}
+				{% endblock %}
+
 				{% block fieldsetPresentationAttributes %}
 					{{ AttributesHelper.allControls('presentation') }}
 				{% endblock %}

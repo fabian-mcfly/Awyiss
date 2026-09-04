@@ -1,0 +1,42 @@
+{#
+@var account string
+@var qrCode string
+@var secret string
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+#}
+
+<div class="Users Form Login">
+	{{ FormHelper.create() }}
+
+	<fieldset class="Fieldset-Login">
+		<h1>{{ __('two_factor_setup') }}</h1>
+
+		{{ FlashHelper.render() }}
+
+		<p>
+			{{ __('two_factor_setup_instructions') }}
+
+			<code>{{ secret }}</code>
+		</p>
+
+		{{ FormHelper.control('code', {
+			autocapitalize: 'off',
+			autocomplete: 'off',
+			inputmode: 'numeric',
+			label: __('two_factor_verification_instructions'),
+			maxlength: 6,
+			required: true,
+			value: '',
+		}) }}
+
+		{% if cancelable %}
+			{{ FormHelper.button(__('cancel'), {class: 'Button Button-Cancel', formnovalidate: true, name: 'submit', value: 'cancel'}) }}
+		{% endif %}
+
+		{{ FormHelper.button(__('two_factor_confirm'), {class: 'Submit'}) }}
+	</fieldset>
+
+	{{ FormHelper.end() }}
+</div>
+

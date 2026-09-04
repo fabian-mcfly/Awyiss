@@ -34,3 +34,10 @@ msgstr "Seite hinzufügen"
 
 msgid "quick_action_user_configuration"
 msgstr "Benutzereinstellungen"
+
+msgid "quick_action_enable_two_factor"
+msgstr "Zwei-Faktor-Authentifizierung aktivieren"
+
+msgid "quick_action_disable_two_factor"
+msgstr "Zwei-Faktor-Authentifizierung deaktivieren"
+

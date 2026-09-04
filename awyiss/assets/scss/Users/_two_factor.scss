@@ -1,0 +1,256 @@
+.UsersController {
+	&:is(
+		.TwoFactorSetupAction,
+		.TwoFactorAuthAction,
+		.TwoFactorDisableAction
+	) {
+		html:has(&) {
+			height:100dvh;
+		}
+
+		display:flex;
+		min-height:100%;
+		padding-block:40px;
+		align-content:center;
+
+		#LoginMask {
+			display:flex;
+			margin:auto;
+			border-radius:10px;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			overflow:hidden;
+
+			@media screen and (width <= 800px) {
+				display:grid;
+				max-width:calc(100dvw - 40px);
+				grid-template-columns:auto;
+			}
+		}
+
+		#Header {
+			width:300px;
+			height:auto;
+			padding-block:80px;
+			border-radius:5px 0 0 5px;
+			//noinspection CssUnknownTarget
+			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
+			background-color:var(--colorDark);
+			background-position:center;
+			background-size:cover;
+			box-shadow:none;
+			position:relative;
+			inset:0;
+			z-index:0;
+			align-items:center;
+			flex-wrap:wrap;
+
+			@media screen and (width <= 800px) {
+				width:100%;
+				aspect-ratio:16 / 9;
+			}
+
+			&::before {
+				display:none;
+			}
+
+			.LoginLogo {
+				width:auto;
+				max-width:220px;
+				height:auto;
+				max-height:220px;
+				margin:0 auto;
+				padding-left:0;
+
+				@media screen and (width <= 800px) {
+					margin-bottom:60px;
+				}
+
+				@media screen and (width <= 580px) {
+					display:block;
+					max-height:80px;
+				}
+			}
+
+			.Title {
+				display:block;
+				width:100%;
+				padding:0 40px;
+				box-shadow:none;
+				border-radius:0;
+				border:0 none;
+				background-color:transparent;
+				line-height:1;
+				text-align:center;
+				pointer-events:none;
+				order:2;
+				position:absolute;
+				bottom:20px;
+				left:0;
+
+				&:last-child {
+					font-size:2.5rem;
+
+					&::before {
+						content:'';
+					}
+				}
+
+				&::before {
+					display:block;
+					content:'powered by';
+					//noinspection CssNoGenericFontName
+					font-family:var(--fontStackMain);
+					font-size:.5rem;
+					font-style:italic;
+					font-weight:300;
+					line-height:1;
+				}
+
+				.Version {
+					display:none;
+				}
+			}
+		}
+
+		#Content {
+			min-height:0;
+			margin:0;
+			background-color:var(--colorBright);
+			border-radius:0 5px 5px 0;
+			padding:40px;
+			position:relative;
+			z-index:1;
+
+			@media screen and (width <= 540px) {
+				padding:20px;
+			}
+
+			html.🌚 & {
+				background-color:var(--colorDark);
+			}
+		}
+
+		code {
+			margin-top:.5lh;
+			padding:10px;
+			font-size:12px;
+			line-height:1;
+			text-box:trim-both cap alphabetic;
+			user-select:all;
+			overflow:auto;
+			scrollbar-color:var(--colorBright) var(--colorDark);
+			scrollbar-width:thin;
+		}
+
+		.Form {
+			container-type:normal;
+		}
+
+		.FlashMessage {
+			margin-block:var(--lineHeightMain);
+			font-size:1rem;
+			line-height:var(--lineHeightMain);
+			grid-column:1 / -1;
+
+			+ .Form {
+				margin-top:var(--lineHeightMain);
+			}
+		}
+
+		.Fieldset-Login {
+			max-width:500px;
+			margin-bottom:0;
+			padding:0;
+			border:0 none;
+			box-shadow:none;
+			background-color:transparent;
+			position:static;
+			grid-template-columns:minmax(0, 1fr) 200px;
+		}
+
+		h1 {
+			padding-right:0;
+			grid-column:1 / -1;
+
+			@media screen and (width <= 480px) {
+				margin-bottom:10px;
+			}
+		}
+
+		p {
+			grid-column:1 / -1;
+		}
+
+		.FormInput {
+			grid-column:1 / -1;
+
+			&Name-LanguageShortcode {
+				display:block;
+				width:140px;
+				grid-column-end:2;
+
+				@media screen and (width <= 480px) {
+					width:100%;
+					grid-column-end:1;
+				}
+			}
+		}
+
+		.Button-Cancel {
+			width:auto;
+			margin-right:auto;
+			align-self:start;
+			grid-column:1 / 2;
+		}
+
+		.Submit {
+			width:200px;
+			margin-left:auto;
+			align-self:end;
+			grid-column-start:2;
+
+			@media screen and (width <= 480px) {
+				width:100%;
+				margin-top:10px;
+			}
+
+			&:hover {
+				&::after {
+					margin-left:20px;
+				}
+			}
+
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f2f6';
+				margin-left:10px;
+				font-size:36px;
+				line-height:28px;
+				vertical-align:-5px;
+				transition:margin-left .3s ease-in-out;
+			}
+		}
+	}
+
+	&:is(
+		.TwoFactorAuthAction,
+		.TwoFactorDisableAction
+	) {
+		#Header {
+			.LoginLogo {
+				filter:saturate(0%) brightness(10);
+			}
+		}
+
+		.Fieldset-Login {
+			max-width:375px;
+		}
+	}
+
+	&:is(
+		.TwoFactorDisableAction
+	) {
+		.Submit {
+		}
+	}
+}

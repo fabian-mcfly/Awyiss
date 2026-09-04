@@ -28,6 +28,8 @@ use RuntimeException;
  * @property int $id
  * @property string|null $username
  * @property string|null $password
+ * @property bool $twoFactorEnabled
+ * @property string|null $twoFactorSecret
  * @property int $failedAttempts
  * @property \Cake\I18n\DateTime|null $lastLogin
  * @property string|null $firstname
@@ -57,6 +59,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		'lastname' => true,
 		'email' => true,
 		'active' => true,
+		'twoFactorEnabled' => true,
 		'usergroups' => true,
 	];
 	/**
@@ -64,6 +67,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 */
 	protected array $_hidden = [ // phpcs:ignore
 		'password',
+		'twoFactorSecret',
 	];
 	/**
 	 * @var array|null
@@ -129,16 +133,16 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *    ],
 		 *    'usergroup3' => [
 		 *        ...
-		 *        'usergroupPermissions' => [permission3.1, permission3.2, permission3.3],
+		 *        'usergroupPermissions' => [permission3.1, permission3.2],
 		 *        ...
 		 *    ],
 		 * ];
 		 *
 		 * The call of array_column returns all values for 'usergroupPermissions' in all elements of $usergroups:
-		 * [[permission1.1, permission1.2, permission1.3, permission1.4], [permission2.1, permission2.2], [permission3.1, permission3.2, permission3.3]]
+		 * [[permission1.1, permission1.2, permission1.3, permission1.4], [permission2.1, permission2.2], [permission3.1, permission3.2]]
 		 *
 		 * Calling array_merge with ... expands each child array and then flattens all.
-		 * [permission1.1, permission1.2, permission1.3, permission1.4, permission2.1, permission2.2, permission3.1, permission3.2, permission3.3]
+		 * [permission1.1, permission1.2, permission1.3, permission1.4, permission2.1, permission2.2, permission3.1, permission3.2]
 		 *
 		 * This line saves one foreach. That foreach would save the comment above, though.
 		 *

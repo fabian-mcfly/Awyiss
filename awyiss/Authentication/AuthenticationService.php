@@ -77,6 +77,8 @@ class AuthenticationService extends BaseAuthenticationService {
 		if (
 			!str_ends_with($redirectUri, '/request-lock/')
 			&& !str_ends_with($redirectUri, '/release-lock/')
+			&& !str_ends_with($redirectUri, '/users/two-factor-auth/')
+			&& !str_ends_with($redirectUri, '/users/two-factor-setup/')
 			&& !str_contains($redirectUri, '/mode:frontend-editor/')
 		) {
 			/** @var \Cake\Http\Session $session */

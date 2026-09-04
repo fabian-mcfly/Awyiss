@@ -4,8 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
+use App\Database\Type\BinaryHashType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -203,5 +205,15 @@ class UsersTable extends Table {
 
 
 		return $rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		$schema->setColumnType('twoFactorSecret', BinaryHashType::class);
 	}
 }

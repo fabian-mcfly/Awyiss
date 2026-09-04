@@ -266,6 +266,7 @@ class EventListenersProviderTest extends TestCase {
 			'UrlHistory' => '\Awyiss\Event\Backend\UrlHistoryListener',
 			'UserConfiguration' => '\Awyiss\Event\Backend\UserConfigurationListener',
 			'Usergroups' => '\Awyiss\Event\Backend\UsergroupsListener',
+			'Users' => '\Awyiss\Event\Backend\UsersListener',
 		], $result);
 	}
 }

@@ -69,7 +69,6 @@ class NewsListingWidgetTest extends TestCase {
 		// Reset static properties
 		$reflection = new ReflectionClass(NewsListingWidget::class);
 		$property = $reflection->getProperty('isPreview');
-		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(null, null);
 	}

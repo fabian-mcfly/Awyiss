@@ -35,6 +35,8 @@ class DummyUsersSeed extends BaseSeed {
                 'changedOn' => '2002-02-22 22:22:22',
                 'deletedBy' => NULL,
                 'deletedOn' => NULL,
+                'twoFactorEnabled' => 0,
+                'twoFactorSecret' => NULL,
             ],
             [
                 'id' => 2,
@@ -53,6 +55,8 @@ class DummyUsersSeed extends BaseSeed {
                 'changedOn' => '2002-02-22 22:22:22',
                 'deletedBy' => NULL,
                 'deletedOn' => NULL,
+                'twoFactorEnabled' => 0,
+                'twoFactorSecret' => NULL,
             ],
             [
                 'id' => 3,
@@ -71,6 +75,8 @@ class DummyUsersSeed extends BaseSeed {
                 'changedOn' => '2002-02-22 22:22:22',
                 'deletedBy' => NULL,
                 'deletedOn' => NULL,
+                'twoFactorEnabled' => 0,
+                'twoFactorSecret' => NULL,
             ],
             [
                 'id' => 4,
@@ -89,6 +95,8 @@ class DummyUsersSeed extends BaseSeed {
                 'changedOn' => '2002-02-22 22:22:22',
                 'deletedBy' => NULL,
                 'deletedOn' => NULL,
+                'twoFactorEnabled' => 0,
+                'twoFactorSecret' => NULL,
             ],
         ];
 

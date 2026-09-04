@@ -14,10 +14,14 @@ use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Http\Session;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use OTPHP\TOTP;
 
 
 /**
@@ -46,7 +50,12 @@ class UsersController extends Controller {
 
 		$this->Authentication->allowUnauthenticated(['login', 'logout']);
 
-		if (in_array($this->getRequest()->getParam('action'), ['login', 'logout'])) {
+		if (
+			in_array(
+				$this->getRequest()->getParam('action'),
+				['login', 'logout', 'twoFactorSetup', 'twoFactorAuth', 'twoFactorEnable', 'twoFactorDisable']
+			)
+		) {
 			$this->Categories->disable();
 		}
 	}
@@ -242,15 +251,7 @@ class UsersController extends Controller {
 				$session->write('Backend.lastLogin', $lastLogin);
 			}
 
-			$redirectUri = $this->Authentication->getLoginRedirect() ?? Router::url([
-				'_name' => Awyiss::REALM_BACKEND,
-				'controller' => 'Dashboard',
-				'action' => 'overview',
-				'_base' => false,
-			]);
-
-
-			return $this->redirect($redirectUri);
+			return $this->redirectAfterLogin();
 		}
 
 		if ($this->request->is('post') && !$result->isValid()) {
@@ -267,6 +268,7 @@ class UsersController extends Controller {
 						'failedAttempts' => $user->failedAttempts + 1,
 						'lastLogin' => DateTime::now(),
 					], ['guard' => false]);
+
 					$this->Users->save($user, ['audit' => ['skip' => true]]);
 				}
 			}
@@ -279,10 +281,223 @@ class UsersController extends Controller {
 		}
 
 		$this->viewBuilder()->setLayout('login');
-
 		$this->set([
 			'languageRealm' => Awyiss::REALM_BACKEND,
 		]);
+	}
+
+
+	/**
+	 * Set up TOTP authentication for the currently logged-in backend user.
+	 *
+	 * A new setup secret is generated for every page load and failed verification attempt.
+	 *
+	 * @return \Cake\Http\Response|void
+	 * @noinspection PhpUnused
+	 */
+	public function twoFactorSetup() {
+		$user = $this->Authentication->getIdentity()?->getOriginalData();
+		if (!$user instanceof User) {
+			return $this->redirect(['action' => 'login']);
+		}
+
+		$session = $this->request->getAttribute('session');
+
+		if ($this->request->is('post')) {
+			if ($this->request->getData('submit') === 'cancel') {
+				// If the user cancels the two-factor setup, disable two-factor authentication and remove the secret.
+				$this->disableTwoFactorForUser($user, $session);
+
+				return $this->redirectAfterLogin();
+			}
+
+			$secret = $session->read('Backend.twoFactorSetupSecret');
+
+			if (!$secret) {
+				$this->Flash->error(__d('Users', 'two_factor_setup_failed'));
+
+				return $this->redirect(['action' => 'twoFactorSetup']);
+			}
+
+			$totp = TOTP::createFromSecret($secret);
+			if ($totp->verify($this->request->getData('code'))) {
+				$user->patch([
+					'twoFactorEnabled' => true,
+					'twoFactorSecret' => Security::encrypt($secret, hash('sha256', Security::getSalt(), true)),
+				], ['guard' => false]);
+
+				$this->Users->save($user);
+
+				$session->delete('Backend.twoFactorSetupSecret');
+				$session->write('Backend.twoFactorVerified', true);
+				$session->write(Awyiss::REALM_BACKEND . '.Auth', $user);
+
+				return $this->redirectAfterLogin();
+			}
+
+			$this->Flash->error(__d('Users', 'two_factor_code_invalid'));
+		}
+
+		// Always generate a new secret for every page load and failed verification attempt, to prevent brute-force attacks.
+		$totp = TOTP::generate()
+			->withIssuer('Awyiss')
+			->withLabel($user->username)
+		;
+
+		$secret = $totp->getSecret();
+		$session->write('Backend.twoFactorSetupSecret', $secret);
+
+		$qrCode = new QrCode($totp->getProvisioningUri());
+		$qrCode = new PngWriter()->write($qrCode)->getDataUri();
+
+		$this->viewBuilder()->setLayout('login');
+		$this->set([
+			'qrCode' => $qrCode,
+			'loginLogoPath' => $qrCode,
+			'secret' => $secret,
+			'cancelable' => Configure::read('Awyiss.Users.Backend.forceTwoFactor', false) === false,
+		]);
+	}
+
+
+	/**
+	 * Start two-factor setup for the currently logged-in backend user.
+	 *
+	 * @return \Cake\Http\Response|null
+	 * @noinspection PhpUnused
+	 */
+	public function twoFactorEnable(): ?Response {
+		$user = $this->Authentication->getIdentity()?->getOriginalData();
+		if (!$user instanceof User) {
+			return $this->redirect(['action' => 'login']);
+		}
+
+		if ($user->twoFactorEnabled) {
+			return $this->redirectAfterLogin();
+		}
+
+		return $this->redirect(['action' => 'twoFactorSetup']);
+	}
+
+
+	/**
+	 * Disable two-factor authentication after verifying the current TOTP code.
+	 *
+	 * @return \Cake\Http\Response|void
+	 * @noinspection PhpUnused
+	 */
+	public function twoFactorDisable() {
+		$user = $this->Authentication->getIdentity()?->getOriginalData();
+		if (!$user instanceof User) {
+			return $this->redirect(['action' => 'login']);
+		}
+
+		if (!$user->twoFactorEnabled || Configure::read('Awyiss.Users.Backend.forceTwoFactor', false)) {
+			return $this->redirectAfterLogin();
+		}
+
+		$encryptedSecret = $user->twoFactorSecret;
+		if (!is_string($encryptedSecret) || $encryptedSecret === '') {
+			return $this->redirect(['action' => 'twoFactorSetup']);
+		}
+
+		$session = $this->request->getAttribute('session');
+		$secret = Security::decrypt($encryptedSecret, hash('sha256', Security::getSalt(), true));
+
+		if (!$secret) {
+			// If no secret has been set, the user needs to have the two-factor flag removed
+			$this->disableTwoFactorForUser($user, $session);
+
+			return $this->redirectAfterLogin();
+		}
+
+		if ($this->request->is('post')) {
+			$totp = TOTP::createFromSecret($secret);
+
+			if ($totp->verify($this->request->getData('code'))) {
+				// If the code is valid, disable two-factor authentication for the user.
+				$this->disableTwoFactorForUser($user, $session);
+
+				return $this->redirectAfterLogin();
+			}
+
+			$user->patch([
+				'failedAttempts' => $user->failedAttempts + 1,
+				'lastLogin' => DateTime::now(),
+			], ['guard' => false]);
+
+			$this->Users->save($user);
+
+			if ($user->failedAttempts >= 5) {
+				$this->Flash->error(__d('Users', 'two_factor_too_many_failed_attempts'));
+				$this->Authentication->logout();
+
+				return $this->redirect(['action' => 'logout']);
+			}
+
+			$this->Flash->error(__d('Users', 'two_factor_code_invalid'));
+		}
+
+		$this->viewBuilder()->setLayout('login');
+		$this->viewBuilder()->setTemplate('two_factor_disable');
+		$this->set([
+			'account' => $user->username,
+		]);
+	}
+
+
+	/**
+	 * Verify the TOTP code after a successful backend password login.
+	 *
+	 * @return \Cake\Http\Response|void
+	 * @noinspection PhpUnused
+	 */
+	public function twoFactorAuth() {
+		$user = $this->Authentication->getIdentity()?->getOriginalData();
+		if (!$user instanceof User) {
+			return $this->redirect(['action' => 'login']);
+		}
+
+		$encryptedSecret = $user->twoFactorSecret;
+
+		if (!$encryptedSecret) {
+			return $this->redirect(['action' => 'twoFactorSetup']);
+		}
+
+		$secret = Security::decrypt($encryptedSecret, hash('sha256', Security::getSalt(), true));
+
+		$session = $this->request->getAttribute('session');
+		if (!$secret) {
+			return $this->redirect(['action' => 'twoFactorSetup']);
+		}
+
+		if ($this->request->is('post')) {
+			$totp = TOTP::createFromSecret($secret);
+			if ($totp->verify($this->request->getData('code'))) {
+				$session->write('Backend.twoFactorVerified', true);
+
+				return $this->redirectAfterLogin();
+			}
+
+			// Increase the failed attempts counter for the user, to prevent brute-force attacks.
+			$user->patch([
+				'failedAttempts' => $user->failedAttempts + 1,
+				'lastLogin' => DateTime::now(),
+			], ['guard' => false]);
+
+			$this->Users->save($user, ['audit' => ['skip' => true]]);
+
+			if ($user->failedAttempts >= 5) {
+				// Redirect to log out to force the user to re-login and reset the failed attempts counter.
+				$this->Flash->error(__d('Users', 'two_factor_too_many_failed_attempts'));
+				$this->Authentication->logout();
+				return $this->redirect(['action' => 'logout']);
+			}
+
+			$this->Flash->error(__d('Users', 'two_factor_code_invalid'));
+		}
+
+		$this->viewBuilder()->setLayout('login');
 	}
 
 
@@ -353,7 +568,27 @@ class UsersController extends Controller {
 		if (!$this->request->getData('reloadForm')) { //reloadForm is set when we need to reload options based on current values
 			$saveAsCopy = (bool)$this->request->getData('saveAsCopy');
 
+			$twoFactorEnabledChanged = $user->isDirty('twoFactorEnabled')
+				&& $user->twoFactorEnabled != $user->getOriginal('twoFactorEnabled');
+
 			if ($this->Users->save($user, ['asCopy' => $saveAsCopy])) {
+				// If the user saved themselves and activated two-factor authentication, redirect to the two-factor setup page.
+				if (
+					$user->id === $this->Authentication->getIdentity()->getIdentifier()
+					&& $twoFactorEnabledChanged
+					&& $user->twoFactorEnabled
+				) {
+					// Update the session to reflect the new two-factor status, so that the user is not immediately logged out.
+					$session = $this->request->getAttribute('session');
+					/** @var \Awyiss\Model\Entity\User $sessionUser */
+					$sessionUser = $session->read(Awyiss::REALM_BACKEND . '.Auth');
+					$sessionUser->twoFactorEnabled = true;
+
+					throw new RedirectException(Router::url([
+						'action' => 'twoFactorSetup',
+					], true), 302);
+				}
+
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
@@ -397,5 +632,43 @@ class UsersController extends Controller {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @return \Cake\Http\Response|null
+	 */
+	protected function redirectAfterLogin(): ?Response {
+		$redirectUri = $this->Authentication->getLoginRedirect() ?? Router::url([
+			'_name' => Awyiss::REALM_BACKEND,
+			'controller' => 'Dashboard',
+			'action' => 'overview',
+			'_base' => false,
+		]);
+
+		return $this->redirect($redirectUri);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\User $user
+	 * @param \Cake\Http\Session $session
+	 * @return void
+	 */
+	protected function disableTwoFactorForUser(User $user, Session $session): void {
+		$user->patch([
+			'twoFactorEnabled' => false,
+			'twoFactorSecret' => null,
+		], ['guard' => false]);
+
+		$this->Users->save($user);
+
+		/** @var \Awyiss\Model\Entity\User $sessionUser */
+		$sessionUser = $session->read(Awyiss::REALM_BACKEND . '.Auth');
+		$sessionUser->twoFactorEnabled = false;
+		$sessionUser->twoFactorSecret = null;
+
+		$session->delete('Backend.twoFactorVerified');
+		$session->delete('Backend.twoFactorSetupSecret');
 	}
 }
