@@ -24,60 +24,84 @@ class App extends BaseApp {
 	 * - in the application/plugin namespace or
 	 * - in the CakePHP core namespace
 	 *
+	 * Cached version of `findClassName()`.
+	 *
 	 * @param string $class
 	 * @param string $type
 	 * @param string $suffix
-	 * @return string|null
+	 * @return string|null The fully qualified class name, or null if the class does not exist.
 	 */
 	public static function className(string $class, string $type = '', string $suffix = ''): ?string {
 		if (str_contains($class, '\\')) {
 			return class_exists($class) ? $class : null;
 		}
 
+		// If the CUSTOM_NAMESPACE is not defined, caching would result in a cache miss when the CUSTOM_NAMESPACE is defined later.
+		// Therefore, we skip caching in this case.
+		if (!defined('CUSTOM_NAMESPACE')) {
+			return static::findClassName($class, $type, $suffix);
+		}
+
 		$cacheName = hash('xxh3', $class . '::' . $type . '::' . $suffix);
 
 		return Cache::remember(
 			$cacheName,
-			function () use ($class, $type, $suffix, $cacheName): string|false {
-				[$plugin, $name] = pluginSplit($class);
-
-				if ($plugin) {
-					$base = str_replace('/', '\\', rtrim($plugin, '\\'));
-					$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
-
-					if (static::_classExistsInBase($fullname, $base)) {
-						return $base . $fullname;
-					}
-
-					return false;
-				}
-
-
-				// No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
-				$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
-				if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($fullname, CUSTOM_NAMESPACE)) {
-					return '\\' . CUSTOM_NAMESPACE . $fullname;
-				}
-
-
-				// No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
-				$base = Configure::read('App.namespace');
-				$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
-				if (static::_classExistsInBase($fullname, $base)) {
-					/** @var class-string */
-					return '\\' . $base . $fullname;
-				}
-
-
-				// Neither CUSTOM_NAMESPACE, nor Awyiss-class? CakePHP it is.
-				if (static::_classExistsInBase($fullname, 'Cake')) {
-					return 'Cake' . $fullname;
-				}
-
-				return false;
-			},
+			fn() => static::findClassName($class, $type, $suffix) ?? false,
 			'classes'
 		) ?: null;
+	}
+
+
+	/**
+	 * Return the class name namespaced.
+	 *
+	 * This method checks if the class is defined
+	 * - in the custom namespace or
+	 * - in the application/plugin namespace or
+	 * - in the CakePHP core namespace
+	 *
+	 * @param string $class
+	 * @param string $type
+	 * @param string $suffix
+	 * @return string|null The fully qualified class name, or null if the class does not exist.
+	 */
+	public static function findClassName(string $class, string $type = '', string $suffix = ''): ?string {
+		[$plugin, $name] = pluginSplit($class);
+
+		if ($plugin) {
+			$base = str_replace('/', '\\', rtrim($plugin, '\\'));
+			$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+
+			if (static::_classExistsInBase($fullname, $base)) {
+				return $base . $fullname;
+			}
+
+			return null;
+		}
+
+
+		// No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
+		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+		if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($fullname, CUSTOM_NAMESPACE)) {
+			return '\\' . CUSTOM_NAMESPACE . $fullname;
+		}
+
+
+		// No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
+		$base = Configure::read('App.namespace');
+		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+		if (static::_classExistsInBase($fullname, $base)) {
+			/** @var class-string */
+			return '\\' . $base . $fullname;
+		}
+
+
+		// Neither CUSTOM_NAMESPACE, nor Awyiss-class? CakePHP it is.
+		if (static::_classExistsInBase($fullname, 'Cake')) {
+			return 'Cake' . $fullname;
+		}
+
+		return null;
 	}
 
 
@@ -87,14 +111,17 @@ class App extends BaseApp {
 	 * - in the custom namespace or
 	 * - in the application/plugin namespace
 	 *
+	 * Cached version of `findClasses()`.
+	 *
 	 * @param string $name The name of the class or * to get all classes
 	 * @param string $folder The folder of the class, e.g. 'Attribute/AttributeOptionsCollection', 'Event/Backend', 'Form'
 	 * @param string $suffix The suffix of the class, e.g. 'AttributeOptionsCollection', 'Listener', 'FormOptions'
 	 * @param string|null $interface The interface the class should implement. If set, the class will be checked
-	 *    for it and an exception will be thrown if it does not implement the interface.
+	 *  for it and an exception will be thrown if it does not implement the interface.
 	 * @param string|null $subfolders Subfolders to check for the class that are not namespaces on their own, like console commands
 	 * @param array $blocklistedClassNames Class names that should be ignored, like Abstract classes or interfaces
-	 * @return array
+	 * @return array<string, class-string> An array of class names with the key being the class name without namespace
+	 *  and the value being the fully qualified class name.
 	 */
 	public static function classes(
 		string $name,
@@ -106,6 +133,12 @@ class App extends BaseApp {
 	): array {
 		if ($name !== '*') {
 			$name = Inflector::camelize(Text::slug($name, '_'));
+		}
+
+		// If the CUSTOM_NAMESPACE is not defined, caching would result in a cache miss when the CUSTOM_NAMESPACE is defined later.
+		// Therefore, we skip caching in this case.
+		if (!defined('CUSTOM_NAMESPACE')) {
+			return static::findClasses($name, $folder, $suffix, $interface, $subfolders, $blocklistedClassNames);
 		}
 
 		$cacheName = hash(
@@ -129,12 +162,13 @@ class App extends BaseApp {
 	 * @param string $folder The folder of the class, e.g. 'Attribute/AttributeOptionsCollection', 'Event/Backend', 'Form'
 	 * @param string $suffix The suffix of the class, e.g. 'AttributeOptionsCollection', 'Listener', 'FormOptions'
 	 * @param string|null $interface The interface the class should implement. If set, the class will be checked
-	 *    for it and an exception will be thrown if it does not implement the interface.
+	 *  for it and an exception will be thrown if it does not implement the interface.
 	 * @param string|null $subfolders Subfolders to check for the class that are not namespaces on their own, like console commands
 	 * @param array $blocklistedClassNames Class names that should be ignored, like Abstract classes or interfaces
-	 * @return array
+	 * @return array<string, class-string> An array of class names with the key being the class name without namespace
+	 *  and the value being the fully qualified class name.
 	 */
-	protected static function findClasses(
+	public static function findClasses(
 		string $name,
 		string $folder,
 		string $suffix = '',
