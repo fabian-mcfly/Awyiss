@@ -21,6 +21,10 @@ class UrlHelper extends BaseUrlHelper {
 	 * @return string
 	 */
 	public function build(array|string|null $url = null, array $options = []): string {
+		if (is_string($url) && str_starts_with($url, 'data:image')) {
+			return $url;
+		}
+
 		$options += [
 			'fullBase' => false,
 			'escape' => true,
