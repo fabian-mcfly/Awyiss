@@ -832,7 +832,9 @@ class AuditBehavior extends Behavior {
 		 * @noinspection PhpLoopCanBeConvertedToArrayMapInspection
 		 */
 		foreach (($entity->get('_translations') ?? []) as $languageShortcode => $translatedEntity) {
-			$newTranslations[ $languageShortcode ] = $translatedEntity?->extract($translateFields) ?? null;
+			$newTranslations[ $languageShortcode ] = $translatedEntity
+				? $this->extractAuditData($translatedEntity, $translateFields)
+				: null;
 		}
 
 		$hasOldTranslations = $entity->hasOriginal('_translations');
@@ -841,7 +843,12 @@ class AuditBehavior extends Behavior {
 			/** @var Entity $translatedEntity */
 			foreach ($oldTranslations as $languageShortcode => $translatedEntity) {
 				$oldTranslations[ $languageShortcode ] = [];
+				$hiddenFields = array_flip($translatedEntity->getHidden());
 				foreach ($translateFields as $field) {
+					if (isset($hiddenFields[ $field ])) {
+						continue;
+					}
+
 					if ($translatedEntity->hasOriginal($field)) {
 						$value = $translatedEntity->getOriginal($field);
 					}
@@ -888,7 +895,10 @@ class AuditBehavior extends Behavior {
 		$translations = [];
 
 		foreach ($entity->get('_translations') as $shortcode => $translatedEntity) {
-			$translations[ $shortcode ] = array_diff_key($translatedEntity->toArray(), array_flip($translatedEntity->getVirtual()));
+			$translations[ $shortcode ] = array_diff_key(
+				$this->extractAuditData($translatedEntity),
+				array_flip($translatedEntity->getVirtual())
+			);
 
 			// If the translations only contain null values, remove them
 			if (array_filter($translations[ $shortcode ], fn($value) => $value !== null) === []) {
@@ -1017,7 +1027,7 @@ class AuditBehavior extends Behavior {
 		$newData = [];
 		$originalEntityData = $entityData;
 		if ($associatedEntity instanceof Entity) {
-			$newData = $associatedEntity->extract();
+						$newData = $this->extractAuditData($associatedEntity);
 			$newData = array_diff_key($newData, $keys);
 
 			if (!$associatedEntity->isDirty()) {
@@ -1030,7 +1040,10 @@ class AuditBehavior extends Behavior {
 			if (isset($newData['_translations'])) {
 				/** @var \Awyiss\Model\Entity $translation */
 				foreach ($newData['_translations'] as $languageShortcode => $translation) {
-					$newData['_translations'][ $languageShortcode ] = array_diff_key($translation->extract(), $keys);
+					$newData['_translations'][ $languageShortcode ] = array_diff_key(
+						$this->extractAuditData($translation),
+						$keys
+					);
 					unset($newData['_translations'][ $languageShortcode ]['locale']);
 				}
 			}
@@ -1039,7 +1052,7 @@ class AuditBehavior extends Behavior {
 		$oldData = [];
 		if (!$entity->hasOriginal($field)) {
 			if ($entity->get($field) instanceof Entity && !$entity->get($field)->isNew()) {
-				$oldData = array_diff_key($entity->get($field)->getOriginalValues(), $keys);
+					$oldData = array_diff_key($this->extractAuditData($entity->get($field), null, true), $keys);
 			}
 			else {
 				if (!isset($newData)) {
@@ -1050,7 +1063,7 @@ class AuditBehavior extends Behavior {
 				$clonedEntity = unserialize(serialize($entity));
 				$this->table()->loadInto($clonedEntity, [$association->getName()]);
 				if ($clonedEntity->get($field) instanceof Entity) {
-					$oldData = $clonedEntity->get($field)->getOriginalValues();
+					$oldData = $this->extractAuditData($clonedEntity->get($field), null, true);
 				}
 			}
 
@@ -1059,13 +1072,16 @@ class AuditBehavior extends Behavior {
 			if (isset($oldData['_translations'])) {
 				/** @var \Awyiss\Model\Entity $translation */
 				foreach ($oldData['_translations'] as $languageShortcode => $translation) {
-					$oldData['_translations'][ $languageShortcode ] = array_diff_key($translation->extractOriginal(null), $keys);
+					$oldData['_translations'][ $languageShortcode ] = array_diff_key(
+						$this->extractAuditData($translation, null, true),
+						$keys
+					);
 					unset($oldData['_translations'][ $languageShortcode ]['locale']);
 				}
 			}
 		}
 		elseif ($associatedEntity) {
-			$oldData = array_diff_key($associatedEntity->getOriginalValues(), $keys);
+			$oldData = array_diff_key($this->extractAuditData($associatedEntity, null, true), $keys);
 		}
 
 		unset($oldData['_locale'], $newData['_locale']);
@@ -1113,7 +1129,10 @@ class AuditBehavior extends Behavior {
 		if ($newData) {
 			/** @var \Awyiss\Model\Entity $associationEntity */
 			foreach ($newData as $key => $associationEntity) {
-				$newData[ $key ] = array_diff_key($associationEntity->toArray(), $keys + array_flip($associationEntity->getVirtual()));
+				$newData[ $key ] = array_diff_key(
+					$this->extractAuditData($associationEntity),
+					$keys + array_flip($associationEntity->getVirtual())
+				);
 
 				if ($associationEntity->has('_translations')) {
 					$this->auditAssociationTranslations($associationEntity, $newData[ $key ]);
@@ -1136,7 +1155,10 @@ class AuditBehavior extends Behavior {
 		if ($oldData) {
 			/** @var Entity $associationEntity */
 			foreach ($oldData as $key => $associationEntity) {
-				$oldData[ $key ] = array_diff_key($associationEntity->toArray(), $keys + array_flip($associationEntity->getVirtual()));
+				$oldData[ $key ] = array_diff_key(
+					$this->extractAuditData($associationEntity),
+					$keys + array_flip($associationEntity->getVirtual())
+				);
 
 				if ($associationEntity->has('_translations')) {
 					$this->auditAssociationTranslations($associationEntity, $oldData[ $key ]);
@@ -1208,7 +1230,7 @@ class AuditBehavior extends Behavior {
 		if ($newData) {
 			foreach ($newData as $key => $newEntity) {
 				if ($newEntity instanceof Entity) {
-					$newData[ $key ] = $newEntity->extract($keys);
+					$newData[ $key ] = $this->extractAuditData($newEntity, $keys);
 
 					/** @var \Awyiss\Model\Entity $joinData */
 					$joinData = $newEntity->get($joinKey);
@@ -1219,7 +1241,10 @@ class AuditBehavior extends Behavior {
 					//Disable the audit for the junction entity
 					$joinData->disableAudit();
 
-					$newData[ $key ]['_joinData'] = array_diff_key($joinData->extract(), array_flip($junctionKeys));
+					$newData[ $key ]['_joinData'] = array_diff_key(
+						$this->extractAuditData($joinData),
+						array_flip($junctionKeys)
+					);
 				}
 				else {
 					$newData[ $key ] = $newEntity;
@@ -1243,7 +1268,7 @@ class AuditBehavior extends Behavior {
 
 		if ($oldData) {
 			foreach ($oldData as $key => $oldEntity) {
-				$oldEntityData = $oldEntity->extract($keys);
+				$oldEntityData = $this->extractAuditData($oldEntity, $keys);
 				$oldData[ $key ] = $oldEntityData;
 
 				/** @var Entity $joinData */
@@ -1252,7 +1277,10 @@ class AuditBehavior extends Behavior {
 					continue;
 				}
 
-				$oldData[ $key ]['_joinData'] = array_diff_key($joinData->extract(), array_flip($junctionKeys));
+				$oldData[ $key ]['_joinData'] = array_diff_key(
+					$this->extractAuditData($joinData),
+					array_flip($junctionKeys)
+				);
 			}
 		}
 
@@ -1289,8 +1317,8 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function buildEntityData(Entity $entity, bool $deleted = false): array {
 		$entityData = [
-			'old' => $entity->getOriginalValues(),
-			'new' => $entity->extract(),
+			'old' => $this->extractAuditData($entity, null, true),
+			'new' => $this->extractAuditData($entity),
 			'changes' => [
 				'old' => [],
 				'new' => [],
@@ -1373,6 +1401,23 @@ class AuditBehavior extends Behavior {
 
 
 	/**
+	 * Extract entity data without fields hidden from the entity representation.
+	 *
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param array|null $fields
+	 * @param bool $original
+	 * @return array
+	 */
+	protected function extractAuditData(Entity $entity, ?array $fields = null, bool $original = false): array {
+		$data = $original && $fields === null
+			? $entity->getOriginalValues()
+			: ($original ? $entity->extractOriginal($fields) : $entity->extract($fields));
+
+		return array_diff_key($data, array_flip($entity->getHidden()));
+	}
+
+
+	/**
 	 * @param array $data
 	 * @param string|int $elementIdentifier
 	 * @param array $elementAssignments
@@ -1387,7 +1432,7 @@ class AuditBehavior extends Behavior {
 	): array {
 		foreach ($elementAssignments as $selectorIdentifier => $selectorAssignments) {
 			if ($selectorAssignments instanceof Entity) {
-				$values = $selectorAssignments->extract();
+				$values = $this->extractAuditData($selectorAssignments);
 
 				$values = array_diff_key($values, array_flip($blocklistedFields));
 
@@ -1399,7 +1444,7 @@ class AuditBehavior extends Behavior {
 			}
 
 			foreach ($selectorAssignments as $key => $mediaAssignment) {
-				$values = $mediaAssignment->extract();
+				$values = $this->extractAuditData($mediaAssignment);
 
 				$values = array_diff_key($values, array_flip($blocklistedFields));
 
