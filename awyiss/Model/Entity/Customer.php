@@ -78,8 +78,8 @@ class Customer extends Entity implements IdentityGroupPermissionInterface {
 		$table->loadInto($this, [
 			'CustomerGroups' => [
 				//Only find active groups.
-
-				'finder' => 'active',			],
+				'finder' => 'active',
+			],
 		]);
 
 		return $this->customerGroups;
