@@ -819,7 +819,12 @@ class CategoriesBehavior extends Behavior {
 				$association = $table->getAssociation($this->getConfig('associationName'));
 				if ($association instanceof BelongsToMany) {
 					if (!empty($value)) {
-						$possibleValues = Hash::extract($value, '{n}.' . $association->getBindingKey());
+						if (is_iterable($value)) {
+							$possibleValues = Hash::extract($value, '{n}.' . $association->getBindingKey());
+						}
+						else {
+							$possibleValues = [$value];
+						}
 
 						return empty(array_diff($possibleValues, array_keys($categories)));
 					}
