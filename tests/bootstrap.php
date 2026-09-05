@@ -43,6 +43,29 @@ require $dir . '/awyiss/config/bootstrap.php';
 
 $loader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
 
+// Make sure tmp, tmp/cache, tmp/sessions and webroot are present
+if (!is_dir(TMP)) {
+	mkdir(TMP, 0755, true);
+}
+
+if (!is_dir(CACHE)) {
+	mkdir(CACHE, 0755, true);
+}
+
+if (!is_dir(TMP . 'sessions')) {
+	mkdir(TMP . 'sessions', 0755, true);
+}
+
+if (!is_dir(WWW_ROOT)) {
+	mkdir(WWW_ROOT, 0755, true);
+}
+
+// If the customer directory does not exist, throw an exception.
+if (!is_dir(ROOT . DS . CUSTOM_DIR)) {
+	throw new RuntimeException(sprintf('The customer directory "%s" does not exist.', ROOT . DS . CUSTOM_DIR));
+}
+
+
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
 	Configure::write('App.fullBaseUrl', 'http://localhost');
 }
