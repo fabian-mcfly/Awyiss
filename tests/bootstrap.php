@@ -43,7 +43,7 @@ require $dir . '/awyiss/config/bootstrap.php';
 
 $loader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
 
-// Make sure tmp, tmp/cache and tmp/sessions are present
+// Make sure tmp, tmp/cache, tmp/sessions and webroot are present
 if (!is_dir(TMP)) {
 	mkdir(TMP, 0755, true);
 }
@@ -54,6 +54,10 @@ if (!is_dir(CACHE)) {
 
 if (!is_dir(TMP . 'sessions')) {
 	mkdir(TMP . 'sessions', 0755, true);
+}
+
+if (!is_dir(WWW_ROOT)) {
+	mkdir(WWW_ROOT, 0755, true);
 }
 
 // If the customer directory does not exist, throw an exception.
