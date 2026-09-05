@@ -42,6 +42,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
+      - name: Make Cake CLI executable
+        run: chmod +x bin/cake
+
       - name: Compile Backend SCSS
         run: bin/cake scss compile -r Backend
 
