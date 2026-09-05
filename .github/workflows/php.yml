@@ -19,9 +19,22 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: curl, dom, fileinfo, gd, intl, libxml, openssl, pdo_sqlite, posix, sqlite3, zip, zlib
+          extensions: curl, dom, fileinfo, gd, imagick, intl, libxml, openssl, pdo_sqlite, posix, sqlite3, zip, zlib
           coverage: none
           tools: composer
+
+      - name: Install ImageMagick and FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick ffmpeg
+
+          if ! command -v magick >/dev/null 2>&1; then
+            sudo ln -s "$(command -v convert)" /usr/local/bin/magick
+          fi
+
+          php -m | grep -i '^imagick$'
+          magick -version
+          ffmpeg -version
 
       - name: Validate Composer configuration
         run: composer validate --strict
