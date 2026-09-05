@@ -13,7 +13,12 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Install locale for German
+        run: |
+          sudo locale-gen de_DE.utf8
+          sudo update-locale    
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -26,7 +31,7 @@ jobs:
       - name: Install ImageMagick and FFmpeg
         run: |
           sudo apt-get update
-          sudo apt-get install -y imagemagick ffmpeg
+          sudo apt-get install -y imagemagick
 
           if ! command -v magick >/dev/null 2>&1; then
             sudo ln -s "$(command -v convert)" /usr/local/bin/magick
@@ -34,7 +39,6 @@ jobs:
 
           php -m | grep -i '^imagick$'
           magick -version
-          ffmpeg -version
 
       - name: Validate Composer configuration
         run: composer validate --strict
