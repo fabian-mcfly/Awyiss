@@ -768,11 +768,6 @@ class ConvertFilesCommand extends Command {
 		if (!file_exists(dirname($file->avifPathAbsolute))) {
 			$io->out(sprintf('Creating directory `%s` for Avif file', dirname($file->avifPath)));
 
-			throw new \Cake\Error\FatalErrorException(
-				'Cannot create directory for Avif file: ' . json_encode(
-					[$file->avifPathAbsolute, dirname($file->avifPathAbsolute), file_exists(dirname($file->avifPathAbsolute))]
-					)
-			);
 			if (!mkdir(dirname($file->avifPathAbsolute))) {
 				$io->error('Status: Cannot create directory for Avif file');
 				$io->hr();
