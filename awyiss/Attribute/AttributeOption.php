@@ -168,7 +168,7 @@ class AttributeOption {
 
 
 	/**
-	 * @param callable|array|bool $disabled
+	 * @param callable|bool|array $disabled
 	 * @return self
 	 * @noinspection PhpUnused
 	 */
@@ -281,7 +281,6 @@ class AttributeOption {
 	 * @param bool $evaluate Whether callable values should be evaluated.
 	 * @param \Awyiss\Model\Entity|null $entity Entity used for evaluation.
 	 * @param array $currentOptions Options collected during evaluation.
-	 * @return callable|bool
 	 * @noinspection PhpUnused
 	 */
 	public function getValue(bool $evaluate = false, ?Entity $entity = null, array &$currentOptions = []): mixed {
