@@ -175,6 +175,10 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
+	 * @param string $scope
+	 * @param array $additionalData
+	 * @param array|string ...$identifier
+	 * @return bool|null
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
@@ -268,6 +272,8 @@ class AuthorizationHelper extends Helper {
 
 	/**
 	 * Retrieve the identity attribute from the current request
+	 *
+	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */

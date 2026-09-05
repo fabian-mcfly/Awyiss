@@ -38,10 +38,7 @@ class UserConfigurationController extends Controller {
 
 
 	/**
-	 * Called after the `__construct()` method
-	 *
-	 * @throws \ReflectionException
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		parent::initialize();
@@ -75,7 +72,7 @@ class UserConfigurationController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?Response
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
 	public function overview() {
@@ -213,9 +210,9 @@ class UserConfigurationController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
-	 * @noinspection DuplicatedCode
 	 */
 	public function edit(int $id) {
 		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('update');

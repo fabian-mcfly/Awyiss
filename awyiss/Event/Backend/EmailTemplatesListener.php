@@ -61,6 +61,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\EmailTemplate $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, EmailTemplate $entity, ArrayObject $options): void {
@@ -127,6 +128,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 	 *
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\EmailTemplate $entity
+	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

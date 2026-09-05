@@ -58,6 +58,7 @@ class FileLoader extends BaseFileLoader {
 	 *
 	 * @param array|string $paths
 	 * @param string $namespace
+	 * @return void
 	 * @throws LoaderError
 	 */
 	public function setPaths(array|string $paths, string $namespace = self::MAIN_NAMESPACE): void {
@@ -225,7 +226,7 @@ class FileLoader extends BaseFileLoader {
 	 * If there's no namespace in the name, return the default one.
 	 *
 	 * @param string $name
-	 * @return array|array<string>
+	 * @return array<string>
 	 * @throws LoaderError
 	 */
 	protected function parseName(string $name): array {
@@ -250,6 +251,8 @@ class FileLoader extends BaseFileLoader {
 	 * - it must not contain a NUL byte
 	 * - it must not try to reach a file or a directory outside the configured paths
 	 *
+	 * @param string $name
+	 * @return void
 	 * @throws LoaderError
 	 */
 	protected function validateName(string $name): void {

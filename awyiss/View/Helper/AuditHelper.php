@@ -424,8 +424,8 @@ class AuditHelper extends Helper {
 	 * @param \Cake\Datasource\EntityInterface $entity The entity (to determine column type)
 	 * @param array<string, array{name: string, property: string, type: string}> $associations The associations
 	 * @return bool True if values differ
-	 * @noinspection PhpUnused
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	public function valuesDiffer(mixed $value1, mixed $value2, string $field, EntityInterface $entity, array $associations): bool {
 		static $dateFormat = $this->getView()->get('dateFormat') ?? $this

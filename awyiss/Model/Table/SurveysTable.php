@@ -175,6 +175,7 @@ class SurveysTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [

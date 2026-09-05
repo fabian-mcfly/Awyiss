@@ -250,7 +250,7 @@ abstract class MenuItem implements ArrayAccess {
 	 * Generates the children of the menu item.
 	 *
 	 * @param int $maxLevel The maximum level of children to generate.
-	 * @return Generator<string, MenuItem> A generator that yields the children of the menu item.
+	 * @return Generator<int|string, MenuItem> A generator that yields the children of the menu item.
 	 */
 	public function children(int $maxLevel = -1): Generator {
 		if ($this->children === null) {

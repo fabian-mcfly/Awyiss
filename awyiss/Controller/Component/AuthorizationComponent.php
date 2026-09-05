@@ -56,6 +56,7 @@ class AuthorizationComponent extends Component {
 	 * Is called when the component is initialized
 	 *
 	 * @param array<string, mixed> $config The configuration settings provided to this component.
+	 * @return void
 	 */
 	public function initialize(array $config): void {
 		if (!empty($config['scope'])) {
@@ -369,6 +370,8 @@ class AuthorizationComponent extends Component {
 
 	/**
 	 * Retrieve the IdentityInterface from the request.
+	 *
+	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface $identity */

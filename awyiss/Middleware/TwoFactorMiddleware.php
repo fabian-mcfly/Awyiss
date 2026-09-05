@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,7 +30,7 @@ class TwoFactorMiddleware implements MiddlewareInterface {
 	/**
 	 * Enforce the configured backend two-factor policy.
 	 *
-	 * @param \Cake\Http\ServerRequest $request
+	 * @param \Cake\Http\ServerRequest|\Psr\Http\Message\ServerRequestInterface $request
 	 * @param \Psr\Http\Server\RequestHandlerInterface $handler
 	 * @return \Psr\Http\Message\ResponseInterface
 	 * @throws \Exception
@@ -75,7 +76,7 @@ class TwoFactorMiddleware implements MiddlewareInterface {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 * @throws \Exception
 	 */
-	protected function redirect(ServerRequestInterface $request, string $action): ResponseInterface {
+	protected function redirect(ServerRequest $request, string $action): ResponseInterface {
 		$url = Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
 			'controller' => 'Users',

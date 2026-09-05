@@ -62,6 +62,7 @@ class RouteController extends AppController {
 	 * a notice with the results and a 300 status code.
 	 *
 	 * @param string $search
+	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
 	 * @noinspection PhpUnused
 	 */

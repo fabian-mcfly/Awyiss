@@ -282,7 +282,7 @@ class FrontendView extends AppView {
 	 * Finds a content filename, returns false on failure.
 	 *
 	 * @param string $name The name of the content to find.
-	 * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
+	 * @param bool $pluginCheck If false will ignore the request's plugin if parsed plugin is not loaded
 	 * @return string|false Either a string to the content filename or false when one can't be found.
 	 */
 	protected function _getContentFileName(string $name, bool $pluginCheck = true): string|false {
@@ -434,7 +434,7 @@ class FrontendView extends AppView {
 	 * Finds a global content filename, returns false on failure.
 	 *
 	 * @param string $name The name of the global content to find.
-	 * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
+	 * @param bool $pluginCheck If false will ignore the request's plugin if parsed plugin is not loaded
 	 * @return string|false Either a string to the global content filename or false when one can't be found.
 	 */
 	protected function _getGlobalContentFileName(string $name, bool $pluginCheck = true): string|false {

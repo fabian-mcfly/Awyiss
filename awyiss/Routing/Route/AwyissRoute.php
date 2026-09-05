@@ -151,6 +151,11 @@ class AwyissRoute extends DashedRoute {
 	 *
 	 * Composes the string URL using the template
 	 * used to create the route.
+	 *
+	 * @param array $params The parameters to use for building the URL string.
+	 * @param array $pass The passed parameters to use for building the URL string.
+	 * @param array $query The query parameters to use for building the URL string.
+	 * @return string The built URL string.
 	 */
 	protected function buildUrlString(array $params, array $pass = [], array $query = []): string {
 		/**

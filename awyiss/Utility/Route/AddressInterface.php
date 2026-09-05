@@ -36,6 +36,7 @@ interface AddressInterface {
 	 * Create an Address object from an associative array.
 	 *
 	 * @param array $data
+	 * @return static|null
 	 */
 	public static function fromArray(array $data): ?static;
 

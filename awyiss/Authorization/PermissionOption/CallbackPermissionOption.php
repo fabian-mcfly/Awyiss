@@ -56,7 +56,8 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	/**
 	 * Sets the callback to be used by the permission
 	 *
-	 * @param mixed $callback
+	 * @param string $event
+	 * @param callable $callback
 	 * @return $this
 	 */
 	public function setCallback(string $event, callable $callback): static {
@@ -79,7 +80,7 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	/**
 	 * Sets the callback to be used by the permission
 	 *
-	 * @param mixed $callbacks
+	 * @param array $callbacks
 	 * @return $this
 	 */
 	public function setCallbacks(array $callbacks): static {
@@ -93,10 +94,10 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 
 	/**
-	 * {@inheritDoc]
-	 *
 	 * Additionally, get a callable from the configuration and call it.
 	 * This allows the callback to define additional logic for the accessibility of the permission
+	 *
+	 * @inheritDoc
 	 */
 	public function isAccessible(mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
 		$isAccessible = parent::isAccessible($access, $settings, $additionalData, $permissionCollection);

@@ -111,6 +111,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @param string $realm
 	 * @param AuthenticationServiceInterface $service
+	 * @return void
 	 * @throws Exception
 	 * @see AuthenticationServiceInterface::loadAuthenticator
 	 */
@@ -156,6 +157,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Add the default authenticators for Session and Form
 	 * for the Backend
 	 *
+	 * @param AuthenticationServiceInterface $service Authentication service.
+	 * @param ServerRequestInterface $request Current request.
+	 * @return void
 	 * @throws Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -212,6 +216,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Register the default authenticators for Session and Form
 	 * for the Frontend
 	 *
+	 * @param \Authentication\AuthenticationServiceInterface $service Authentication service.
+	 * @param \Psr\Http\Message\ServerRequestInterface $request Current request.
+	 * @return void
 	 * @throws Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -338,6 +345,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @param callable|string $authenticator
 	 * @param array $config
 	 * @param int $priority
+	 * @return void
 	 */
 	public static function addAuthenticator(string $realm, string|callable $authenticator, array $config = [], int $priority = 100): void {
 		if (is_string($authenticator)) {
@@ -363,6 +371,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Disable the default Backend authenticators for Session and Form
 	 *
 	 * @param bool $disableDefaultAuthenticators
+	 * @return void
 	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultBackendAuthenticators(bool $disableDefaultAuthenticators): void {
@@ -374,6 +383,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Disable the default Frontend authenticators for Session and Form
 	 *
 	 * @param bool $disableDefaultAuthenticators
+	 * @return void
 	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultFrontendAuthenticators(bool $disableDefaultAuthenticators): void {

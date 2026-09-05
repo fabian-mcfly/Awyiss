@@ -82,6 +82,7 @@ class TemplateCommand extends BaseTemplateCommand {
 	 * @inheritDoc
 	 * @param Arguments $args The arguments
 	 * @param string|null $container
+	 * @return string Template path.
 	 * @see \Bake\Command\BakeCommand::getTemplatePath()
 	 * @see \Bake\Command\TemplateCommand::getTemplatePath()
 	 */

@@ -96,6 +96,7 @@ class DatatablesListener implements EventListenerInterface {
 	/**
 	 * @param Event $event
 	 * @param Datatable $entity
+	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -130,6 +131,7 @@ class DatatablesListener implements EventListenerInterface {
 	/**
 	 * @param Event $event
 	 * @param Datatable $entity
+	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

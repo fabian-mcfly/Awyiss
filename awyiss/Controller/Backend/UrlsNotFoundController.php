@@ -45,6 +45,7 @@ class UrlsNotFoundController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {

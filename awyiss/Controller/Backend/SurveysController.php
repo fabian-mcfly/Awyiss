@@ -77,6 +77,7 @@ class SurveysController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -763,7 +764,7 @@ class SurveysController extends Controller {
 
 
 	/**
-	 * @param mixed $question
+	 * @param \Awyiss\Model\Entity\SurveySurveyQuestion $question
 	 * @return void
 	 */
 	protected function sortAnswers(SurveySurveyQuestion $question): void {

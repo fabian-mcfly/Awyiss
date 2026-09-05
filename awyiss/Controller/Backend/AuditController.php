@@ -64,6 +64,7 @@ class AuditController extends Controller {
 	/**
 	 * Show the history of a record
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	#[NoDirectAccess]
@@ -255,7 +256,7 @@ class AuditController extends Controller {
 	 * createdBy or changedBy fields are empty, otherwise they are set to 'Unknown'.
 	 *
 	 * @return void
-	 * @throws \Cake\Http\Exception\RedirectException|\Exception If the id or scope is not provided in the request parameters
+	 * @throws \Cake\Http\Exception\RedirectException|\Exception If the id or scope is not provided in the request parameters.
 	 */
 	#[NoDirectAccess]
 	public function info(): void {

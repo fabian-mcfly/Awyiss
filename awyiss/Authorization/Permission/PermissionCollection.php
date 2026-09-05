@@ -103,7 +103,6 @@ class PermissionCollection {
 	/**
 	 * Returns true or false, whether a scope (and optional identifier) exists in the collection of permission
 	 *
-	 * @noinspection PhpUnused
 	 * @param string $scope
 	 * @param string|null $identifier
 	 * @return bool
@@ -186,7 +185,7 @@ class PermissionCollection {
 	 *
 	 * @param string $scope
 	 * @param array $additionalData
-	 * @param array|array<string> $identifier
+	 * @param array|string ...$identifier
 	 * @return bool|null
 	 */
 	protected function identifierIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): ?bool {

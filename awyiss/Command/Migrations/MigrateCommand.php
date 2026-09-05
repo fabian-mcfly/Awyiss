@@ -21,7 +21,7 @@ class MigrateCommand extends BaseMigrateCommand {
 	/**
 	 * Re-implemented 1:1 to use the custom ManagerFactory
 	 *
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	protected function executeMigrations(Arguments $args, ConsoleIo $io): ?int {
 		$version = $args->getOption('target') !== null ? (int)$args->getOption('target') : null;

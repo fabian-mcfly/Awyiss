@@ -20,6 +20,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\Cell;
+use LogicException;
 
 
 /**
@@ -171,13 +172,17 @@ class ContentsCell extends Cell {
 
 	/**
 	 * @inheritDoc
-	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $children
 	 * @return string
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
+		if (!$entity instanceof Content) {
+			throw new LogicException('ContentsCell expects a Content entity.');
+		}
+
 		DebugTimer::start(
 			'ContentsCell::renderElement' . $entity->id,
 			sprintf(
@@ -400,11 +405,15 @@ class ContentsCell extends Cell {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return void
 	 */
 	protected function applyDuplicateData(Entity $entity): void {
 		static $blocklistedKeys;
+
+		if (!$entity instanceof Content) {
+			throw new LogicException('ContentsCell expects a Content entity.');
+		}
 
 		if (!isset($blocklistedKeys)) {
 			/** @var \Awyiss\Model\Table\ContentsTable $table */

@@ -292,7 +292,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * Copyright (c) 2024 Awyiss
 	 * Copyright (c) 2019 Mark Scherer
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \Awyiss\Model\Table $table
 	 * @return \Cake\Datasource\EntityInterface
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master

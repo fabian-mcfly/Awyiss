@@ -20,7 +20,7 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class OpenGraphController extends AppController {
 	/**
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		AppController::initialize();

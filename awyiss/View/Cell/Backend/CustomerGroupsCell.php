@@ -85,6 +85,7 @@ class CustomerGroupsCell extends Cell {
 	/**
 	 * Retrieve the identity attribute from the current request
 	 *
+	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 * @noinspection PhpUnused
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {

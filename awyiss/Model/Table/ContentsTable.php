@@ -888,6 +888,7 @@ class ContentsTable extends Table {
 	 * Sets the scope the authorization behavior has to check.
 	 *
 	 * @param string $scope
+	 * @return void
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function setForScope(string $scope): void {

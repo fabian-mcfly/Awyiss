@@ -581,7 +581,8 @@ class MediaHelper extends Helper {
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
-	 * @param array<float, array{
+	 * @param array<float, array<string, mixed>> $breakpoints Breakpoint definitions.
+	 * @phpstan-param array<float, array{
 	 *     baseWidth: float|null,
 	 *     breakpoint: float,
 	 *     columnWidth: float|null,
@@ -668,6 +669,7 @@ class MediaHelper extends Helper {
 	 * create versions of it for approximately the same size.
 	 *
 	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $renderOptions
 	 * @param float|int|null $width
 	 * @param float|int|null $height
 	 * @param float|int|null $aspectRatio
@@ -675,7 +677,6 @@ class MediaHelper extends Helper {
 	 * @param string|null $format
 	 * @param bool $strictSize
 	 * @param bool $allowUpscale
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $renderOptions
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpFeatureEnvyLocalInspection

@@ -7,6 +7,7 @@ namespace Awyiss\Model\Behavior;
 use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
 use BadMethodCallException;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use RuntimeException;
 
@@ -56,6 +57,8 @@ class EventTriggerBehavior extends Behavior {
 
 	/**
 	 * Will return all config values of `events`-settings, prefixed with 'Model.'
+	 *
+	 * @return array
 	 */
 	public function implementedEvents(): array {
 		if (!$this->getConfig('enabled')) {
@@ -139,7 +142,7 @@ class EventTriggerBehavior extends Behavior {
 	/**
 	 * @param string $name
 	 * @param \Cake\Event\Event $originalEvent
-	 * @param array $arguments
+	 * @param mixed ...$arguments
 	 * @return bool
 	 */
 	protected function dispatchEvent(string $name, Event $originalEvent, mixed ...$arguments): bool {
@@ -170,11 +173,11 @@ class EventTriggerBehavior extends Behavior {
 	 *
 	 * @param string $name
 	 * @param \Cake\Event\Event $originalEvent
-	 * @param \Awyiss\Model\Entity $subject
-	 * @param array $arguments
+	 * @param \Cake\Datasource\EntityInterface $subject
+	 * @param mixed ...$arguments
 	 * @return bool
 	 */
-	protected function dispatchCreateUpdateEvents(string $name, Event $originalEvent, Entity $subject, mixed ...$arguments): bool {
+	protected function dispatchCreateUpdateEvents(string $name, Event $originalEvent, EntityInterface $subject, mixed ...$arguments): bool {
 		//If the entity has a `deleted`-property, and it's trueish, don't send the custom events
 		if (property_exists($subject, 'deleted') && $subject->deleted) {
 			return true;
@@ -203,11 +206,11 @@ class EventTriggerBehavior extends Behavior {
 	/**
 	 * @param string $name
 	 * @param \Cake\Event\Event $originalEvent
-	 * @param \Awyiss\Model\Entity $subject
-	 * @param array $arguments
+	 * @param \Cake\Datasource\EntityInterface $subject
+	 * @param mixed ...$arguments
 	 * @return bool|null
 	 */
-	protected function dispatchCopyEvents(string $name, Event $originalEvent, Entity $subject, mixed ...$arguments): ?bool {
+	protected function dispatchCopyEvents(string $name, Event $originalEvent, EntityInterface $subject, mixed ...$arguments): ?bool {
 		$name = match (true) {
 			$name == 'beforeSave' => 'beforeCopy',
 			$name == 'afterSave' => 'afterCopy',

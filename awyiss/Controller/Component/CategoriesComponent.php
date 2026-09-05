@@ -30,6 +30,9 @@ use Cake\Utility\Hash;
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class CategoriesComponent extends Component {
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'redirectOnInvalidSelection' => true,
 		'startupMethods' => ['overview'],
@@ -44,8 +47,6 @@ class CategoriesComponent extends Component {
 
 	/**
 	 * @inheritDoc
-	 * @param array $config
-	 * @return void
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
 		$this->table = $registry->getController()->fetchTable();
@@ -55,8 +56,7 @@ class CategoriesComponent extends Component {
 
 
 	/**
-	 * @param array $config
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize(array $config): void {
 		parent::initialize($config);

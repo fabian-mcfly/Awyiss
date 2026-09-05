@@ -172,6 +172,7 @@ class SoftDeleteBehavior extends Behavior {
 	 * @param SelectQuery $query
 	 * @param ArrayObject $options
 	 * @param bool $primary
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {

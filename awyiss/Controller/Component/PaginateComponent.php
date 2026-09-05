@@ -332,7 +332,7 @@ class PaginateComponent extends Component {
 	 * @param array $params
 	 * @param array $settings
 	 * @param \Awyiss\Model\Behavior\TranslateBehavior $behavior
-	 * @param ?string $tableAlias
+	 * @param string|null $tableAlias
 	 * @return void
 	 */
 	protected function modifyTranslatedPaginateParams(

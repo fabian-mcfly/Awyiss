@@ -57,9 +57,9 @@ class EavStrategy extends BaseEavStrategy {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Implemented here nearly 1:1 without removing the dirty flag on translatable fields
+	 *
+	 * @inheritDoc
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();

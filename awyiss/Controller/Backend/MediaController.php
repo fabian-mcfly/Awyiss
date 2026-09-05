@@ -109,6 +109,7 @@ class MediaController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -291,6 +292,7 @@ class MediaController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
@@ -423,8 +425,8 @@ class MediaController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param ?int $id
-	 * @return Response
+	 * @param int|null $id
+	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
 	public function delete(?int $id = null): Response {

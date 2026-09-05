@@ -32,6 +32,8 @@ class EventManager extends BaseEventManager {
 
 	/**
 	 * Initialize the EventManager
+	 *
+	 * @param bool $resetStatic Whether to reset the static properties of the EventManager. Default is false.
 	 */
 	public function __construct(bool $resetStatic = false) {
 		if ($resetStatic) {

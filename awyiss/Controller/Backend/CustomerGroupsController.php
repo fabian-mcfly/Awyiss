@@ -42,6 +42,7 @@ class CustomerGroupsController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -89,6 +90,7 @@ class CustomerGroupsController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

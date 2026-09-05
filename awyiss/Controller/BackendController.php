@@ -96,6 +96,7 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * @inheritDoc
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
@@ -540,7 +541,7 @@ abstract class BackendController extends AppController {
 	/**
 	 * beforeRender callback.
 	 *
-	 * @param EventInterface<\Cake\Controller\Controller> $event Event.
+	 * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
 	 * @return void
 	 */
 	public function beforeRender(EventInterface $event): void {

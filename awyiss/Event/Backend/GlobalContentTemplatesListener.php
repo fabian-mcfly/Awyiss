@@ -96,6 +96,7 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\GlobalContentTemplate $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, GlobalContentTemplate $entity, ArrayObject $options): void {
@@ -160,8 +161,9 @@ class GlobalContentTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param Event $event
+	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\GlobalContentTemplate $entity
+	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

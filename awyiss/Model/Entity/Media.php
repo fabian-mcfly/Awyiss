@@ -133,7 +133,7 @@ class Media extends Entity {
 
 
 	/**
-	 * return bool
+	 * @return bool
 	 */
 	public function isAudio(): bool {
 		return in_array($this->mimeType, [

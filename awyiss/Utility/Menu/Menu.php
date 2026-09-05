@@ -117,7 +117,7 @@ abstract class Menu {
 
 
 	/**
-	 * @param mixed $menuData
+	 * @param object|iterable $menuData Menu extension data.
 	 * @return $this
 	 * @throws \ReflectionException
 	 * @see /awyiss/config/menu-extension.schema.json
@@ -242,6 +242,7 @@ abstract class Menu {
 
 
 	/**
+	 * @param int $maxLevel Maximum child depth to include, or -1 for all levels.
 	 * @return \Generator<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function items(int $maxLevel = -1): Generator {

@@ -44,6 +44,7 @@ class ScssFilesCollection {
 	 * Adds a file to the files array and updates the lastModified property if necessary.
 	 *
 	 * @param \SplFileInfo $file The file to add.
+	 * @return void
 	 */
 	public function addFile(SplFileInfo $file): void {
 		$this->files[] = $file;

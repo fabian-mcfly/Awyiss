@@ -509,7 +509,7 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param array $options
+	 * @param iterable $options
 	 * @param array $attributes
 	 * @param bool $forLinkSelect
 	 * @return array
@@ -652,8 +652,8 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param mixed $options
-	 * @param mixed $groupBy
+	 * @param \Cake\Collection\CollectionInterface $options
+	 * @param string $groupBy
 	 * @param array $attributes
 	 * @return array
 	 */

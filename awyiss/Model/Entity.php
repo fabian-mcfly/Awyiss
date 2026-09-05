@@ -272,6 +272,7 @@ class Entity extends BaseEntity {
 	 *
 	 * The label can be translated as well
 	 *
+	 * @return string
 	 * @noinspection PhpUnused
 	 */
 	protected function _getLabel(): string {

@@ -20,6 +20,7 @@ trait UtilTrait {
 	 * Added a logic that honors the `namespace`-option and modifies the path accordingly.
 	 *
 	 * @param Arguments $args Arguments instance to read the prefix option from.
+	 * @param string $basePath Base path for generated files.
 	 * @return string Path to output.
 	 */
 	public function getPath(Arguments $args, string $basePath = APP): string {

@@ -52,6 +52,7 @@ class EventTriggerComponent extends Component {
 	 * Is called when the component is initialized
 	 *
 	 * @param array<string, mixed> $config The configuration settings provided to this component.
+	 * @return void
 	 */
 	public function initialize(array $config): void {
 		$this->dispatchEvent('initialize', null, $config);
@@ -62,6 +63,7 @@ class EventTriggerComponent extends Component {
 	 * Is called before the controller’s beforeFilter method, but after the controller’s initialize() method.
 	 *
 	 * @param \Cake\Event\EventInterface $event
+	 * @return void
 	 */
 	public function beforeFilter(EventInterface $event): void {
 		$this->dispatchEvent('beforeFilter', $event);
@@ -72,6 +74,7 @@ class EventTriggerComponent extends Component {
 	 * Is called after the controller’s beforeFilter method but before the controller executes the current action handler.
 	 *
 	 * @param \Cake\Event\EventInterface $event
+	 * @return void
 	 */
 	public function startup(EventInterface $event): void {
 		$this->dispatchEvent('startup', $event);
@@ -82,6 +85,7 @@ class EventTriggerComponent extends Component {
 	 * Is called after the controller executes the requested action’s logic, but before the controller renders views and layout.
 	 *
 	 * @param \Cake\Event\EventInterface $event
+	 * @return void
 	 */
 	public function beforeRender(EventInterface $event): void {
 		$this->dispatchEvent('beforeRender', $event);
@@ -92,6 +96,7 @@ class EventTriggerComponent extends Component {
 	 * Is called before output is sent to the browser.
 	 *
 	 * @param \Cake\Event\EventInterface $event
+	 * @return void
 	 * @noinspection PhpUnused
 	 */
 	public function afterFilter(EventInterface $event): void {

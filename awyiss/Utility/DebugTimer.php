@@ -71,7 +71,7 @@ class DebugTimer {
 	 * Get all timers that have been started and stopped.
 	 * Calculates elapsed time for each timer. If clear is true, will delete existing timers
 	 *
-	 * @param bool $clear false
+	 * @param bool $clear Whether to clear existing timers after fetching them.
 	 * @return array
 	 */
 	public static function getAll(bool $clear = false): array {
@@ -100,9 +100,9 @@ class DebugTimer {
 	/**
 	 * Get the difference in time between the timer start and timer end.
 	 *
-	 * @param string $name the name of the timer you want elapsed time for.
-	 * @param int $precision the number of decimal places to return, defaults to 5.
-	 * @return float number of seconds elapsed for timer name, 0 on missing key
+	 * @param string $name The name of the timer you want elapsed time for.
+	 * @param int $precision The number of decimal places to return, defaults to 5.
+	 * @return float Number of seconds elapsed for timer name, 0 on missing key
 	 */
 	public static function elapsedTime(string $name = 'default', int $precision = 5): float {
 		if (!static::isDebugEnabled()) {

@@ -22,7 +22,7 @@ class SeedCommand extends BaseSeedCommand {
 	/**
 	 * Re-implemented 1:1 to use the custom ManagerFactory
 	 *
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	protected function executeSeeds(Arguments $args, ConsoleIo $io): ?int {
 		$factory = new ManagerFactory([

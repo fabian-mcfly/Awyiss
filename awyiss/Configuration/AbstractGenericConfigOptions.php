@@ -24,6 +24,7 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 	/**
 	 * Set the scope and initialize the config options
 	 *
+	 * @param string $scope
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct(string $scope) {

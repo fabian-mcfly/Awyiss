@@ -15,11 +15,11 @@ use Cake\Utility\Fs\Finder;
  */
 class I18nExtractCommand extends BaseI18nExtractCommand {
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Added
 	 * - '__df' => ['domain', 'fallback', 'context', 'singular'],
 	 * - '__dfx' => ['domain', 'fallback', 'context', 'singular'],
+	 *
+	 * @inheritDoc
 	 */
 	protected function _extractTokens(Arguments $args, ConsoleIo $io): void {
 		/** @var \Cake\Command\Helper\ProgressHelper $progress */

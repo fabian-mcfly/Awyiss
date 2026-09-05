@@ -25,14 +25,7 @@ class MediaRenderOptions {
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
-	 * @param array<float, array{
-	 *     baseWidth: float|null,
-	 *     breakpoint: float,
-	 *     columnWidth: float|null,
-	 *     width: float|null,
-	 *     height: float|null,
-	 *     resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null
-	 * }> $breakpoints
+	 * @param array<int|string, array<string, mixed>|float|int> $breakpoints
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
 	 * @param bool $include2x
@@ -420,8 +413,16 @@ class MediaRenderOptions {
 	 *
 	 * @param string|float|int $key
 	 * @param array|float|int $value
-	 * @return array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
-	 * @noinspection LongLine
+	 * @return array{
+	 *     aspectRatio: float|int|string|null,
+	 *     baseWidth: float|int|string|null,
+	 *     breakpoint: float,
+	 *     columnWidth: float|int|string|null,
+	 *     height: float|int|string|null,
+	 *     is2x: bool|float|int|string,
+	 *     resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|int|string,
+	 *     width: float|int|string|null
+	 * }
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$options = [
@@ -458,8 +459,17 @@ class MediaRenderOptions {
 	/**
 	 * Normalize the breakpoints array.
 	 *
-	 * @param array $breakpoints
-	 * @return array
+	 * @param array<int|string, array<string, mixed>|float|int> $breakpoints
+	 * @return array<int, array{
+	 *     aspectRatio: float|int|string|null,
+	 *     baseWidth: float|int|string|null,
+	 *     breakpoint: float,
+	 *     columnWidth: float|int|string|null,
+	 *     height: float|int|string|null,
+	 *     is2x: bool|float|int|string,
+	 *     resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|int|string,
+	 *     width: float|int|string|null
+	 * }>
 	 */
 	public static function normalizeBreakpoints(array $breakpoints): array {
 		$normalizedBreakpoints = [];

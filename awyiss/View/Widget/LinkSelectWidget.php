@@ -92,7 +92,7 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * @inheritDoc
 	 * @param array $data
-	 * @return array|array<string>
+	 * @return array<string>
 	 */
 	public function secureFields(array $data): array {
 		return [];

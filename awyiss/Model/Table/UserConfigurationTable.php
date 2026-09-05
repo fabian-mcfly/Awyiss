@@ -287,6 +287,7 @@ class UserConfigurationTable extends Table {
 	/**
 	 * Returns all configurable and accessible scopes
 	 *
+	 * @return array<string, class-string>
 	 * @throws \ReflectionException
 	 */
 	public function getScopes(): array {

@@ -133,6 +133,7 @@ class UsersController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id User id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
@@ -221,7 +222,7 @@ class UsersController extends Controller {
 	/**
 	 * Login method
 	 *
-	 * @return void|?Response
+	 * @return Response|void
 	 */
 	public function login() {
 		$result = $this->Authentication->getResult();

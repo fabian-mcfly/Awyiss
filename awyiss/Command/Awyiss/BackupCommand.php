@@ -142,6 +142,7 @@ class BackupCommand extends Command {
 
 	/**
 	 * @param \ZipArchive $zip
+	 * @return void
 	 */
 	protected function addDatabaseBackup(ZipArchive $zip): void {
 		$config = Configure::read('Datasources.default');

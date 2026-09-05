@@ -30,8 +30,9 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * Before saving a page, make sure its slug is unique.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (

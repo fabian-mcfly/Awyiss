@@ -706,6 +706,8 @@ class AttributesTable extends Table {
 
 	/**
 	 * Returns all available scopes that can have attributes.
+	 *
+	 * @return array<string, class-string> An array of available scopes and their corresponding table class names.
 	 */
 	public function getAvailableScopes(): array {
 		if (isset($this->attributeScopes)) {

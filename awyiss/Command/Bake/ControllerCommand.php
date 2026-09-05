@@ -173,11 +173,9 @@ class ControllerCommand extends BaseControllerCommand {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Adds the `namespace`-option.
 	 *
-	 * @param ConsoleOptionParser $parser The console option parser
+	 * @inheritDoc
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);

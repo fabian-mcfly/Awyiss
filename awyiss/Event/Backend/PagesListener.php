@@ -149,6 +149,7 @@ class PagesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @param ArrayObject $options
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(Event $event, Page $entity, ArrayObject $options): void {
@@ -260,8 +261,9 @@ class PagesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @param ArrayObject $options
-	 * @noinspection PhpUnusedParameterInspection
+	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterCopy(Event $event, Page $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
@@ -305,9 +307,10 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param Event $event
+	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Page $entity
-	 * @param ArrayObject $options
+	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, Page $entity, ArrayObject $options): void {
@@ -462,8 +465,8 @@ class PagesListener implements EventListenerInterface {
 	/**
 	 * @param \Awyiss\Model\Table\PagesTable $table
 	 * @param \Awyiss\Model\Entity\Page $entity
-	 * @param mixed $originalLanguage
-	 * @param mixed $originalSlug
+	 * @param string|null $originalLanguage
+	 * @param string|null $originalSlug
 	 * @return void
 	 */
 	protected function createHistoricalSlugs(PagesTable $table, Page $entity, ?string $originalLanguage, ?string $originalSlug): void {

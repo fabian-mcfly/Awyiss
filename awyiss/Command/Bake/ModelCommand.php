@@ -286,9 +286,9 @@ class ModelCommand extends BaseModelCommand {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Extends the parent-method with a check for column type 'json'.
+	 *
+	 * @inheritDoc
 	 */
 	public function fieldValidation(TableSchemaInterface $schema, string $fieldName, array $metaData, array $primaryKey): array {
 		$validations = parent::fieldValidation($schema, $fieldName, $metaData, $primaryKey);
@@ -392,9 +392,9 @@ class ModelCommand extends BaseModelCommand {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Extends the parent-method with a check for column type 'json'.
+	 *
+	 * @inheritDoc
 	 */
 	protected function getEmptyMethod(string $fieldName, array $metaData, string $prefix = 'allow'): string {
 		if ($metaData['type'] == 'json') {
@@ -554,6 +554,9 @@ class ModelCommand extends BaseModelCommand {
 
 	/**
 	 * Strip `_id` and `Id` from the end of the key and camelize and pluralize it to get the model name.
+	 *
+	 * @param string $key The key to convert to a model name.
+	 * @return string The model name.
 	 */
 	protected function _modelNameFromKey(string $key): string {
 		$key = preg_replace('/(_id|Id)$/', '', $key);

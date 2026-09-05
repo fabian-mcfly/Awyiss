@@ -73,7 +73,7 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $event
 	 * @param PageRole $entity
-	 * @noinspection PhpUnused
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, PageRole $entity): void {
@@ -94,7 +94,7 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $event
 	 * @param PageRole $entity
-	 * @noinspection PhpUnused
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, PageRole $entity): void {
@@ -128,7 +128,7 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $event
 	 * @param PageRole $entity
-	 * @noinspection PhpUnused
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDeleteCommit(Event $event, PageRole $entity): void {
@@ -144,6 +144,7 @@ class PageRolesListener implements EventListenerInterface {
 			->getSchemaCollection()
 			->listTables()
 		;
+
 		if (in_array($attributesTableName, $tables)) {
 			/** @var \Awyiss\Model\Table $attributesTable */
 			$attributesTable = $tableLocator->get('Attributes');

@@ -115,6 +115,9 @@ class Address implements AddressInterface {
 
 	/**
 	 * Create an address from an ORS result
+	 *
+	 * @param array<string, mixed> $data ORS result data.
+	 * @return static|null The created address, or null when required data is missing.
 	 */
 	public static function fromOrs(array $data): ?static {
 		if (!isset($data['geometry']['coordinates'][0], $data['geometry']['coordinates'][1], $data['properties']['label'])) {

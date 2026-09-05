@@ -52,13 +52,13 @@ class AttributeOption {
 
 
 	/**
-	 * @param callable|array|bool|null $disabled
 	 * @param string $identifier
+	 * @param callable|array|bool|null $disabled
 	 * @param callable|array|null $options
 	 * @param callable|bool|null $readonly
 	 * @param callable|null $toScalar
-	 * @param mixed|null $validate
-	 * @param mixed|null $value
+	 * @param mixed $validate
+	 * @param mixed $value
 	 */
 	public function __construct(
 		string $identifier,
@@ -180,6 +180,9 @@ class AttributeOption {
 
 
 	/**
+	 * @param bool $evaluate Whether callable options should be evaluated.
+	 * @param \Awyiss\Model\Entity|null $entity Entity used for evaluation.
+	 * @param array $currentOptions Options collected during evaluation.
 	 * @return callable|array
 	 * @noinspection PhpUnused
 	 */
@@ -204,6 +207,9 @@ class AttributeOption {
 
 
 	/**
+	 * @param bool $evaluate Whether callable readonly state should be evaluated.
+	 * @param \Awyiss\Model\Entity|null $entity Entity used for evaluation.
+	 * @param array $currentOptions Options collected during evaluation.
 	 * @return callable|bool
 	 * @noinspection PhpUnused
 	 */
@@ -230,7 +236,7 @@ class AttributeOption {
 
 	/**
 	 * @param bool $evaluate
-	 * @param mixed|null $value
+	 * @param mixed $value
 	 * @param Entity|null $entity
 	 * @param array $currentOptions
 	 * @return mixed
@@ -245,7 +251,7 @@ class AttributeOption {
 
 
 	/**
-	 * @param mixed $toScalar
+	 * @param callable|null $toScalar
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
@@ -272,6 +278,9 @@ class AttributeOption {
 
 
 	/**
+	 * @param bool $evaluate Whether callable values should be evaluated.
+	 * @param \Awyiss\Model\Entity|null $entity Entity used for evaluation.
+	 * @param array $currentOptions Options collected during evaluation.
 	 * @return callable|bool
 	 * @noinspection PhpUnused
 	 */
@@ -296,7 +305,7 @@ class AttributeOption {
 
 
 	/**
-	 * @param array $value
+	 * @param mixed $value
 	 * @param Entity|null $entity
 	 * @return string|bool
 	 */

@@ -82,6 +82,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Retrieves the unique identifier of this identity
 	 *
+	 * @return int|null
 	 * @see \Authentication\IdentityInterface::getIdentifier
 	 */
 	public function getIdentifier(): ?int {
@@ -92,6 +93,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Retrieve the data of this identity. Required by IdentityInterface
 	 *
+	 * @return static
 	 * @see \Authentication\IdentityInterface::getOriginalData
 	 */
 	public function getOriginalData(): static {

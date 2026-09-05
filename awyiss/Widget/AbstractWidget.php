@@ -23,6 +23,10 @@ abstract class AbstractWidget implements WidgetInterface {
 	/**
 	 * Get the form fields for the widget.
 	 *
+	 * @param \Awyiss\View\BackendView $view The backend view instance.
+	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage The frontend language entity, if available.
+	 * @param \Awyiss\Model\Entity\Language|null $userLanguage The user language entity, if available.
+	 * @param array $settings Additional settings for the widget form fields.
 	 * @return array<string, string|array<string, mixed>>
 	 */
 	abstract protected static function getFormFields(

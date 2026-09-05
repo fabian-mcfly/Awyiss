@@ -214,7 +214,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @param string|null $realm
-	 * @return array|array<Language>
+	 * @return array<\Awyiss\Model\Entity\Language>
 	 */
 	public static function getLanguages(?string $realm = null): array {
 		static::loadLanguages();
@@ -362,6 +362,8 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
+	 * @param string|null $realm
+	 * @return Language|null
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */

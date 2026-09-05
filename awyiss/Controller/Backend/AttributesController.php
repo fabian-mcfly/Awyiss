@@ -32,9 +32,7 @@ class AttributesController extends Controller {
 
 
 	/**
-	 * Called after the `__construct()` method
-	 *
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		$this->attributeScopes = $this->Attributes->getAvailableScopes();
@@ -74,6 +72,7 @@ class AttributesController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -140,6 +139,7 @@ class AttributesController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

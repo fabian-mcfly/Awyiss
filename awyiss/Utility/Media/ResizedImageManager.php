@@ -180,6 +180,7 @@ class ResizedImageManager {
 	 *
 	 * If a media id is provided, only the resized images for that media item are returned
 	 *
+	 * @param int|null $mediaId The media id to filter by.
 	 * @return array<int, array<\Awyiss\Model\Entity\MediaResizedImage>>|null
 	 */
 	public static function getResizedItems(?int $mediaId = null): ?array {
@@ -358,6 +359,8 @@ class ResizedImageManager {
 
 	/**
 	 * Clears all static storage
+	 *
+	 * @return void
 	 */
 	public static function clear(): void {
 		static::$mediaItems = [];

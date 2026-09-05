@@ -33,6 +33,8 @@ use Cake\ORM\Query\UpdateQuery;
 trait SqlTraceTrait {
 	/**
 	 * Overwrite parent table method to inject SQL comment
+	 *
+	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function selectQuery(): SelectQuery {
 		return $this->fileStamp(parent::selectQuery());
@@ -41,6 +43,8 @@ trait SqlTraceTrait {
 
 	/**
 	 * Overwrite parent table method to inject SQL comment
+	 *
+	 * @return \Cake\ORM\Query\UpdateQuery
 	 */
 	public function updateQuery(): UpdateQuery {
 		return $this->fileStamp(parent::updateQuery());
@@ -49,6 +53,8 @@ trait SqlTraceTrait {
 
 	/**
 	 * Overwrite parent table method to inject SQL comment
+	 *
+	 * @return \Cake\ORM\Query\DeleteQuery
 	 */
 	public function deleteQuery(): DeleteQuery {
 		return $this->fileStamp(parent::deleteQuery());

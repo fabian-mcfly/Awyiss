@@ -39,6 +39,7 @@ class AttributeOptionsProvider {
 	/**
 	 * Returns all found AttributeOptions classes in both the Awyiss and the custom namespace
 	 *
+	 * @param bool $returnLoaded Whether already loaded options should be returned.
 	 * @return array<string, class-string<AttributeOptionsCollectionInterface>>
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused

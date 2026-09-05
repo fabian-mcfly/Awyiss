@@ -698,8 +698,9 @@ class NestBehavior extends Behavior {
 	 * - Moving a content from one contentAreas to another one results in all children contents also being moved to the new contentArea
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -999,7 +1000,7 @@ class NestBehavior extends Behavior {
 
 
 	/**
-	 * @param mixed $query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param array $options
 	 * @return void
 	 */

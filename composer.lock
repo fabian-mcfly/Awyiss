@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89389a91f9d8e2114c0fdff4c77ed95c",
+    "content-hash": "36e001042b65ee0daccd476202dd1cbe",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -3818,16 +3818,16 @@
     "packages-dev": [
         {
             "name": "awyiss/phpcs-sniffs",
-            "version": "v0.5",
+            "version": "v0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabian-mcfly/awyiss-phpcs-sniffs.git",
-                "reference": "7a022d112ad6c1e07a1e2225616d7184ab6139b8"
+                "reference": "9561f8893d84d50c84e2ae7cb5342cb2102cf811"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabian-mcfly/awyiss-phpcs-sniffs/zipball/7a022d112ad6c1e07a1e2225616d7184ab6139b8",
-                "reference": "7a022d112ad6c1e07a1e2225616d7184ab6139b8",
+                "url": "https://api.github.com/repos/fabian-mcfly/awyiss-phpcs-sniffs/zipball/9561f8893d84d50c84e2ae7cb5342cb2102cf811",
+                "reference": "9561f8893d84d50c84e2ae7cb5342cb2102cf811",
                 "shasum": ""
             },
             "require": {
@@ -3857,9 +3857,9 @@
             ],
             "support": {
                 "issues": "https://github.com/fabian-mcfly/awyiss-phpcs-sniffs/issues",
-                "source": "https://github.com/fabian-mcfly/awyiss-phpcs-sniffs/tree/v0.5"
+                "source": "https://github.com/fabian-mcfly/awyiss-phpcs-sniffs/tree/v0.9"
             },
-            "time": "2026-08-17T16:34:36+00:00"
+            "time": "2026-09-05T12:51:47+00:00"
         },
         {
             "name": "cakephp/cakephp-codesniffer",

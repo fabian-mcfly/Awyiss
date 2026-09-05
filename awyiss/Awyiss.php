@@ -294,7 +294,7 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * return bool
+	 * @return bool
 	 */
 	public static function hasRealm(): bool {
 		return isset(static::$realm);
@@ -345,6 +345,7 @@ class Awyiss extends BaseApplication {
 	 * @param string $frontendLanguage
 	 * @param string $backendLanguage
 	 * @param bool $forceReload
+	 * @return void
 	 */
 	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
 		$fileName = Inflector::underscore(CUSTOM_NAMESPACE);

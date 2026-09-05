@@ -232,6 +232,9 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 
 	/**
 	 * Returns a list of all media folders
+	 *
+	 * @param string|null $languageShortcode The language shortcode to filter the media folders by
+	 * @return array<string, string> The list of media folders
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');

@@ -64,7 +64,7 @@ class FrontendController extends AppController {
 
 
 	/**
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		DebugTimer::start('FrontendController::initialize');
@@ -405,7 +405,8 @@ class FrontendController extends AppController {
 					'fields' => ['id', 'languageShortcode', 'slug'],
 					'finder' => [
 						$finder => [
-							// Skip the customer group access settings and the translate behavior for the duplicated page, as we don't need them
+							// Skip the customer group access settings and the translate-behavior for the duplicated page,
+							// as we don't need them
 							'customerGroupAccessSettings' => ['skip' => true],
 							'translate' => ['skip' => true],
 						],

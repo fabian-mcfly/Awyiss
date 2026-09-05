@@ -186,6 +186,7 @@ class GlobalContent extends Entity {
 
 
 	/**
+	 * @return string
 	 * @see \Awyiss\Model\Trait\ForcedTitleTrait::getForcedTitle()
 	 */
 	protected function _getLabel(): string {

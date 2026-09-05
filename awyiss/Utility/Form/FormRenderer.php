@@ -337,12 +337,16 @@ class FormRenderer {
 
 	/**
 	 * @inheritDoc
-	 * @param \Awyiss\Model\Entity\FormElement $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $children
 	 * @return string
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
+		if (!$entity instanceof FormElement) {
+			throw new RuntimeException('Entity must be an instance of FormElement.');
+		}
+
 		DebugTimer::start(
 			'FormRenderer::renderElement' . $entity->id,
 			sprintf('FormRenderer::renderElement: Rendering form element #%d type "%s"', $entity->id, $entity->type)

@@ -82,6 +82,7 @@ class GlobalContentsController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
 	 */

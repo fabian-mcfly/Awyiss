@@ -77,6 +77,7 @@ class MenuItemLink {
 	 *
 	 * @param string|null $rel The rel attribute to set, e.g. 'noopener noreferrer'.
 	 * @param bool $overwrite If true, the existing rel attribute will be overwritten, otherwise it will be appended.
+	 * @return static The updated menu item.
 	 */
 	public function setRel(?string $rel, bool $overwrite = false): static {
 		if ($overwrite) {
@@ -104,6 +105,7 @@ class MenuItemLink {
 	 * Sets the target of the menu item.
 	 *
 	 * @param string|null $target The target to set, e.g. '_blank'.
+	 * @return static The updated menu item.
 	 */
 	public function setTarget(?string $target): static {
 		$this->target = $target;

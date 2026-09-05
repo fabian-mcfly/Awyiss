@@ -51,6 +51,7 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns all found ConfigOptions classes in both the Awyiss and the custom namespace
 	 *
+	 * @param bool $returnLoaded If true, returns instances of the ConfigOptions classes instead of class names
 	 * @return array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
 	 * @noinspection PhpUnused
 	 */

@@ -32,10 +32,7 @@ class ConfigurationController extends Controller {
 
 
 	/**
-	 * Called after the `__construct()` method
-	 *
-	 * @throws \ReflectionException
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		$this->selectedRealmSessionIdentifier = 'categories.' . Inflector::variable($this->getName()) . '.realm';
@@ -71,7 +68,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?Response
+	 * @return Response|void
 	 * @throws \Exception
 	 */
 	public function overview() {
@@ -176,6 +173,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id Configuration id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode

@@ -256,6 +256,8 @@ class InstallCommand extends Command {
 
 	/**
 	 * Move the dummy folder to the customer's folder
+	 *
+	 * @return void
 	 */
 	protected function copyDummyFolder(): void {
 		if ($this->dryRun) {
@@ -288,7 +290,7 @@ class InstallCommand extends Command {
 	 * If the connection fails, it sets the $connectionValid property to false, outputs a warning message, and returns early.
 	 *
 	 * @return void
-	 * @throws \Cake\Database\Exception\MissingConnectionException if the connection fails.
+	 * @throws \Cake\Database\Exception\MissingConnectionException If the connection fails.
 	 */
 	protected function checkConnection(): void {
 		try {
@@ -482,7 +484,7 @@ class InstallCommand extends Command {
 	 *
 	 * @param array $command An array of strings representing the command to be executed.
 	 * @return void
-	 * @throws ProcessFailedException if the command fails.
+	 * @throws \Symfony\Component\Process\Exception\ProcessFailedException If the command fails.
 	 */
 	protected function runCommand(array $command): void {
 		$process = new Process($command);
@@ -502,6 +504,8 @@ class InstallCommand extends Command {
 
 	/**
 	 * Find and remove all .gitkeep files from the customer's folder
+	 *
+	 * @return void
 	 */
 	protected function removeGitkeepFiles(): void {
 		if ($this->dryRun) {

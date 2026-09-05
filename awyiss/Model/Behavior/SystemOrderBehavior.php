@@ -95,7 +95,7 @@ class SystemOrderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity\Configuration $configuration
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnused
@@ -127,7 +127,7 @@ class SystemOrderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity\Configuration $configuration
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnused
@@ -163,6 +163,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param \ArrayObject $options
 	 * @param bool $primary
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {
@@ -186,6 +187,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \ArrayObject $data
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
@@ -205,7 +207,7 @@ class SystemOrderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection, PhpPossiblePolymorphicInvocationInspection
@@ -239,8 +241,9 @@ class SystemOrderBehavior extends Behavior {
 	 * Before saving an entity, make sure the value for systemOrder is valid.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
@@ -330,8 +333,9 @@ class SystemOrderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
@@ -473,8 +477,9 @@ class SystemOrderBehavior extends Behavior {
 	 * Before a delete, set the systemOrder to 999999, so it'll no longer be part of the group.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
@@ -500,8 +505,9 @@ class SystemOrderBehavior extends Behavior {
 	 * Before a soft delete, set the systemOrder to 999999, so it'll no longer be part of the group.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 */
 	public function beforeSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$this->beforeDelete($event, $entity, $options);
@@ -512,8 +518,9 @@ class SystemOrderBehavior extends Behavior {
 	 * After a delete, call the `updateAfterRemove`-method since deleting an item means it's no longer part of the scope.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
@@ -549,8 +556,9 @@ class SystemOrderBehavior extends Behavior {
 	 * After a soft delete, call the `updateAfterRemove`-method since deleting an item means it's no longer part of the scope.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function afterSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
@@ -560,8 +568,9 @@ class SystemOrderBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -595,7 +604,7 @@ class SystemOrderBehavior extends Behavior {
 	 * otherwise the current values will be used.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery|null $query
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param bool $preferOriginal
 	 * @return \Cake\ORM\Query\SelectQuery|false
 	 */
@@ -653,7 +662,7 @@ class SystemOrderBehavior extends Behavior {
 	/**
 	 * Retrieve the current highest system order for the scope of the provided entity
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @return int
 	 */
 	public function getHighestSystemOrder(EntityInterface $entity): int {
@@ -691,7 +700,7 @@ class SystemOrderBehavior extends Behavior {
 	 * Return the columns, related to the system order.
 	 * Columns with the same value form a scope.
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @return array
 	 */
 	public function getDirtyRelatedColumns(EntityInterface $entity): array {
@@ -717,7 +726,7 @@ class SystemOrderBehavior extends Behavior {
 	 * Returns whether the entity has dirty related columns.
 	 * Dirty requires the column to be an original as well.
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param string|null $initiator
 	 * @return bool
 	 */
@@ -827,7 +836,8 @@ class SystemOrderBehavior extends Behavior {
 	 * This method moves all elements to the back, depending on the position of the newly created resp. changed entity
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
+	 * @return void
 	 * @throws \Exception
 	 */
 	protected function updateAfterInsert(EventInterface $event, EntityInterface $entity): void {
@@ -871,8 +881,9 @@ class SystemOrderBehavior extends Behavior {
 	 * This method moves all elements to the front, depending on the position of the modified entity
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param array $originalData
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
 	 */
@@ -951,7 +962,7 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param string $field
 	 * @return void
 	 */
@@ -1027,7 +1038,7 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface|\Awyiss\Model\Entity $entity
 	 * @param int $hightesSystemOrder
 	 * @return void
 	 */

@@ -98,6 +98,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\ContentTemplate $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, ContentTemplate $entity, ArrayObject $options): void {
@@ -167,6 +168,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\ContentTemplate $entity
+	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

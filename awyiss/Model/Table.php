@@ -587,8 +587,8 @@ class Table extends BaseTable {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to add some rules to it.
-	 * @return \Awyiss\Validation\Validator
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to add some rules to it.
+	 * @return \Cake\Validation\Validator
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		$validator->setI18nDomain($this->getI18nDomain())->setStopOnFailure();
@@ -615,9 +615,9 @@ class Table extends BaseTable {
 	/**
 	 * Build a list of events based on the given config
 	 *
-	 * @param Table|Behavior $instance
-	 * @param mixed $eventMap
-	 * @param mixed $priority
+	 * @param \Awyiss\Model\Table|\Awyiss\ORM\Behavior $instance
+	 * @param array $eventMap
+	 * @param int|null $priority
 	 * @return array
 	 */
 	public function buildEventMap(Table|Behavior $instance, array $eventMap, ?int $priority = null): array {
@@ -1089,6 +1089,7 @@ class Table extends BaseTable {
 	 * Sets specific column types for attributes
 	 *
 	 * @param TableSchemaInterface $schema
+	 * @return void
 	 */
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		if (!str_starts_with($this->getTable(), 'attributes_')) {
@@ -1179,6 +1180,7 @@ class Table extends BaseTable {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
 	 * @return void
+	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options): void {

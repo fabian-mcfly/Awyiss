@@ -665,9 +665,9 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param string $method name of the method to be invoked
+	 * @param string $method Name of the method to be invoked
 	 * @param array $args List of arguments passed to the function
-	 * @return SelectQuery
+	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \BadMethodCallException
 	 */
 	public function __call(string $method, array $args): SelectQuery {

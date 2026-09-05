@@ -117,9 +117,9 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Extended version that uses a different default value for the label text, if none was provided.
+	 *
+	 * @inheritDoc
 	 */
 	public function label(string $fieldName, ?string $text = null, array $options = []): string {
 		$text ??= $this->labelTextFromFieldname($fieldName);

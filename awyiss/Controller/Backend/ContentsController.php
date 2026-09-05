@@ -114,6 +114,7 @@ class ContentsController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
 	 */
@@ -801,7 +802,11 @@ class ContentsController extends Controller {
 			}
 		}
 
-		// Get the page id of the first content
+		/**
+		 * Get the page id of the first content
+		 *
+		 * @var \Awyiss\Model\Entity\Content $content
+		 */
 		$content = $table->findById($orderData[0]['id'])->first();
 
 		// Calling this ensures access to the pageId/it's scope resp. the page role.
@@ -934,9 +939,11 @@ class ContentsController extends Controller {
 	/**
 	 * Returns and caches a Page object.
 	 *
+	 * @param int $pageId
+	 * @return \Awyiss\Model\Entity\Page
 	 * @throws \Exception
 	 * @throws \RuntimeException
-	 * @see Page
+	 * @see \Awyiss\Model\Entity\Page
 	 */
 	protected function getPage(int $pageId): Page {
 		if (!isset($this->pages[ $pageId ])) {
@@ -950,7 +957,7 @@ class ContentsController extends Controller {
 
 	/**
 	 * Sets the Contents table to use the page role of a page with the given id
-	 * Requesting a page that does not exist or without having read access to the scope of the page (page role),
+	 * Requesting a page that does not exist - or without having read access to the scope of the page (page role) -
 	 * a redirect exception is thrown.
 	 *
 	 * @param int $pageId

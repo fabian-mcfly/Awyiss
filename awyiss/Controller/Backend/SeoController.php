@@ -110,6 +110,7 @@ class SeoController extends BackendController {
 	/**
 	 * Analyze method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
@@ -459,6 +460,7 @@ class SeoController extends BackendController {
 			->all()
 		;
 
+		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
 		foreach ($pageRoles as $pageRole) {
 			$this->pageRoles[ Inflector::pluralize($pageRole->identifier) ] = $pageRole->title;
 		}

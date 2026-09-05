@@ -12,10 +12,11 @@ interface RouteInterface {
 	/**
 	 * @param \Awyiss\Utility\Route\AddressInterface $start
 	 * @param \Awyiss\Utility\Route\AddressInterface $end
-	 * @param array{
+	 * @param array<string, mixed> $geoJson GeoJSON route data.
+	 * @phpstan-param array{
 	 *     type: string,
 	 *     properties: array<string, mixed>,
-	 *     bbox?: array<float, float, float, float>,
+	 *     bbox?: array{0: float, 1: float, 2: float, 3: float},
 	 *     geometry?: array<string, mixed>,
 	 * } $geoJson
 	 */

@@ -18,9 +18,9 @@ use Cake\View\StringTemplate as BaseStringTemplate;
  */
 class StringTemplate extends BaseStringTemplate {
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Used to load \Awyiss\Core\Configure\Engine\PhpConfig instead of the CakePHP one
+	 *
+	 * @inheritDoc
 	 */
 	public function load(string $file): void {
 		if ($file === '') {

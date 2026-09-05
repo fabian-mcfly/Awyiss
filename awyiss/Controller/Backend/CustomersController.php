@@ -103,6 +103,7 @@ class CustomersController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id Customer id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

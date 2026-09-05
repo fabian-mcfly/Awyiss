@@ -27,6 +27,7 @@ trait ContentElementTrait {
 	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
+	 * @return void
 	 */
 	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
 		$count = $entities->count();

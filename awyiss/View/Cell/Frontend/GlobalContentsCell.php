@@ -15,6 +15,7 @@ use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\View\Cell;
+use LogicException;
 
 
 /**
@@ -84,13 +85,17 @@ class GlobalContentsCell extends Cell {
 
 	/**
 	 * @inheritDoc
-	 * @param \Awyiss\Model\Entity\GlobalContent $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $children
 	 * @return string
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children = ''): string {
+		if (!$entity instanceof GlobalContent) {
+			throw new LogicException('ContentsCell expects a Content entity.');
+		}
+
 		DebugTimer::start(
 			'GlobalContentsCell::renderElement' . $entity->id,
 			sprintf(

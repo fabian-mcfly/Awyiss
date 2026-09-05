@@ -24,8 +24,9 @@ class PermissionOptionCollection extends ObjectRegistry {
 	/**
 	 * Constructor
 	 *
+	 * @param string $scope Scope
 	 * @param array $config Configuration
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function __construct(string $scope, array $config = []) {
 		$this->scope = AuthorizationService::sanitizeScope($scope);

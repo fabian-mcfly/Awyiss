@@ -263,7 +263,7 @@ class ConvertFilesCommand extends Command {
 
 	/**
 	 * @param array $command
-	 * @param mixed $args
+	 * @param mixed ...$args Process arguments.
 	 * @return \Symfony\Component\Process\Process
 	 */
 	public function getProcess(array $command, mixed ...$args): Process {

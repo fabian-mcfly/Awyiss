@@ -171,9 +171,9 @@ class AssetHelper extends Helper {
 	 * @param array|string $asset The asset to add. This can be either a string representing the asset,
 	 *  or an array with the asset as the key and an array of options as the value.
 	 * @param array $attributes
-	 * @param bool $critical (optional) Whether the asset is critical. Defaults to false.
-	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
-	 * @param int $priority (optional) The priority of the asset. Defaults to 10.
+	 * @param bool $critical Whether the asset is critical. Defaults to false.
+	 * @param bool|null $minified Whether the asset is minified. Defaults to false.
+	 * @param int $priority The priority of the asset. Defaults to 10.
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
@@ -234,14 +234,15 @@ class AssetHelper extends Helper {
 
 
 	/**
-	 * Adds a new css layer (single layer or group),
-	 * with a given name and priority.
+	 * Adds a new css layer (single layer or group), with a given name and priority.
 	 *
-	 * Layers will be ordered by priority, with the
-	 * highest priority last.
+	 * Layers will be ordered by priority, with the highest priority last.
 	 *
-	 * Layers provided as an array will be added
-	 * with their internal priority `as-is`.
+	 * Layers provided as an array will be added with their internal priority `as-is`.
+	 *
+	 * @param array|string $layer The name of the layer or an array of layers to add.
+	 * @param int $priority The priority of the layer. Higher numbers indicate higher priority. Defaults to 10.
+	 * @return void
 	 */
 	public function addCssLayer(string|array $layer, int $priority = 10): void {
 		$layer = is_string($layer) ? $layer : implode(', ', $layer);
@@ -257,6 +258,8 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Returns the defined css layers
+	 *
+	 * @return array
 	 */
 	public function getCssLayers(): array {
 		return static::$assets['cssLayer'];
@@ -381,8 +384,8 @@ class AssetHelper extends Helper {
 	 * @param string $assetPath The path to the asset. This should be a full URL.
 	 * @param array $options An array of options for the asset. This should include a 'critical' key with a boolean value
 	 *  indicating whether the asset is critical.
-	 * @param bool $lazyLoad (optional) Whether to generate a lazy loading tag for the asset. Defaults to true.
-	 * @return string An HTML tag for the asset.
+	 * @param bool $lazyLoad Whether to generate a lazy loading tag for the asset. Defaults to true.
+	 * @return string An HTML tag for the asset. (Optional)
 	 */
 	public function createAssetTag(string $assetPath, array $options, bool $lazyLoad = true): string {
 		// Get the extension of the asset
@@ -453,7 +456,7 @@ class AssetHelper extends Helper {
 	/**
 	 * Creates a style tag containing the layer definition
 	 *
-	 * @returns string
+	 * @return string
 	 */
 	public function createLayerTag(): string {
 		$layers = static::$assets['cssLayer'];
@@ -589,10 +592,10 @@ class AssetHelper extends Helper {
 	 * Optionally includes a <noscript> tag with tags for non-JavaScript assets.
 	 *
 	 * @param string $type The type of assets to generate tags for. Defaults to 'all'.
-	 * @param bool|null $critical (optional) Whether to generate tags for critical assets. If null, tags are generated for all assets.
-	 *  Defaults to null.
-	 * @param bool $includeNoScript (optional) Whether to include a <noscript> tag with tags for non-JavaScript assets. Defaults to true.
-	 * @return string A string of HTML tags for the specified type of assets.
+	 * @param bool|null $critical Whether to generate tags for critical assets. If null, tags are generated for all assets.
+	 *  Defaults to null. (Optional)
+	 * @param bool $includeNoScript Whether to include a <noscript> tag with tags for non-JavaScript assets. Defaults to true.
+	 * @return string A string of HTML tags for the specified type of assets. (Optional)
 	 * @throws \Exception
 	 */
 	public function getTags(string $type = 'all', ?bool $critical = null, bool $includeNoScript = true): string {
@@ -778,7 +781,7 @@ class AssetHelper extends Helper {
 	 *
 	 * @param array|string $module The module to add. This can be either a string representing the module,
 	 *  or an array with the module as the key and an array of options as the value.
-	 * @param bool|null $minified (optional) Whether the module is minified. Defaults to the opposite of the debug configuration.
+	 * @param bool|null $minified Whether the module is minified. Defaults to the opposite of the debug configuration. (Optional)
 	 * @return void
 	 */
 	public function addJsModule(array|string $module, ?bool $minified = null): void {

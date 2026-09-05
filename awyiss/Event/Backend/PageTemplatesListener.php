@@ -63,6 +63,7 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\PageTemplate $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, PageTemplate $entity, ArrayObject $options): void {
@@ -127,9 +128,9 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param Event $event
-	 * @param PageTemplate $entity
-	 * @noinspection PhpUnused
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\PageTemplate $entity
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, PageTemplate $entity): void {

@@ -80,6 +80,7 @@ abstract class GenericDatatablesController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -147,6 +148,7 @@ abstract class GenericDatatablesController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id Entity id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
@@ -476,6 +478,10 @@ abstract class GenericDatatablesController extends Controller {
 	 * Try to render the view using the default render-method
 	 * If this fails because the view template could not be found, try again with a view-template
 	 * in templates/Backend/GenericDatatables
+	 *
+	 * @param string|null $template Template name.
+	 * @param string|null $layout Layout name.
+	 * @return \Cake\Http\Response Rendered response.
 	 */
 	public function render(?string $template = null, ?string $layout = null): Response {
 		$viewBuilder = $this->viewBuilder();

@@ -205,6 +205,7 @@ class ConfigOption {
 
 	/**
 	 * @param bool $localizable
+	 * @return void
 	 */
 	public function setLocalizable(bool $localizable): void {
 		$this->localizable = $localizable;
@@ -223,6 +224,7 @@ class ConfigOption {
 	/**
 	 * @param bool $nullable
 	 * @param bool $localized
+	 * @return void
 	 */
 	public function setNullable(bool $nullable, bool $localized = false): void {
 		$this->nullable[ $localized ? 'localized' : 'global' ] = $nullable;
@@ -239,6 +241,7 @@ class ConfigOption {
 
 	/**
 	 * @param bool $personalizable
+	 * @return void
 	 */
 	public function setPersonalizable(bool $personalizable): void {
 		$this->personalizable = $personalizable;
@@ -515,6 +518,8 @@ class ConfigOption {
 
 
 	/**
+	 * @param bool $returnEvaluated If true, the method will return the evaluated values (e.g. enum cases or callable result)
+	 * @param string|null $languageShortcode
 	 * @return callable|array|class-string|null
 	 */
 	public function getValues(bool $returnEvaluated = false, ?string $languageShortcode = null): array|callable|string|null {

@@ -113,6 +113,7 @@ class MediaFoldersController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -174,6 +175,7 @@ class MediaFoldersController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id Media folder id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

@@ -212,7 +212,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function cleanEmptyTags(HtmlDocument $dom): void {
+	protected static function cleanEmptyTags(HTMLDocument $dom): void {
 		// Clean all list items, list tags, starting from the items, because if the list items are empty, the list tags will be empty too
 		$tags = array_merge(
 			iterator_to_array($dom->getElementsByTagName('li')),
@@ -248,8 +248,9 @@ class HtmlCleaner {
 	 * in all text nodes of the given \Dom\HTMLDocument
 	 *
 	 * @param \Dom\HTMLDocument $dom
+	 * @return void
 	 */
-	protected static function combineConsecutiveBrTags(HtmlDocument $dom): void {
+	protected static function combineConsecutiveBrTags(HTMLDocument $dom): void {
 		$brTags = $dom->querySelectorAll('br');
 
 		$brTagCounter = $brTags->length;
@@ -307,7 +308,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function combineConsecutiveEmptyPTags(HtmlDocument $dom): void {
+	protected static function combineConsecutiveEmptyPTags(HTMLDocument $dom): void {
 		$pTags = $dom->querySelectorAll('p');
 
 		$pTagCounter = $pTags->length;
@@ -384,7 +385,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function combineConsecutiveWhitespace(HtmlDocument $dom): void {
+	protected static function combineConsecutiveWhitespace(HTMLDocument $dom): void {
 		$path = new XPath($dom);
 		$textNodes = $path->query('//text()');
 
@@ -414,7 +415,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingBrTagsInParagraphs(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingBrTagsInParagraphs(HTMLDocument $dom): void {
 		$pTags = $dom->querySelectorAll('p');
 
 		/** @var \Dom\Node $pTag */
@@ -440,7 +441,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingBrTags(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingBrTags(HTMLDocument $dom): void {
 		$brTags = $dom->querySelectorAll('br');
 
 		foreach ($brTags as $brTag) {
@@ -489,7 +490,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingEmptyTags(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingEmptyTags(HTMLDocument $dom): void {
 		$body = $dom->querySelector('body');
 
 		while ($body->firstChild) {
@@ -537,7 +538,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingWhitespaceFromTags(HtmlDocument $dom): void {
+	protected static function removeLeadingAndTrailingWhitespaceFromTags(HTMLDocument $dom): void {
 		// Get all tags inside `<body>`
 		$tags = $dom->querySelectorAll('body *');
 		$skipTags = ['PRE', 'CODE', 'SCRIPT', 'STYLE', 'TEXTAREA'];
@@ -622,7 +623,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function replaceNbspAfterPunctuation(HtmlDocument $dom): void {
+	protected static function replaceNbspAfterPunctuation(HTMLDocument $dom): void {
 		$path = new XPath($dom);
 		$textNodes = $path->query('//text()');
 
@@ -640,7 +641,7 @@ class HtmlCleaner {
 	 * @param \Dom\HTMLDocument $dom
 	 * @return string|false
 	 */
-	protected static function getBody(HtmlDocument $dom): string|false {
+	protected static function getBody(HTMLDocument $dom): string|false {
 		$html = '';
 
 		// Remove the opening and closing `<body>`-tags

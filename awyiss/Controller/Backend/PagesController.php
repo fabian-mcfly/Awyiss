@@ -105,6 +105,7 @@ class PagesController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -285,6 +286,7 @@ class PagesController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return Response|void
 	 * @throws \Exception
 	 */
@@ -730,6 +732,10 @@ class PagesController extends Controller {
 	 * Try to render the view using the default render-method
 	 * If this fails because the view template could not be found, try again with a view-template
 	 * in templates/Backend/GenericPages
+	 *
+	 * @param string|null $template
+	 * @param string|null $layout
+	 * @return \Cake\Http\Response
 	 */
 	#[NoDirectAccess]
 	public function render(?string $template = null, ?string $layout = null): Response {

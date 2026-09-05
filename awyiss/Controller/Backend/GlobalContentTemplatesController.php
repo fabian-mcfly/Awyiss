@@ -45,6 +45,7 @@ class GlobalContentTemplatesController extends Controller {
 	/**
 	 * Overview method
 	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function overview(): void {
@@ -92,6 +93,7 @@ class GlobalContentTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id Global content template id.
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

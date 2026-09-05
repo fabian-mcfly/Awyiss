@@ -305,13 +305,13 @@ class AuditBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
+	public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$options['transactionId'] ??= vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 
 		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
@@ -328,12 +328,13 @@ class AuditBehavior extends Behavior {
 	 * Before saving set information when creating, updating or deleting.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection,PhpUnused
 	 */
-	public function beforeCopy(EventInterface $event, Entity $entity, ArrayObject $options): void {
+	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$entity->unset(['createdOn', 'createdBy', 'changedOn', 'changedBy']);
 	}
 
@@ -342,12 +343,13 @@ class AuditBehavior extends Behavior {
 	 * Before saving set information when creating, updating or deleting.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$options['transactionId'] ??= vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 
 		$queryOtions = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
@@ -402,10 +404,11 @@ class AuditBehavior extends Behavior {
 	 * Create the actual audit entry after the entity has been saved.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 */
-	public function afterSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
+	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
@@ -499,10 +502,11 @@ class AuditBehavior extends Behavior {
 	 * Create the actual audit entry after the entity has been deleted.
 	 *
 	 * @param \Cake\Event\EventInterface $event
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 */
-	public function afterDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
+	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
@@ -599,13 +603,13 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param \Cake\ORM\Association|false $association
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditAssociation(Entity $entity, string $field, Association|false $association, array $entityData): array {
+	protected function auditAssociation(EntityInterface $entity, string $field, Association|false $association, array $entityData): array {
 		if (
 			!$association
 			|| (
@@ -641,11 +645,11 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditMediaAssignments(Entity $entity, array $entityData): array {
+	protected function auditMediaAssignments(EntityInterface $entity, array $entityData): array {
 		if (!$entity->getSource()) {
 			return $entityData;
 		}
@@ -722,11 +726,11 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditPublicationData(Entity $entity, array $entityData): array {
+	protected function auditPublicationData(EntityInterface $entity, array $entityData): array {
 		if (!$entity->getSource()) {
 			return $entityData;
 		}
@@ -799,11 +803,11 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditTranslations(Entity $entity, array $entityData): array {
+	protected function auditTranslations(EntityInterface $entity, array $entityData): array {
 		if (!$entity->getSource()) {
 			return $entityData;
 		}
@@ -887,11 +891,11 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $entityData
 	 * @return void
 	 */
-	protected function auditAssociationTranslations(Entity $entity, array &$entityData): void {
+	protected function auditAssociationTranslations(EntityInterface $entity, array &$entityData): void {
 		$translations = [];
 
 		foreach ($entity->get('_translations') as $shortcode => $translatedEntity) {
@@ -925,12 +929,12 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a new entity
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param int|null $identityId
 	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setCreateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+	protected function setCreateInfo(EntityInterface $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('createdOn', DateTime::now());
 		if ($identityId && $schema->getColumn('createdBy')) {
 			$entity->set('createdBy', $identityId);
@@ -943,12 +947,12 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for an existing entity
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param int|null $identityId
 	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setUpdateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+	protected function setUpdateInfo(EntityInterface $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('changedOn', DateTime::now());
 		if ($identityId && $schema->getColumn('changedBy')) {
 			$entity->set('changedBy', $identityId);
@@ -959,12 +963,12 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a deleted entity
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param int|null $identityId
 	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setDeleteInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+	protected function setDeleteInfo(EntityInterface $entity, ?int $identityId, TableSchemaInterface $schema): void {
 		$entity->set('deletedOn', DateTime::now());
 		if ($identityId && $schema->getColumn('deletedBy')) {
 			$entity->set('deletedBy', $identityId);
@@ -1001,14 +1005,14 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\HasOne $association
 	 * @param array $entityData
 	 * @return array
 	 */
 	protected function cleanHasOneAssociationData(
-		Entity $entity,
+		EntityInterface $entity,
 		string $field,
 		Association|HasOne $association,
 		array $entityData
@@ -1103,14 +1107,14 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\HasMany $association
 	 * @param array $entityData
 	 * @return array
 	 */
 	protected function cleanHasManyAssociationData(
-		Entity $entity,
+		EntityInterface $entity,
 		string $field,
 		Association|HasMany $association,
 		array $entityData
@@ -1195,7 +1199,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\BelongsToMany $association
 	 * @param array $entityData
@@ -1203,7 +1207,7 @@ class AuditBehavior extends Behavior {
 	 * @noinspection PhpFunctionCyclomaticComplexityInspection
 	 */
 	protected function cleanBelongsToManyAssociationData(
-		Entity $entity,
+		EntityInterface $entity,
 		string $field,
 		Association|BelongsToMany $association,
 		array $entityData
@@ -1311,11 +1315,11 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param bool $deleted
 	 * @return array
 	 */
-	protected function buildEntityData(Entity $entity, bool $deleted = false): array {
+	protected function buildEntityData(EntityInterface $entity, bool $deleted = false): array {
 		$entityData = [
 			'old' => $this->extractAuditData($entity, null, true),
 			'new' => $this->extractAuditData($entity),
@@ -1403,12 +1407,12 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Extract entity data without fields hidden from the entity representation.
 	 *
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array|null $fields
 	 * @param bool $original
 	 * @return array
 	 */
-	protected function extractAuditData(Entity $entity, ?array $fields = null, bool $original = false): array {
+	protected function extractAuditData(EntityInterface $entity, ?array $fields = null, bool $original = false): array {
 		$data = $original && $fields === null
 			? $entity->getOriginalValues()
 			: ($original ? $entity->extractOriginal($fields) : $entity->extract($fields));

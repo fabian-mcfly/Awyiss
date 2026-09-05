@@ -155,6 +155,8 @@ class ControllerFactory extends BaseControllerFactory {
 	 * in the given namespace, e.g. "Backend".
 	 * This allows page roles to have their own routes without the need to create a controller
 	 *
+	 * @param \Cake\Http\ServerRequest $request Current request.
+	 * @return \Cake\Controller\Controller|null Generic controller, or null when unavailable.
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Controller\Backend\PagesController::asPageRole()
 	 */

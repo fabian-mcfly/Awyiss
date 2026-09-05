@@ -49,8 +49,9 @@ class MediaFoldersListener implements EventListenerInterface {
 	/**
 	 * Before saving a media folder, make sure its path is unique.
 	 *
-	 * @param Event $event
+	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(Event $event, MediaFolder $entity): void {
@@ -152,6 +153,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, MediaFolder $entity, ArrayObject $options): void {
@@ -200,6 +202,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
 	 * @param \ArrayObject $options
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
@@ -309,7 +312,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	/**
 	 * @param string $table
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
-	 * @param mixed $originalPath
+	 * @param string $originalPath
 	 * @return void
 	 */
 	protected function rebuildDatabasePath(string $table, MediaFolder $entity, string $originalPath): void {
@@ -406,7 +409,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 *
 	 * @param string $sourceDirectory The source directory.
 	 * @param string $targetDirectory The destination directory.
-	 * @returns void
+	 * @return void
 	 * @throws \Exception
 	 */
 	protected function copyDirectory(string $sourceDirectory, string $targetDirectory): void {

@@ -51,6 +51,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * we overwrite those with ['overview', 'add', 'edit', 'delete', 'save'] since index is called overview
 	 * and because having a "view" method is a stupid idea.
 	 *
+	 * @param \Cake\Event\Event $event
+	 * @return void
 	 * @noinspection PhpUnused
 	 */
 	public function beforeRenderControllerController(Event $event): void {

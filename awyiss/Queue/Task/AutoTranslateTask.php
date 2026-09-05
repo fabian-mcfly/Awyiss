@@ -111,7 +111,7 @@ class AutoTranslateTask extends Task {
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function translatePages(string $type, mixed $sourceLanguage, mixed $targetLanguage, mixed $ids): void {
+	protected function translatePages(string $type, string $sourceLanguage, string $targetLanguage, array $ids): void {
 		$translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
 
 		$batchSize = $translationService->getBatchSize();
