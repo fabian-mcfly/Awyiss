@@ -306,9 +306,8 @@ class ErrorController extends AppController {
 	protected function handlePage(Page $page): void {
 		$this
 			->viewBuilder()
-			//->setLayout('default')
-				->setTemplate($page->pageTemplate->fileName)
-				->setTemplatePath('Frontend/page')
+			->setTemplate($page->pageTemplate->fileName)
+			->setTemplatePath('Frontend/page')
 		;
 
 		$this->templatePathSet = true;
