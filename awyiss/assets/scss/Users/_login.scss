@@ -28,7 +28,7 @@
 			height:auto;
 			border-radius:5px 0 0 5px;
 			//noinspection CssUnknownTarget
-			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
+			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.avif');
 			background-color:var(--colorDark);
 			background-position:center;
 			background-size:cover;

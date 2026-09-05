@@ -91,9 +91,18 @@ body.OverlayForm {
 					width:auto;
 					height:48px;
 					margin-bottom:0;
-					background-color:transparent;
 					line-height:26px;
 					z-index:20;
+
+					&:not(.Button-SaveAsCopy) {
+						background-color:transparent;
+					}
+
+					&.Button-SaveAsCopy {
+						html:not(:has(#SaveAsCopy:checked)) & {
+							background-color:transparent;
+						}
+					}
 
 					@media screen and (width <= 768px) {
 						height:38px;
