@@ -288,8 +288,6 @@ class AttributeOption {
 			return call_user_func_array($this->value, [$entity, &$currentOptions]);
 		}
 
-		return 'Incorrect value';
-
 		return $this->value;
 	}
 
