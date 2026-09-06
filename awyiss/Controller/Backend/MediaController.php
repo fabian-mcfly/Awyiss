@@ -499,6 +499,9 @@ class MediaController extends Controller {
 	 * @return void
 	 */
 	protected function checkProgress(string $type): void {
+		// Ensure the user has the 'create' permission for `Media`
+		$this->Authorization->ensure('create');
+
 		// Increase the maximum execution time to a bit more than 3 minutes
 		set_time_limit(190);
 
