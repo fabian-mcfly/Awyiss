@@ -225,7 +225,7 @@ trait FrontendRenderingTrait {
 
 			/** @noinspection PhpParamsInspection */
 			$widgetOutput = $widgetClass::render(
-				$settings,
+				$settings ?? [],
 				$this->getView(),
 				$mediaRenderOptions,
 				$entity,
