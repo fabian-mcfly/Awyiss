@@ -51,7 +51,7 @@
 							<tbody>
 								{% for entity in dashboardElement.records %}
 									{% block tableOverviewBodyRow %}
-										{{ include(['@Backend/element/Dashboard/' ~ dashboardElement.scope ~ '_element_row.twig', '@Backend/element/Dashboard/element_row.twig']) }}
+										{{ include(['@Backend/element/Dashboard/' ~ dashboardElement.scope|underscore ~ '_element_row.twig', '@Backend/element/Dashboard/element_row.twig']) }}
 									{% endblock %}
 								{% endfor %}
 							</tbody>
