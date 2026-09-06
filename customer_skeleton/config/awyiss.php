@@ -13,6 +13,10 @@ use Cake\Mailer\Transport\SmtpTransport;
 
 
 return [
+	'App' => [
+		// In production environments, this should be set to the full base URL of your application, e.g. https://www.example.com
+		// 'fullBaseUrl' => env('APP_FULL_BASE_URL', 'https://www.yourdomain.invalid'),
+	],
 	'Csp' => [
 		'connectSrc' => [
 			'allow' => [

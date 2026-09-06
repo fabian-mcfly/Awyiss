@@ -141,6 +141,8 @@ export default class MediaController {
 				uploadQueue.classList.remove('Visible');
 			}
 
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 			// Initialize the rebuilding of the system order
 			// Make a POST request to the '/save-order' URL with the current order and the controller name
 			// noinspection JSIgnoredPromiseFromCall
@@ -150,6 +152,7 @@ export default class MediaController {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json',
 					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': csrfToken,
 				},
 			});
 
@@ -186,12 +189,15 @@ export default class MediaController {
 			// Revert the checkbox state to the opposite of the new value
 			event.target.checked = newValue !== 'true';
 
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 			// Send a fetch request to save the new value
 			fetch(`${baseUrl}backend/${languageShortcode}/media/user-configuration/identifier:upload.auto-overwrite/value:${newValue}/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': csrfToken,
 				},
 			})
 			.then(response => response.json())
@@ -221,12 +227,15 @@ export default class MediaController {
 			url += '/';
 		}
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		return fetch(`${url}paginate:true`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'text/html',
 				'Content-Type': 'text/html',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			}
 		})
 		.then(response => response.text())

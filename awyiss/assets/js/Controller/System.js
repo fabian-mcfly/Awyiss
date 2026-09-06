@@ -58,10 +58,13 @@ export default class SystemController {
 	 * @returns {Promise}
 	 */
 	sendClearCacheRequest(button) {
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		return fetch(button.href, {
 			method: 'POST',
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 		}).then(response => {
 			if (!response.ok) {

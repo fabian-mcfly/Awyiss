@@ -519,12 +519,15 @@ export default class SurveysController {
 
 		const target = event.target;
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		return fetch(`${target.href}`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'text/html',
 				'Content-Type': 'text/html',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			}
 		})
 		.then(response => response.text())

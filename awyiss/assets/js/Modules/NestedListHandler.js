@@ -811,6 +811,8 @@ export default class NestedListHandler {
 		// Add a class to the body to show that a save operation is in progress
 		document.body.classList.add('FetchInProgress');
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		// Make a POST request to the '/save-order' URL with the current order and the controller name
 		return fetch(`${baseUrl}backend/${languageShortcode}/${controller}/save-system-order/`, {
 			method: 'POST',
@@ -818,6 +820,7 @@ export default class NestedListHandler {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: JSON.stringify({order, controller}),
 		})

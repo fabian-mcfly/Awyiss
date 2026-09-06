@@ -260,6 +260,8 @@ export default class ResizableContents {
 		// Add a class to the body to show that a save operation is in progress
 		document.body.classList.add('FetchInProgress');
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		// Send a request to save the column width
 		fetch(`${baseUrl}backend/${languageShortcode}/${this.controller}/save-column-width/`, {
 			method: 'POST',
@@ -267,6 +269,7 @@ export default class ResizableContents {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: JSON.stringify({
 				id: parseInt(this.element.id.replace(/^\D+/g, '')),

@@ -32,7 +32,7 @@
 			{{ FormHelper.button(__d('Search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
 		</div>
 
-		<form class="Columns" method="post" id="FilterForm-{{ scope|camelize }}">
+		{{ FormHelper.create(null, {class: 'Columns', id: 'FilterForm-' ~ scope|camelize}) }}
 			{% for column, settings in _filter[ scope ]['columns'] %}
 				{# @var settings Awyiss\Model\Behavior\Search\FilterColumnSettings #}
 				<div class="Column Column-{{ column|camelize }}{% if column in _filter[ scope ]['selectedColumns'] %} Active{% endif %}" data-column="{{ column }}"
@@ -118,6 +118,6 @@
 				{{ FormHelper.button(__d('Search', 'filter_reset'), {class: 'Button Button-Error Button-Delete Button-Reset', name: 'submitType', value: 'reset'}) }}
 				{{ FormHelper.button(__d('Search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
 			</div>
-		</form>
+		{{ FormHelper.end() }}
 	</dialog>
 {% endif %}

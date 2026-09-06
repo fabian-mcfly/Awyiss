@@ -360,11 +360,14 @@ export class MediaFolderSelect {
 			includeHidden = 'include-hidden:1/';
 		}
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/folder-select/${includeHidden}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: JSON.stringify({
 				mediaFolderId: this.activeInput.value,

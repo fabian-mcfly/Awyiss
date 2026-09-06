@@ -160,9 +160,9 @@
 						<div class="Button Button-Add">
 							{{ __('create') }}
 
-							<form action="{{ _view.url({action: 'add'}) }}" method="post" enctype="multipart/form-data" class="Form Form-Upload">
+							{{ FormHelper.create(null, {class: 'Form Form-Upload', url: {action: 'add'}, enctype: 'multipart/form-data'}) }}
 								<input type="file" name="files[]" multiple>
-							</form>
+							{{ FormHelper.end() }}
 
 							<label for="UploadAutoOverwrite" tabindex="0"
 								data-title-active="{{ __d('Media', 'upload_overwrite_existing_files_active') }}"

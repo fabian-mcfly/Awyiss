@@ -521,6 +521,8 @@ return [
 			'session.gc_divisor' => 1000,
 			'session.gc_maxlifetime' => 86400, //Time in seconds!
 			'session.gc_probability' => 1,
+			'session.cookie_httponly' => true,
+			'session.cookie_samesite' => 'Strict',
 		],
 		'timeout' => 1440, //Time in minutes!
 	],

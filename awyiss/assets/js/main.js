@@ -89,12 +89,15 @@ export function addDarkModeSwitcherEvent() {
 
 		event.preventDefault();
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		// Send a fetch request to the URL of the item itself
 		fetch(target.href, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 		})
 		.then(response => response.json())

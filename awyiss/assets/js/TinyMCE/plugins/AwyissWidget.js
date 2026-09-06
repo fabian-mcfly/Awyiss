@@ -62,11 +62,14 @@ class AwyissWidget {
 	async fetchWidgetConfiguration(identifier, settings, language) {
 		language = language || languageShortcode;
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		const response = await fetch(`${baseUrl}backend/${language}/contents/widget-configuration/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: JSON.stringify({
 				widgetIdentifier: identifier,

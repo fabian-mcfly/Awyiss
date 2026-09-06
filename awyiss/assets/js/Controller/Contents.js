@@ -252,7 +252,7 @@ export class DuplicateOfConfiguration {
 
 		if (this.duplicateOfInput) {
 			this.duplicateOfInput.instantUpdate = true;
-			this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
+			this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(form));
 		}
 
 		this.observer.addObserver(this.observeMutations.bind(this), form);
@@ -313,21 +313,28 @@ export class DuplicateOfConfiguration {
 	/**
 	 * Fetch the duplicate configuration form.
 	 *
+	 * @param {HTMLFormElement} form
 	 * @returns {Promise<Element>}
 	 */
-	async fetchDuplicateConfiguration() {
-		const response = await fetch(`${baseUrl}backend/${languageShortcode}/contents/duplicate-configuration/page-id:${this.duplicateOfInput.dataset.pageId}/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Requested-With': 'XMLHttpRequest',
-			},
-			body: JSON.stringify({
-				duplicateOfPageId: this.duplicateOfInput.dataset.duplicateOfPageId,
-				duplicateOf: this.duplicateOfInput.value,
-				contentTemplateId: this.duplicateOfInput.dataset.contentTemplateId,
-			}),
-		});
+	async fetchDuplicateConfiguration(form) {
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+		const response = await fetch(
+			`${baseUrl}backend/${languageShortcode}/contents/duplicate-configuration/page-id:${this.duplicateOfInput.dataset.pageId}/`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': csrfToken,
+				},
+				body: JSON.stringify({
+					duplicateOfPageId: this.duplicateOfInput.dataset.duplicateOfPageId,
+					duplicateOf: this.duplicateOfInput.value,
+					contentTemplateId: this.duplicateOfInput.dataset.contentTemplateId,
+				}),
+			}
+		);
 
 		const html = await response.text();
 
@@ -341,12 +348,10 @@ export class DuplicateOfConfiguration {
 	/**
 	 * Open the overlay to select the content to duplicate.
 	 *
-	 * @param {Event} event
-	 * @param {tinymce.Editor} editor
-	 * @param {HTMLElement} node
+	 * @param {HTMLFormElement} form
 	 * @returns {Promise<void>}
 	 */
-	async openDuplicateContentOverlay(event, editor, node) {
+	async openDuplicateContentOverlay(form) {
 		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
 
 		if (!this.dialog) {
@@ -355,14 +360,14 @@ export class DuplicateOfConfiguration {
 
 		this.dialog.showModal();
 
-		const form = await this.fetchDuplicateConfiguration();
+		const formWrapper = await this.fetchDuplicateConfiguration(form);
 
-		if (!form) {
+		if (!formWrapper) {
 			return;
 		}
 
-		form.classList.remove('Contents');
-		this.dialog.appendChild(form);
+		formWrapper.classList.remove('Contents');
+		this.dialog.appendChild(formWrapper);
 	}
 
 
@@ -427,14 +432,14 @@ export class DuplicateOfConfiguration {
 				if (node.matches(selector)) {
 					this.duplicateOfInput = node;
 					this.duplicateOfInput.instantUpdate = true;
-					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
+					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(node.closest('form')));
 				}
 
 				const elements = node.querySelectorAll(selector);
 				elements.forEach((element) => {
 					this.duplicateOfInput = element;
 					this.duplicateOfInput.instantUpdate = true;
-					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
+					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(element.closest('form')));
 				});
 			}
 		});

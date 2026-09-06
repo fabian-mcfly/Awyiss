@@ -3,6 +3,9 @@
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Routing\Router;
+use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
+use Cake\Http\ServerRequest;
 use Cake\Routing\RouteBuilder;
 
 
@@ -39,6 +42,21 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	$routeBuilder->applyMiddleware('backendAuthorization');
 
 	$routeBuilder->applyMiddleware('csp');
+
+	$csrfProtectionMiddleware = new SessionCsrfProtectionMiddleware();
+	$csrfProtectionMiddleware->skipCheckCallback(function (ServerRequest $request) {
+		if ($request->getPath() === Router::url([
+			'controller' => 'Pages',
+			'action' => 'previewSettings',
+			'_base' => false,
+		])) {
+			return true;
+		}
+
+		return false;
+	});
+	$routeBuilder->registerMiddleware('csrf', $csrfProtectionMiddleware);
+	$routeBuilder->applyMiddleware('csrf');
 
 	$routeBuilder->applyMiddleware('design');
 

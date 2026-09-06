@@ -196,11 +196,14 @@ export default class FormLock {
 			id: parseInt(form.lockDialog.dataset.entityId),
 		};
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		return fetch(`${baseUrl}backend/${languageShortcode}/${form.lockDialog.dataset.controller}/request-lock/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: JSON.stringify(data)
 		}).then(response => {

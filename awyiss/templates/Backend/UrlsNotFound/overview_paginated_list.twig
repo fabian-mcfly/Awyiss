@@ -90,11 +90,11 @@
 		<td class="TableCell-Actions">
 			<div class="Actions">
 				{% if canCreateUrlHistory %}
-					<form method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
+					{{ FormHelper.create(entity, {url: {controller: 'UrlHistory', action: 'add'}}) }}
 						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submitType', value: 'submit'}) }}
 						{{ FormHelper.hidden('reloadForm', {val: 1}) }}
 						{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
-					</form>
+					{{ FormHelper.end() }}
 				{% endif %}
 				{% if grouped == false %}
 					{% block tableOverviewCellActionsDelete %}

@@ -325,10 +325,13 @@ export default class FormUpdater {
 		// Add a class to the body to show that a reload operation is in progress
 		document.body.classList.add('FetchInProgress');
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		return fetch(form.action, {
 			method: form.method,
 			headers: {
-				'X-Requested-With': 'XMLHttpRequest'
+				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 			body: formData
 		})

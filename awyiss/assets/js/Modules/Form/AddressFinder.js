@@ -111,12 +111,15 @@ export default class AddressFinder {
 		const latInput = input.latInput;
 		const lngInput = input.lngInput;
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 		const url = `${baseUrl}${languageShortcode}/_route/find-coordinates/${encodeURIComponent(search)}/`;
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': csrfToken,
 			},
 		});
 

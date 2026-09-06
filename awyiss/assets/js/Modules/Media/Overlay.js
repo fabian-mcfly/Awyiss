@@ -122,12 +122,15 @@ export default class Overlay {
 			// Revert the checkbox state to the opposite of the new value
 			event.target.checked = newValue !== 'true';
 
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 			// Send a fetch request to save the new value
 			fetch(`${baseUrl}backend/${languageShortcode}/media/user-configuration/identifier:upload.auto-overwrite/value:${newValue}/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': csrfToken,
 				},
 			})
 			.then(response => response.json())
@@ -904,6 +907,8 @@ export default class Overlay {
 		for (const item of items) {
 			const mediaId = item.id.replace(/^\D+/g, '');
 
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 			try {
 				const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/edit/id:${mediaId}/`, {
 					method: 'PATCH',
@@ -911,6 +916,7 @@ export default class Overlay {
 						'Accept': 'application/json',
 						'Content-Type': 'application/json',
 						'X-Requested-With': 'XMLHttpRequest',
+						'X-CSRF-Token': csrfToken,
 					},
 					body: JSON.stringify({
 						mediaFolderId: folderId,

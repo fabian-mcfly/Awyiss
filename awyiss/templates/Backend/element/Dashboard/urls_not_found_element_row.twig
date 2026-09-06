@@ -25,11 +25,11 @@
 		{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('UrlHistory', [], 'create') %}
 
 		{% if canCreateUrlHistory %}
-			<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
+			{{ FormHelper.create(entity, {class: 'Actions', url: {controller: 'UrlHistory', action: 'add'}}) }}
 				{{ FormHelper.button(__d('UrlsNotFound', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submitType', value: 'submit'}) }}
 				{{ FormHelper.hidden('reloadForm', {val: 1}) }}
 				{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
-			</form>
+			{{ FormHelper.end() }}
 		{% endif %}
 	</td>
 {% endblock %}

@@ -99,11 +99,14 @@ class TypographyFixer {
 		try {
 			overlay = this.showLoader();
 
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 			const response = await fetch(`${baseUrl}backend/${languageShortcode}/contents/fix-typography/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': csrfToken,
 				},
 				body: JSON.stringify({
 					content: content,

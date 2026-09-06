@@ -232,6 +232,9 @@ export default class Upload {
 		// Set the HTTP_X_REQUESTED_WITH header
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+		xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+
 		// Set up a progress event handler to update the progress bar as the file uploads
 		xhr.upload.onprogress = function (event) {
 			if (event.lengthComputable) {
