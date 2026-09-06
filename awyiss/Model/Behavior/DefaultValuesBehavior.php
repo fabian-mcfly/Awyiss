@@ -389,7 +389,9 @@ class DefaultValuesBehavior extends Behavior {
 						default => boolval($default),
 					},
 					'date' => $default ? new Date($default) : null,
-					'datetime' => $default && $default !== 'current_timestamp()' ? new DateTime($default) : null,
+					'datetime' => $default && !in_array($default, ['current_timestamp()', 'CURRENT_TIMESTAMP'])
+						? new DateTime($default)
+						: null,
 					'float' => floatval($default),
 					'integer' => intval($default),
 					'json' => json_decode(trim($default, '\'')),
