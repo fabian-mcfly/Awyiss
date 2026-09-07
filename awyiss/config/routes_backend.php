@@ -4,6 +4,7 @@
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
+use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\Middleware\SessionCsrfProtectionMiddleware;
 use Cake\Http\ServerRequest;
 use Cake\Routing\RouteBuilder;
@@ -66,6 +67,8 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	$twoFactorMiddlewareClass = App::className('TwoFactor', 'Middleware', 'Middleware');
 	$routeBuilder->registerMiddleware('backendTwoFactor', new $twoFactorMiddlewareClass());
 	$routeBuilder->applyMiddleware('backendTwoFactor');
+
+	$routeBuilder->applyMiddleware('securityHeaders');
 
 	/**
 	 * Load the backend-related routes

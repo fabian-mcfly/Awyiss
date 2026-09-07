@@ -298,6 +298,15 @@ return [
 		'salt' => env('SECURITY_SALT', 'dummy_salt'),
 	],
 
+	/**
+	 * @see https://book.cakephp.org/5.x/security/security-headers.html
+	 */
+	'SecurityHeaders' => [
+		'referrerPolicy' => 'strict-origin-when-cross-origin',
+		'xFrameOptions' => 'sameorigin',
+		'permissionsPolicy' => 'camera=(), microphone=(), payment=()',
+	],
+
 	'Session' => [
 		'cookie' => env('SESSION_COOKIE_NAME', 'awyiss_session'),
 	],

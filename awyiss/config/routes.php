@@ -101,6 +101,22 @@ $routes->registerMiddleware('design', new $designMiddlewareClass());
 $localeMiddlewareClass = App::className('Locale', 'Middleware', 'Middleware');
 $routes->registerMiddleware('requestLocale', new $localeMiddlewareClass());
 
+/** @var class-string<\Cake\Http\Middleware\SecurityHeadersMiddleware> $securityHeadersMiddlewareClass */
+$securityHeadersMiddlewareClass = App::className('SecurityHeaders', 'Http/Middleware', 'Middleware');
+$routes->registerMiddleware(
+	'securityHeaders',
+	new $securityHeadersMiddlewareClass()
+		->noSniff()
+		->setReferrerPolicy(
+			Configure::read('SecurityHeaders.referrerPolicy') ?? $securityHeadersMiddlewareClass::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+		)
+		->setXFrameOptions(
+			Configure::read('SecurityHeaders.xFrameOptions') ?? $securityHeadersMiddlewareClass::SAMEORIGIN,
+		)
+		->setPermissionsPolicy(
+			Configure::read('SecurityHeaders.permissionsPolicy') ?? 'camera=(), microphone=(), payment=()',
+		),
+);
 
 $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	/** @uses \Awyiss\Routing\Route\AwyissRoute */
@@ -131,6 +147,7 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->applyMiddleware('requestLocale');
 
+	$routeBuilder->applyMiddleware('securityHeaders');
 
 	/**
 	 * Load the general routes
