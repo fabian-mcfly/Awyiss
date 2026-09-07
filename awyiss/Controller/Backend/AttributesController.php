@@ -180,7 +180,7 @@ class AttributesController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var Attribute $attribute */
 		$attribute = $this->Attributes

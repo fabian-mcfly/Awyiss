@@ -239,7 +239,7 @@ class ConfigurationController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var Configuration $configuration */
 		$configuration = $this->Configuration->findById($id)->first();

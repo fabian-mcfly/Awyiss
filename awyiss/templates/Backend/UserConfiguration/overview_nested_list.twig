@@ -124,7 +124,7 @@
 										{% endif %}
 
 										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: configuration.id}, {
+											{{ FormHelper.deleteLink(__('delete'), {action: 'delete', id: configuration.id}, {
 												class: 'Button Button-Small Button-Delete',
 												'data-confirm-title': __('confirm_delete_title'),
 												'data-confirm-yes': __('confirm_delete_yes'),

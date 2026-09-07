@@ -128,7 +128,7 @@ class UrlsNotFoundController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\UrlsNotFound $urlsNotFound */
 		$urlsNotFound = $this->UrlsNotFound->findById($id)->first();
@@ -164,7 +164,7 @@ class UrlsNotFoundController extends Controller {
 	public function deleteOld(): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		$duration = $this->request->getParam('olderThan');
 		$duration = match ($duration) {

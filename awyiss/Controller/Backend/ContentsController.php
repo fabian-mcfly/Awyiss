@@ -288,7 +288,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete(int $id): Response {
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->Contents->findById($id)->first();

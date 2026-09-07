@@ -71,7 +71,7 @@
 
 {% block nestedListActionsDelete %}
 	{% if key is numeric and AuthorizationHelper.isAccessible('delete') %}
-		{{ HtmlHelper.link(__('delete'), {action: 'delete', id: settings.isFiltered ? entity.id : key}, {
+		{{ FormHelper.deleteLink(__('delete'), {action: 'delete', id: settings.isFiltered ? entity.id : key}, {
 			class: 'Button Button-Small Button-Delete',
 			'data-confirm-title': __('confirm_delete_title'),
 			'data-confirm-yes': __('confirm_delete_yes'),

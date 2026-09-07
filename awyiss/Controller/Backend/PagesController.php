@@ -341,7 +341,7 @@ class PagesController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $this->Pages->findById($id)->first();

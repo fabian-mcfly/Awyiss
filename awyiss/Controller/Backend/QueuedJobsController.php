@@ -153,7 +153,7 @@ class QueuedJobsController extends BackendController {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Queue\Model\Entity\QueuedJob $queuedJob */
 		/** @noinspection PhpUndefinedMethodInspection */

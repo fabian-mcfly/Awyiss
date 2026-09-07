@@ -189,7 +189,7 @@ class BackendMenuEntriesController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var BackendMenuEntry $menuEntry */
 		$menuEntry = $this->BackendMenuEntries->findById($id)->first();

@@ -432,7 +432,7 @@ class MediaController extends Controller {
 	public function delete(?int $id = null): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		if (!$id && $this->request->getMethod() === 'DELETE') {
 			return $this->_deleteMultiple();

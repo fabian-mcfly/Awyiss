@@ -132,7 +132,7 @@
 
 						{% block nestedListActionsDelete %}
 							{% if AuthorizationHelper.isAccessible('delete') %}
-								{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'System', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
+								{{ FormHelper.deleteLink(i18nDomain ? __df(i18nDomain, 'System', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
 									class: 'Button Button-Small Button-Delete',
 									'data-confirm-title': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_title') : __('confirm_delete_title'),
 									'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'System', 'confirm_delete_yes') : __('confirm_delete_yes'),

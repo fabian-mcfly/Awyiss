@@ -284,7 +284,7 @@ class UserConfigurationController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->setAdditionalData(['scope' => ''])->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\UserConfiguration $configuration */
 		$configuration = $this->UserConfiguration->findById($id)->first();

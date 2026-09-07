@@ -144,7 +144,7 @@ class GlobalContentTemplatesController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\GlobalContentTemplate $globalContentTemplate */
 		$globalContentTemplate = $this->GlobalContentTemplates->findById($id)->first();

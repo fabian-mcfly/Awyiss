@@ -149,7 +149,7 @@ class UsergroupsController extends Controller {
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
-		$this->request->allowMethod(['get', 'delete']);
+		$this->request->allowMethod(['post', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\Usergroup $usergroup */
 		$usergroup = $this->Usergroups->findById($id)->first();
