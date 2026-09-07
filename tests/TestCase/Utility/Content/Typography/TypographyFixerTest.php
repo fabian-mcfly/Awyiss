@@ -1481,7 +1481,7 @@ HTML;
 	 * @return void
 	 * @covers \Awyiss\Utility\Content\Typography\TypographyFixer::formatHtml()
 	 */
-	public function testFormatHtmlSkipsUnsupportedElementsIncludingResponsiveImageTag(): void {
+	public function testFormatHtmlSkipsUnsupportedElementsIncludingResponsiveImageAndWidgetTags(): void {
 		TypographyRuleRegistry::registerDefaults();
 		$this->assertCount(13, TypographyRuleRegistry::getRulesForLanguage('de'));
 
@@ -1489,6 +1489,7 @@ HTML;
 <p>Außen "Zitat" ! Preis : 49,99€ und 20 %.</p>
 <code>Code "Zitat" ! Preis : 49,99€ und 20 %.</code>
 <pre>Pre "Zitat" ! Preis : 49,99€ und 20 %.</pre>
+<widget data-identifier="routePlanner" data-label="Route Planner">{"address":"Bronnbachergasse, Wuerzburg","lat":49.795823,"lng":9.929298,"transportationMode":"car","showTransportationModes":false}</widget>
 <script>const msg = '"Zitat" ! Preis : 49,99€ und 20 %.';</script>
 <style>.x::before { content: '"Zitat" ! Preis : 49,99€ und 20 %.'; }</style>
 <awyiss-responsive-image>Responsive "Zitat" ! Preis : 49,99€ und 20 %.</awyiss-responsive-image>
@@ -1498,6 +1499,7 @@ HTML;
 <p>Außen „Zitat“! Preis: 49,99 € und 20 %.</p>
 <code>Code "Zitat" ! Preis : 49,99€ und 20 %.</code>
 <pre>Pre "Zitat" ! Preis : 49,99€ und 20 %.</pre>
+<widget data-identifier="routePlanner" data-label="Route Planner">{"address":"Bronnbachergasse, Wuerzburg","lat":49.795823,"lng":9.929298,"transportationMode":"car","showTransportationModes":false}</widget>
 <script>const msg = '"Zitat" ! Preis : 49,99€ und 20 %.';</script>
 <style>.x::before { content: '"Zitat" ! Preis : 49,99€ und 20 %.'; }</style>
 <awyiss-responsive-image>Responsive "Zitat" ! Preis : 49,99€ und 20 %.</awyiss-responsive-image>

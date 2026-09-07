@@ -51,7 +51,7 @@ class TypographyFixer {
 	 *
 	 * @var array<int, string>
 	 */
-	protected const array SKIPPED_TAGS = ['CODE', 'PRE', 'SCRIPT', 'STYLE', 'AWYISS-RESPONSIVE-IMAGE'];
+	protected const array SKIPPED_TAGS = ['AWYISS-RESPONSIVE-IMAGE', 'CODE', 'PRE', 'SCRIPT', 'STYLE', 'WIDGET'];
 
 
 	/**
