@@ -25,6 +25,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Dom\XMLDocument;
+use enshrined\svgSanitize\Sanitizer;
 use Imagick;
 
 
@@ -189,6 +190,18 @@ class MediaListener implements EventListenerInterface {
 		}
 
 		if ($entity->file) {
+			if ($entity->mimeType === 'image/svg+xml' && !$this->sanitizeSvg($entity)) {
+				$event->stopPropagation();
+
+				$entity->setError(
+					'file',
+					__df($mediaTable->getI18nDomain(), 'validation', 'error_media_svg_sanitization_failed'),
+					true
+				);
+
+				return;
+			}
+
 			$this->setDimensions($entity);
 
 			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml'])
@@ -546,6 +559,26 @@ class MediaListener implements EventListenerInterface {
 		$content = $dom->saveXml($dom->documentElement, LIBXML_NOEMPTYTAG);
 
 		file_put_contents($path, $content);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @return bool
+	 */
+	protected function sanitizeSvg(Media $entity): bool {
+		$tempName = $entity->file->getStream()->getMetadata('uri');
+
+		$sanitizer = new Sanitizer();
+		$clean = $sanitizer->sanitize(file_get_contents($tempName));
+
+		if ($clean === false) {
+			return false;
+		}
+
+		file_put_contents($tempName, $clean);
+
+		return true;
 	}
 
 

@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.0\n"
+"Project-Id-Version: 0.1.1\n"
 "POT-Creation-Date: 2024-05-11 19:35+0000\n"
-"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2026-09-07 20:08+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -163,6 +163,9 @@ msgstr "Actions"
 
 msgid "error_max_file_size"
 msgstr "The file is too large"
+
+msgid "error_media_svg_sanitization_failed"
+msgstr "The SVG file could not be sanitized. Please check the file for errors."
 
 msgid "cancel_upload"
 msgstr "Cancel upload"
