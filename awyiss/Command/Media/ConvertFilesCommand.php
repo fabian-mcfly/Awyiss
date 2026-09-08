@@ -60,6 +60,12 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected int $quality;
 	/**
+	 * Whether the current Imagick version supports transparency in Avif files.
+	 *
+	 * @var bool
+	 */
+	protected bool $transparencySupported;
+	/**
 	 * Whether to output debug information to the log.
 	 *
 	 * @var bool
@@ -132,6 +138,11 @@ class ConvertFilesCommand extends Command {
 	protected function createImageManager(): void {
 		$driver = $this->driver === 'gd' ? GdDriver::class : ImagickDriver::class;
 		$this->imageManager = ImageManager::usingDriver($driver, autoOrientation: false);
+
+		if ($driver === 'imagick' && !isset($this->transparencySupported)) {
+			$imagickVersion = $this->imageManager->driver->version();
+			$this->transparencySupported = version_compare($imagickVersion, '7.0.25', '>=');
+		}
 	}
 
 
@@ -844,7 +855,8 @@ class ConvertFilesCommand extends Command {
 		$inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		try {
-			$image = $this->imageManager->decodePath($inputPath);
+			$image = $this->loadImage($inputPath);
+
 
 			$image
 				->encodeUsingFormat(Format::AVIF, quality: $this->quality)
@@ -1379,7 +1391,7 @@ class ConvertFilesCommand extends Command {
 		}
 
 		try {
-			$image = $this->imageManager->decodePath($inputPath);
+			$image = $this->loadImage($inputPath);
 
 			$this->debug('Cropping file with Intervention', [
 				'mediaId' => $file->id,
@@ -1638,9 +1650,8 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function resizeImageIntervention(MediaResizedImage $file, ConsoleIo $io): bool {
 		try {
-			$image = $this->imageManager->decodePath(
-				$file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute
-			);
+			$filepath = $file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute;
+			$image = $this->loadImage($filepath);
 
 			if ($file->strategy === ResizeStrategy::Contain) {
 				$image->scaleDown($file->width, $file->height);
@@ -2274,7 +2285,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function autoRotateImageIntervention(string $inputPath): bool {
 		try {
-			$image = $this->imageManager->decodePath($inputPath);
+			$image = $this->loadImage($inputPath);
 
 			$image = $image->orient();
 
@@ -2333,7 +2344,7 @@ class ConvertFilesCommand extends Command {
 	 * @throws \Intervention\Image\Exceptions\InvalidArgumentException
 	 */
 	protected function cropAndResizeIntervention(string $filePath, array $crop, array $resize, ?string $outputPath): ImageInterface {
-		$image = $this->imageManager->decodePath($filePath);
+		$image = $this->loadImage($filePath);
 
 		if ($crop) {
 			$image->crop(...$crop);
@@ -2344,6 +2355,52 @@ class ConvertFilesCommand extends Command {
 		}
 
 		$image->save($outputPath, quality: $this->quality, progressive: true);
+
+		return $image;
+	}
+
+
+	/**
+	 * @param string|null $inputPath
+	 * @return \Intervention\Image\Interfaces\ImageInterface
+	 * @throws \Intervention\Image\Exceptions\DriverException
+	 * @throws \Intervention\Image\Exceptions\ImageDecoderException
+	 * @throws \Intervention\Image\Exceptions\InvalidArgumentException
+	 */
+	protected function loadImage(?string $inputPath): ImageInterface {
+		$image = $this->imageManager->decodePath($inputPath);
+		$fallbackImage = $image;
+
+		try {
+			// If the image has an alpha channel, the driver is Imagick and the Imagick version does not support transparency in Avif files,
+			// convert the image using GD instead of Imagick to avoid losing the alpha channel
+			$hasAlphaChannel = $image
+				->core()
+				->native()
+				->getImageAlphaChannel()
+			;
+
+			if ($hasAlphaChannel && $this->driver === 'imagick' && !$this->transparencySupported) {
+				$this->debug(
+					'Image has alpha channel but Imagick version does not support transparency in Avif files. Using GD driver instead.',
+					[
+						'path' => $inputPath,
+						'driver' => $this->driver,
+						'transparencySupported' => $this->transparencySupported,
+					]
+				);
+
+				// Create a new ImageManager instance using the GD driver
+				$gdImageManager = ImageManager::usingDriver(GdDriver::class, autoOrientation: false);
+
+				// Decode the image using the GD driver
+				$image = $gdImageManager->decodePath($inputPath);
+			}
+		}
+		catch (Exception) {
+			// Return the original image if any exception occurs
+			return $fallbackImage;
+		}
 
 		return $image;
 	}
