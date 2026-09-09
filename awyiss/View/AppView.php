@@ -64,9 +64,10 @@ class AppView extends TwigView {
 			$this->initTwig($this->getTwig());
 		}
 
+		$obfuscateVersion = Configure::read('obfuscateAwyissVersion', false);
 		$this->set('Awyiss', [
-			'VERSION' => Awyiss::VERSION,
-			'VERSION_NAME' => Awyiss::VERSION_NAME,
+			'VERSION' => $obfuscateVersion ? '?.?.?' : Awyiss::VERSION,
+			'VERSION_NAME' => $obfuscateVersion ? '???' : Awyiss::VERSION_NAME,
 		]);
 	}
 

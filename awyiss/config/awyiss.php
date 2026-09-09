@@ -332,6 +332,10 @@ return [
 	],
 
 
+	// Set to true to obscure the Awyiss version and version name in the backend and console.
+	'obfuscateAwyissVersion' => false,
+
+
 	/**
 	 * Periodic events configuration
 	 * Each key represents a frequency (currently only 'hourly' and 'daily' are supported)
