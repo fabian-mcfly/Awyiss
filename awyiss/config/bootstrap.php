@@ -163,6 +163,15 @@ if (PHP_SAPI === 'cli') {
  */
 $fullBaseUrl = Configure::read('App.fullBaseUrl');
 if (!$fullBaseUrl) {
+	// Determine the environment the application is running in
+	$configEnv = defined('CONFIG_ENV') ? CONFIG_ENV : 'production';
+	if (in_array($configEnv, ['production', 'prod', 'live']) && PHP_SAPI !== 'cli') {
+		throw new RuntimeException(
+			'The full base URL is not configured. Please set the `App.fullBaseUrl` configuration value'
+			. ' in your awyiss.php configuration file.'
+		);
+	}
+
 	$https = null;
 	if (env('HTTPS')) {
 		$https = 's';
