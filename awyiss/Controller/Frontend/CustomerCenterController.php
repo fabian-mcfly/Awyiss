@@ -354,7 +354,7 @@ class CustomerCenterController extends AppController {
 				if ($customer && !$customer->verified) {
 					$errorMessage = __d('Customers', 'error_account_not_verified');
 				}
-				elseif ($customer && !$customer->verified) {
+				elseif ($customer && $customer->verified) {
 					// Increment failed attempts
 					$customer->patch([
 						'failedAttempts' => $customer->failedAttempts + 1,
