@@ -1173,7 +1173,7 @@ class AssetHelper extends Helper {
 			};
 
 			// Add the asset path to the Link header
-			$header[] = 'Link: <' . $assetOptions['path'] . '>; rel=preload; as=' . $asType . '; nopush';
+			$header[] = '<' . $assetOptions['path'] . '>; rel=preload; as=' . $asType . '; nopush';
 		}
 
 		if (!$header) {
