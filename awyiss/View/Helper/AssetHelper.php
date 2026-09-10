@@ -778,6 +778,7 @@ class AssetHelper extends Helper {
 	 * - `minified`: A boolean indicating whether the module is minified. Defaults to the opposite of the debug configuration.
 	 * - `as`: A string indicating the name to use for the module in the import map. If not provided, the module name will be used.
 	 * - `fallback`: A string indicating a fallback for the module. This is used if the module cannot be loaded.
+	 * - `preload`: Whether the module should be emitted as a modulepreload link. Defaults to false.
 	 *
 	 * @param array|string $module The module to add. This can be either a string representing the module,
 	 *  or an array with the module as the key and an array of options as the value.
@@ -788,15 +789,17 @@ class AssetHelper extends Helper {
 		// If minified is not set, default to the opposite of the debug configuration
 		$minified ??= $this->getAutoMinify();
 
+		$defaultOptions = ['minified' => $minified, 'preload' => false];
+
 		// If module is not an array, convert it to an array
-		$modules = is_array($module) ? $module : [$module => ['minified' => $minified]];
+		$modules = is_array($module) ? $module : [$module => $defaultOptions];
 
 		// Iterate over each module
 		foreach ($modules as $moduleName => $moduleOptions) {
 			// If the key is not a string, use the value as the module name
 			if (!is_string($moduleName)) {
 				$moduleName = $moduleOptions;
-				$moduleOptions = ['minified' => $minified];
+				$moduleOptions = $defaultOptions;
 			}
 
 			// If the module is not already in the jsModules array, add it
@@ -805,7 +808,7 @@ class AssetHelper extends Helper {
 			}
 
 			// Otherwise, use the default minified value
-			static::$jsModules[ $moduleName ] = $moduleOptions + ['minified' => $minified];
+			static::$jsModules[ $moduleName ] = $moduleOptions + $defaultOptions;
 		}
 	}
 
@@ -832,6 +835,51 @@ class AssetHelper extends Helper {
 	 */
 	public function getJsModules(): array {
 		return static::$jsModules;
+	}
+
+
+	/**
+	 * Creates modulepreload link tags for all registered JavaScript modules.
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function getModulePreloadTags(): string {
+		$assetPaths = [];
+
+		foreach (static::$jsModules as $moduleName => $moduleOptions) {
+			if ($moduleOptions['preload'] !== true) {
+				continue;
+			}
+
+			$assetPath = $this->getAssetPath($moduleName, $moduleOptions);
+
+			if (!$assetPath && isset($moduleOptions['fallback'])) {
+				$assetPath = $this->getAssetPath($moduleOptions['fallback'], $moduleOptions);
+			}
+
+			if ($assetPath) {
+				$assetPaths[ $assetPath ] = true;
+			}
+		}
+
+		foreach (static::$assets['all'] as $fileName => $assetOptions) {
+			if (($assetOptions['attributes']['type'] ?? null) !== 'module') {
+				continue;
+			}
+
+			$assetPath = $this->getAssetPath($fileName, $assetOptions);
+			if ($assetPath) {
+				$assetPaths[ $assetPath ] = true;
+			}
+		}
+
+		$tags = '';
+		foreach (array_keys($assetPaths) as $assetPath) {
+			$tags .= '<link rel="modulepreload" href="' . $assetPath . '" crossorigin>' . PHP_EOL;
+		}
+
+		return $tags;
 	}
 
 

@@ -170,6 +170,7 @@
 
 				{%- block headAssetTags -%}
 					{{- AssetHelper.createImportMap() -}}
+					{{- AssetHelper.getModulePreloadTags() -}}
 					{%- if page %}
 						{{- AssetHelper.addDynamicContentsStylesheet(page.id) -}}
 					{%- endif -%}

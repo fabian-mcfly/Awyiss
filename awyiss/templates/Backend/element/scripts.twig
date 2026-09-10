@@ -32,6 +32,41 @@
 {% endblock %}
 
 {% block scriptsAdd %}
+	{% do AssetHelper.addJsModule({
+		'Modules/Audit/Audit.js': {preload: true},
+		'Modules/ButtonArea.js': {preload: true},
+		'Modules/ButtonHandler.js': {preload: true},
+		'Modules/DetailsHandler.js': {preload: true},
+		'Modules/EventHandler.js': {preload: true},
+		'Modules/FieldsetManager.js': {preload: true},
+		'Modules/FooterReveal.js': {preload: true},
+		'Modules/Form/AccessHelperDialog.js': {preload: true},
+		'Modules/Form/AddressFinder.js': {preload: true},
+		'Modules/Form/AssignableElements.js': {preload: true},
+		'Modules/Form/CodeEditor.js': {preload: true},
+		'Modules/Form/ColorPicker.js': {preload: true},
+		'Modules/Form/CustomSelect.js': {preload: true},
+		'Modules/Form/DatePicker.js': {preload: true},
+		'Modules/Form/FormLeaveConfirmation.js': {preload: true},
+		'Modules/Form/FormLock.js': {preload: true},
+		'Modules/Form/FormUpdater.js': {preload: true},
+		'Modules/Form/IdentifierAutofill.js': {preload: true},
+		'Modules/Form/InputListManager.js': {preload: true},
+		'Modules/Form/LinkHelperDialog.js': {preload: true},
+		'Modules/Form/OverlayForm.js': {preload: true},
+		'Modules/Form/PasswordReveal.js': {preload: true},
+		'Modules/Form/PlaceholderHelper.js': {preload: true},
+		'Modules/Form/TranslatableTexts.js': {preload: true},
+		'Modules/GenericDialog.js': {preload: true},
+		'Modules/Media/Overlay.js': {preload: true},
+		'Modules/Media/ProgressChecker.js': {preload: true},
+		'Modules/NestedListHandler.js': {preload: true},
+		'Modules/Observer.js': {preload: true},
+		'Modules/OverflowMenu.js': {preload: true},
+		'Modules/Search.js': {preload: true},
+		'Modules/TitleSetter.js': {preload: true},
+	}) %}
+
 	{% do AssetHelper.addJsModule([
 		'Modules/Audit/Audit.js',
 		'Modules/Audit/History.js',

@@ -1819,6 +1819,95 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getModulePreloadTags()
+	 * @throws \Exception
+	 */
+	public function testGetModulePreloadTagsOnlyIncludesModulesWithPreload(): void {
+		$preloaded = 'https://cdn.example.test/preloaded.js';
+		$unmarked = 'https://cdn.example.test/unmarked.js';
+		$disabled = 'https://cdn.example.test/disabled.js';
+
+		$this->helper->addJsModule([
+			$preloaded => ['preload' => true],
+			$unmarked,
+			$disabled => ['preload' => false],
+		]);
+
+		$tags = $this->helper->getModulePreloadTags();
+
+		$this->assertSame(
+			'<link rel="modulepreload" href="' . $preloaded . '" crossorigin>' . PHP_EOL,
+			$tags
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getModulePreloadTags()
+	 * @throws \Exception
+	 */
+	public function testGetModulePreloadTagsUsesFallbackAndDeduplicatesResolvedUrls(): void {
+		$this->helper->addJsModule([
+			'doesnotexist.js' => [
+				'fallback' => 'dummy.js',
+				'preload' => true,
+			],
+			'dummy.js' => [
+				'preload' => true,
+			],
+		]);
+
+		$tags = $this->helper->getModulePreloadTags();
+
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
+		$assetPath = 'http://localhost/assets/awyiss/js/dummy.' . $fileMTime . '.js';
+
+		$this->assertSame(
+			'<link rel="modulepreload" href="' . $assetPath . '" crossorigin>' . PHP_EOL,
+			$tags
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getModulePreloadTags()
+	 * @throws \Exception
+	 */
+	public function testGetModulePreloadTagsIncludesNormalModuleAssets(): void {
+		$this->helper->add('dummy.js', ['type' => 'module']);
+
+		$tags = $this->helper->getModulePreloadTags();
+
+		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'js', 'dummy.js']));
+		$assetPath = 'http://localhost/assets/awyiss/js/dummy.' . $fileMTime . '.js';
+
+		$this->assertSame(
+			'<link rel="modulepreload" href="' . $assetPath . '" crossorigin>' . PHP_EOL,
+			$tags
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getModulePreloadTags()
+	 * @throws \Exception
+	 */
+	public function testGetModulePreloadTagsIgnoresClassicAssetsAndUnmarkedModules(): void {
+		$classicAsset = 'https://cdn.example.test/classic.js';
+		$unmarkedModule = 'https://cdn.example.test/unmarked-module.js';
+
+		$this->helper->add($classicAsset);
+		$this->helper->addJsModule($unmarkedModule);
+
+		$this->assertSame('', $this->helper->getModulePreloadTags());
+	}
+
+
+	/**
+	 * @return void
 	 * @see \Awyiss\View\Helper\AssetHelper::getFinalAssets()
 	 * @throws \Exception
 	 */
@@ -2083,7 +2172,7 @@ class AssetHelperTest extends TestCase {
 
 		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.css']));
 
-		$this->assertContains('Link: <http://localhost/assets/awyiss/css/dummy.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
+		$this->assertContains('<http://localhost/assets/awyiss/css/dummy.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
 	}
 
 
@@ -2102,7 +2191,7 @@ class AssetHelperTest extends TestCase {
 
 		$fileMTime = filemtime(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 
-		$this->assertContains('Link: <http://localhost/assets/awyiss/css/dummy.min.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
+		$this->assertContains('<http://localhost/assets/awyiss/css/dummy.min.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
 
 		unlink(implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'awyiss', 'css', 'dummy.min.css']));
 	}
@@ -2126,8 +2215,9 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertTrue($response->hasHeader('Link'));
 
-		$this->assertStringContainsString('Link: <http://localhost/assets/awyiss/css/dummy.' . $fileMTimeCss . '.css>; rel=preload; as=style; nopush,', $response->getHeader('Link')[0]);
-		$this->assertStringContainsString('Link: <http://localhost/assets/awyiss/js/dummy.' . $fileMTimeJs . '.js>; rel=preload; as=script; nopush', $response->getHeader('Link')[0]);
+		$this->assertStringContainsString('<http://localhost/assets/awyiss/css/dummy.' . $fileMTimeCss . '.css>; rel=preload; as=style; nopush,', $response->getHeader('Link')[0]);
+		$this->assertStringNotContainsString('Link:', $response->getHeader('Link')[0]);
+		$this->assertStringContainsString('<http://localhost/assets/awyiss/js/dummy.' . $fileMTimeJs . '.js>; rel=preload; as=script; nopush', $response->getHeader('Link')[0]);
 	}
 
 
