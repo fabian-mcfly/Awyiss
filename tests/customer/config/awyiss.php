@@ -234,5 +234,8 @@ return [
 			'className' => DebugTransport::class, //To not send any mails
 		],
 	],
+	'Security' => [
+		'salt' => 'AbsolutelyRandomStringThatIsAtLeast32CharactersLong',
+	],
 	'SomeDebugKey' => 'someDebugValue',
 ];

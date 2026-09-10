@@ -10,6 +10,7 @@ use Awyiss\Utility\Design\ScssVariableType;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\Transport\MailTransport;
 use Cake\Mailer\Transport\SmtpTransport;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 return [
@@ -50,6 +51,15 @@ return [
 	'debug' => false,
 
 	'Design' => [
+		/**
+		 * Allow SCSS compilation only for explicitly trusted local clients.
+		 */
+		'allowCompile' => static function (ServerRequestInterface $request): bool {
+			$ip = $request->getServerParams()['REMOTE_ADDR'] ?? null;
+			$allowedIps = ['127.0.0.1', '::1'];
+
+			return is_string($ip) && in_array($ip, $allowedIps, true);
+		},
 		/**
 		 * Blocklisted variables that should not be shown in the designer.
 		 * If a variable name contains a regex pattern but the exact variable name

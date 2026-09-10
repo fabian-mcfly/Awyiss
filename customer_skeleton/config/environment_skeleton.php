@@ -22,6 +22,12 @@ return [
 
 	'debug' => true,
 
+	'Design' => [
+		// Only use this in development or staging environments. In production, it is recommended to set this to false or provide
+		// a callable that checks the request's IP address or other criteria to determine if SCSS compilation is allowed.
+		'allowCompile' => true,
+	],
+
 	'DebugKit' => [
 		'forceEnable' => false,
 		'ignoreAuthentication' => true,

@@ -192,7 +192,11 @@ Cache::setConfig(Configure::consume('Cache'));
 ConnectionManager::setConfig(PHP_SAPI === 'cli' ? Configure::read('Datasources') : Configure::consume('Datasources'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
-Security::setSalt(Configure::consume('Security.salt'));
+$securitySalt = Configure::consume('Security.salt');
+if (!is_string($securitySalt) || strlen($securitySalt) < 32) {
+	throw new RuntimeException('Security.salt must be a string with at least 32 bytes.');
+}
+Security::setSalt($securitySalt);
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 
 /**
