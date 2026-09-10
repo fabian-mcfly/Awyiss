@@ -25,7 +25,7 @@
 		"cakephp/twig-view": "^2.1.2",
 		"dereuromark/cakephp-queue": "^8.15.1",
 		"endroid/qr-code": "^6.1",
-		"enshrined/svg-sanitize": "*",
+		"enshrined/svg-sanitize": "^1.0.0",
 		"friendsofcake/cakephp-csvview": "^5.1",
 		"intervention/image": "^4.3.1",
 		"jaybizzle/crawler-detect": "^1.4.1",
