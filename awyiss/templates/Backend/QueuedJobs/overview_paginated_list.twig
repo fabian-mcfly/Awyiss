@@ -41,13 +41,15 @@
 	<td class="TableCell-Reference">
 		{{ entity.scope }}<br>
 		{{ entity.reference }}
-		<div class="Command">
-			{% if entity.job_task == 'Queue.Execute' %}
-				{{ dump(entity.data|unserialize.command) }}
-			{% else %}
-				{{ dump(entity.data|unserialize) }}
-			{% endif %}
-		</div>
+		{% if entity.data %}
+			<div class="Command">
+				{%- if entity.job_task == 'Queue.Execute' -%}
+					{{- dump(entity.data is array ? entity.data.command : entity.data|unserialize.command) -}}
+				{%- else -%}
+					{{- dump(entity.data is array ? entity.data : entity.data|unserialize) -}}
+				{%- endif -%}
+			</div>
+		{% endif %}
 	</td>
 	<td class="TableCell-Created">{{ TimeHelper.nice(entity.created) }}</td>
 	<td class="TableCell-Completed">
