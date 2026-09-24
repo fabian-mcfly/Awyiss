@@ -13,6 +13,89 @@ let isFetching = {
 	webp: false,
 };
 
+/**
+ * Reads the progress response directly and processes newline-delimited JSON messages.
+ *
+ * @param {ReadableStream<Uint8Array>} body - The response body stream.
+ * @param {string} type - The progress type associated with the response.
+ * @returns {Promise<void>} A promise that resolves after the stream has ended.
+ */
+async function readProgressResponse(body, type) {
+	const reader = body.getReader();
+	const decoder = new TextDecoder();
+	let buffer = '';
+
+	/**
+	 * Parses and forwards one complete JSON line.
+	 *
+	 * @param {string} line - A complete line from the response body.
+	 * @returns {Promise<boolean>} Whether the response indicates that polling is done.
+	 */
+	const processLine = async line => {
+		const message = line.trim();
+		if (!message) {
+			return false;
+		}
+
+		let data;
+		try {
+			data = JSON.parse(message);
+		}
+		catch (error) {
+			console.error('Error parsing JSON:', error);
+
+			return false;
+		}
+
+		const clients = await self.clients.matchAll({type: 'window', includeUncontrolled: true});
+		clients.forEach(client => {
+			client.postMessage({
+				command: 'serverMessage',
+				data: data,
+				type: type,
+				workerId: 'mediaProgressChecker',
+			});
+		});
+
+		return data.message === 'done';
+	};
+
+	try {
+		while (true) {
+			const result = await reader.read();
+			const {done, value} = result;
+
+			if (done) {
+				buffer += decoder.decode();
+				if (buffer.trim()) {
+					await processLine(buffer);
+				}
+
+				return;
+			}
+
+			const chunk = decoder.decode(value, {stream: true});
+			buffer += chunk;
+			let newlineIndex;
+			while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+				const line = buffer.slice(0, newlineIndex);
+				buffer = buffer.slice(newlineIndex + 1);
+				if (await processLine(line)) {
+					await reader.cancel();
+					isFetching[ type ] = false;
+
+					return;
+				}
+			}
+		}
+	}
+	catch (error) {
+		console.error('Media progress response stream failed:', error);
+
+		throw error;
+	}
+}
+
 self.addEventListener('message', function (event) {
 	// Only start a new fetch if one is not already in progress
 	if (event.data.command === 'startChecking' && !isFetching[event.data.type]) {
@@ -29,6 +112,7 @@ self.addEventListener('message', function (event) {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
+					'X-CSRF-Token': event.data.csrfToken,
 				},
 				body: JSON.stringify({
 					elements: event.data.elements,
@@ -36,124 +120,20 @@ self.addEventListener('message', function (event) {
 				}),
 			})
 			.then(response => {
-				// Create a new Reader object
-				const reader = response.body.getReader();
-
-				/**
-				 * Returns a new ReadableStream to the main JavaScript context.
-				 * The ReadableStream is used to read the response body of the fetch request.
-				 *
-				 * @returns {ReadableStream} A ReadableStream that can be used to read the response body.
-				 */
-				return new ReadableStream({
-					/**
-					 * The start method is called immediately when the ReadableStream is created.
-					 *
-					 * @param {ReadableStreamDefaultController} controller - The controller instance associated with the ReadableStream.
-					 */
-					start(controller) {
-						/**
-						 * The push function reads a chunk of data from the response body and enqueues it in the ReadableStream.
-						 * If the end of the response body is reached, the ReadableStream is closed and the isFetching flag is set to false.
-						 */
-						function push() {
-							reader.read().then(({done, value}) => {
-								if (done) {
-									controller.close();
-									isFetching[event.data.type] = false;
-									return;
-								}
-								controller.enqueue(value);
-								push();
-							});
-						}
-
-						push();
-					}
-				});
-			})
-			.then(stream => {
-				/**
-				 * A Reader object to read the stream.
-				 * @type {ReadableStreamDefaultReader}
-				 */
-				const reader = stream.getReader();
-
-				/**
-				 * A TextDecoder object to decode the stream into text.
-				 * @type {TextDecoder}
-				 */
-				let decoder = new TextDecoder();
-
-				/**
-				 * The read function reads a chunk of data from the stream and decodes it into text.
-				 * If the end of the stream is reached, the function returns.
-				 * Otherwise, it posts the decoded text to the main JavaScript context and calls itself recursively to read the next chunk of data.
-				 */
-				function read() {
-					reader.read().then(({value, done}) => {
-						if (done) {
-							isFetching[event.data.type] = false;
-
-							return;
-						}
-
-						/**
-						 * The decoded text message.
-						 * @type {string}
-						 */
-						let message = decoder.decode(value, {stream: !done});
-						message = message.trim();
-
-						// If there's a newline in the message, it's likely that the message contains multiple JSON objects.
-						if (message && message.indexOf('\n') !== -1) {
-							// Split the message by newline and use the last row as the data.
-							const messages = message.split('\n');
-							message = messages[messages.length - 1].trim();
-						}
-
-						let data;
-
-						try {
-							data = JSON.parse(message);
-						}
-						catch (e) {
-							console.error('Error parsing JSON:', e);
-							return;
-						}
-
-						// Post the data to the main JavaScript context
-						self.clients.matchAll().then(function (clients) {
-							clients.forEach(function (client) {
-								/**
-								 * Post a message to the client with the workerId, command, and data.
-								 */
-								client.postMessage({
-									command: 'serverMessage',
-									data: data,
-									type: event.data.type,
-									workerId: 'mediaProgressChecker',
-								});
-							});
-						});
-
-						if (data.message === 'done') {
-							// Set the flag back to false when the fetch request is complete
-							isFetching[event.data.type] = false;
-							return;
-						}
-
-						// Recursive call to read the next chunk of data
-						read();
-					});
+				if (!response.ok) {
+					throw new Error(`Media progress request failed with HTTP ${response.status}.`);
 				}
 
-				// Initial call to the read function
-				read();
+				if (!response.body) {
+					throw new Error('Media progress request returned no response body.');
+				}
+
+				return readProgressResponse(response.body, event.data.type);
 			})
 			.catch(error => {
 				// Log any errors that occur during the fetch operation
 				console.error('Fetch error: ', error);
+				const errorMessage = error instanceof Error ? error.message : String(error);
 
 				/**
 				 * If an error occurs during the fetch request, the isFetching flag is set back to false.
@@ -174,7 +154,7 @@ self.addEventListener('message', function (event) {
 					clients.forEach(function (client) {
 						client.postMessage({
 							command: 'serverError',
-							data: error.message,
+							data: errorMessage,
 							type: event.data.type,
 							workerId: 'mediaProgressChecker',
 						});

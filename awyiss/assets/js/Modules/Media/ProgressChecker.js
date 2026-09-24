@@ -27,8 +27,10 @@ export default class ProgressChecker {
 	};
 
 	constructor() {
+		const workerUrl = `${baseUrl}awyiss/assets/js/Modules/Media/ProgressCheckerWorker.js`;
+
 		// Register the service worker for checking the progress of file creation
-		navigator.serviceWorker?.register(`${baseUrl}awyiss/assets/js/Modules/Media/ProgressCheckerWorker.js`, {scope: `${baseUrl}`})
+		navigator.serviceWorker?.register(workerUrl, {scope: `${baseUrl}`})
 		.then((registration) => {
 			this.worker = registration;
 
@@ -46,7 +48,10 @@ export default class ProgressChecker {
 		})
 		.catch((error) => {
 			// The service worker registration failed
-			console.error('Service Worker Registration Failed: ', error);
+			console.error('Service Worker Registration Failed:', {
+				url: workerUrl,
+				error: error,
+			});
 		});
 
 		this.observer.addObserver(this.observeMutations.bind(this));
@@ -110,12 +115,20 @@ export default class ProgressChecker {
 
 		elements = elements.filter(element => element !== null);
 
+		const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+		if (!csrfToken) {
+			console.error('Cannot start media progress check because the CSRF token is missing.');
+
+			return;
+		}
+
 		// Send a message to the worker to start checking
 		this.worker.active.postMessage({
 			command: 'startChecking',
 			elements: elements,
 			type: type,
 			url: this.checkerUrls[type],
+			csrfToken: csrfToken,
 		});
 	}
 
@@ -124,8 +137,13 @@ export default class ProgressChecker {
 	 * @param event
 	 */
 	handleMessage(event) {
-		// noinspection JSIncompatibleTypesComparison
-		if (!event.data.workerId === 'mediaProgressChecker') {
+		if (event.data?.workerId !== 'mediaProgressChecker') {
+			return;
+		}
+
+		if (event.data.command === 'serverError') {
+			console.error(`Media progress worker error (${event.data.type}):`, event.data.data);
+
 			return;
 		}
 
@@ -272,10 +290,7 @@ export default class ProgressChecker {
 			// Unregister the service worker
 			this.worker.unregister()
 			.then((success) => {
-				if (success) {
-					console.info('Unregistration of the Service Worker succeeded.');
-				}
-				else {
+				if (!success) {
 					console.error('Unregistration of the Service Worker failed.');
 				}
 			})
