@@ -9,6 +9,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Dom\HTMLCollection;
 use Dom\HTMLDocument;
+use Dom\Node;
 use Dom\XPath;
 use InvalidArgumentException;
 
@@ -498,6 +499,10 @@ class HtmlCleaner {
 				break;
 			}
 
+			if (static::containsRenderableContent($body->firstChild)) {
+				break;
+			}
+
 			// If the first tag is a hr, break
 			if ($body->firstChild->nodeName === 'HR') {
 				break;
@@ -513,6 +518,10 @@ class HtmlCleaner {
 
 		while ($body->lastChild) {
 			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $body->lastChild->textContent)) {
+				break;
+			}
+
+			if (static::containsRenderableContent($body->lastChild)) {
 				break;
 			}
 
@@ -732,6 +741,10 @@ class HtmlCleaner {
 					array_key_exists($tag->nodeName, $handleEmptyTags)
 					&& $handleEmptyTags[$tag->nodeName] === false
 				) {
+					if (static::containsRenderableContent($tag)) {
+						continue;
+					}
+
 					if ($tag->nextSibling && $tag->nextSibling->nodeName === '#text') {
 						$tag->parentNode->removeChild($tag->nextSibling);
 					}
@@ -757,5 +770,28 @@ class HtmlCleaner {
 				$tag->textContent = "\xC2\xA0";
 			}
 		}
+	}
+
+
+	/**
+	 * Checks whether a node contains a renderable element without text content.
+	 *
+	 * @param \Dom\Node $node
+	 * @return bool
+	 */
+	protected static function containsRenderableContent(Node $node): bool {
+		$renderableNodes = ['IMG', 'AWYISS-RESPONSIVE-IMAGE', 'WIDGET'];
+
+		foreach ($node->childNodes as $childNode) {
+			if (in_array($childNode->nodeName, $renderableNodes, true)) {
+				return true;
+			}
+
+			if ($childNode->hasChildNodes() && static::containsRenderableContent($childNode)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
