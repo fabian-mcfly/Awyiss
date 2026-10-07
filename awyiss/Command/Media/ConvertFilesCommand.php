@@ -139,7 +139,7 @@ class ConvertFilesCommand extends Command {
 		$driver = $this->driver === 'gd' ? GdDriver::class : ImagickDriver::class;
 		$this->imageManager = ImageManager::usingDriver($driver, autoOrientation: false);
 
-		if ($driver === 'imagick' && !isset($this->transparencySupported)) {
+		if ($this->driver === 'imagick' && !isset($this->transparencySupported)) {
 			$imagickVersion = $this->imageManager->driver->version();
 			$this->transparencySupported = version_compare($imagickVersion, '7.0.25', '>=');
 		}
