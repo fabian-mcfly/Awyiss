@@ -1198,6 +1198,8 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Sets the HTTP2 preload headers for all assets.
+	 * Module scripts are emitted as `modulepreload` and fonts with `crossorigin`, so that the credentials mode of the preload
+	 * matches the later request. Otherwise the browser discards the preload and fetches the file a second time.
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -1220,8 +1222,13 @@ class AssetHelper extends Helper {
 				default => 'fetch',
 			};
 
+			// Fonts and module scripts are fetched in CORS mode, so the preload needs `crossorigin` to be reused by the later request
+			$isCorsAsset = $asType === 'font'
+				|| ($assetOptions['attributes']['type'] ?? null) === 'module'
+				|| isset($assetOptions['attributes']['crossorigin']);
+
 			// Add the asset path to the Link header
-			$header[] = '<' . $assetOptions['path'] . '>; rel=preload; as=' . $asType . '; nopush';
+			$header[] = '<' . $assetOptions['path'] . '>; rel=preload; as=' . $asType . ($isCorsAsset ? '; crossorigin' : '') . '; nopush';
 		}
 
 		if (!$header) {
