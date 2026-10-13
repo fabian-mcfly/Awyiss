@@ -348,6 +348,36 @@ HTML,
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_STRICT
+	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
+	 */
+	public function testCleanStrictNotRemovesNestedRenderableContentInsideEmptyLists(): void {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->fetchTable('Contents')->newDefaultEntity();
+		/** @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget */
+		$content->text = <<<'HTML'
+<ul><li><div><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></div></li></ul>
+<ol><li><div><awyiss-responsive-image></awyiss-responsive-image></div></li></ol>
+<dl><dd><div><widget>{"key":"value"}</widget></div></dd></dl>
+HTML;
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		HtmlCleaner::clean($content, HtmlCleaner::CLEAN_STRICT);
+
+		/** @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget */
+		$this->assertSame(
+			<<<'HTML'
+<ul><li><div><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></div></li></ul>
+<ol><li><div><awyiss-responsive-image></awyiss-responsive-image></div></li></ol>
+<dl><dd><div><widget>{"key":"value"}</widget></div></dd></dl>
+HTML,
+			$content->text
+		);
+	}
+
+
+	/**
+	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
 	 */
 	public function testCleanWithInvalidMethod(): void {
