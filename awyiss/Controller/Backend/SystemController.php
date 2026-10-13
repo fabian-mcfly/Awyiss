@@ -53,7 +53,7 @@ class SystemController extends Controller {
 
 		// Check if the cronjob is running
 		$queuedProcessesTable = $this->fetchTable('Queue.QueueProcesses');
-		$timeOffset = time() - Configure::read('Queue.workermaxruntime');
+		$timeOffset = time() - Configure::read('Queue.workerLifetime');
 		$cronjobRunning = $queuedProcessesTable
 			->find('all')
 			->where([
