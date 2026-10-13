@@ -100,6 +100,7 @@ export default class FormLock {
 
 	/**
 	 * Handles the unload event for forms and releases locks on the specified entities using navigator.sendBeacon.
+	 * The CSRF token is sent as form data because sendBeacon cannot set request headers.
 	 *
 	 * @param {string} selector The CSS selector used to identify the forms to process. If not provided, defaults to `this.selector`.
 	 * @return {void} No return value. Executes release lock actions for matched forms.
@@ -112,9 +113,11 @@ export default class FormLock {
 
 		forms.forEach(form => {
 			const formData = new FormData();
+			const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 			formData.append('controller', form.lockDialog.dataset.controller);
 			formData.append('id', parseInt(form.lockDialog.dataset.entityId));
 			formData.append('createdOn', form.lockDialog.dataset.createdOn);
+			formData.append('_csrfToken', csrfToken);
 
 			navigator.sendBeacon(`${baseUrl}backend/${languageShortcode}/${form.lockDialog.dataset.controller}/release-lock/`, formData);
 		});
