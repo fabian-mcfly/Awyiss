@@ -134,7 +134,7 @@ export default class PageTemplatesController {
 
 			const selector = '.ContentAreas-List';
 			if (node.matches(selector) || node.querySelectorAll(selector).length) {
-				this.initSortable();
+				this.initSortable(document.querySelector('.PageTemplates.Form'));
 			}
 		});
 	}
