@@ -1,1 +1,12 @@
 * text=auto eol=lf
+/.github/ export-ignore
+/.phpstorm.meta.php/ export-ignore
+/bin/ export-ignore
+/tests/ export-ignore
+/webroot/ export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/phpcs.xml export-ignore
+/phpunit.xml export-ignore
+/awyiss_code_style.xml export-ignore
