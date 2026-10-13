@@ -4,7 +4,7 @@
 namespace Awyiss\Test\TestCase\Configuration\ConfigOptions;
 
 
-use Awyiss\config\GenericPagesConfigOptions;
+use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
 
@@ -12,14 +12,14 @@ use Awyiss\Test\TestSuite\TestCase;
 /**
  * GenericPagesConfigOptions Test Case
  *
- * @see \Awyiss\config\GenericPagesConfigOptions
+ * @see \Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions
  */
 class GenericPagesConfigOptionsTest extends TestCase {
 	use FlattenConfigOptionsTrait;
 
 
 	/**
-	 * @var \Awyiss\config\GenericPagesConfigOptions
+	 * @var \Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions
 	 */
 	protected GenericPagesConfigOptions $configOptions;
 

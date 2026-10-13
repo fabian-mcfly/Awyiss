@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\config;
+namespace Awyiss\Configuration\ConfigOptions;
 
 
 use Awyiss\Awyiss;
@@ -254,14 +254,24 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 
 	/**
 	 * Returns a list of all media folders
+	 *
+	 * @param string|null $languageShortcode The language shortcode to filter the media folders by
+	 * @return array The list of media folders
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$query = $mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
-			'id !=' => 1,
-			'hidden' => false,
-		]);
+		$query = $mediaFoldersTable
+			->find(
+				'forCurrentLanguage',
+				languageShortcode: $languageShortcode ?? false,
+				includeGlobal: false
+			)
+			->where([
+				'id !=' => 1,
+				'hidden' => false,
+			])
+		;
 		/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
 		$mediaFolders = $mediaFoldersTable->listNested($query);
 
@@ -271,6 +281,9 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 
 	/**
 	 * Returns a list of all pages
+	 *
+	 * @param string|null $languageShortcode The language shortcode to filter the pages by
+	 * @return array The list of pages
 	 */
 	protected function getPages(?string $languageShortcode): array {
 		$pagesTable = $this->fetchTable('Pages');
