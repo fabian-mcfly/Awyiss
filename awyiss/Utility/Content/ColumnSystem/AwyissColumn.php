@@ -4,9 +4,6 @@
 namespace Awyiss\Utility\Content\ColumnSystem;
 
 
-use function __dx;
-
-
 /**
  * Class AwyissColumn
  */

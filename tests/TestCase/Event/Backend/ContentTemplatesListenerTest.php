@@ -13,10 +13,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Queue\Model\Table\QueuedJobsTable;
 use Symfony\Component\Process\Process;
-use function str_ends_with;
-use function str_starts_with;
-use const DS;
-use const TMP;
 
 
 /**
