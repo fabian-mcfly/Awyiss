@@ -150,7 +150,6 @@ class DatatablesListener implements EventListenerInterface {
 			/** @var \Awyiss\Model\Table $attributesTable */
 			$attributesTable = $tableLocator->get('Attributes');
 
-			/** @noinspection PhpUndefinedMethodInspection */
 			$identityId = $attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$queuedJobsTable->createJob('Attributes/Delete', [
@@ -167,37 +166,56 @@ class DatatablesListener implements EventListenerInterface {
 
 		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . escapeshellarg($filePath);
+			$commands[] = [
+				'command' => 'unlink',
+				'params' => [$filePath],
+			];
 		}
 
 		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize($entity->identifier) . 'Table.php']);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . escapeshellarg($filePath);
+			$commands[] = [
+				'command' => 'unlink',
+				'params' => [$filePath],
+			];
 		}
 
 		//Bake a `drop`-migration
-		$commands[] = 'bin' . DS . 'cake bake migration'
-			. ' ' . escapeshellarg('drop_' . $entity->identifier)
-			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations')
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['bake', 'migration', 'drop_' . $entity->identifier, '--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations'],
+		];
 
 		//Migrate all the newly baked migrations
-		$commands[] = 'bin' . DS . 'cake migrations migrate'
-			. ' --source ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations') . ' --no-lock'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['migrations', 'migrate', '--source', CUSTOM_DIR . DS . 'config' . DS . 'Migrations', '--no-lock'],
+		];
 
 		//Clear the database schema
-		$commands[] = 'bin' . DS . 'cake schema_cache clear';
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['schema_cache', 'clear'],
+		];
 
 		//Bake the seed of the datatables table
-		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables'
-			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'seed',
+				'--data',
+				'Datatables',
+				'--folder',
+				CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+				'--force',
+				'--truncate',
+			],
+		];
 
 		//Queue the job.
-		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', $commands) . ')',
-			'escape' => false,
+		$queuedJobsTable->createJob('ExecuteCommands', [
+			'commands' => $commands,
 			'log' => true,
 		], [
 			'group' => 'general',
@@ -219,55 +237,79 @@ class DatatablesListener implements EventListenerInterface {
 		$commands = [];
 
 		//Force migrations for datatables to be stored in the custom directory, to not mess with the Awyiss migrations.
-		$migrationsPath = ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
+		$migrationsPath = CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		$columns = [
-			escapeshellarg('parentId:integer?[11]:index'),
-			escapeshellarg('languageShortcode:char?[2]:index'),
-			escapeshellarg('title:string?[255]'),
-			escapeshellarg('systemOrder:integer[11](0)'),
-			escapeshellarg('active:tinyinteger[1](1):index'),
-			escapeshellarg('deleted:tinyinteger[1](0):index'),
-			escapeshellarg('createdBy:integer?[11]'),
-			escapeshellarg('createdOn:datetime?'),
-			escapeshellarg('changedBy:integer?[11]'),
-			escapeshellarg('changedOn:datetime?'),
-			escapeshellarg('deletedBy:integer?[11]'),
-			escapeshellarg('deletedOn:datetime?'),
+			'parentId:integer?[11]:index',
+			'languageShortcode:char?[2]:index',
+			'title:string?[255]',
+			'systemOrder:integer[11](0)',
+			'active:tinyinteger[1](1):index',
+			'deleted:tinyinteger[1](0):index',
+			'createdBy:integer?[11]',
+			'createdOn:datetime?',
+			'changedBy:integer?[11]',
+			'changedOn:datetime?',
+			'deletedBy:integer?[11]',
+			'deletedOn:datetime?',
 		];
 
 		//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-		$commands[] = 'bin' . DS . 'cake bake migration'
-			. ' ' . escapeshellarg('create_' . $entity->identifier)
-			. ' ' . implode(' ', $columns) . $migrationsPath
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => array_merge(['bake', 'migration', 'create_' . $entity->identifier], $columns, ['--folder', $migrationsPath]),
+		];
 
 		//Migrate all the newly baked migrations
-		$commands[] = 'bin' . DS . 'cake migrations migrate'
-			. ' --source ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Migrations') . ' --no-lock'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['migrations', 'migrate', '--source', $migrationsPath, '--no-lock'],
+		];
 
 		//Clear the database schema
-		$commands[] = 'bin' . DS . 'cake schema_cache clear';
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => ['schema_cache', 'clear'],
+		];
 
 		//Bake the model
-		$commands[] = 'bin' . DS . 'cake bake model ' . escapeshellarg($entity->identifier)
-			. ' --namespace ' . CUSTOM_NAMESPACE
-			. ' --no-fixture --no-test --update --force --is-datatable'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'model',
+				$entity->identifier,
+				'--namespace',
+				CUSTOM_NAMESPACE,
+				'--no-fixture',
+				'--no-test',
+				'--update',
+				'--force',
+				'--is-datatable',
+			],
+		];
 
 		//Bake the seed of the datatables table
-		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables'
-			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'seed',
+				'--data',
+				'Datatables',
+				'--folder',
+				CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+				'--force',
+				'--truncate',
+			],
+		];
 
 		$tableLocator = FactoryLocator::get('Table');
 		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 		//Queue the job.
-		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', $commands) . ')',
-			'escape' => false,
+		$queuedJobsTable->createJob('ExecuteCommands', [
+			'commands' => $commands,
 			'log' => true,
 		], [
 			'group' => 'general',

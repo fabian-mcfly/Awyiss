@@ -166,7 +166,10 @@ class PageRolesListener implements EventListenerInterface {
 
 		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . escapeshellarg($filePath);
+			$commands[] = [
+				'command' => 'unlink',
+				'params' => [$filePath],
+			];
 		}
 
 		$filePath = implode(
@@ -174,17 +177,29 @@ class PageRolesListener implements EventListenerInterface {
 			[ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']
 		);
 		if (file_exists($filePath)) {
-			$commands[] = 'unlink ' . escapeshellarg($filePath);
+			$commands[] = [
+				'command' => 'unlink',
+				'params' => [$filePath],
+			];
 		}
 
-		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
-			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'seed',
+				'--data',
+				'PageRoles',
+				'--folder',
+				CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+				'--force',
+				'--truncate',
+			],
+		];
 
 		//Queue the job.
-		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', $commands) . ')',
-			'escape' => false,
+		$queuedJobsTable->createJob('ExecuteCommands', [
+			'commands' => $commands,
 			'log' => true,
 		], [
 			'group' => 'general',
@@ -212,25 +227,27 @@ class PageRolesListener implements EventListenerInterface {
 			$pageRoles[] = $pageRole->identifier . ':' . $pageRole->id;
 		}
 
-		$commands[] = 'bin' . DS . 'cake bake enum PageRole '
-			. escapeshellarg(implode(',', $pageRoles))
-			. ' -i --namespace ' . CUSTOM_NAMESPACE
-			. ' --is-pagerole --force'
-		;
-
-		if (!empty($commands)) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
-			$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
-			$queuedJobsTable->createJob('Queue.Execute', [
-				'command' => implode(' && ', $commands),
-				'escape' => false,
-				'log' => true,
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'PageRoles::createEnum',
-			]);
-		}
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
+		$queuedJobsTable->createJob('Queue.Execute', [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'enum',
+				'PageRole',
+				implode(',', $pageRoles),
+				'-i',
+				'--namespace',
+				CUSTOM_NAMESPACE,
+				'--is-pagerole',
+				'--force',
+			],
+			'log' => true,
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'PageRoles::createEnum',
+		]);
 	}
 
 
@@ -252,31 +269,46 @@ class PageRolesListener implements EventListenerInterface {
 
 		$commands = [];
 
-		$command = 'bin' . DS . 'cake bake model ' . escapeshellarg(Inflector::camelize(Inflector::pluralize($entity->identifier)));
-		$command .= ' --namespace ' . CUSTOM_NAMESPACE;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'model',
+				Inflector::camelize(Inflector::pluralize($entity->identifier)),
+				'--namespace',
+				CUSTOM_NAMESPACE,
+				'--force',
+				'--is-pagerole',
+				'--no-associations',
+				'--no-fixture',
+				'--no-hidden',
+				'--no-rules',
+				'--no-test',
+				'--no-validation',
+				'--skip-relation-check',
+				'--table',
+				'pages',
+				'--update',
+			],
+		];
 
-		$command .= ' --force';
-		$command .= ' --is-pagerole';
-		$command .= ' --no-associations';
-		$command .= ' --no-fixture';
-		$command .= ' --no-hidden';
-		$command .= ' --no-rules';
-		$command .= ' --no-test';
-		$command .= ' --no-validation';
-		$command .= ' --skip-relation-check';
-		$command .= ' --table pages';
-		$command .= ' --update';
-
-		$commands[] = $command;
-
-		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles'
-			. ' --folder ' . escapeshellarg(CUSTOM_DIR . DS . 'config' . DS . 'Seeds') . ' --force --truncate'
-		;
+		$commands[] = [
+			'command' => 'bin' . DS . 'cake',
+			'params' => [
+				'bake',
+				'seed',
+				'--data',
+				'PageRoles',
+				'--folder',
+				CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+				'--force',
+				'--truncate',
+			],
+		];
 
 		//Queue the job.
-		$queuedJobsTable->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', $commands) . ')',
-			'escape' => false,
+		$queuedJobsTable->createJob('ExecuteCommands', [
+			'commands' => $commands,
 			'log' => true,
 		], [
 			'group' => 'general',

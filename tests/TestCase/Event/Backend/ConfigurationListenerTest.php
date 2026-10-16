@@ -978,8 +978,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1018,8 +1021,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1122,8 +1128,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1491,8 +1500,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1531,8 +1543,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1602,8 +1617,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',
@@ -1646,8 +1664,11 @@ class ConfigurationListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'bin' . DS . 'cake'
-					&& isset($data['params']) && $data['params'] === ['media', 'clear_cache'];
+				return $data === [
+					'command' => 'bin' . DS . 'cake',
+					'params' => ['media', 'clear_cache'],
+					'log' => true,
+				];
 			}),
 			[
 				'group' => 'general',

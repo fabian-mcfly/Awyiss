@@ -170,16 +170,15 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(1, $commands);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'create_attributes_users\' \'userId:integer[11]:index\' \'testCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[0]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'create_attributes_users', 'userId:integer[11]:index', 'testCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -232,16 +231,15 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(1, $commands);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'add_testCol_to_attributes_contents\' \'testCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[0]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'add_testCol_to_attributes_contents', 'testCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -294,16 +292,15 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->exactly(1))->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(1, $commands);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'alter_oldCol_on_attributes_contents\' \'newCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[0]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'alter_oldCol_on_attributes_contents', 'newCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -356,24 +353,23 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(3, $commands);
-
-				$this->assertEquals(
-					'bin/cake bake migration \'remove_testCol_from_attributes_contents\' \'testCol\''
-						. ' --folder \'tests/customer/config/Migrations\'',
-					$commands[0]
-				);
-
-				$this->assertEquals('sleep 1', $commands[1]);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'create_attributes_users\' \'userId:integer[11]:index\' \'renamedCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[2]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'remove_testCol_from_attributes_contents', 'testCol',
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+					['command' => 'sleep', 'params' => ['1']],
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'create_attributes_users', 'userId:integer[11]:index', 'renamedCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -426,24 +422,23 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(3, $commands);
-
-				$this->assertEquals(
-					'bin/cake bake migration \'remove_testCol_from_attributes_news\' \'testCol\''
-						. ' --folder \'tests/customer/config/Migrations\'',
-					$commands[0]
-				);
-
-				$this->assertEquals('sleep 1', $commands[1]);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'add_renamedCol_to_attributes_contents\' \'renamedCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[2]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'remove_testCol_from_attributes_news', 'testCol',
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+					['command' => 'sleep', 'params' => ['1']],
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'add_renamedCol_to_attributes_contents', 'renamedCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -502,33 +497,31 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands) use ($colString): bool {
-				$this->assertCount(5, $commands);
-
-				$this->assertEquals(
-					'bin/cake bake migration \'drop_attributes_usergroups\' --folder \'tests/customer/config/Migrations\'',
-					$commands[0]
-				);
-
-				$this->assertEquals(
-					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php\'',
-					$commands[1]
-				);
-
-				$this->assertEquals(
-					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php\'',
-					$commands[2]
-				);
-
-				$this->assertEquals('sleep 1', $commands[3]);
-
-				$this->assertEquals(
-					sprintf(
-						'bin/cake bake migration \'add_renamedCol_to_attributes_contents\' \'renamedCol:%s\''
-							. ' --folder \'tests/customer/config/Migrations\'',
-						$colString
-					),
-					$commands[4]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'drop_attributes_usergroups',
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+					[
+						'command' => 'unlink',
+						'params' => [ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php'],
+					],
+					[
+						'command' => 'unlink',
+						'params' => [ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php'],
+					],
+					['command' => 'sleep', 'params' => ['1']],
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake', 'migration', 'add_renamedCol_to_attributes_contents', 'renamedCol:' . $colString,
+							'--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+				], $commands);
 
 				return true;
 			}),
@@ -586,13 +579,20 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands): bool {
-				$this->assertCount(1, $commands);
-
-				$this->assertEquals(
-					'bin/cake bake migration \'remove_testCol_from_attributes_contents\' \'testCol\''
-						. ' --folder \'tests/customer/config/Migrations\'',
-					$commands[0]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake',
+							'migration',
+							'remove_testCol_from_attributes_contents',
+							'testCol',
+							'--folder',
+							CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+					['command' => 'sleep', 'params' => ['1']],
+				], $commands);
 
 				return true;
 			}),
@@ -646,22 +646,27 @@ class UpsertTaskTest extends TestCase {
 
 		$task->expects($this->once())->method('createJob')->with(
 			$this->callback(function (array $commands): bool {
-				$this->assertCount(3, $commands);
-
-				$this->assertEquals(
-					'bin/cake bake migration \'drop_attributes_usergroups\' --folder \'tests/customer/config/Migrations\'',
-					$commands[0]
-				);
-
-				$this->assertEquals(
-					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php\'',
-					$commands[1]
-				);
-
-				$this->assertEquals(
-					'unlink \'' . ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php\'',
-					$commands[2]
-				);
+				$this->assertSame([
+					[
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake',
+							'migration',
+							'drop_attributes_usergroups',
+							'--folder',
+							CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+						],
+					],
+					[
+						'command' => 'unlink',
+						'params' => [ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesUsergroupsTable.php'],
+					],
+					[
+						'command' => 'unlink',
+						'params' => [ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesUsergroup.php'],
+					],
+					['command' => 'sleep', 'params' => ['1']],
+				], $commands);
 
 				return true;
 			}),
@@ -715,16 +720,59 @@ class UpsertTaskTest extends TestCase {
 		// Mock QueuedJobs to capture the job creation
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);
 		$mockQueuedJobs->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function (array $jobData): bool {
-				$this->assertSame(
-					'(bin/cake bake migration create_attributes_contents' .
-					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model \'attributes_contents\' --namespace Customer --no-fixture --no-test --update --force' .
-					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
-					$jobData['command']
-				);
+				$this->assertSame([
+					'commands' => [
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'migration',
+								'create_attributes_contents',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_contents',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Attributes',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				], $jobData);
 
 				return true;
 			}),
@@ -746,7 +794,12 @@ class UpsertTaskTest extends TestCase {
 			'old' => ['scope' => 'Pages'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration create_attributes_contents'], $data, false, false);
+		$this->callProtectedMethod($task, 'createJob', [
+			[
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['bake', 'migration', 'create_attributes_contents'],
+			],
+		], $data, false, false);
 	}
 
 
@@ -761,15 +814,45 @@ class UpsertTaskTest extends TestCase {
 
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);
 		$mockQueuedJobs->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function (array $jobData): bool {
-				$this->assertSame(
-					'(bin/cake bake migration remove_testCol_from_attributes_contents' .
-					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
-					$jobData['command']
-				);
+				$this->assertSame([
+					'commands' => [
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'migration',
+								'remove_testCol_from_attributes_contents',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Attributes',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				], $jobData);
 
 				return true;
 			}),
@@ -791,7 +874,12 @@ class UpsertTaskTest extends TestCase {
 			'old' => ['scope' => 'Contents'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration remove_testCol_from_attributes_contents'], $data, false, false);
+		$this->callProtectedMethod($task, 'createJob', [
+			[
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['bake', 'migration', 'remove_testCol_from_attributes_contents'],
+			],
+		], $data, false, false);
 	}
 
 
@@ -806,16 +894,61 @@ class UpsertTaskTest extends TestCase {
 
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);
 		$mockQueuedJobs->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function (array $jobData): bool {
-				$this->assertSame(
-					'(bin/cake bake migration add_test_to_attributes_news' .
-					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model \'attributes_news\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'News\'' .
-					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
-					$jobData['command']
-				);
+				$this->assertSame([
+					'commands' => [
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'migration',
+								'add_test_to_attributes_news',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_news',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+								'--for-pagerole',
+								'News',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Attributes',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				], $jobData);
 
 				return true;
 			}),
@@ -837,7 +970,12 @@ class UpsertTaskTest extends TestCase {
 			'old' => ['scope' => 'News'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_news'], $data, true, false);
+		$this->callProtectedMethod($task, 'createJob', [
+			[
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['bake', 'migration', 'add_test_to_attributes_news'],
+			],
+		], $data, true, false);
 	}
 
 	/**
@@ -851,17 +989,68 @@ class UpsertTaskTest extends TestCase {
 
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);
 		$mockQueuedJobs->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function (array $jobData): bool {
-				$this->assertSame(
-					'(bin/cake bake migration add_test_to_attributes_contents' .
-					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model \'attributes_contents\' --namespace Customer --no-fixture --no-test --update --force' .
-					' && bin/cake bake model \'attributes_pages\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'Pages\'' .
-					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
-					$jobData['command']
-				);
+				$this->assertSame([
+					'commands' => [
+						['command' => 'bin' . DS . 'cake', 'params' => ['bake', 'migration', 'add_test_to_attributes_contents']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_contents',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_pages',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+								'--for-pagerole',
+								'Pages',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Attributes',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				], $jobData);
 
 				return true;
 			}),
@@ -883,7 +1072,12 @@ class UpsertTaskTest extends TestCase {
 			'old' => ['scope' => 'Pages'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_contents'], $data, false, true);
+		$this->callProtectedMethod($task, 'createJob', [
+			[
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['bake', 'migration', 'add_test_to_attributes_contents'],
+			],
+		], $data, false, true);
 	}
 
 	/**
@@ -897,17 +1091,70 @@ class UpsertTaskTest extends TestCase {
 
 		$mockQueuedJobs = $this->createMock(QueuedJobsTable::class);
 		$mockQueuedJobs->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function (array $jobData): bool {
-				$this->assertSame(
-					'(bin/cake bake migration add_test_to_attributes_products' .
-					' && bin/cake migrations migrate --source \'tests/customer/config/Migrations\' --no-lock' .
-					' && bin/cake schema_cache clear' .
-					' && bin/cake bake model \'attributes_products\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'Products\'' .
-					' && bin/cake bake model \'attributes_news\' --namespace Customer --no-fixture --no-test --update --force --for-pagerole \'News\'' .
-					' && bin/cake bake seed --data Attributes --folder \'tests/customer/config/Seeds\' --force --truncate)',
-					$jobData['command']
-				);
+				$this->assertSame([
+					'commands' => [
+						['command' => 'bin' . DS . 'cake', 'params' => ['bake', 'migration', 'add_test_to_attributes_products']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_products',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+								'--for-pagerole',
+								'Products',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'attributes_news',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--no-fixture',
+								'--no-test',
+								'--update',
+								'--force',
+								'--for-pagerole',
+								'News',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Attributes',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				], $jobData);
 
 				return true;
 			}),
@@ -929,6 +1176,11 @@ class UpsertTaskTest extends TestCase {
 			'old' => ['scope' => 'News'],
 		];
 
-		$this->callProtectedMethod($task, 'createJob', ['bin/cake bake migration add_test_to_attributes_products'], $data, true, true);
+		$this->callProtectedMethod($task, 'createJob', [
+			[
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['bake', 'migration', 'add_test_to_attributes_products'],
+			],
+		], $data, true, true);
 	}
 }

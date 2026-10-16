@@ -251,35 +251,73 @@ class DatatablesListenerTest extends TestCase {
 
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
 				$expectedColumns = [
-					'\'parentId:integer?[11]:index\'',
-					'\'languageShortcode:char?[2]:index\'',
-					'\'title:string?[255]\'',
-					'\'systemOrder:integer[11](0)\'',
-					'\'active:tinyinteger[1](1):index\'',
-					'\'deleted:tinyinteger[1](0):index\'',
-					'\'createdBy:integer?[11]\'',
-					'\'createdOn:datetime?\'',
-					'\'changedBy:integer?[11]\'',
-					'\'changedOn:datetime?\'',
-					'\'deletedBy:integer?[11]\'',
-					'\'deletedOn:datetime?\'',
+					'parentId:integer?[11]:index',
+					'languageShortcode:char?[2]:index',
+					'title:string?[255]',
+					'systemOrder:integer[11](0)',
+					'active:tinyinteger[1](1):index',
+					'deleted:tinyinteger[1](0):index',
+					'createdBy:integer?[11]',
+					'createdOn:datetime?',
+					'changedBy:integer?[11]',
+					'changedOn:datetime?',
+					'deletedBy:integer?[11]',
+					'deletedOn:datetime?',
 				];
 
-				$expectedCommand = '(' . implode(' && ', [
-					'bin' . DS . 'cake bake migration \'create_testDatatable\' ' . implode(' ', $expectedColumns)
-						. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
-					'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
-					'bin' . DS . 'cake schema_cache clear',
-					'bin' . DS . 'cake bake model \'testDatatable\' --namespace ' . CUSTOM_NAMESPACE
-						. ' --no-fixture --no-test --update --force --is-datatable',
-					'bin' . DS . 'cake bake seed --data Datatables --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\''
-						. ' --force --truncate',
-				]) . ')';
-
-				return $data['command'] === $expectedCommand;
+				return $data === [
+						'commands' => [
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => array_merge(['bake', 'migration', 'create_testDatatable'],
+									$expectedColumns,
+									['--folder', CUSTOM_DIR . DS . 'config' . DS . 'Migrations']),
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'migrations',
+									'migrate',
+									'--source',
+									CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+									'--no-lock',
+								],
+							],
+							['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'model',
+									'testDatatable',
+									'--namespace',
+									CUSTOM_NAMESPACE,
+									'--no-fixture',
+									'--no-test',
+									'--update',
+									'--force',
+									'--is-datatable',
+								],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'seed',
+									'--data',
+									'Datatables',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+									'--force',
+									'--truncate',
+								],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -564,18 +602,47 @@ class DatatablesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				$expectedCommand = '(' . implode(' && ', [
-						'bin' . DS . 'cake bake migration \'drop_testDatatable\''
-							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
-						'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
-						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake seed --data Datatables'
-							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\' --force --truncate',
-					]) . ')';
-
-				return $data['command'] === $expectedCommand;
+				return $data === [
+						'commands' => [
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'migration',
+									'drop_testDatatable',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'migrations',
+									'migrate',
+									'--source',
+									CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+									'--no-lock',
+								],
+							],
+							['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'seed',
+									'--data',
+									'Datatables',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+									'--force',
+									'--truncate',
+								],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -615,20 +682,52 @@ class DatatablesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				$expectedCommand = '(' . implode(' && ', [
-						'unlink \'' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php']) . '\'',
-						'unlink \'' . implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'TestDatatableTable.php']). '\'',
-						'bin' . DS . 'cake bake migration \'drop_testDatatable\''
-							. ' --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\'',
-						'bin' . DS . 'cake migrations migrate --source \'' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations\' --no-lock',
-						'bin' . DS . 'cake schema_cache clear',
-						'bin' . DS . 'cake bake seed --data Datatables --folder \'' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds\''
-							. ' --force --truncate',
-					]) . ')';
-
-				return $data['command'] === $expectedCommand;
+				return $data === [
+						'commands' => [
+							['command' => 'unlink', 'params' => [implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'TestDatatable.php'])]],
+							[
+								'command' => 'unlink',
+								'params' => [implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'TestDatatableTable.php'])],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'migration',
+									'drop_testDatatable',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'migrations',
+									'migrate',
+									'--source',
+									CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+									'--no-lock',
+								],
+							],
+							['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'seed',
+									'--data',
+									'Datatables',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+									'--force',
+									'--truncate',
+								],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -667,29 +766,78 @@ class DatatablesListenerTest extends TestCase {
 			$this->callback(function ($jobType) use (&$callCounter) {
 				$callCounter++;
 
-				return ($callCounter === 1 && $jobType === 'Attributes/Delete') || ($callCounter === 2 && $jobType === 'Queue.Execute');
+				return ($callCounter === 1 && $jobType === 'Attributes/Delete') || ($callCounter === 2 && $jobType === 'ExecuteCommands');
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
-					return $data['identifier'] === 'Cars';
+					return $data === [
+						'identifier' => 'Cars',
+						'identityId' => null,
+					];
 				}
 
-				return true;
+				return $data === [
+					'commands' => [
+						[
+							'command' => 'unlink',
+							'params' => [implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', 'Car.php'])],
+						],
+						[
+							'command' => 'unlink',
+							'params' => [implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', 'CarsTable.php'])],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'migration',
+								'drop_cars',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'migrations',
+								'migrate',
+								'--source',
+								CUSTOM_DIR . DS . 'config' . DS . 'Migrations',
+								'--no-lock',
+							],
+						],
+						['command' => 'bin' . DS . 'cake', 'params' => ['schema_cache', 'clear']],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'Datatables',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				];
 			}),
 			$this->callback(function ($options) use (&$callCounter) {
 				if ($callCounter === 1) {
 					return $options === [
-							'group' => 'general',
-							'priority' => 1,
-							'reference' => 'Attributes::tableChanges',
-						];
+						'group' => 'general',
+						'priority' => 1,
+						'reference' => 'Attributes::tableChanges',
+					];
 				}
 
 				return $options === [
-						'group' => 'general',
-						'priority' => 1,
-						'reference' => 'Datatables::dropTable',
-					];
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'Datatables::dropTable',
+				];
 			})
 		);
 

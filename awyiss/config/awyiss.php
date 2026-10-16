@@ -354,6 +354,14 @@ return [
 
 	'Queue' => [
 		'defaultRequeueTimeout' => 120,
+		'executeAllowedCommands' => [
+			'bin' . DS . 'cake',
+			'mkdir',
+			'mv',
+			'chmod',
+			'unlink',
+			'sleep',
+		],
 		'maxworkers' => 3,
 		'workerLifetime' => 600,
 	],

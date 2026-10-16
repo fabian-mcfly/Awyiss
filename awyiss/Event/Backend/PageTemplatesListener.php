@@ -77,7 +77,10 @@ class PageTemplatesListener implements EventListenerInterface {
 		$commands = [];
 
 		if (!file_exists($folderPath)) {
-			$commands[] = 'mkdir -m 0755 -p ' . escapeshellarg($folderPath);
+			$commands[] = [
+				'command' => 'mkdir',
+				'params' => ['-m', '0755', '-p', $folderPath],
+			];
 		}
 
 		$filePath = $folderPath . $fileName . $extension;
@@ -92,7 +95,10 @@ class PageTemplatesListener implements EventListenerInterface {
 			$currentFilePath = $folderPath . $currentFileName . $extension;
 			$fileExists = file_exists($currentFilePath);
 			if ($fileExists) {
-				$commands[] = 'mv -f ' . escapeshellarg($currentFilePath) . ' ' . escapeshellarg($filePath);
+				$commands[] = [
+					'command' => 'mv',
+					'params' => ['-f', $currentFilePath, $filePath],
+				];
 			}
 		}
 		else {
@@ -101,18 +107,31 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontend page templates
 		if (!$fileExists) {
-			$commands[] = 'bin' . DS . 'cake bake template page_templates page_template '
-				. escapeshellarg($fileName) . ' --prefix Frontend --controller page'
-			;
-			$commands[] = 'chmod 0755 ' . escapeshellarg($filePath);
+			$commands[] = [
+				'command' => 'bin' . DS . 'cake',
+				'params' => [
+					'bake',
+					'template',
+					'page_templates',
+					'page_template',
+					$fileName,
+					'--prefix',
+					'Frontend',
+					'--controller',
+					'page',
+				],
+			];
+			$commands[] = [
+				'command' => 'chmod',
+				'params' => ['0755', $filePath],
+			];
 		}
 
 		if (!empty($commands)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
 			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$queuedJobsTable->createJob('Queue.Execute', [
-				'command' => implode(' && ', $commands),
-				'escape' => false,
+			$queuedJobsTable->createJob('ExecuteCommands', [
+				'commands' => $commands,
 				'log' => true,
 			], [
 				'group' => 'general',

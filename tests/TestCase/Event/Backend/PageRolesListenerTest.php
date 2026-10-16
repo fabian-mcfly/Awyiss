@@ -276,26 +276,76 @@ class PageRolesListenerTest extends TestCase {
 
 		$callCounter = 0;
 		$queueTable->expects($this->exactly(2))->method('createJob')->with(
-			'Queue.Execute',
+			$this->callback(function ($jobType) use (&$callCounter) {
+				return ($callCounter === 0 && $jobType === 'Queue.Execute') || ($callCounter === 1 && $jobType === 'ExecuteCommands');
+			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				$callCounter++;
 
-				if ($callCounter > 1) {
-					return true;
-				}
-
-				return isset($data['command']) && $data['command'] === 'bin/cake bake enum PageRole'
-					. ' \'page:1,newscategory:2,news:3,product:4\' -i --namespace Customer --is-pagerole --force';
-			}),
-			$this->callback(function ($data) use (&$callCounter) {
-				if ($callCounter > 1) {
-					return true;
+				if ($callCounter === 1) {
+					return $data === [
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'enum',
+								'PageRole',
+								'page:1,newscategory:2,news:3,product:4',
+								'-i',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--is-pagerole',
+								'--force',
+							],
+							'log' => true,
+						];
 				}
 
 				return $data === [
+						'commands' => [
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'model',
+									'TestRoles',
+									'--namespace',
+									CUSTOM_NAMESPACE,
+									'--force',
+									'--is-pagerole',
+									'--no-associations',
+									'--no-fixture',
+									'--no-hidden',
+									'--no-rules',
+									'--no-test',
+									'--no-validation',
+									'--skip-relation-check',
+									'--table',
+									'pages',
+									'--update',
+								],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'seed',
+									'--data',
+									'PageRoles',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+									'--force',
+									'--truncate',
+								],
+							],
+						],
+						'log' => true,
+					];
+			}),
+			$this->callback(function ($data) use (&$callCounter) {
+				return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'PageRoles::createEnum',
+						'reference' => $callCounter === 1 ? 'PageRoles::createEnum' : 'System::createPageRoleModel::test_role',
 					];
 			})
 		);
@@ -329,29 +379,85 @@ class PageRolesListenerTest extends TestCase {
 
 		$callCounter = 0;
 		$queueTable->expects($this->exactly(2))->method('createJob')->with(
-			'Queue.Execute',
+			$this->callback(function ($jobType) use (&$callCounter) {
+				return ($callCounter === 0 && $jobType === 'Queue.Execute') || ($callCounter === 1 && $jobType === 'ExecuteCommands');
+			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				$callCounter++;
 
-				if ($callCounter > 1) {
-					return true;
-				}
-
-				return isset($data['command']) && $data['command'] === 'bin/cake bake enum PageRole'
-					. ' \'page:1,newscategory:2,news:3,product:4\''
-					. ' -i --namespace Customer --is-pagerole --force'
-				;
-			}),
-			$this->callback(function ($data) use (&$callCounter) {
-				if ($callCounter > 1) {
-					return true;
+				if ($callCounter === 1) {
+					return $data === [
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake',
+							'enum',
+							'PageRole',
+							'page:1,newscategory:2,news:3,product:4',
+							'-i',
+							'--namespace',
+							CUSTOM_NAMESPACE,
+							'--is-pagerole',
+							'--force',
+						],
+						'log' => true,
+					];
 				}
 
 				return $data === [
+					'commands' => [
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'model',
+								'NewRoles',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--force',
+								'--is-pagerole',
+								'--no-associations',
+								'--no-fixture',
+								'--no-hidden',
+								'--no-rules',
+								'--no-test',
+								'--no-validation',
+								'--skip-relation-check',
+								'--table',
+								'pages',
+								'--update',
+							],
+						],
+						[
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'seed',
+								'--data',
+								'PageRoles',
+								'--folder',
+								CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+								'--force',
+								'--truncate',
+							],
+						],
+					],
+					'log' => true,
+				];
+			}),
+			$this->callback(function ($data) use (&$callCounter) {
+				if ($callCounter > 1) {
+					return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'PageRoles::createEnum',
+						'reference' => 'System::createPageRoleModel::new_role',
 					];
+				}
+
+				return $data === [
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'PageRoles::createEnum',
+				];
 			})
 		);
 
@@ -441,22 +547,35 @@ class PageRolesListenerTest extends TestCase {
 
 		$callCounter = 0;
 		$queueTable->expects($this->exactly(2))->method('createJob')->with(
-			'Queue.Execute',
+			$this->callback(function ($jobType) use (&$callCounter) {
+				return ($callCounter === 0 && $jobType === 'Queue.Execute') || ($callCounter === 1 && $jobType === 'ExecuteCommands');
+			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				$callCounter++;
 
 				if ($callCounter === 1) {
-					return true;
+					return $data === [
+						'command' => 'bin' . DS . 'cake',
+						'params' => ['bake', 'enum', 'PageRole', 'page:1,newscategory:2,news:3,product:4', '-i', '--namespace', CUSTOM_NAMESPACE, '--is-pagerole', '--force'],
+						'log' => true,
+					];
 				}
 
-				return isset($data['command']) && $data['command'] === '(bin/cake bake model \'TestRoles\' --namespace Customer'
-					. ' --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation'
-					. ' --skip-relation-check --table pages --update &&'
-				   . ' bin/cake bake seed --data PageRoles --folder \'tests/customer/config/Seeds\' --force --truncate)';
+				return $data === [
+					'commands' => [
+						['command' => 'bin' . DS . 'cake', 'params' => ['bake', 'model', 'TestRoles', '--namespace', CUSTOM_NAMESPACE, '--force', '--is-pagerole', '--no-associations', '--no-fixture', '--no-hidden', '--no-rules', '--no-test', '--no-validation', '--skip-relation-check', '--table', 'pages', '--update']],
+						['command' => 'bin' . DS . 'cake', 'params' => ['bake', 'seed', '--data', 'PageRoles', '--folder', CUSTOM_DIR . DS . 'config' . DS . 'Seeds', '--force', '--truncate']],
+					],
+					'log' => true,
+				];
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
-					return true;
+					return $data === [
+						'group' => 'general',
+						'priority' => 1,
+						'reference' => 'PageRoles::createEnum',
+					];
 				}
 
 				return $data === [
@@ -496,22 +615,78 @@ class PageRolesListenerTest extends TestCase {
 
 		$callCounter = 0;
 		$queueTable->expects($this->exactly(2))->method('createJob')->with(
-			'Queue.Execute',
+			$this->callback(function ($jobType) use (&$callCounter) {
+				return ($callCounter === 0 && $jobType === 'Queue.Execute') || ($callCounter === 1 && $jobType === 'ExecuteCommands');
+			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				$callCounter++;
 
 				if ($callCounter === 1) {
-					return true;
+					return $data === [
+							'command' => 'bin' . DS . 'cake',
+							'params' => [
+								'bake',
+								'enum',
+								'PageRole',
+								'page:1,newscategory:2,news:3,product:4',
+								'-i',
+								'--namespace',
+								CUSTOM_NAMESPACE,
+								'--is-pagerole',
+								'--force',
+							],
+							'log' => true,
+						];
 				}
 
-				return isset($data['command']) && $data['command'] === '(bin/cake bake model \'NewRoles\''
-					. ' --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test'
-					. ' --no-validation --skip-relation-check --table pages --update && bin/cake bake seed --data PageRoles'
-					. ' --folder \'tests/customer/config/Seeds\' --force --truncate)';
+				return $data === [
+						'commands' => [
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'model',
+									'NewRoles',
+									'--namespace',
+									CUSTOM_NAMESPACE,
+									'--force',
+									'--is-pagerole',
+									'--no-associations',
+									'--no-fixture',
+									'--no-hidden',
+									'--no-rules',
+									'--no-test',
+									'--no-validation',
+									'--skip-relation-check',
+									'--table',
+									'pages',
+									'--update',
+								],
+							],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'seed',
+									'--data',
+									'PageRoles',
+									'--folder',
+									CUSTOM_DIR . DS . 'config' . DS . 'Seeds',
+									'--force',
+									'--truncate',
+								],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			$this->callback(function ($data) use (&$callCounter) {
 				if ($callCounter === 1) {
-					return true;
+					return $data === [
+							'group' => 'general',
+							'priority' => 1,
+							'reference' => 'PageRoles::createEnum',
+						];
 				}
 
 				return $data === [
@@ -609,15 +784,27 @@ class PageRolesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) &&
-					   $data['command'] !==
-					   '(bin/cake bake model NewRoles --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages --update && bin/cake bake seed --data PageRoles --folder tests/customer/config/Seeds --force --truncate)';
+				return $data === [
+						'command' => 'bin' . DS . 'cake',
+						'params' => [
+							'bake',
+							'enum',
+							'PageRole',
+							'page:1,newscategory:2,news:3,product:4',
+							'-i',
+							'--namespace',
+							CUSTOM_NAMESPACE,
+							'--is-pagerole',
+							'--force',
+						],
+						'log' => true,
+					];
 			}),
 			$this->callback(function ($data) {
-				return $data !== [
+				return $data === [
 						'group' => 'general',
 						'priority' => 1,
-						'reference' => 'System::createPageRoleModel::test_role',
+						'reference' => 'PageRoles::createEnum',
 					];
 			})
 		);

@@ -209,13 +209,29 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/email/\'',
-						'bin/cake bake template email_templates email_template \'test_template\' --prefix Frontend --controller email',
-						'chmod 0755 \'' . TMP . 'test_templates/Frontend/email/test_template.twig\'',
-					]);
+				return $data === [
+						'commands' => [
+							['command' => 'mkdir', 'params' => ['-m', '0755', '-p', TMP . 'test_templates/Frontend/email/']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'template',
+									'email_templates',
+									'email_template',
+									'test_template',
+									'--prefix',
+									'Frontend',
+									'--controller',
+									'email',
+								],
+							],
+							['command' => 'chmod', 'params' => ['0755', TMP . 'test_templates/Frontend/email/test_template.twig']],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -256,12 +272,28 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'bin/cake bake template email_templates email_template \'test_template\' --prefix Frontend --controller email',
-						'chmod 0755 \'' . TMP . 'test_templates/Frontend/email/test_template.twig\'',
-					]);
+				return $data === [
+						'commands' => [
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'template',
+									'email_templates',
+									'email_template',
+									'test_template',
+									'--prefix',
+									'Frontend',
+									'--controller',
+									'email',
+								],
+							],
+							['command' => 'chmod', 'params' => ['0755', TMP . 'test_templates/Frontend/email/test_template.twig']],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -334,13 +366,29 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === implode(' && ', [
-						'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/email/\'',
-						'bin/cake bake template email_templates email_template \'new_template\' --prefix Frontend --controller email',
-						'chmod 0755 \'' . TMP . 'test_templates/Frontend/email/new_template.twig\'',
-					]);
+				return $data === [
+						'commands' => [
+							['command' => 'mkdir', 'params' => ['-m', '0755', '-p', TMP . 'test_templates/Frontend/email/']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'template',
+									'email_templates',
+									'email_template',
+									'new_template',
+									'--prefix',
+									'Frontend',
+									'--controller',
+									'email',
+								],
+							],
+							['command' => 'chmod', 'params' => ['0755', TMP . 'test_templates/Frontend/email/new_template.twig']],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -385,12 +433,21 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'mv -f'
-					. ' \'' . TMP . 'test_templates/Frontend/email/test_template.twig\''
-					. ' \'' . TMP . 'test_templates/Frontend/email/new_template.twig\''
-				;
+				return $data === [
+						'commands' => [
+							[
+								'command' => 'mv',
+								'params' => [
+									'-f',
+									TMP . 'test_templates/Frontend/email/test_template.twig',
+									TMP . 'test_templates/Frontend/email/new_template.twig',
+								],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -429,13 +486,29 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === implode(' && ', [
-					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/email/\'',
-					'bin/cake bake template email_templates email_template \'new_template\' --prefix Frontend --controller email',
-					'chmod 0755 \'' . TMP . 'test_templates/Frontend/email/new_template.twig\'',
-				]);
+				return $data === [
+						'commands' => [
+							['command' => 'mkdir', 'params' => ['-m', '0755', '-p', TMP . 'test_templates/Frontend/email/']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'template',
+									'email_templates',
+									'email_template',
+									'new_template',
+									'--prefix',
+									'Frontend',
+									'--controller',
+									'email',
+								],
+							],
+							['command' => 'chmod', 'params' => ['0755', TMP . 'test_templates/Frontend/email/new_template.twig']],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -471,14 +544,32 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
 
 		$queueTable->expects($this->once())->method('createJob')->with(
-			'Queue.Execute',
+			'ExecuteCommands',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === implode(' && ', [
-					'mkdir -m 0755 -p \'' . TMP . 'test_templates/Frontend/email/\'',
-					'bin/cake bake template email_templates email_template \'test_template_with_spaces_special_chars\''
-						. ' --prefix Frontend --controller email',
-					'chmod 0755 \'' . TMP . 'test_templates/Frontend/email/test_template_with_spaces_special_chars.twig\'',
-				]);
+				return $data === [
+						'commands' => [
+							['command' => 'mkdir', 'params' => ['-m', '0755', '-p', TMP . 'test_templates/Frontend/email/']],
+							[
+								'command' => 'bin' . DS . 'cake',
+								'params' => [
+									'bake',
+									'template',
+									'email_templates',
+									'email_template',
+									'test_template_with_spaces_special_chars',
+									'--prefix',
+									'Frontend',
+									'--controller',
+									'email',
+								],
+							],
+							[
+								'command' => 'chmod',
+								'params' => ['0755', TMP . 'test_templates/Frontend/email/test_template_with_spaces_special_chars.twig'],
+							],
+						],
+						'log' => true,
+					];
 			}),
 			[
 				'group' => 'general',
@@ -521,11 +612,18 @@ class EmailTemplatesListenerTest extends TestCase {
 		$queueTable->expects($this->once())->method('createJob')->with(
 			'Queue.Execute',
 			$this->callback(function ($data) {
-				return isset($data['command']) && $data['command'] === 'mv'
-					&& isset($data['params']) && $data['params'][0] === '-f'
-					&& $data['params'][1] === TMP . 'test_templates/Frontend/email/test_template.twig'
-					&& str_starts_with($data['params'][2], TMP . 'test_templates/Frontend/email/_deleted-test_template-')
-					&& str_ends_with($data['params'][2], '.twig');
+				$targetFilePath = $data['params'][2];
+				$this->assertMatchesRegularExpression(
+					'/^' . preg_quote(TMP . 'test_templates/Frontend/email/_deleted-test_template-', '/') . '\\d+\\.twig$/',
+					$targetFilePath
+				);
+				$expectedData = [
+					'command' => 'mv',
+					'params' => ['-f', TMP . 'test_templates/Frontend/email/test_template.twig', $targetFilePath],
+					'log' => true,
+				];
+
+				return $data === $expectedData;
 			}),
 			[
 				'group' => 'general',

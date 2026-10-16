@@ -144,15 +144,24 @@ class SystemController extends Controller {
 		$commands = [];
 
 		if (!$type || $type === 'full') {
-			$commands[] = 'bin' . DS . 'cake cache clear_all';
+			$commands[] = [
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['cache', 'clear_all'],
+			];
 		}
 
 		if (in_array($type, ['media', 'full'], true)) {
-			$commands[] = 'bin' . DS . 'cake media clear_cache';
+			$commands[] = [
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['media', 'clear_cache'],
+			];
 		}
 
 		if (in_array($type, ['twig', 'full'], true)) {
-			$commands[] = 'bin' . DS . 'cake twig clear_cache';
+			$commands[] = [
+				'command' => 'bin' . DS . 'cake',
+				'params' => ['twig', 'clear_cache'],
+			];
 		}
 
 		if (!$runningJob) {
@@ -168,9 +177,8 @@ class SystemController extends Controller {
 			;
 
 			if (!$runningJob) {
-				$runningJob = $queuedJobsTable->createJob('Queue.Execute', [
-					'command' => implode(' && ', $commands),
-					'escape' => false,
+				$runningJob = $queuedJobsTable->createJob('ExecuteCommands', [
+					'commands' => $commands,
 					'log' => true,
 				], [
 					'group' => 'general',
