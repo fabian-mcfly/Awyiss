@@ -6,6 +6,7 @@ namespace Awyiss\Command\Awyiss;
 
 use Awyiss\Command\Awyiss\Trait\AdminTrait;
 use Awyiss\Command\Awyiss\Trait\ConfigTrait;
+use Awyiss\Command\Awyiss\Trait\MaintenanceTrait;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -17,8 +18,6 @@ use Cake\Utility\Text;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 
 /**
@@ -28,6 +27,7 @@ use Symfony\Component\Process\Process;
 class InstallCommand extends Command {
 	use AdminTrait;
 	use ConfigTrait;
+	use MaintenanceTrait;
 
 
 	/**
@@ -35,25 +35,9 @@ class InstallCommand extends Command {
 	 */
 	protected bool $connectionValid = false;
 	/**
-	 * @var string The customer's name
-	 */
-	protected string $customerName;
-	/**
-	 * @var bool Whether the installation is a dry run
-	 */
-	protected bool $dryRun = false;
-	/**
-	 * @var \Symfony\Component\Filesystem\Filesystem The filesystem
-	 */
-	protected Filesystem $filesystem;
-	/**
 	 * @var string The environment of the installation
 	 */
 	protected string $installEnvironment;
-	/**
-	 * @var \Cake\Console\ConsoleIo The console I/O
-	 */
-	protected ConsoleIo $io;
 	/**
 	 * A list of reserved customer names that cannot be used for the installation.
 	 *
@@ -329,116 +313,10 @@ class InstallCommand extends Command {
 			return;
 		}
 
-		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '--no-lock']);
-		$this->io->success('Migrations completed.');
-
-		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
-		$this->io->success('Queue migrations completed.');
+		$this->runMigrations();
 
 		// Seed the database
-		$this->runCommand(['bin' . DS . 'cake', 'seeds', 'run', '-q']);
-		$this->io->success('Seeding completed.');
-	}
-
-
-	/**
-	 * Create symlinks for the assets
-	 *
-	 * @return bool|null
-	 */
-	protected function createAssetSymlinks(): ?bool {
-		if ($this->dryRun) {
-			$this->io->success('Skipping symlink creation in dry run mode.');
-
-			return null;
-		}
-
-		if (!isset($this->customerName)) {
-			if (!defined('CUSTOM_DIR')) {
-				$this->io->abort('CUSTOM_DIR is not defined. Cannot create symlinks.');
-			}
-			else {
-				$this->customerName = CUSTOM_DIR;
-			}
-		}
-
-		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-			try {
-				$this->filesystem->symlink(APP . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
-				$this->filesystem->symlink(
-					ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce',
-					WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce'
-				);
-				$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
-			}
-			catch (IOExceptionInterface) {
-				$this->io->error('Failed to create symlinks.', 0);
-
-				$this->io->out('Please create the symlinks manually:');
-
-				$this->io->comment('ln -s ' . APP . 'assets ' . WWW_ROOT . 'awyiss' . DS . 'assets');
-				$this->io->comment(
-					'ln -s'
-					. ' '
-					. ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce'
-					. ' '
-					. WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce'
-				);
-				$this->io->comment('ln -s ' . ROOT . DS . $this->customerName . DS . 'assets ' . WWW_ROOT . 'assets');
-
-				return false;
-			}
-
-			return true;
-		}
-
-		$this->io->info('Trying to create symlinks using the mklink command...');
-
-		$commands = [
-			[
-				'cmd',
-				'/c',
-				'mklink',
-				'/D',
-				WWW_ROOT . 'awyiss' . DS . 'assets',
-				APP . 'assets',
-			],
-			[
-				'cmd',
-				'/c',
-				'mklink',
-				'/D',
-				WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce',
-				ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce',
-			],
-			[
-				'cmd',
-				'/c',
-				'mklink',
-				'/D',
-				WWW_ROOT . 'assets',
-				ROOT . DS . $this->customerName . DS . 'assets',
-			],
-		];
-
-		try {
-			foreach ($commands as $command) {
-				$this->runCommand($command);
-			}
-		}
-		catch (ProcessFailedException) {
-			$this->io->error('Failed to create symlinks.', 0);
-
-			$this->io->out('Please create the symlinks manually:');
-
-			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets ' . APP . '\assets');
-			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets\js\TinyMCE\tinymce ' . ROOT . DS . 'vendor\tinymce\tinymce');
-			$this->io->comment('mklink /D ' . WWW_ROOT . 'assets ' . ROOT . DS . $this->customerName . DS . 'assets');
-
-			return false;
-		}
-
-		return true;
+		$this->runSeeds();
 	}
 
 
@@ -471,33 +349,6 @@ class InstallCommand extends Command {
 		}
 		else {
 			$this->io->abort('Invalid customer name.');
-		}
-	}
-
-
-	/**
-	 * Executes a command using the Symfony Process component.
-	 * This method takes an array of strings representing the command to be executed.
-	 * It creates a new Process instance with the command, and then calls the mustRun method on the Process instance to execute the command.
-	 * If the command is successful, the output of the command is printed to the console.
-	 * If there is an error, an exception is thrown and the error message is printed to the console.
-	 *
-	 * @param array $command An array of strings representing the command to be executed.
-	 * @return void
-	 * @throws \Symfony\Component\Process\Exception\ProcessFailedException If the command fails.
-	 */
-	protected function runCommand(array $command): void {
-		$process = new Process($command);
-
-		try {
-			$process->mustRun();
-		}
-		catch (ProcessFailedException $ex) {
-			$this->io->error('The command failed. Error: ' . $ex->getMessage());
-
-			if ($this->io->askChoice('Do you want to continue?', ['y', 'n'], 'n') === 'n') {
-				$this->io->abort('Installation aborted.');
-			}
 		}
 	}
 

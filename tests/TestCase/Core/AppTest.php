@@ -206,6 +206,7 @@ class AppTest extends TestCase {
 			'Awyiss\BackupCommand' => '\Awyiss\Command\Awyiss\BackupCommand',
 			'Awyiss\InstallCommand' => '\Awyiss\Command\Awyiss\InstallCommand',
 			'Awyiss\ResetPasswordCommand' => '\Awyiss\Command\Awyiss\ResetPasswordCommand',
+			'Awyiss\UpdateCommand' => '\Awyiss\Command\Awyiss\UpdateCommand',
 			'Bake\AllCommand' => '\Awyiss\Command\Bake\AllCommand',
 			'Bake\ControllerCommand' => '\Awyiss\Command\Bake\ControllerCommand',
 			'Bake\EnumCommand' => '\Awyiss\Command\Bake\EnumCommand',
